@@ -5,9 +5,12 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class MyGdxGame extends Game {
 	// define game variables
@@ -20,11 +23,16 @@ public class MyGdxGame extends Game {
 
 	protected SpriteBatch batch;
 	protected BitmapFont font;
+	protected OrthographicCamera camera;
+	protected Viewport viewport;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, GAME_WIDTH, GAME_HEIGHT);
+		viewport = new FitViewport(GAME_WIDTH, GAME_HEIGHT, camera);
 		setScreen(new MainMenuScreen(this));
 	}
 

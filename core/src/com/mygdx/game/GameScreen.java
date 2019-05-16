@@ -30,6 +30,8 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game.camera.update();
+
         player.render();
         background.render();
         int x = player.getX();
@@ -37,10 +39,10 @@ public class GameScreen implements Screen {
 
         // movement input handling, ensure player stays in bounds
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && x > 0) {
-            player = player.move((int) (x - (SENSITIVITY * delta)), y);
+            player.move((int) (x - (SENSITIVITY * delta)), y);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && x < GAME_WIDTH - player.getWidth()) {
-            player = player.move((int) (x + (SENSITIVITY * delta)), y);
+            player.move((int) (x + (SENSITIVITY * delta)), y);
         }
 
         // player input handling, activate skills on keypress

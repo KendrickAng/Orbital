@@ -24,6 +24,7 @@ public class MainMenuScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game.camera.update();
 
         game.batch.begin();
         game.font.draw(game.batch, "Press any key", GAME_WIDTH / 2 , GAME_HEIGHT / 2);
