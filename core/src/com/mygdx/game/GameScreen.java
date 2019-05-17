@@ -32,8 +32,6 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.camera.update();
 
-        player.render();
-        background.render();
         int x = player.getX();
         int y = player.getY();
 
@@ -47,14 +45,17 @@ public class GameScreen implements Screen {
 
         // player input handling, activate skills on keypress
         if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
-            player.primary();
+            player.setPrimaryPressed(true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-            player.secondary();
+            player.setSecondaryPressed(true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.E)) {
-            player.tertiary();
+            player.setTertiaryPressed(true);
         }
+
+        player.render();
+        background.render();
     }
 
     @Override

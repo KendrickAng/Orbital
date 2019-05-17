@@ -23,12 +23,17 @@ public abstract class Character {
         shape = new ShapeRenderer();
     }
 
-    public void render() {
-        shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.setColor(Color.BLACK);
-        shape.rect(x, y, width, height);
-        shape.end();
-    }
+    public abstract void render();
+
+    // Skills to be implemented
+    public abstract void primary();
+    public abstract void secondary();
+    public abstract void tertiary();
+
+    // manipulate key press state
+    public abstract void setPrimaryPressed(boolean flag);
+    public abstract void setSecondaryPressed(boolean flag);
+    public abstract void setTertiaryPressed(boolean flag);
 
     public void move(int x, int y) {
         this.x = x;
@@ -40,6 +45,11 @@ public abstract class Character {
         return cooldownUtils.isSkillAvailable(prev, cooldown);
     }
 
+    // returns true if a skill is still being cast.
+    public boolean isSkillPersisting(long startCast, long persistTime) {
+        return cooldownUtils.isSkillPersisting(startCast, persistTime);
+    }
+
     public void dispose() {
         shape.dispose();
     }
@@ -49,9 +59,4 @@ public abstract class Character {
     public int getWidth() { return this.width; }
     public int getHeight() { return this.height; }
     public ShapeRenderer getRenderer() { return this.shape; }
-
-    // Skills to be implemented
-    public abstract void primary();
-    public abstract void secondary();
-    public abstract void tertiary();
 }
