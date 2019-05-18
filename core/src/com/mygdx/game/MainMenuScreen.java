@@ -38,6 +38,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        game.viewport.update(width, height);
     }
 
     @Override

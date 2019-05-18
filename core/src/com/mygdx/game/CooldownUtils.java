@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.TimeUtils;
  */
 public class CooldownUtils {
 
-    // returns true if cooldown < current time - prev
+    // returns true if the time elapsed since prev >= cooldown.
     public boolean isSkillAvailable(long prev, long cooldown) {
         if(TimeUtils.timeSinceMillis(prev) < 0) {
             throw new IllegalStateException("Cooldown check returning negative cd!");
@@ -16,7 +16,7 @@ public class CooldownUtils {
         }
     }
 
-    // returns true if persistTime < current time - startCast
+    // returns true if time elapsed since startCast <= persisTime.
     public boolean isSkillPersisting(long startCast, long persistTime) {
         if(TimeUtils.timeSinceMillis(startCast) < 0) {
             throw new IllegalStateException("Skill persist check returning negative time!");
