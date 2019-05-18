@@ -24,7 +24,7 @@ public class Tank extends Character {
         state = new TankState();
     }
 
-    // TODO: Have render check if the skills are still persisting, and draw the necessary stuff.
+    // TODO: don't use setters and getters, use protected boolean flags instead. ugh
     @Override
     public void render() {
         // draw character
@@ -41,29 +41,33 @@ public class Tank extends Character {
         }
 
         if (state.isSecondaryPressed()) {
-            if (super.isSkillAvailable(state.getSecondaryTimeSince(), state.SECONDARY_COOLDOWN)) {
+            if (super.isSkillAvailable(state.getSecondaryTimeSince(), state.SECONDARY_COOLDOWN) && !state.secondary_persist) {
                 // case 1 : skill is available to cast.
-                // update cast time to now
                 Gdx.app.log("Tank.java", "Secondary skill pressed");
-                state.updateSecondaryTimeSince(); // update last cast timing
+                state.updateSecondaryTimeSince(); // update last cast timing to now
+                state.secondary_persist = true;
                 secondary();
             } else if(super.isSkillPersisting(state.getSecondaryTimeSince(), state.SECONDARY_PERSIST_TIME)) {
                 // case 2: skill is on cooldown, but is persisting.
                 secondary();
             } else {
                 state.setSecondaryPressed(false);
+                state.secondary_persist = false;
             }
         }
 
         if (state.isTertiaryPressed()) {
-            if (super.isSkillAvailable(state.getTertiaryTimeSince(), state.TERTIARY_COOLDOWN)) {
+            // persist time may be longer than cooldown time, causing persist -> skill available -> persist...
+            if (super.isSkillAvailable(state.getTertiaryTimeSince(), state.TERTIARY_COOLDOWN) && !state.tertiary_persist) {
                 Gdx.app.log("Tank.java", "Tertiary skill pressed");
                 state.updateTertiaryTimeSince();
+                state.tertiary_persist = true;
                 tertiary();
             } else if(super.isSkillPersisting(state.getTertiaryTimeSince(), state.TERTIARY_PERSIST_TIME)) {
                 tertiary();
             } else {
                 state.setTertiaryPressed(false);
+                state.tertiary_persist = false;
             }
         }
     }

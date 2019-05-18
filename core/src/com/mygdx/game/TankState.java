@@ -18,6 +18,11 @@ public class TankState {
     private boolean secondary_pressed = false;
     private boolean tertiary_pressed = false;
 
+    // when a skill persists, you can't cast it
+    protected boolean primary_persist = false;
+    protected boolean secondary_persist = false;
+    protected boolean tertiary_persist = false;
+
     // time since last skills
     private long primary;
     private long secondary;
