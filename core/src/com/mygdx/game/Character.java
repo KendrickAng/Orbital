@@ -11,19 +11,18 @@ public abstract class Character {
 
     private int x; // bottom left
     private int y; // bottom left
-    private int width; // dimensions of rectangle
-    private int height;
-    private ShapeRenderer shape;
+    private float width;
+    private float height;
 
-    public Character() {
+    public Character(float width, float height) {
         this.x = 0;
         this.y = MAP_HEIGHT;
-        this.width = PLAYER_WIDTH;
-        this.height = PLAYER_HEIGHT;
-        shape = new ShapeRenderer();
+        this.width = width;
+        this.height = height;
     }
 
     public abstract void render();
+    public abstract void dispose();
 
     // Skills to be implemented
     public abstract void primary();
@@ -50,13 +49,8 @@ public abstract class Character {
         return cooldownUtils.isSkillPersisting(startCast, persistTime);
     }
 
-    public void dispose() {
-        shape.dispose();
-    }
-
     public int getX() { return this.x; }
     public int getY() { return this.y; }
-    public int getWidth() { return this.width; }
-    public int getHeight() { return this.height; }
-    public ShapeRenderer getRenderer() { return this.shape; }
+    public float getWidth() { return this.width; }
+    public float getHeight() { return this.height; }
 }

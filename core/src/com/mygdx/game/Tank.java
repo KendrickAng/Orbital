@@ -2,6 +2,9 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import static com.mygdx.game.MyGdxGame.*;
@@ -10,29 +13,50 @@ import static com.mygdx.game.MyGdxGame.*;
  * Represents the Tank playable character.
  */
 public class Tank extends Character {
-    private static final int SHIELD_OFFSET = PLAYER_HEIGHT / 10;
-    private static final int SWORD_LENGTH = PLAYER_HEIGHT;
-    private static final int SWORD_WIDTH = PLAYER_WIDTH / 2;
+    // load textures
+    static {
+        TANK_STANDING = new Sprite(new Texture(Gdx.files.internal("Tank/Standing.png")));
+        TANK_PRIMARY = new Sprite(new Texture(Gdx.files.internal("Tank/Primary.png")));
+        TANK_SECONDARY = new Sprite(new Texture(Gdx.files.internal("Tank/Secondary.png")));
+    }
+
+    private static float SHIELD_OFFSET; // affects primary block hitbox
+    private static float SWORD_LENGTH; // affects secondary slash hitbox
+    private static float SWORD_WIDTH;
+    private static Sprite TANK_STANDING;
+    private static Sprite TANK_PRIMARY;
+    private static Sprite TANK_SECONDARY;
 
     private TankState state;
+    private MyGdxGame game;
+    private ShapeRenderer shape;
 
     /**
      * Initliases the tank at coordinates (0, MAP_HEIGHT).
      */
     public Tank() {
-        super();
+        super(TANK_STANDING.getWidth(), TANK_STANDING.getHeight());
+        SHIELD_OFFSET = super.getHeight() / 10;
+        SWORD_LENGTH = super.getHeight();
+        SWORD_WIDTH = super.getWidth() / 2;
         state = new TankState();
+        shape = new ShapeRenderer();
     }
 
     // TODO: don't use setters and getters, use protected boolean flags instead. ugh
     @Override
     public void render() {
         // draw character
-        ShapeRenderer shape = super.getRenderer();
-        shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.setColor(Color.BLACK);
-        shape.rect(getX(), getY(), getWidth(), getHeight());
-        shape.end();
+        SpriteBatch batch = MyGdxGame.getSpriteBatch();
+        TANK_STANDING.setPosition(getX(), getY());
+        batch.begin();
+        TANK_STANDING.draw(batch);
+        batch.end();
+//        ShapeRenderer shape = super.getRenderer();
+//        shape.begin(ShapeRenderer.ShapeType.Filled);
+//        shape.setColor(Color.BLACK);
+//        shape.rect(getX(), getY(), getWidth(), getHeight());
+//        shape.end();
 
         // update persist states
         if (state.isPrimaryPressed()) {
@@ -72,21 +96,24 @@ public class Tank extends Character {
         }
     }
 
+    @Override
+    public void dispose() {
+        shape.dispose();
+    }
+
     // Block
     @Override
     public void primary() {
-        ShapeRenderer shape = super.getRenderer();
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(Color.GOLD);
         shape.rect(super.getX() - SHIELD_OFFSET, super.getY() - SHIELD_OFFSET,
-                super.getWidth() + 2 * SHIELD_OFFSET, super.getHeight() + 2 * SHIELD_OFFSET);
+                getWidth() + 2 * SHIELD_OFFSET, getHeight() + 2 * SHIELD_OFFSET);
         shape.end();
     }
 
     // Slash
     @Override
     public void secondary() {
-        ShapeRenderer shape = super.getRenderer();
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(Color.GOLD);
         shape.rect(getX() + getWidth() / 2, getY() + getHeight() / 2,
@@ -97,7 +124,6 @@ public class Tank extends Character {
     // Fortress
     @Override
     public void tertiary() {
-        ShapeRenderer shape = super.getRenderer();
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(Color.GOLD);
         shape.rect(getX(), getY(), getWidth(), getHeight());
@@ -105,17 +131,9 @@ public class Tank extends Character {
     }
 
     @Override
-    public void setPrimaryPressed(boolean flag) {
-        this.state.setPrimaryPressed(flag);
-    }
-
+    public void setPrimaryPressed(boolean flag) { this.state.setPrimaryPressed(flag); }
     @Override
-    public void setSecondaryPressed(boolean flag) {
-        this.state.setSecondaryPressed(flag);
-    }
-
+    public void setSecondaryPressed(boolean flag) { this.state.setSecondaryPressed(flag); }
     @Override
-    public void setTertiaryPressed(boolean flag) {
-        this.state.setTertiaryPressed(flag);
-    }
+    public void setTertiaryPressed(boolean flag) { this.state.setTertiaryPressed(flag); }
 }

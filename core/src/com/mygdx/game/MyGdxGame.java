@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -16,15 +17,13 @@ public class MyGdxGame extends Game {
 	// define game variables
 	public static final int GAME_WIDTH = 1200;
 	public static final int GAME_HEIGHT = 760;
-	public static final int PLAYER_WIDTH = 25;
-	public static final int PLAYER_HEIGHT = 50;
 	protected static final int SENSITIVITY = 250;
 	protected static final int MAP_HEIGHT = GAME_HEIGHT / 5; // accounts for ground
 
-	protected SpriteBatch batch;
-	protected BitmapFont font;
-	protected OrthographicCamera camera;
-	protected Viewport viewport;
+	private static SpriteBatch batch;
+	private static BitmapFont font;
+	private static OrthographicCamera camera;
+	private static Viewport viewport;
 
 	@Override
 	public void create () {
@@ -46,4 +45,9 @@ public class MyGdxGame extends Game {
 		batch.dispose();
 		font.dispose();
 	}
+
+	public static SpriteBatch getSpriteBatch() { return batch; }
+	public static BitmapFont getFont() { return font; }
+	public static OrthographicCamera getCamera() { return camera; }
+	public static Viewport getViewport() { return viewport; }
 }

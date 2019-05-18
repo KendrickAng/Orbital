@@ -24,11 +24,11 @@ public class MainMenuScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.camera.update();
+        MyGdxGame.getCamera().update();
 
-        game.batch.begin();
-        game.font.draw(game.batch, "Press any key", GAME_WIDTH / 2 , GAME_HEIGHT / 2);
-        game.batch.end();
+        MyGdxGame.getSpriteBatch().begin();
+        MyGdxGame.getFont().draw(MyGdxGame.getSpriteBatch(), "Press any key", GAME_WIDTH / 2 , GAME_HEIGHT / 2);
+        MyGdxGame.getSpriteBatch().end();
 
         if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
             game.setScreen(new GameScreen(game));
@@ -38,7 +38,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.viewport.update(width, height);
+        MyGdxGame.getViewport().update(width, height);
     }
 
     @Override

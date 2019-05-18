@@ -30,7 +30,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.camera.update();
+        MyGdxGame.getCamera().update();
 
         int x = player.getX();
         int y = player.getY();
@@ -60,7 +60,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.viewport.update(width, height);
+        MyGdxGame.getViewport().update(width, height);
     }
 
     @Override
