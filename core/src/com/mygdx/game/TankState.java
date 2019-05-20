@@ -28,10 +28,14 @@ public class TankState {
     private long secondary;
     private long tertiary;
 
+    // direction facing
+    private Direction direction;
+
     public TankState() {
         this.primary = 0;
         this.secondary = 0;
         this.tertiary = 0;
+        this.direction = Direction.RIGHT;
     }
 
     // set the timing of the respective skill to current time.
@@ -42,6 +46,9 @@ public class TankState {
     public long getPrimaryTimeSince() { return this.primary; }
     public long getSecondaryTimeSince() { return this.secondary; }
     public long getTertiaryTimeSince() { return this.tertiary; }
+
+    public Direction getDirection() { return this.direction; }
+    public void setDirection(Direction d) { this.direction = d; }
 
     public boolean isPrimaryPressed() { return this.primary_pressed; }
     public boolean isSecondaryPressed() { return this.secondary_pressed; }

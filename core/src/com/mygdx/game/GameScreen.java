@@ -38,9 +38,11 @@ public class GameScreen implements Screen {
         // movement input handling, ensure player stays in bounds
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && x > 0) {
             player.move((int) (x - (SENSITIVITY * delta)), y);
+            player.setDirection(Direction.LEFT);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && x < GAME_WIDTH - player.getWidth()) {
             player.move((int) (x + (SENSITIVITY * delta)), y);
+            player.setDirection(Direction.RIGHT);
         }
 
         // player input handling, activate skills on keypress

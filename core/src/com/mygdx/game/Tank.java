@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import static com.mygdx.game.MyGdxGame.*;
-
 /**
  * Represents the Tank playable character.
  */
@@ -18,6 +16,7 @@ public class Tank extends Character {
         TANK_STANDING = new Sprite(new Texture(Gdx.files.internal("Tank/Standing.png")));
         TANK_PRIMARY = new Sprite(new Texture(Gdx.files.internal("Tank/Primary.png")));
         TANK_SECONDARY = new Sprite(new Texture(Gdx.files.internal("Tank/Secondary.png")));
+        TANK_TERTIARY = new Sprite(new Texture(Gdx.files.internal("Tank/Tertiary.png")));
     }
 
     private static float SHIELD_OFFSET; // affects primary block hitbox
@@ -26,8 +25,10 @@ public class Tank extends Character {
     private static Sprite TANK_STANDING;
     private static Sprite TANK_PRIMARY;
     private static Sprite TANK_SECONDARY;
+    private static Sprite TANK_TERTIARY;
 
     private TankState state;
+    private Sprite current_sprite;
     private MyGdxGame game;
     private ShapeRenderer shape;
 
@@ -41,25 +42,27 @@ public class Tank extends Character {
         SWORD_WIDTH = super.getWidth() / 2;
         state = new TankState();
         shape = new ShapeRenderer();
+        current_sprite = TANK_STANDING;
     }
 
-    // TODO: don't use setters and getters, use protected boolean flags instead. ugh
     @Override
     public void render() {
         // draw character
         SpriteBatch batch = MyGdxGame.getSpriteBatch();
-        TANK_STANDING.setPosition(getX(), getY());
+        current_sprite.setPosition(getX(), getY());
         batch.begin();
-        TANK_STANDING.draw(batch);
+        // reset sprite if nothing is pressed
+        if(!state.isPrimaryPressed() && !state.isSecondaryPressed() && !state.isTertiaryPressed()) {
+            current_sprite = TANK_STANDING;
+        }
+        alignSprite();
+        current_sprite.draw(batch);
         batch.end();
-//        ShapeRenderer shape = super.getRenderer();
-//        shape.begin(ShapeRenderer.ShapeType.Filled);
-//        shape.setColor(Color.BLACK);
-//        shape.rect(getX(), getY(), getWidth(), getHeight());
-//        shape.end();
 
+        // TODO: Solve the teleporting sprite issue
         // update persist states
         if (state.isPrimaryPressed()) {
+            current_sprite = TANK_PRIMARY;
             primary(); // no cooldown timer for primary skill
             state.setPrimaryPressed(false);
         }
@@ -68,6 +71,7 @@ public class Tank extends Character {
             if (super.isSkillAvailable(state.getSecondaryTimeSince(), state.SECONDARY_COOLDOWN) && !state.secondary_persist) {
                 // case 1 : skill is available to cast.
                 Gdx.app.log("Tank.java", "Secondary skill pressed");
+                current_sprite = TANK_SECONDARY;
                 state.updateSecondaryTimeSince(); // update last cast timing to now
                 state.secondary_persist = true;
                 secondary();
@@ -84,6 +88,7 @@ public class Tank extends Character {
             // persist time may be longer than cooldown time, causing persist -> skill available -> persist...
             if (super.isSkillAvailable(state.getTertiaryTimeSince(), state.TERTIARY_COOLDOWN) && !state.tertiary_persist) {
                 Gdx.app.log("Tank.java", "Tertiary skill pressed");
+                current_sprite = TANK_TERTIARY;
                 state.updateTertiaryTimeSince();
                 state.tertiary_persist = true;
                 tertiary();
@@ -101,10 +106,27 @@ public class Tank extends Character {
         shape.dispose();
     }
 
+    @Override
+    public void setDirection(Direction d) {
+        state.setDirection(d);
+    }
+
+    @Override
+    public void alignSprite() {
+        switch(state.getDirection()) {
+            case LEFT:
+                current_sprite.setFlip(true, false);
+                break;
+            case RIGHT:
+                current_sprite.setFlip(false, false);
+                break;
+        }
+    }
+
     // Block
     @Override
     public void primary() {
-        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.begin(ShapeRenderer.ShapeType.Line);
         shape.setColor(Color.GOLD);
         shape.rect(super.getX() - SHIELD_OFFSET, super.getY() - SHIELD_OFFSET,
                 getWidth() + 2 * SHIELD_OFFSET, getHeight() + 2 * SHIELD_OFFSET);
@@ -114,7 +136,7 @@ public class Tank extends Character {
     // Slash
     @Override
     public void secondary() {
-        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.begin(ShapeRenderer.ShapeType.Line);
         shape.setColor(Color.GOLD);
         shape.rect(getX() + getWidth() / 2, getY() + getHeight() / 2,
                 SWORD_LENGTH, SWORD_WIDTH);
@@ -124,7 +146,7 @@ public class Tank extends Character {
     // Fortress
     @Override
     public void tertiary() {
-        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.begin(ShapeRenderer.ShapeType.Line);
         shape.setColor(Color.GOLD);
         shape.rect(getX(), getY(), getWidth(), getHeight());
         shape.end();

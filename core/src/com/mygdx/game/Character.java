@@ -23,6 +23,9 @@ public abstract class Character {
 
     public abstract void render();
     public abstract void dispose();
+    // set the direction the character faces depending on key pressed
+    public abstract void setDirection(Direction d);
+    public abstract void alignSprite();
 
     // Skills to be implemented
     public abstract void primary();
