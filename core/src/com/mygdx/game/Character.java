@@ -1,57 +1,140 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.ability.Abilities;
+import com.mygdx.game.ability.Callback;
+import com.mygdx.game.state.States;
 
-import static com.mygdx.game.MyGdxGame.*;
+import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.state.CharacterStates.ABILITIES;
+import static com.mygdx.game.state.CharacterStates.PRIMARY;
+import static com.mygdx.game.state.CharacterStates.SECONDARY;
+import static com.mygdx.game.state.CharacterStates.STANDING;
+import static com.mygdx.game.state.CharacterStates.TERTIARY;
 
+/**
+ * An Entity.
+ */
 public abstract class Character {
-    // for cooldown checking
-    private final CooldownUtils cooldownUtils = new CooldownUtils();
-
     private int x; // bottom left
     private int y; // bottom left
     private float width;
     private float height;
+    private Direction direction;
 
-    public Character(float width, float height) {
+    private Sprite sprite;
+
+    private States<Character> states;
+    private Abilities<Character> abilities;
+    private Animations<Character> animations;
+    // TODO: Effects/Debuffs Class (Crowd Control)
+
+    /**
+     * Initliases the character at coordinates (0, MAP_HEIGHT).
+     */
+    public Character() {
         this.x = 0;
         this.y = MAP_HEIGHT;
-        this.width = width;
-        this.height = height;
+        this.direction = Direction.RIGHT;
+
+        this.states = new States<Character>();
+        states.add(STANDING);
+
+        this.abilities = abilities();
+        this.animations = animations();
+        sprite = animations.from(states);
     }
 
-    public abstract void render();
-    public abstract void dispose();
-    // set the direction the character faces depending on key pressed
-    public abstract void setDirection(Direction d);
-    public abstract void alignSprite();
+    protected abstract Abilities<Character> abilities();
+    protected abstract Animations<Character> animations();
 
-    // Skills to be implemented
-    public abstract void primary();
-    public abstract void secondary();
-    public abstract void tertiary();
+    /* Abilities */
+    public void primary() {
+        if (!states.contains(ABILITIES) && abilities.ready(PRIMARY)) {
+            states.add(PRIMARY);
+            abilities.use(PRIMARY, new Callback() {
+                @Override
+                public void call() {
+                    states.remove(PRIMARY);
+                }
+            });
+        }
+    }
 
-    // manipulate key press state
-    public abstract void setPrimaryPressed(boolean flag);
-    public abstract void setSecondaryPressed(boolean flag);
-    public abstract void setTertiaryPressed(boolean flag);
+    public void secondary() {
+        if (!states.contains(ABILITIES) && abilities.ready(SECONDARY)) {
+            states.add(SECONDARY);
+            abilities.use(SECONDARY, new Callback() {
+                @Override
+                public void call() {
+                    states.remove(SECONDARY);
+                }
+            });
+        }
+    }
+
+    public void tertiary() {
+        if (!states.contains(ABILITIES) && abilities.ready(TERTIARY)) {
+            states.add(TERTIARY);
+            abilities.use(TERTIARY, new Callback() {
+                @Override
+                public void call() {
+                    states.remove(TERTIARY);
+                }
+            });
+        }
+    }
+
+    public abstract void isPrimary(ShapeRenderer shapeBatch);
+    public abstract void isSecondary(ShapeRenderer shapeBatch);
+    public abstract void isTertiary(ShapeRenderer shapeBatch);
+
+    /* Render */
+    public void render(SpriteBatch batch) {
+        // Updating
+        sprite = animations.from(states);
+        width = sprite.getWidth();
+        height = sprite.getHeight();
+
+        switch(direction) {
+            case LEFT:
+                sprite.setFlip(true, false);
+                break;
+            case RIGHT:
+                sprite.setFlip(false, false);
+                break;
+        }
+
+        // Rendering
+        sprite.setPosition(x, y);
+        sprite.draw(batch);
+    }
+
+    // TODO: This is weird. ShapeRenderer should be for debugging purposes only.
+    // A possible fix would be to create 3 more methods called isPrimaryDebug, isSecondaryDebug, isTertiaryDebug.
+    public void renderShape(ShapeRenderer shapeBatch) {
+        if (states.contains(PRIMARY)) {
+            isPrimary(shapeBatch);
+        } else if (states.contains(SECONDARY)) {
+            isSecondary(shapeBatch);
+        } else if (states.contains(TERTIARY)) {
+            isTertiary(shapeBatch);
+        }
+    }
+
+    /* Called from GameScreen */
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
 
     public void move(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    // returns true if a skill's cooldown timer has passed.
-    public boolean isSkillAvailable(long prev, long cooldown) {
-        return cooldownUtils.isSkillAvailable(prev, cooldown);
-    }
-
-    // returns true if a skill is still being cast.
-    public boolean isSkillPersisting(long startCast, long persistTime) {
-        return cooldownUtils.isSkillPersisting(startCast, persistTime);
-    }
-
+    /* Getters */
     public int getX() { return this.x; }
     public int getY() { return this.y; }
     public float getWidth() { return this.width; }

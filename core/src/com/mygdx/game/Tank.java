@@ -3,159 +3,83 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.ability.Abilities;
+
+import static com.mygdx.game.state.CharacterStates.PRIMARY;
+import static com.mygdx.game.state.CharacterStates.SECONDARY;
+import static com.mygdx.game.state.CharacterStates.STANDING;
+import static com.mygdx.game.state.CharacterStates.TERTIARY;
 
 /**
  * Represents the Tank playable character.
  */
 public class Tank extends Character {
-    // load textures
-    static {
-        TANK_STANDING = new Sprite(new Texture(Gdx.files.internal("Tank/Standing.png")));
-        TANK_PRIMARY = new Sprite(new Texture(Gdx.files.internal("Tank/Primary.png")));
-        TANK_SECONDARY = new Sprite(new Texture(Gdx.files.internal("Tank/Secondary.png")));
-        TANK_TERTIARY = new Sprite(new Texture(Gdx.files.internal("Tank/Tertiary.png")));
-    }
+    // Skill cd in seconds.
+    private static final float PRIMARY_COOLDOWN = 0;
+    private static final float SECONDARY_COOLDOWN = 1;
+    private static final float TERTIARY_COOLDOWN = 2;
 
-    private static float SHIELD_OFFSET; // affects primary block hitbox
-    private static float SWORD_LENGTH; // affects secondary slash hitbox
-    private static float SWORD_WIDTH;
-    private static Sprite TANK_STANDING;
-    private static Sprite TANK_PRIMARY;
-    private static Sprite TANK_SECONDARY;
-    private static Sprite TANK_TERTIARY;
+    // Skill lasting time in seconds.
+    private static final float PRIMARY_DURATION = 0.05f;
+    private static final float SECONDARY_DURATION = 0.05f;
+    private static final float TERTIARY_DURATION = 5;
 
-    private TankState state;
-    private Sprite current_sprite;
-    private MyGdxGame game;
-    private ShapeRenderer shape;
-
-    /**
-     * Initliases the tank at coordinates (0, MAP_HEIGHT).
-     */
     public Tank() {
-        super(TANK_STANDING.getWidth(), TANK_STANDING.getHeight());
-        SHIELD_OFFSET = super.getHeight() / 10;
-        SWORD_LENGTH = super.getHeight();
-        SWORD_WIDTH = super.getWidth() / 2;
-        state = new TankState();
-        shape = new ShapeRenderer();
-        current_sprite = TANK_STANDING;
+        super();
     }
 
     @Override
-    public void render() {
-        // draw character
-        SpriteBatch batch = MyGdxGame.getSpriteBatch();
-        current_sprite.setPosition(getX(), getY());
-        batch.begin();
-        // reset sprite if nothing is pressed
-        if(!state.isPrimaryPressed() && !state.isSecondaryPressed() && !state.isTertiaryPressed()) {
-            current_sprite = TANK_STANDING;
-        }
-        alignSprite();
-        current_sprite.draw(batch);
-        batch.end();
-
-        // TODO: Solve the teleporting sprite issue
-        // update persist states
-        if (state.isPrimaryPressed()) {
-            current_sprite = TANK_PRIMARY;
-            primary(); // no cooldown timer for primary skill
-            state.setPrimaryPressed(false);
-        }
-
-        if (state.isSecondaryPressed()) {
-            if (super.isSkillAvailable(state.getSecondaryTimeSince(), state.SECONDARY_COOLDOWN) && !state.secondary_persist) {
-                // case 1 : skill is available to cast.
-                Gdx.app.log("Tank.java", "Secondary skill pressed");
-                current_sprite = TANK_SECONDARY;
-                state.updateSecondaryTimeSince(); // update last cast timing to now
-                state.secondary_persist = true;
-                secondary();
-            } else if(super.isSkillPersisting(state.getSecondaryTimeSince(), state.SECONDARY_PERSIST_TIME)) {
-                // case 2: skill is on cooldown, but is persisting.
-                secondary();
-            } else {
-                state.setSecondaryPressed(false);
-                state.secondary_persist = false;
-            }
-        }
-
-        if (state.isTertiaryPressed()) {
-            // persist time may be longer than cooldown time, causing persist -> skill available -> persist...
-            if (super.isSkillAvailable(state.getTertiaryTimeSince(), state.TERTIARY_COOLDOWN) && !state.tertiary_persist) {
-                Gdx.app.log("Tank.java", "Tertiary skill pressed");
-                current_sprite = TANK_TERTIARY;
-                state.updateTertiaryTimeSince();
-                state.tertiary_persist = true;
-                tertiary();
-            } else if(super.isSkillPersisting(state.getTertiaryTimeSince(), state.TERTIARY_PERSIST_TIME)) {
-                tertiary();
-            } else {
-                state.setTertiaryPressed(false);
-                state.tertiary_persist = false;
-            }
-        }
+    protected Abilities<Character> abilities() {
+        return new Abilities<Character>()
+                .add(PRIMARY, PRIMARY_COOLDOWN, PRIMARY_DURATION)
+                .add(SECONDARY, SECONDARY_COOLDOWN, SECONDARY_DURATION)
+                .add(TERTIARY, TERTIARY_COOLDOWN, TERTIARY_DURATION);
     }
 
     @Override
-    public void dispose() {
-        shape.dispose();
+    protected Animations<Character> animations() {
+        /*
+         * Load Textures
+         * TODO: Move to a texture handling class.
+         */
+        Texture TANK_STANDING = new Texture(Gdx.files.internal("Tank/Standing.png"));
+        Texture TANK_PRIMARY = new Texture(Gdx.files.internal("Tank/Primary.png"));
+        Texture TANK_SECONDARY = new Texture(Gdx.files.internal("Tank/Secondary.png"));
+        Texture TANK_TERTIARY = new Texture(Gdx.files.internal("Tank/Tertiary.png"));
+
+        return new Animations<Character>()
+                .add(STANDING, TANK_STANDING, 1)
+                .add(PRIMARY, TANK_PRIMARY, 2)
+                .add(SECONDARY, TANK_SECONDARY, 2)
+                .add(TERTIARY, TANK_TERTIARY, 2);
     }
 
+    /* Block */
     @Override
-    public void setDirection(Direction d) {
-        state.setDirection(d);
-    }
-
-    @Override
-    public void alignSprite() {
-        switch(state.getDirection()) {
-            case LEFT:
-                current_sprite.setFlip(true, false);
-                break;
-            case RIGHT:
-                current_sprite.setFlip(false, false);
-                break;
-        }
-    }
-
-    // Block
-    @Override
-    public void primary() {
-        shape.begin(ShapeRenderer.ShapeType.Line);
-        shape.setColor(Color.GOLD);
-        shape.rect(super.getX() - SHIELD_OFFSET, super.getY() - SHIELD_OFFSET,
+    public void isPrimary(ShapeRenderer shapeBatch) {
+        // affects primary block hitbox
+        float SHIELD_OFFSET = super.getHeight() / 10;
+        shapeBatch.setColor(Color.GOLD);
+        shapeBatch.rect(super.getX() - SHIELD_OFFSET, super.getY() - SHIELD_OFFSET,
                 getWidth() + 2 * SHIELD_OFFSET, getHeight() + 2 * SHIELD_OFFSET);
-        shape.end();
     }
 
-    // Slash
+    /* Slash */
     @Override
-    public void secondary() {
-        shape.begin(ShapeRenderer.ShapeType.Line);
-        shape.setColor(Color.GOLD);
-        shape.rect(getX() + getWidth() / 2, getY() + getHeight() / 2,
+    public void isSecondary(ShapeRenderer shapeBatch) {
+        // affects secondary slash hitbox
+        float SWORD_LENGTH = super.getHeight();
+        float SWORD_WIDTH = super.getWidth() / 2;
+        shapeBatch.setColor(Color.GOLD);
+        shapeBatch.rect(getX() + getWidth() / 2, getY() + getHeight() / 2,
                 SWORD_LENGTH, SWORD_WIDTH);
-        shape.end();
     }
 
-    // Fortress
+    /* Fortress */
     @Override
-    public void tertiary() {
-        shape.begin(ShapeRenderer.ShapeType.Line);
-        shape.setColor(Color.GOLD);
-        shape.rect(getX(), getY(), getWidth(), getHeight());
-        shape.end();
+    public void isTertiary(ShapeRenderer shapeBatch) {
+        shapeBatch.setColor(Color.GOLD);
+        shapeBatch.rect(getX(), getY(), getWidth(), getHeight());
     }
-
-    @Override
-    public void setPrimaryPressed(boolean flag) { this.state.setPrimaryPressed(flag); }
-    @Override
-    public void setSecondaryPressed(boolean flag) { this.state.setSecondaryPressed(flag); }
-    @Override
-    public void setTertiaryPressed(boolean flag) { this.state.setTertiaryPressed(flag); }
 }
