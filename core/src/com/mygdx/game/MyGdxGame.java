@@ -15,10 +15,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class MyGdxGame extends Game {
 	// define game variables
-	public static final int GAME_WIDTH = 1200;
-	public static final int GAME_HEIGHT = 760;
+	public static final int GAME_WIDTH = 600;
+	public static final int GAME_HEIGHT = 380;
 	protected static final int SENSITIVITY = 250;
-	protected static final int MAP_HEIGHT = GAME_HEIGHT / 5; // accounts for ground
+	protected static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
+	protected static final int GRAVITATIONAL_ACC = -2;
 
 	private static SpriteBatch batch;
 	private static BitmapFont font;

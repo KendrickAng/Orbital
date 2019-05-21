@@ -54,12 +54,12 @@ public class Tank extends Character {
         // reset sprite if nothing is pressed
         if(!state.isPrimaryPressed() && !state.isSecondaryPressed() && !state.isTertiaryPressed()) {
             current_sprite = TANK_STANDING;
+            current_sprite.setPosition(getX(), getY());
         }
         alignSprite();
         current_sprite.draw(batch);
         batch.end();
 
-        // TODO: Solve the teleporting sprite issue
         // update persist states
         if (state.isPrimaryPressed()) {
             current_sprite = TANK_PRIMARY;

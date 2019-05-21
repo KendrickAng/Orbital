@@ -15,7 +15,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(MyGdxGame game) {
         // init rectangle to (0, 0)
-        this.player = new Tank();
+        this.player = new Assassin();
         this.background = new Background();
         this.game = game;
     }

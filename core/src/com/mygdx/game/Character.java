@@ -1,8 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 import static com.mygdx.game.MyGdxGame.*;
 
 public abstract class Character {
