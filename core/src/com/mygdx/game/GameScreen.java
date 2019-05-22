@@ -19,11 +19,13 @@ public class GameScreen implements Screen {
 
     private Character player;
     private Background background;
+    protected static EntityManager entityManager; // has to be accessed from character class
 
     public GameScreen(MyGdxGame game) {
         // init rectangle to (0, 0)
         this.player = new Assassin();
         this.background = new Background();
+        this.entityManager = new EntityManager();
         this.shapeBatch = new ShapeRenderer();
         this.game = game;
     }
@@ -49,12 +51,12 @@ public class GameScreen implements Screen {
         setCharacter() for now
          */
         // movement input handling, ensure player stays in bounds
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && x > 0) {
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             player.move((int) (x - (SENSITIVITY * delta)), y);
             player.setDirection(Direction.LEFT);
         }
         // move this x checking in to the character class
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && x < GAME_WIDTH - player.getWidth()) {
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             player.move((int) (x + (SENSITIVITY * delta)), y);
             player.setDirection(Direction.RIGHT);
         }
@@ -79,9 +81,15 @@ public class GameScreen implements Screen {
         background.renderShape(shapeBatch);
         shapeBatch.end();
 
+        // render hitboxes.
         shapeBatch.begin(ShapeRenderer.ShapeType.Line);
         player.renderShape(shapeBatch);
         shapeBatch.end();
+
+        // render interactive entities (shuriken)
+        getSpriteBatch().begin();
+        entityManager.renderAll(getSpriteBatch());
+        getSpriteBatch().end();
 
         // TODO: Don't use static spriteBatch. Use game reference.
         getSpriteBatch().begin();

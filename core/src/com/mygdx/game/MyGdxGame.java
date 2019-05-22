@@ -12,8 +12,8 @@ public class MyGdxGame extends Game {
 	public static final int GAME_WIDTH = 600;
 	public static final int GAME_HEIGHT = 380;
 	protected static final int SENSITIVITY = 250;
+	protected static final int GRAVITY = -2;
 	protected static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
-	protected static final int GRAVITATIONAL_ACC = -2;
 
 	// TODO: Install LibGDX plugin for IntelliJ, you can see the warnings below.
 	private static SpriteBatch batch;

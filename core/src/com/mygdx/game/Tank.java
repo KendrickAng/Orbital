@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.ability.Abilities;
 
-import static com.mygdx.game.state.CharacterStates.PRIMARY;
-import static com.mygdx.game.state.CharacterStates.SECONDARY;
-import static com.mygdx.game.state.CharacterStates.STANDING;
-import static com.mygdx.game.state.CharacterStates.TERTIARY;
+import static com.mygdx.game.state.EntityStates.PRIMARY;
+import static com.mygdx.game.state.EntityStates.SECONDARY;
+import static com.mygdx.game.state.EntityStates.STANDING;
+import static com.mygdx.game.state.EntityStates.TERTIARY;
 
 /**
  * Represents the Tank playable character.
