@@ -87,6 +87,7 @@ public abstract class Character {
         }
     }
 
+    // handles logic for the skills.
     public abstract void isPrimary(ShapeRenderer shapeBatch);
     public abstract void isSecondary(ShapeRenderer shapeBatch);
     public abstract void isTertiary(ShapeRenderer shapeBatch);

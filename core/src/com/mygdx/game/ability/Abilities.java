@@ -9,7 +9,7 @@ import java.util.HashMap;
  * What abilities an entity can use.
  */
 public class Abilities<T> {
-	// TODO: Learn about Timer class. TimeUtils was not really a good class to use.
+	// TODO: Learn about Timer class. TimeUtils was not really a good class to use. WHY
 	private Timer timer;
 	private HashMap<State<T>, Timer.Task> tasks;
 
@@ -31,9 +31,11 @@ public class Abilities<T> {
 	}
 
 	public void use(final State<T> state, final Callback callback) {
+		// schedule a task that's called after the skill ends
 		tasks.put(state, timer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
+				// remove this state from tasks once the cooldown is up
 				timer.scheduleTask(new Timer.Task() {
 					@Override
 					public void run() {

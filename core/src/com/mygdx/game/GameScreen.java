@@ -33,8 +33,6 @@ public class GameScreen implements Screen {
         Gdx.app.log("GameScreen.java", "show() called");
     }
 
-    // TODO: Abstract out the renderable stuff (background, rectangle) into array
-    // TODO: ^ Not sure what this is supposed to mean.
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -44,12 +42,18 @@ public class GameScreen implements Screen {
         int x = player.getX();
         int y = player.getY();
 
-        // TODO: Move to EntityController class.
+        // TODO: Move to CharacterController class.
+        // Character controller is the interface between the player (me) and the person I can control.
+        /*
+        has-a inputprocessor
+        setCharacter() for now
+         */
         // movement input handling, ensure player stays in bounds
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && x > 0) {
             player.move((int) (x - (SENSITIVITY * delta)), y);
             player.setDirection(Direction.LEFT);
         }
+        // move this x checking in to the character class
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && x < GAME_WIDTH - player.getWidth()) {
             player.move((int) (x + (SENSITIVITY * delta)), y);
             player.setDirection(Direction.RIGHT);

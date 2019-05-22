@@ -58,6 +58,7 @@ public class Tank extends Character {
     /* Block */
     @Override
     public void isPrimary(ShapeRenderer shapeBatch) {
+        Gdx.app.log("Tank.java", "Primary");
         // affects primary block hitbox
         float SHIELD_OFFSET = super.getHeight() / 10;
         shapeBatch.setColor(Color.GOLD);
@@ -68,6 +69,7 @@ public class Tank extends Character {
     /* Slash */
     @Override
     public void isSecondary(ShapeRenderer shapeBatch) {
+        Gdx.app.log("Tank.java", "Secondary");
         // affects secondary slash hitbox
         float SWORD_LENGTH = super.getHeight();
         float SWORD_WIDTH = super.getWidth() / 2;
@@ -79,6 +81,7 @@ public class Tank extends Character {
     /* Fortress */
     @Override
     public void isTertiary(ShapeRenderer shapeBatch) {
+        Gdx.app.log("Tank.java", "Tertiary");
         shapeBatch.setColor(Color.GOLD);
         shapeBatch.rect(getX(), getY(), getWidth(), getHeight());
     }

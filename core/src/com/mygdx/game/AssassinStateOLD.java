@@ -2,7 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.utils.TimeUtils;
 
-public class AssassinState {
+public class AssassinStateOLD {
     // time since last skills
     private long primary;
     private long secondary;
@@ -19,7 +19,7 @@ public class AssassinState {
     // boolean flags for assassin state (in air, etc)
     protected boolean in_air = false;
 
-    public AssassinState() {
+    public AssassinStateOLD() {
         this.primary = 0;
         this.secondary = 0;
         this.tertiary = 0;

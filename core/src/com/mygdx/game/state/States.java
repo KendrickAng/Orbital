@@ -12,6 +12,7 @@ public class States<T> {
 		states = new HashSet<State<T>>();
 	}
 
+	// ensures that no two same states from the same group exists at same time
 	public void add(State<T> state) {
 		for (State s : states) {
 			if (state.group().contains(s)) {

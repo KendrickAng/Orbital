@@ -27,6 +27,8 @@ public class Animations<T> {
 		return this;
 	}
 
+	// supposed to return multiple animations for multiple actions carried in tandem. Ideally should
+	// combine all animations into one big animation and return it
 	public Sprite from(States<T> states) {
 		Sprite sprite = null;
 		Integer priority = 0;

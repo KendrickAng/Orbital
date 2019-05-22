@@ -1,138 +1,62 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.ability.Abilities;
 
-import static com.mygdx.game.MyGdxGame.GRAVITATIONAL_ACC;
-import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.state.CharacterStates.*;
 
 public class Assassin extends Character {
-    private static final int JUMP_VELOCITY = 20;
-    private static final int DASH_VELOCITY = 5;
+    // Skill cd in seconds.
+    private static final float PRIMARY_COOLDOWN = 0;
+    private static final float SECONDARY_COOLDOWN = 1;
+    private static final float TERTIARY_COOLDOWN = 2;
 
-    static {
-        ASSASSIN_STANDING = new Sprite(new Texture(Gdx.files.internal("Tank/Standing.png")));
-        ASSASSIN_PRIMARY = new Sprite(new Texture(Gdx.files.internal("Tank/Primary.png")));
-        ASSASSIN_SECONDARY = new Sprite(new Texture(Gdx.files.internal("Tank/Secondary.png")));
-        ASSASSIN_TERTIARY = new Sprite(new Texture(Gdx.files.internal("Tank/Tertiary.png")));
-    }
+    // Skill lasting time in seconds.
+    private static final float PRIMARY_DURATION = 0.05f;
+    private static final float SECONDARY_DURATION = 0.05f;
+    private static final float TERTIARY_DURATION = 5;
 
-    private static Sprite ASSASSIN_STANDING;
-    private static Sprite ASSASSIN_PRIMARY;
-    private static Sprite ASSASSIN_SECONDARY;
-    private static Sprite ASSASSIN_TERTIARY;
-
-    private Sprite current_sprite;
-    private AssassinState state;
-    private int y_velocity;
-    private int x_velocity;
-
-    /**
-     * Initialises the tank at coordinates (0, MAP_HEIGHT).
-     */
     public Assassin() {
-        super(ASSASSIN_STANDING.getWidth(), ASSASSIN_STANDING.getHeight());
-        state = new AssassinState();
-        current_sprite = ASSASSIN_STANDING;
-        y_velocity = 0;
-        x_velocity = 0;
+        super();
     }
 
     @Override
-    public void render() {
-        // draw character
-        SpriteBatch batch = MyGdxGame.getSpriteBatch();
-        current_sprite.setPosition(getX(), getY());
-        batch.begin();
-        // reset sprite if nothing is pressed
-        if(!state.isPrimaryPressed() && !state.isSecondaryPressed() && !state.isTertiaryPressed()) {
-            current_sprite = ASSASSIN_STANDING;
-            current_sprite.setPosition(getX(), getY());
-        }
-        alignSprite();
-        current_sprite.draw(batch);
-        batch.end();
-
-        // update persist states
-        if(state.isPrimaryPressed()) {
-            // cant jump again until the ground is touched
-            Gdx.app.log("Assassin.java", "Primary skill pressed");
-            if(!state.in_air) {
-                state.in_air = true;
-                current_sprite = ASSASSIN_PRIMARY;
-                primary();
-            }
-            state.setPrimaryPressed(false);
-        }
-
-        // update y-position based on velocity
-        int x = super.getX() + x_velocity;
-        int y = super.getY() + y_velocity;
-        // correct for edge cases
-        if(y <= MAP_HEIGHT) {
-            y_velocity = 0;
-            x_velocity = 0;
-            y = MAP_HEIGHT;
-            state.in_air = false;
-        } else {
-            y_velocity += GRAVITATIONAL_ACC;
-        }
-        super.move(x, y);
+    protected Abilities<Character> abilities() {
+        return new Abilities<Character>()
+                .add(PRIMARY, PRIMARY_COOLDOWN, PRIMARY_DURATION)
+                .add(SECONDARY, SECONDARY_COOLDOWN, SECONDARY_DURATION)
+                .add(TERTIARY, TERTIARY_COOLDOWN, TERTIARY_DURATION);
     }
 
     @Override
-    public void dispose() {
+    protected Animations<Character> animations() {
+        return new Animations<Character>()
+                .add(STANDING, new Texture(Gdx.files.internal("Assassin/Standing.png")), 1)
+                .add(PRIMARY, new Texture(Gdx.files.internal("Assassin/Primary.png")), 4)
+                .add(SECONDARY, new Texture(Gdx.files.internal("Assassin/Secondary.png")), 2)
+                .add(TERTIARY, new Texture(Gdx.files.internal("Assassin/Tertiary.png")), 3);
+    }
+
+    // Dodge
+    @Override
+    public void isPrimary(ShapeRenderer shapeBatch) {
+        Gdx.app.log("Assassin.java", "Primary");
 
     }
 
+    // Stars
     @Override
-    public void setDirection(Direction d) {
-        state.setDirection(d);
-    }
-
-    @Override
-    public void alignSprite() {
-        switch(state.getDirection()) {
-            case LEFT:
-                current_sprite.setFlip(true, false);
-                break;
-            case RIGHT:
-                current_sprite.setFlip(false, false);
-                break;
-        }
-    }
-
-    // Jump
-    @Override
-    public void primary() {
-        y_velocity = JUMP_VELOCITY;
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            x_velocity = DASH_VELOCITY;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            x_velocity = -DASH_VELOCITY;
-        }
-    }
-
-    // Throwing stars
-    @Override
-    public void secondary() {
+    public void isSecondary(ShapeRenderer shapeBatch) {
+        Gdx.app.log("Assassin.java", "Primary");
 
     }
 
     // Cleanse
     @Override
-    public void tertiary() {
+    public void isTertiary(ShapeRenderer shapeBatch) {
+        Gdx.app.log("Assassin.java", "Primary");
 
     }
-
-    @Override
-    public void setPrimaryPressed(boolean flag) { state.setPrimaryPressed(flag); }
-    @Override
-    public void setSecondaryPressed(boolean flag) { state.setSecondaryPressed(flag); }
-    @Override
-    public void setTertiaryPressed(boolean flag) { state.setTertiaryPressed(flag); }
 }
