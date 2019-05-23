@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.HashSet;
 
 /**
- * ADT to store all entities and render them.
+ * ADT to store all entities (interactive objects) and render them.
  */
 public class EntityManager {
     private HashSet<Entity> entities;

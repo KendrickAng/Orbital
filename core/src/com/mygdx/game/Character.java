@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -26,6 +27,10 @@ public abstract class Character {
     private float height;
     private Direction direction;
 
+    // affected by key presses from input processor
+    private boolean leftMove;
+    private boolean rightMove;
+
     private Sprite sprite;
 
     private States<Character> states;
@@ -42,6 +47,8 @@ public abstract class Character {
         this.x_velocity = 0;
         this.y_velocity = 0;
         this.direction = Direction.RIGHT;
+        this.leftMove = false;
+        this.rightMove = false;
 
         this.states = new States<Character>();
         states.add(STANDING);
@@ -121,6 +128,10 @@ public abstract class Character {
 
     // movement coming from external sources (e.g abilities). generally used with setSpeed().
     private void moveExternalInBounds() {
+        // movement from arrow keys
+        if(leftMove) x -= MOVESPEED;
+        if(rightMove) x += MOVESPEED;
+        // external source movement
         this.x += x_velocity;
         this.y += y_velocity;
 
@@ -136,9 +147,9 @@ public abstract class Character {
         if(x < 0) x = 0;
     }
 
-    // TODO: This is weird. ShapeRenderer should be for debugging purposes only.
+    // TODO: ShapeRenderer should be for debugging purposes only, possibly remove shaperenderer arg.
     // A possible fix would be to create 3 more methods called isPrimaryDebug, isSecondaryDebug, isTertiaryDebug.
-    public void renderShape(ShapeRenderer shapeBatch) {
+    public void renderDebug(ShapeRenderer shapeBatch) {
         if (states.contains(PRIMARY)) {
             isPrimary(shapeBatch);
         } else if (states.contains(SECONDARY)) {
@@ -162,6 +173,14 @@ public abstract class Character {
     public void setSpeed(int x_vel, int y_vel) {
         this.x_velocity = x_vel;
         this.y_velocity = y_vel;
+    }
+
+    /* Called from InputProcessors */
+    public void setLeftMove(boolean flag) {
+        this.leftMove = flag;
+    }
+    public void setRightMove(boolean flag) {
+        this.rightMove = flag;
     }
 
     /* Getters */

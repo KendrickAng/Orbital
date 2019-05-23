@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.ability.Abilities;
@@ -73,9 +74,11 @@ public class Assassin extends Character {
     }
 
     // Cleanse
+    // TODO: Can't dodge while in tertiary, when should be able to.
     @Override
     public void isTertiary(ShapeRenderer shapeBatch) {
         Gdx.app.log("Assassin.java", "Tertiary");
-
+        shapeBatch.setColor(Color.GOLD);
+        shapeBatch.rect(getX(), getY(), getWidth(), getHeight());
     }
 }

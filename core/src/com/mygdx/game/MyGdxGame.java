@@ -11,7 +11,7 @@ public class MyGdxGame extends Game {
 	// define game variables
 	public static final int GAME_WIDTH = 600;
 	public static final int GAME_HEIGHT = 380;
-	protected static final int SENSITIVITY = 250;
+	protected static final int MOVESPEED = 5;
 	protected static final int GRAVITY = -2;
 	protected static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
 
