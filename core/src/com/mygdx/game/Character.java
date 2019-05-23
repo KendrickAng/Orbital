@@ -9,11 +9,7 @@ import com.mygdx.game.ability.Callback;
 import com.mygdx.game.state.States;
 
 import static com.mygdx.game.MyGdxGame.*;
-import static com.mygdx.game.state.EntityStates.ABILITIES;
-import static com.mygdx.game.state.EntityStates.PRIMARY;
-import static com.mygdx.game.state.EntityStates.SECONDARY;
-import static com.mygdx.game.state.EntityStates.STANDING;
-import static com.mygdx.game.state.EntityStates.TERTIARY;
+import static com.mygdx.game.state.EntityStates.*;
 
 /**
  * An Entity.
@@ -87,7 +83,7 @@ public abstract class Character {
     }
 
     public void tertiary() {
-        if (!states.contains(ABILITIES) && abilities.ready(TERTIARY)) {
+        if (!states.contains(ABILITIES_ULTIMATE) && abilities.ready(TERTIARY)) {
             states.add(TERTIARY);
             abilities.use(TERTIARY, new Callback() {
                 @Override
@@ -189,4 +185,6 @@ public abstract class Character {
     public float getWidth() { return this.width; }
     public float getHeight() { return this.height; }
     public Direction getDirection() { return this.direction; }
+    public boolean getLeftMove() { return this.leftMove; }
+    public boolean getRightMove() { return this.rightMove; }
 }

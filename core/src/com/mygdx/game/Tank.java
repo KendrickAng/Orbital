@@ -10,6 +10,8 @@ import static com.mygdx.game.state.EntityStates.PRIMARY;
 import static com.mygdx.game.state.EntityStates.SECONDARY;
 import static com.mygdx.game.state.EntityStates.STANDING;
 import static com.mygdx.game.state.EntityStates.TERTIARY;
+import static com.mygdx.game.Direction.RIGHT;
+import static com.mygdx.game.Direction.LEFT;
 
 /**
  * Represents the Tank playable character.

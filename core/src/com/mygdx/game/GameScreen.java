@@ -52,7 +52,7 @@ public class GameScreen implements Screen {
 
         // render hitboxes.
         shapeBatch.begin(ShapeRenderer.ShapeType.Line);
-        controller.getCharacter().renderDebug(shapeBatch);
+        controller.character().renderDebug(shapeBatch);
         shapeBatch.end();
 
         // render interactive entities (shuriken)
@@ -62,7 +62,7 @@ public class GameScreen implements Screen {
 
         // TODO: Don't use static spriteBatch. Use game reference.
         getSpriteBatch().begin();
-        controller.getCharacter().render(getSpriteBatch());
+        controller.character().render(getSpriteBatch());
         getSpriteBatch().end();
     }
 
