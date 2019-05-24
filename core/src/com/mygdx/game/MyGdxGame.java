@@ -16,7 +16,7 @@ public class MyGdxGame extends Game {
 	protected static final int GRAVITY = -2;
 	protected static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
 
-	// TODO: Install LibGDX plugin for IntelliJ, you can see the warnings below.
+	// TODO: Tile the background.
 	private SpriteBatch batch;
 	private BitmapFont font;
 	private OrthographicCamera camera;

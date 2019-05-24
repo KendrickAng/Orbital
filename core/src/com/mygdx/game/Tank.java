@@ -47,7 +47,6 @@ public class Tank extends Character {
     protected Animations<Character> animations() {
         /*
          * Load Textures
-         * TODO: Move to a texture handling class.
          */
         Texture tank_standing = getGame().getTextureManager().get(TANK_STANDING);
         Texture tank_primary = getGame().getTextureManager().get(TANK_PRIMARY);
