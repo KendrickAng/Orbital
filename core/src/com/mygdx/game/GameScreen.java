@@ -3,10 +3,10 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import static com.mygdx.game.CharacterType.ASSASSIN;
-import static com.mygdx.game.MyGdxGame.getSpriteBatch;
 
 public class GameScreen implements Screen {
     // Game reference.
@@ -17,17 +17,15 @@ public class GameScreen implements Screen {
 
     private CharacterController controller;
     private Background background;
-    protected static EntityManager entityManager; // has to be accessed from character class
 
     public GameScreen(MyGdxGame game) {
         // init rectangle to (0, 0)
-        this.controller = new CharacterController();
+        this.game = game;
+        this.controller = new CharacterController(game);
         controller.setCharacter(ASSASSIN);
 
         this.background = new Background();
-        this.entityManager = new EntityManager();
         this.shapeBatch = new ShapeRenderer();
-        this.game = game;
     }
 
     @Override
@@ -39,7 +37,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        MyGdxGame.getCamera().update();
+        game.getCamera().update();
 
         // TODO: ShapeRenderer should be for debugging purposes only.
         /*
@@ -56,19 +54,21 @@ public class GameScreen implements Screen {
         shapeBatch.end();
 
         // render interactive entities (shuriken)
-        getSpriteBatch().begin();
-        entityManager.renderAll(getSpriteBatch());
-        getSpriteBatch().end();
+        SpriteBatch batch = game.getSpriteBatch();
+        EntityManager entityManager = game.getEntityManager();
+        batch.begin();
+        entityManager.renderAll(batch);
+        batch.end();
 
         // TODO: Don't use static spriteBatch. Use game reference.
-        getSpriteBatch().begin();
-        controller.character().render(getSpriteBatch());
-        getSpriteBatch().end();
+        batch.begin();
+        controller.character().render(batch);
+        batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
-        MyGdxGame.getViewport().update(width, height);
+        game.getViewport().update(width, height);
     }
 
     @Override
@@ -85,6 +85,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        game.dispose();
         shapeBatch.dispose();
     }
 }

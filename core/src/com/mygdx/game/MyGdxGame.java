@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.texture.TextureManager;
 
 public class MyGdxGame extends Game {
 	// define game variables
@@ -16,10 +17,12 @@ public class MyGdxGame extends Game {
 	protected static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
 
 	// TODO: Install LibGDX plugin for IntelliJ, you can see the warnings below.
-	private static SpriteBatch batch;
-	private static BitmapFont font;
-	private static OrthographicCamera camera;
-	private static Viewport viewport;
+	private SpriteBatch batch;
+	private BitmapFont font;
+	private OrthographicCamera camera;
+	private Viewport viewport;
+	private EntityManager entityManager; // stores interactive stuff like shurikens
+	private TextureManager textureManager;
 
 	@Override
 	public void create () {
@@ -28,6 +31,10 @@ public class MyGdxGame extends Game {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, GAME_WIDTH, GAME_HEIGHT);
 		viewport = new FitViewport(GAME_WIDTH, GAME_HEIGHT, camera);
+		entityManager = new EntityManager();
+		textureManager = new TextureManager();
+		textureManager.loadTextures(); // load textures
+
 		setScreen(new MainMenuScreen(this));
 	}
 
@@ -40,10 +47,13 @@ public class MyGdxGame extends Game {
 	public void dispose () {
 		batch.dispose();
 		font.dispose();
+		textureManager.dispose();
 	}
 
-	public static SpriteBatch getSpriteBatch() { return batch; }
-	public static BitmapFont getFont() { return font; }
-	public static OrthographicCamera getCamera() { return camera; }
-	public static Viewport getViewport() { return viewport; }
+	public SpriteBatch getSpriteBatch() { return batch; }
+	public BitmapFont getFont() { return font; }
+	public OrthographicCamera getCamera() { return camera; }
+	public Viewport getViewport() { return viewport; }
+	public EntityManager getEntityManager() { return this.entityManager; }
+	public TextureManager getTextureManager() { return this.textureManager; }
 }

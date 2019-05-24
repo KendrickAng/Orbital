@@ -22,6 +22,7 @@ public abstract class Character {
     private float width;
     private float height;
     private Direction direction;
+    private MyGdxGame game;
 
     // affected by key presses from input processor
     private boolean leftMove;
@@ -37,7 +38,7 @@ public abstract class Character {
     /**
      * Initialises the character at coordinates (0, MAP_HEIGHT).
      */
-    public Character() {
+    public Character(MyGdxGame game) {
         this.x = 0;
         this.y = MAP_HEIGHT;
         this.x_velocity = 0;
@@ -45,6 +46,7 @@ public abstract class Character {
         this.direction = Direction.RIGHT;
         this.leftMove = false;
         this.rightMove = false;
+        this.game = game;
 
         this.states = new States<Character>();
         states.add(STANDING);
@@ -187,4 +189,5 @@ public abstract class Character {
     public Direction getDirection() { return this.direction; }
     public boolean getLeftMove() { return this.leftMove; }
     public boolean getRightMove() { return this.rightMove; }
+    public MyGdxGame getGame() { return this.game; }
 }

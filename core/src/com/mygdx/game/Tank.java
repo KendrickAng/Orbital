@@ -12,6 +12,10 @@ import static com.mygdx.game.state.EntityStates.STANDING;
 import static com.mygdx.game.state.EntityStates.TERTIARY;
 import static com.mygdx.game.Direction.RIGHT;
 import static com.mygdx.game.Direction.LEFT;
+import static com.mygdx.game.texture.Textures.TANK_STANDING;
+import static com.mygdx.game.texture.Textures.TANK_PRIMARY;
+import static com.mygdx.game.texture.Textures.TANK_SECONDARY;
+import static com.mygdx.game.texture.Textures.TANK_TERTIARY;
 
 /**
  * Represents the Tank playable character.
@@ -27,8 +31,8 @@ public class Tank extends Character {
     private static final float SECONDARY_DURATION = 0.05f;
     private static final float TERTIARY_DURATION = 5;
 
-    public Tank() {
-        super();
+    public Tank(MyGdxGame game) {
+        super(game);
     }
 
     @Override
@@ -45,16 +49,16 @@ public class Tank extends Character {
          * Load Textures
          * TODO: Move to a texture handling class.
          */
-        Texture TANK_STANDING = new Texture(Gdx.files.internal("Tank/Standing.png"));
-        Texture TANK_PRIMARY = new Texture(Gdx.files.internal("Tank/Primary.png"));
-        Texture TANK_SECONDARY = new Texture(Gdx.files.internal("Tank/Secondary.png"));
-        Texture TANK_TERTIARY = new Texture(Gdx.files.internal("Tank/Tertiary.png"));
+        Texture tank_standing = getGame().getTextureManager().get(TANK_STANDING);
+        Texture tank_primary = getGame().getTextureManager().get(TANK_PRIMARY);
+        Texture tank_secondary = getGame().getTextureManager().get(TANK_SECONDARY);
+        Texture tank_tertiary = getGame().getTextureManager().get(TANK_TERTIARY);
 
         return new Animations<Character>()
-                .add(STANDING, TANK_STANDING, 1)
-                .add(PRIMARY, TANK_PRIMARY, 2)
-                .add(SECONDARY, TANK_SECONDARY, 2)
-                .add(TERTIARY, TANK_TERTIARY, 2);
+                .add(STANDING, tank_standing, 1)
+                .add(PRIMARY, tank_primary, 2)
+                .add(SECONDARY, tank_secondary, 2)
+                .add(TERTIARY, tank_tertiary, 2);
     }
 
     /* Block */

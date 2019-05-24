@@ -8,6 +8,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.ability.Abilities;
 
 import static com.mygdx.game.state.EntityStates.*;
+import static com.mygdx.game.texture.Textures.ASSASSIN_STANDING;
+import static com.mygdx.game.texture.Textures.ASSASSIN_PRIMARY;
+import static com.mygdx.game.texture.Textures.ASSASSIN_SECONDARY;
+import static com.mygdx.game.texture.Textures.ASSASSIN_TERTIARY;
 
 public class Assassin extends Character {
     // Skill cd in seconds.
@@ -24,8 +28,8 @@ public class Assassin extends Character {
     private static final int STRAFE_SPEED = 5;
     private static final int JUMP_SPEED = 15;
 
-    public Assassin() {
-        super();
+    public Assassin(MyGdxGame game) {
+        super(game);
     }
 
     @Override
@@ -38,11 +42,16 @@ public class Assassin extends Character {
 
     @Override
     protected Animations<Character> animations() {
+        Texture assassin_standing = getGame().getTextureManager().get(ASSASSIN_STANDING);
+        Texture assassin_primary = getGame().getTextureManager().get(ASSASSIN_PRIMARY);
+        Texture assassin_secondary = getGame().getTextureManager().get(ASSASSIN_SECONDARY);
+        Texture assassin_tertiary = getGame().getTextureManager().get(ASSASSIN_TERTIARY);
+
         return new Animations<Character>()
-                .add(STANDING, new Texture(Gdx.files.internal("Assassin/Standing.png")), 1)
-                .add(PRIMARY, new Texture(Gdx.files.internal("Assassin/Primary.png")), 2)
-                .add(SECONDARY, new Texture(Gdx.files.internal("Assassin/Secondary.png")), 2)
-                .add(TERTIARY, new Texture(Gdx.files.internal("Assassin/Tertiary.png")), 2);
+                .add(STANDING, assassin_standing, 1)
+                .add(PRIMARY, assassin_primary, 2)
+                .add(SECONDARY, assassin_secondary, 2)
+                .add(TERTIARY, assassin_tertiary, 2);
     }
 
     // Dodge
@@ -70,11 +79,10 @@ public class Assassin extends Character {
         int x_velocity = getDirection() == Direction.RIGHT ? Shuriken.FLYING_SPEED : -Shuriken.FLYING_SPEED;
         shuriken.setPosition(x, y);
         shuriken.setVelocity(x_velocity, 0);
-        GameScreen.entityManager.add(shuriken);
+        super.getGame().getEntityManager().add(shuriken);
     }
 
     // Cleanse
-    // TODO: Can't dodge while in tertiary, when should be able to.
     @Override
     public void isTertiary(ShapeRenderer shapeBatch) {
         Gdx.app.log("Assassin.java", "Tertiary");

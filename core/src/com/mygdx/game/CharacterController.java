@@ -15,9 +15,11 @@ import static com.mygdx.game.CharacterType.BOSS;
 public class CharacterController implements InputProcessor {
     private HashMap<CharacterType, Character> characters;
     private CharacterType current;
+    private MyGdxGame game;
 
-    public CharacterController() {
+    public CharacterController(MyGdxGame game) {
         this.characters = new HashMap<CharacterType, Character>();
+        this.game = game;
         init();
         this.current = TANK;
     }
@@ -25,8 +27,8 @@ public class CharacterController implements InputProcessor {
     // load characters
     public void init() {
         Gdx.input.setInputProcessor(this);
-        this.characters.put(TANK, new Tank());
-        this.characters.put(ASSASSIN, new Assassin());
+        this.characters.put(TANK, new Tank(game));
+        this.characters.put(ASSASSIN, new Assassin(game));
     }
 
     public void setCharacter(CharacterType character) {
@@ -123,4 +125,6 @@ public class CharacterController implements InputProcessor {
         next.setLeftMove(prev.getLeftMove());
         return switched;
     }
+
+    public MyGdxGame getGame() { return this.game; }
 }
