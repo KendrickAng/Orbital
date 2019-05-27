@@ -16,17 +16,19 @@ public abstract class Entity {
     private int y_velocity;
     private float width;
     private float height;
+    private MyGdxGame game;
 
     private Sprite sprite;
 
     private States<Entity> states;
     private Animations<Entity> animations;
 
-    public Entity() {
+    public Entity(MyGdxGame game) {
         this.x = 0;
         this.y = 0;
         this.x_velocity = 0; // unmoving by default
         this.y_velocity = 0;
+        this.game = game;
 
         this.states = new States<Entity>();
         states.add(FLYING);
@@ -64,6 +66,16 @@ public abstract class Entity {
         sprite.draw(batch);
     }
 
-    public int getX() { return this.x; }
-    public int getY() { return this.y; }
+    // TODO: Dispose
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public MyGdxGame getGame() {
+        return this.game;
+    }
 }

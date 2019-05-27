@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
@@ -22,13 +24,15 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.getCamera().update();
+        OrthographicCamera camera = game.getCamera();
+        camera.update();
 
-        game.getSpriteBatch().begin();
-        game.getFont().draw(game.getSpriteBatch(), "Press any key", GAME_WIDTH / 2 , GAME_HEIGHT / 2);
-        game.getSpriteBatch().end();
+        SpriteBatch batch = game.getSpriteBatch();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        game.getFont().draw(batch, "Press any key", GAME_WIDTH / 2, GAME_HEIGHT / 2);
+        batch.end();
 
         if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
             game.setScreen(new GameScreen(game));

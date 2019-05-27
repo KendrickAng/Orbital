@@ -3,9 +3,6 @@ package com.mygdx.game.texture;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.graphics.Texture;
-import com.mygdx.game.Assassin;
-import com.mygdx.game.Entity;
-import com.mygdx.game.Tank;
 
 import java.util.ArrayList;
 
@@ -20,7 +17,7 @@ public class Textures {
     public static final AssetDescriptor<Texture> TANK_PRIMARY = new AssetDescriptor<Texture>(Gdx.files.internal("Tank/Primary.png"), Texture.class);
     public static final AssetDescriptor<Texture> TANK_SECONDARY = new AssetDescriptor<Texture>(Gdx.files.internal("Tank/Secondary.png"), Texture.class);
     public static final AssetDescriptor<Texture> TANK_TERTIARY = new AssetDescriptor<Texture>(Gdx.files.internal("Tank/Tertiary.png"), Texture.class);
-    public static TextureGroup<Tank> TANK = new TextureGroup<Tank>()
+    public static TextureGroup<Texture> TANK = new TextureGroup<Texture>()
             .addTexture(new TextureAsset<Texture>(TANK_STANDING))
             .addTexture(new TextureAsset<Texture>(TANK_PRIMARY))
             .addTexture(new TextureAsset<Texture>(TANK_SECONDARY))
@@ -31,7 +28,7 @@ public class Textures {
     public static final AssetDescriptor<Texture> ASSASSIN_PRIMARY = new AssetDescriptor<Texture>(Gdx.files.internal("Assassin/Primary.png"), Texture.class);
     public static final AssetDescriptor<Texture> ASSASSIN_SECONDARY = new AssetDescriptor<Texture>(Gdx.files.internal("Assassin/Secondary.png"), Texture.class);
     public static final AssetDescriptor<Texture> ASSASSIN_TERTIARY = new AssetDescriptor<Texture>(Gdx.files.internal("Assassin/Tertiary.png"), Texture.class);
-    public static TextureGroup<Assassin> ASSASSIN = new TextureGroup<Assassin>()
+    public static TextureGroup<Texture> ASSASSIN = new TextureGroup<Texture>()
             .addTexture(new TextureAsset<Texture>(ASSASSIN_STANDING))
             .addTexture(new TextureAsset<Texture>(ASSASSIN_PRIMARY))
             .addTexture(new TextureAsset<Texture>(ASSASSIN_SECONDARY))
@@ -39,12 +36,20 @@ public class Textures {
 
     /* ENTITY */
     public static final AssetDescriptor<Texture> ENTITY_SHURIKEN = new AssetDescriptor<Texture>(Gdx.files.internal("Entity/Shuriken.png"), Texture.class);
-    public static TextureGroup<Entity> ENTITY = new TextureGroup<Entity>()
+    public static TextureGroup<Texture> ENTITY = new TextureGroup<Texture>()
             .addTexture(new TextureAsset<Texture>(ENTITY_SHURIKEN));
+
+    /* ENVIRONMENT */
+    public static final AssetDescriptor<Texture> ENVIRONMENT_BACKGROUND = new AssetDescriptor<Texture>(Gdx.files.internal("Background.png"), Texture.class);
+    public static final AssetDescriptor<Texture> ENVIRONMENT_FLOOR = new AssetDescriptor<Texture>(Gdx.files.internal("Floor.png"), Texture.class);
+    public static TextureGroup<Texture> ENVIRONMENT = new TextureGroup<Texture>()
+            .addTexture(new TextureAsset<Texture>(ENVIRONMENT_BACKGROUND))
+            .addTexture(new TextureAsset<Texture>(ENVIRONMENT_FLOOR));
 
     static {
         library.add(TANK);
         library.add(ASSASSIN);
         library.add(ENTITY);
+        library.add(ENVIRONMENT);
     }
 }

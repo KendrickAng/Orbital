@@ -2,7 +2,9 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -24,8 +26,9 @@ public class GameScreen implements Screen {
         this.controller = new CharacterController(game);
         controller.setCharacter(ASSASSIN);
 
-        this.background = new Background();
+        this.background = new Background(game.getTextureManager());
         this.shapeBatch = new ShapeRenderer();
+        shapeBatch.setColor(Color.GOLD);
     }
 
     @Override
@@ -35,35 +38,27 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.getCamera().update();
 
-        // TODO: ShapeRenderer should be for debugging purposes only.
-        /*
-         ShapeRenderer uses it's own batch rendering system.
-         Which is why I have to seperate it from the main sprite batch or it can cause graphical issues.
-          */
-        shapeBatch.begin(ShapeRenderer.ShapeType.Filled);
-        background.renderShape(shapeBatch);
-        shapeBatch.end();
+        OrthographicCamera camera = game.getCamera();
+        SpriteBatch batch = game.getSpriteBatch();
 
-        // render hitboxes.
+        camera.update();
+
+        /* Render */
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        background.render(batch);
+        // render interactive entities (shuriken)
+        game.getEntityManager().renderAll(batch);
+        controller.character().render(batch);
+        batch.end();
+
+        /* Debug */
+        shapeBatch.setProjectionMatrix(camera.combined);
         shapeBatch.begin(ShapeRenderer.ShapeType.Line);
         controller.character().renderDebug(shapeBatch);
         shapeBatch.end();
-
-        // render interactive entities (shuriken)
-        SpriteBatch batch = game.getSpriteBatch();
-        EntityManager entityManager = game.getEntityManager();
-        batch.begin();
-        entityManager.renderAll(batch);
-        batch.end();
-
-        // TODO: Don't use static spriteBatch. Use game reference.
-        batch.begin();
-        controller.character().render(batch);
-        batch.end();
     }
 
     @Override

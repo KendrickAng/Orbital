@@ -14,7 +14,7 @@ public class TextureGroup<T> {
     }
 
     // Add a texture to the group
-    public TextureGroup<T> addTexture(TextureAsset texture) {
+    public TextureGroup<T> addTexture(TextureAsset<T> texture) {
         textures.add(texture);
         return this;
     }

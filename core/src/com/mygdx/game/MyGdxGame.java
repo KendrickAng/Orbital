@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +15,7 @@ public class MyGdxGame extends Game {
 	public static final int GAME_HEIGHT = 380;
 	protected static final int MOVESPEED = 5;
 	protected static final int GRAVITY = -2;
+	protected static final int FRICTION = 2;
 	protected static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
 
 	// TODO: Tile the background.
@@ -35,6 +37,7 @@ public class MyGdxGame extends Game {
 		textureManager = new TextureManager();
 		textureManager.loadTextures(); // load textures
 
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		setScreen(new MainMenuScreen(this));
 	}
 

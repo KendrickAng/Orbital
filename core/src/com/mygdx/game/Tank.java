@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.ability.Abilities;
+import com.mygdx.game.ability.Ability;
 
 import static com.mygdx.game.state.EntityStates.PRIMARY;
 import static com.mygdx.game.state.EntityStates.SECONDARY;
@@ -27,9 +28,14 @@ public class Tank extends Character {
     private static final float TERTIARY_COOLDOWN = 2;
 
     // Skill lasting time in seconds.
-    private static final float PRIMARY_DURATION = 0.05f;
-    private static final float SECONDARY_DURATION = 0.05f;
+    private static final float PRIMARY_DURATION = 0.5f;
+    private static final float SECONDARY_DURATION = 0.5f;
     private static final float TERTIARY_DURATION = 5;
+
+    /* Hitboxes */
+    private float SHIELD_OFFSET;
+    private float SWORD_LENGTH;
+    private float SWORD_WIDTH;
 
     public Tank(MyGdxGame game) {
         super(game);
@@ -38,9 +44,9 @@ public class Tank extends Character {
     @Override
     protected Abilities<Character> abilities() {
         return new Abilities<Character>()
-                .add(PRIMARY, PRIMARY_COOLDOWN, PRIMARY_DURATION)
-                .add(SECONDARY, SECONDARY_COOLDOWN, SECONDARY_DURATION)
-                .add(TERTIARY, TERTIARY_COOLDOWN, TERTIARY_DURATION);
+                .add(PRIMARY, new Ability(PRIMARY_DURATION, PRIMARY_COOLDOWN))
+                .add(SECONDARY, new Ability(SECONDARY_DURATION, SECONDARY_COOLDOWN))
+                .add(TERTIARY, new Ability(TERTIARY_DURATION, TERTIARY_COOLDOWN));
     }
 
     @Override
@@ -60,34 +66,56 @@ public class Tank extends Character {
                 .add(TERTIARY, tank_tertiary, 2);
     }
 
+    @Override
+    public void isPrimaryBegin() {
+        Gdx.app.log("Tank.java", "Primary");
+    }
+
+    @Override
+    public void isSecondaryBegin() {
+        Gdx.app.log("Tank.java", "Secondary");
+    }
+
+    @Override
+    public void isTertiaryBegin() {
+        Gdx.app.log("Tank.java", "Tertiary");
+    }
+
+    @Override
+    public void isPrimary() {
+        // Update primary block hitbox
+        SHIELD_OFFSET = super.getHeight() / 10;
+    }
+
+    @Override
+    public void isSecondary() {
+        // Update secondary slash hitbox
+        SWORD_LENGTH = super.getHeight();
+        SWORD_WIDTH = super.getWidth() / 2;
+    }
+
+    @Override
+    public void isTertiary() {
+
+    }
+
     /* Block */
     @Override
-    public void isPrimary(ShapeRenderer shapeBatch) {
-        Gdx.app.log("Tank.java", "Primary");
-        // affects primary block hitbox
-        float SHIELD_OFFSET = super.getHeight() / 10;
-        shapeBatch.setColor(Color.GOLD);
+    public void isPrimaryDebug(ShapeRenderer shapeBatch) {
         shapeBatch.rect(super.getX() - SHIELD_OFFSET, super.getY() - SHIELD_OFFSET,
                 getWidth() + 2 * SHIELD_OFFSET, getHeight() + 2 * SHIELD_OFFSET);
     }
 
     /* Slash */
     @Override
-    public void isSecondary(ShapeRenderer shapeBatch) {
-        Gdx.app.log("Tank.java", "Secondary");
-        // affects secondary slash hitbox
-        float SWORD_LENGTH = super.getHeight();
-        float SWORD_WIDTH = super.getWidth() / 2;
-        shapeBatch.setColor(Color.GOLD);
+    public void isSecondaryDebug(ShapeRenderer shapeBatch) {
         shapeBatch.rect(getX() + getWidth() / 2, getY() + getHeight() / 2,
                 SWORD_LENGTH, SWORD_WIDTH);
     }
 
     /* Fortress */
     @Override
-    public void isTertiary(ShapeRenderer shapeBatch) {
-        Gdx.app.log("Tank.java", "Tertiary");
-        shapeBatch.setColor(Color.GOLD);
+    public void isTertiaryDebug(ShapeRenderer shapeBatch) {
         shapeBatch.rect(getX(), getY(), getWidth(), getHeight());
     }
 }
