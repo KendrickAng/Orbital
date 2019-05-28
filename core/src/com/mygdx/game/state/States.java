@@ -8,18 +8,20 @@ import java.util.HashSet;
  */
 public class States<T> {
 	private HashSet<State<T>> states;
+
 	public States() {
 		states = new HashSet<State<T>>();
 	}
 
-	// ensures that no two same states from the same group exists at same time
-	public void add(State<T> state) {
+	public States<T> add(State<T> state) {
+		// ensures that no two same states from the same group exists at same time
 		for (State s : states) {
 			if (state.group().contains(s)) {
 				states.remove(s);
 			}
 		}
 		states.add(state);
+		return this;
 	}
 
 	public void remove(State state) {

@@ -13,10 +13,7 @@ public class MyGdxGame extends Game {
 	// define game variables
 	public static final int GAME_WIDTH = 600;
 	public static final int GAME_HEIGHT = 380;
-	protected static final int MOVESPEED = 5;
-	protected static final int GRAVITY = -2;
-	protected static final int FRICTION = 2;
-	protected static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
+	public static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
 
 	// TODO: Tile the background.
 	private SpriteBatch batch;
@@ -27,7 +24,7 @@ public class MyGdxGame extends Game {
 	private TextureManager textureManager;
 
 	@Override
-	public void create () {
+	public void create() {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		camera = new OrthographicCamera();
@@ -42,21 +39,38 @@ public class MyGdxGame extends Game {
 	}
 
 	@Override
-	public void render () {
+	public void render() {
 		super.render();
 	}
 
 	@Override
-	public void dispose () {
+	public void dispose() {
 		batch.dispose();
 		font.dispose();
 		textureManager.dispose();
 	}
 
-	public SpriteBatch getSpriteBatch() { return batch; }
-	public BitmapFont getFont() { return font; }
-	public OrthographicCamera getCamera() { return camera; }
-	public Viewport getViewport() { return viewport; }
-	public EntityManager getEntityManager() { return this.entityManager; }
-	public TextureManager getTextureManager() { return this.textureManager; }
+	public SpriteBatch getSpriteBatch() {
+		return batch;
+	}
+
+	public BitmapFont getFont() {
+		return font;
+	}
+
+	public OrthographicCamera getCamera() {
+		return camera;
+	}
+
+	public Viewport getViewport() {
+		return viewport;
+	}
+
+	public EntityManager getEntityManager() {
+		return this.entityManager;
+	}
+
+	public TextureManager getTextureManager() {
+		return this.textureManager;
+	}
 }

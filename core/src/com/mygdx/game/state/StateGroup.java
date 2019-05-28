@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 public class StateGroup<T> {
 	private HashSet<State> states;
+
 	public StateGroup() {
 		states = new HashSet<State>();
 	}
