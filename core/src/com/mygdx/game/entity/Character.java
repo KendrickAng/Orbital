@@ -1,55 +1,72 @@
 package com.mygdx.game.entity;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.ability.Callback;
-import com.mygdx.game.state.States;
+import com.mygdx.game.GameScreen;
+import com.mygdx.game.ability.Abilities;
+import com.mygdx.game.ability.Ability;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
-import static com.mygdx.game.state.CharacterStates.ABILITIES;
-import static com.mygdx.game.state.CharacterStates.ABILITIES_ULTIMATE;
-import static com.mygdx.game.state.CharacterStates.PRIMARY;
-import static com.mygdx.game.state.CharacterStates.SECONDARY;
-import static com.mygdx.game.state.CharacterStates.STANDING;
-import static com.mygdx.game.state.CharacterStates.TERTIARY;
+import static com.mygdx.game.entity.Character.AbilityState.PRIMARY;
+import static com.mygdx.game.entity.Character.AbilityState.SECONDARY;
+import static com.mygdx.game.entity.Character.AbilityState.TERTIARY;
+import static com.mygdx.game.entity.Character.MovingState.STANDING;
+import static com.mygdx.game.entity.Character.MovingState.WALKING;
 
 /**
  * Character is a LivingEntity with 3 abilities: Primary, Secondary, Tertiary.
  */
-public abstract class Character extends LivingEntity<Character> {
-	private static final int MOVESPEED = 5;
+public abstract class Character extends LivingEntity<Character.MovingState, Character.AbilityState> {
+	public enum MovingState {
+		STANDING, WALKING
+	}
+
+	public enum AbilityState {
+		PRIMARY, SECONDARY, TERTIARY
+	}
+
+	private static final int MOVESPEED = 4;
 	private static final int FRICTION = 2;
+
 	private boolean falling;
 
-	public Character(MyGdxGame game) {
+	public Character(GameScreen game) {
 		super(game);
 		setPosition(0, MAP_HEIGHT);
 	}
 
-	// Called once when skill is started.
-	public abstract void isPrimaryBegin();
+	@Override
+	protected MovingState basicState() {
+		return STANDING;
+	}
 
-	public abstract void isSecondaryBegin();
+	/* Abilities */
+	protected abstract Ability initPrimary();
+	protected abstract Ability initSecondary();
+	protected abstract Ability initTertiary();
 
-	public abstract void isTertiaryBegin();
+	@Override
+	protected Abilities<AbilityState> abilities() {
+		return new Abilities<AbilityState>(getAbilityStates())
+				.add(PRIMARY, initPrimary())
+				.add(SECONDARY, initSecondary())
+				.add(TERTIARY, initTertiary());
+	}
 
-	// Logic for skills.
-	public abstract void isPrimary();
+	public void usePrimary() {
+		getAbilities().use(PRIMARY);
+	}
 
-	public abstract void isSecondary();
+	public void useSecondary() {
+		getAbilities().use(SECONDARY);
+	}
 
-	public abstract void isTertiary();
+	public void useTertiary() {
+		getAbilities().use(TERTIARY);
+	}
 
-	// Debug rendering.
-	public abstract void isPrimaryDebug(ShapeRenderer shapeBatch);
-
-	public abstract void isSecondaryDebug(ShapeRenderer shapeBatch);
-
-	public abstract void isTertiaryDebug(ShapeRenderer shapeBatch);
-
+	/* Update */
 	@Override
 	protected void updatePosition(Vector2 position) {
 		if (position.x < 0) {
@@ -81,10 +98,10 @@ public abstract class Character extends LivingEntity<Character> {
 			if (position.y > MAP_HEIGHT) {
 				switch (getInputDirection()) {
 					case RIGHT:
-						velocity.x += MOVESPEED / 10;
+						velocity.x += (float) MOVESPEED / 10;
 						break;
 					case LEFT:
-						velocity.x -= MOVESPEED / 10;
+						velocity.x -= (float) MOVESPEED / 10;
 						break;
 				}
 				velocity.y += GRAVITY;
@@ -109,81 +126,37 @@ public abstract class Character extends LivingEntity<Character> {
 		}
 	}
 
+	/* Debug rendering. */
+	protected abstract void isPrimaryDebug(ShapeRenderer shapeRenderer);
+	protected abstract void isSecondaryDebug(ShapeRenderer shapeRenderer);
+	protected abstract void isTertiaryDebug(ShapeRenderer shapeRenderer);
+
 	@Override
-	protected States<Character> states() {
-		return new States<Character>()
-				.add(STANDING);
-	}
-
-	/* Abilities */
-	public void primary() {
-		if (!getStates().contains(ABILITIES) && getAbilities().ready(PRIMARY)) {
-			getStates().add(PRIMARY);
-			getAbilities().use(PRIMARY, new Callback() {
-				@Override
-				public void call() {
-					getStates().remove(PRIMARY);
-				}
-			});
-			isPrimaryBegin();
+	public void renderDebug(ShapeRenderer shapeRenderer) {
+		getHitbox().renderDebug(shapeRenderer);
+		if (getAbilityStates().contains(PRIMARY)) {
+			isPrimaryDebug(shapeRenderer);
 		}
-	}
 
-	public void secondary() {
-		if (!getStates().contains(ABILITIES) && getAbilities().ready(SECONDARY)) {
-			getStates().add(SECONDARY);
-			getAbilities().use(SECONDARY, new Callback() {
-				@Override
-				public void call() {
-					getStates().remove(SECONDARY);
-				}
-			});
-			isSecondaryBegin();
+		if (getAbilityStates().contains(SECONDARY)) {
+			isSecondaryDebug(shapeRenderer);
 		}
-	}
 
-	public void tertiary() {
-		if (!getStates().contains(ABILITIES_ULTIMATE) && getAbilities().ready(TERTIARY)) {
-			getStates().add(TERTIARY);
-			getAbilities().use(TERTIARY, new Callback() {
-				@Override
-				public void call() {
-					getStates().remove(TERTIARY);
-				}
-			});
-			isTertiaryBegin();
+		if (getAbilityStates().contains(TERTIARY)) {
+			isTertiaryDebug(shapeRenderer);
 		}
 	}
 
 	@Override
-	public void render(SpriteBatch batch) {
-		super.render(batch);
-
-		// Skill being used
-		if (getStates().contains(PRIMARY)) {
-			isPrimary();
-		}
-
-		if (getStates().contains(SECONDARY)) {
-			isSecondary();
-		}
-
-		if (getStates().contains(TERTIARY)) {
-			isTertiary();
-		}
-	}
-
-	public void renderDebug(ShapeRenderer shapeBatch) {
-		if (getStates().contains(PRIMARY)) {
-			isPrimaryDebug(shapeBatch);
-		}
-
-		if (getStates().contains(SECONDARY)) {
-			isSecondaryDebug(shapeBatch);
-		}
-
-		if (getStates().contains(TERTIARY)) {
-			isTertiaryDebug(shapeBatch);
+	protected void updateDirection(Direction inputDirection) {
+		switch (inputDirection) {
+			case NONE:
+				setBasicState(STANDING);
+				break;
+			case RIGHT:
+			case LEFT:
+				setBasicState(WALKING);
+				break;
 		}
 	}
 

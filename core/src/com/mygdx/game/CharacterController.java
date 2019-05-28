@@ -15,23 +15,22 @@ import static com.mygdx.game.CharacterType.ASSASSIN;
 import static com.mygdx.game.CharacterType.TANK;
 
 public class CharacterController implements InputProcessor {
-	private HashMap<CharacterType, Character> characters;
-	private CharacterType current;
-	private MyGdxGame game;
+	private GameScreen game;
+	private Character character;
 	private HashSet<Direction> inputDirections;
 
-	public CharacterController(MyGdxGame game) {
-		Gdx.input.setInputProcessor(this);
-		this.characters = new HashMap<CharacterType, Character>();
+	public CharacterController(GameScreen game) {
 		this.game = game;
-		this.characters.put(TANK, new Tank(game));
-		this.characters.put(ASSASSIN, new Assassin(game));
+		Gdx.input.setInputProcessor(this);
 		inputDirections = new HashSet<Direction>();
-		setCharacter(TANK);
 	}
 
-	public void setCharacter(CharacterType character) {
-		this.current = character;
+	public void setCharacter(Character character) {
+		this.character = character;
+	}
+
+	public Character getCharacter() {
+		return character;
 	}
 
 	@Override
@@ -39,24 +38,23 @@ public class CharacterController implements InputProcessor {
 		switch (keycode) {
 			case Input.Keys.LEFT:
 				inputDirections.add(Direction.LEFT);
-				character().setInputDirection(resolveInputDirection());
+				character.setInputDirection(resolveInputDirection());
 				break;
 			case Input.Keys.RIGHT:
 				inputDirections.add(Direction.RIGHT);
-				character().setInputDirection(resolveInputDirection());
+				character.setInputDirection(resolveInputDirection());
 				break;
 			case Input.Keys.Q:
-				character().primary();
+				character.usePrimary();
 				break;
 			case Input.Keys.W:
-				character().secondary();
+				character.useSecondary();
 				break;
 			case Input.Keys.E:
-				character().tertiary();
+				character.useTertiary();
 				break;
 			case Input.Keys.R: // switch characters
-				Gdx.app.log("CharacterController.java", "switched characters");
-				current = switchCharacter();
+				game.switchCharacter();
 				break;
 		}
 		return true;
@@ -67,11 +65,11 @@ public class CharacterController implements InputProcessor {
 		switch (keycode) {
 			case Input.Keys.LEFT:
 				inputDirections.remove(Direction.LEFT);
-				character().setInputDirection(resolveInputDirection());
+				character.setInputDirection(resolveInputDirection());
 				break;
 			case Input.Keys.RIGHT:
 				inputDirections.remove(Direction.RIGHT);
-				character().setInputDirection(resolveInputDirection());
+				character.setInputDirection(resolveInputDirection());
 				break;
 		}
 		return true;
@@ -105,33 +103,6 @@ public class CharacterController implements InputProcessor {
 	@Override
 	public boolean scrolled(int amount) {
 		return true;
-	}
-
-	public Character character() {
-		Character c = null;
-		switch (current) {
-			case ASSASSIN:
-				c = characters.get(ASSASSIN);
-				break;
-			case TANK:
-				c = characters.get(TANK);
-				break;
-		}
-		return c;
-	}
-
-	public CharacterType switchCharacter() {
-		CharacterType previous = current;
-		CharacterType switched = previous == ASSASSIN ? TANK : ASSASSIN;
-		Character prev = characters.get(previous);
-		Character next = characters.get(switched);
-		next.setPosition(prev.getPosition());
-		next.setInputDirection(prev.getInputDirection());
-		return switched;
-	}
-
-	public MyGdxGame getGame() {
-		return this.game;
 	}
 
 	private Direction resolveInputDirection() {

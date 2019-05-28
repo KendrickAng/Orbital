@@ -1,17 +1,19 @@
 package com.mygdx.game.entity;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Animations;
-import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.state.States;
+import com.mygdx.game.GameScreen;
+import com.mygdx.game.shape.Rectangle;
 
 /**
  * Represents all renderable, interactive objects such as throwing stars/falling rocks.
  * LivingEntity represents Characters, Bosses.
  */
-public abstract class Entity<T> {
+public abstract class Entity<T extends Enum<T>> {
 	public static final int GRAVITY = -2;
 
 	private Vector2 position;
@@ -19,35 +21,54 @@ public abstract class Entity<T> {
 	private float width;
 	private float height;
 
-	private MyGdxGame game;
+	private boolean visible;
+	private boolean dispose;
+
+	private GameScreen game;
 	private Sprite sprite;
 	private Direction spriteDirection;
+	private Rectangle hitbox;
 
-	private States<T> states;
-	private Animations<T> animations;
+	private T basicState;
+	private Animations<T> basicAnimations;
 
-	public Entity(MyGdxGame game) {
+	public Entity(GameScreen game) {
 		this.position = new Vector2();
 		this.velocity = new Vector2();
 
+		this.visible = true;
+
 		this.game = game;
-		this.states = states();
-		this.animations = animations();
+		this.hitbox = new Rectangle();
+		this.basicState = basicState();
+		this.basicAnimations = basicAnimations();
 		this.spriteDirection = Direction.RIGHT;
-		updateAnimations();
+		updateHitBox();
+
+		game.getEntityManager().add(this);
 	}
 
-	protected abstract States<T> states();
+	protected abstract T basicState();
+	protected abstract Animations<T> basicAnimations();
 
-	protected abstract Animations<T> animations();
-
+	protected abstract void update();
 	protected abstract void updatePosition(Vector2 position);
-
 	protected abstract void updateVelocity(Vector2 position, Vector2 velocity);
 
 	public void render(SpriteBatch batch) {
+		/* Physics */
+		// Account for velocity
+		updateVelocity(position, velocity);
+		position.x += velocity.x;
+		position.y += velocity.y;
+
+		// Map bounds check
+		updatePosition(position);
+
+		updateHitBox();
+		update();
+
 		/* Animations */
-		updateAnimations();
 		switch (spriteDirection) {
 			case RIGHT:
 				sprite.setFlip(false, false);
@@ -57,28 +78,43 @@ public abstract class Entity<T> {
 				break;
 		}
 
-		// Account for velocity
-		updateVelocity(position, velocity);
-		position.x += velocity.x;
-		position.y += velocity.y;
-
-		// Map bounds check
-		updatePosition(position);
-
 		/* Rendering */
 		sprite.setPosition(position.x, position.y);
 		sprite.draw(batch);
 	}
 
-	private void updateAnimations() {
-		this.sprite = animations.from(states);
-		this.width = sprite.getWidth();
-		this.height = sprite.getHeight();
+	public void renderDebug(ShapeRenderer shapeRenderer) {
+		hitbox.renderDebug(shapeRenderer);
 	}
 
-	// TODO: Dispose
+	public Sprite updateAnimation() {
+		return basicAnimations.from(basicState);
+	}
+
+	private void updateHitBox() {
+		this.sprite = updateAnimation();
+		this.width = sprite.getWidth();
+		this.height = sprite.getHeight();
+
+		hitbox.setX(position.x);
+		hitbox.setY(position.y);
+		hitbox.setWidth(width);
+		hitbox.setHeight(height);
+	}
+
+	public void dispose() {
+		dispose = true;
+	}
 
 	/* Setters */
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public void setBasicState(T state) {
+		this.basicState = state;
+	}
+
 	public void setPosition(float x, float y) {
 		position.x = x;
 		position.y = y;
@@ -94,11 +130,24 @@ public abstract class Entity<T> {
 		velocity.y = y_vel;
 	}
 
+	public void setVelocity(Vector2 vel) {
+		velocity.x = vel.x;
+		velocity.y = vel.y;
+	}
+
 	public void setSpriteDirection(Direction spriteDirection) {
 		this.spriteDirection = spriteDirection;
 	}
 
 	/* Getters */
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public boolean isDispose() {
+		return dispose;
+	}
+
 	public float getX() {
 		return position.x;
 	}
@@ -115,19 +164,31 @@ public abstract class Entity<T> {
 		return this.height;
 	}
 
+	public Rectangle getHitbox() {
+		return hitbox;
+	}
+
 	public Vector2 getPosition() {
 		return position;
+	}
+
+	public Vector2 getVelocity() {
+		return velocity;
 	}
 
 	public Direction getSpriteDirection() {
 		return spriteDirection;
 	}
 
-	public States<T> getStates() {
-		return states;
+	public T getBasicState() {
+		return basicState;
 	}
 
-	public MyGdxGame getGame() {
+	public Animations<T> getBasicAnimations() {
+		return basicAnimations;
+	}
+
+	public GameScreen getGame() {
 		return this.game;
 	}
 }

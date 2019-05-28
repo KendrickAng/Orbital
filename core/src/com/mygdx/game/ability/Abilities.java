@@ -1,93 +1,134 @@
 package com.mygdx.game.ability;
 
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.game.state.State;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * What abilities an entity can use.
+ * This class will also mutate the states of the entity accordingly.
  */
 public class Abilities<T> {
 	private Timer timer;
 
+	private HashSet<T> states;
+
 	// Abilities defined
-	private HashMap<State<T>, Ability> abilities;
+	private HashMap<T, Ability> abilities;
 
 	// Abilities that can be used
-	private HashMap<State<T>, Ability> usable;
+	private HashMap<T, Ability> usable;
 
-	// Abilities on cooldown
-	private HashSet<State<T>> unusable;
+	// Abilities that are currently active
+	private HashMap<T, Timer.Task> using;
 
-	// Cooldowns
-	private HashMap<State<T>, Timer.Task> cooldowns;
+	// Abilities that cannot be used and need to be checked if they can be reset
+	private HashMap<T, Timer.Task> unusable;
 
-	public Abilities() {
-		timer = new Timer();
-		abilities = new HashMap<State<T>, Ability>();
-		usable = new HashMap<State<T>, Ability>();
-		unusable = new HashSet<State<T>>();
-		cooldowns = new HashMap<State<T>, Timer.Task>();
+	public Abilities(HashSet<T> states) {
+		this.timer = new Timer();
+		this.states = states;
+
+		abilities = new HashMap<T, Ability>();
+		usable = new HashMap<T, Ability>();
+		using = new HashMap<T, Timer.Task>();
+		unusable = new HashMap<T, Timer.Task>();
 	}
 
-	public Abilities<T> add(State<T> state, Ability ability) {
+	/* Add an ability */
+	public Abilities<T> add(T state, Ability ability) {
 		abilities.put(state, ability);
 		usable.put(state, ability);
-		cooldowns.put(state, null);
 		return this;
 	}
 
-	public void use(final State<T> state, final Callback abilityDone) {
-		if (ready(state)) {
-			final Ability ability = usable.get(state);
+	/* Use an ability */
+	public void use(final T state) {
+		final Ability ability = usable.get(state);
 
-			// Ability executing
-			timer.scheduleTask(new Timer.Task() {
+		// Check if ability can be used
+		if (ability != null && ability.canUse(using.size())) {
+			// Schedule a task for when ability ends
+			Timer.Task endTask = timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
-					// Ability duration is up
-					abilityDone.call();
-
-					// Cooldown
-					cooldowns.put(state, timer.scheduleTask(new Timer.Task() {
+					// Schedule a task for when ability goes off cooldown
+					Timer.Task cooldownTask = timer.scheduleTask(new Timer.Task() {
 						@Override
 						public void run() {
-							cooldowns.put(state, null);
+							// Set task to null
+							unusable.put(state, null);
 						}
-					}, ability.getCooldown()));
-					unusable.add(state);
+					}, ability.getCooldown());
+
+					// Call ability's end callback
+					ability.end();
+					states.remove(state);
+
+					// Ability ended, remove ability from using
+					using.remove(state);
+
+					// Ability ended, add ability to unusable
+					unusable.put(state, cooldownTask);
 				}
 			}, ability.getDuration());
 
-			// Ability used, set ability slot to empty
-			usable.put(state, null);
+			// Schedule a task for each AbilityTask
+			for (final Ability.AbilityTask task : ability.getAbilityTasks()) {
+				timer.scheduleTask(new Timer.Task() {
+					@Override
+					public void run() {
+						task.callback.call();
+					}
+				}, task.delay);
+			}
+
+			// Call ability's begin callback
+			ability.begin();
+			states.add(state);
+
+			// Ability used, remove ability from usable
+			usable.remove(state);
+
+			// Ability used, add ability to using
+			using.put(state, endTask);
 		}
 	}
 
+	/* Update */
 	public void update() {
-		Iterator<State<T>> iterator = unusable.iterator();
+		// Execute "using" abilities callback
+		for (Map.Entry<T, Timer.Task> entry : using.entrySet()) {
+			Ability ability = abilities.get(entry.getKey());
+			ability.using();
+		}
+
+		// Check if unusables can be reset
+		Iterator<Map.Entry<T, Timer.Task>> iterator = unusable.entrySet().iterator();
 		while (iterator.hasNext()) {
-			State<T> state = iterator.next();
+			Map.Entry<T, Timer.Task> entry = iterator.next();
+			T state = entry.getKey();
+			Timer.Task task = entry.getValue();
 			Ability ability = abilities.get(state);
-			// Check if ability is ready to be removed from cooldown
-			boolean isOnCooldown = cooldowns.get(state) != null;
-			if (ability.isReady(isOnCooldown)) {
+
+			// Is on cooldown if cooldown task is still running
+			boolean isOnCooldown = task != null;
+			if (ability.canReset(isOnCooldown)) {
 				if (isOnCooldown) {
 					// Cancel task if still running
-					cooldowns.get(state).cancel();
+					task.cancel();
 				}
-				// Put original ability back in ability slot
-				usable.put(state, abilities.get(state));
+
+				// Put original ability back in usable
+				usable.put(state, ability);
+
+				// Remove ability from unusable
 				iterator.remove();
 			}
 		}
-	}
-
-	public boolean ready(State<T> state) {
-		return usable.get(state) != null;
 	}
 
 	// TODO: Reset abilities when switching characters

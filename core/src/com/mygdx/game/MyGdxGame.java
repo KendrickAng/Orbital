@@ -20,7 +20,6 @@ public class MyGdxGame extends Game {
 	private BitmapFont font;
 	private OrthographicCamera camera;
 	private Viewport viewport;
-	private EntityManager entityManager; // stores interactive stuff like shurikens
 	private TextureManager textureManager;
 
 	@Override
@@ -30,7 +29,6 @@ public class MyGdxGame extends Game {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, GAME_WIDTH, GAME_HEIGHT);
 		viewport = new FitViewport(GAME_WIDTH, GAME_HEIGHT, camera);
-		entityManager = new EntityManager();
 		textureManager = new TextureManager();
 		textureManager.loadTextures(); // load textures
 
@@ -64,10 +62,6 @@ public class MyGdxGame extends Game {
 
 	public Viewport getViewport() {
 		return viewport;
-	}
-
-	public EntityManager getEntityManager() {
-		return this.entityManager;
 	}
 
 	public TextureManager getTextureManager() {
