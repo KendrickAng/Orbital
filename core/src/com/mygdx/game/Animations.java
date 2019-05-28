@@ -2,37 +2,39 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.mygdx.game.state.State;
-import com.mygdx.game.state.States;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Eventually change from sprites to animations.
  */
 public class Animations<T> {
-	private HashMap<State<T>, Sprite> sprites;
-	private HashMap<State<T>, Integer> priorities;
+	private HashMap<T, Sprite> sprites;
+	private HashMap<T, Integer> priorities;
 
 	public Animations() {
-		sprites = new HashMap<State<T>, Sprite>();
-		priorities = new HashMap<State<T>, Integer>();
+		sprites = new HashMap<T, Sprite>();
+		priorities = new HashMap<T, Integer>();
 	}
 
-	// TODO: Priorities are just a temporary fix.
-	// Ideally, the animation should be able to display a character walking & doing something else at the same time.
-	public Animations<T> add(State<T> state, Texture texture, Integer priority) {
+	// Maps a state to a texture & priority
+	public Animations<T> add(T state, Texture texture, Integer priority) {
 		sprites.put(state, new Sprite(texture));
 		priorities.put(state, priority);
 		return this;
 	}
 
-	// supposed to return multiple animations for multiple actions carried in tandem. Ideally should
-	// combine all animations into one big animation and return it
-	public Sprite from(States<T> states) {
+	// Returns a sprite based on the given state
+	public Sprite from(T state) {
+		return sprites.get(state);
+	}
+
+	// Returns the best animation based on priorities.
+	public Sprite from(HashSet<T> states) {
 		Sprite sprite = null;
 		Integer priority = 0;
-		for (State state : states.toArray()) {
+		for (T state : states) {
 			Sprite s = sprites.get(state);
 			Integer p = priorities.get(state);
 			if (s != null && p > priority) {

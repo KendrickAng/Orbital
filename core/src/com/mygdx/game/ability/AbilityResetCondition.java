@@ -1,5 +1,5 @@
 package com.mygdx.game.ability;
 
-public interface AbilityReady {
+public interface AbilityResetCondition {
 	boolean check(boolean isOnCooldown);
 }
