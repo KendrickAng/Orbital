@@ -8,6 +8,8 @@ import com.mygdx.game.GameScreen;
 import com.mygdx.game.ability.Ability;
 import com.mygdx.game.ability.AbilityCallback;
 import com.mygdx.game.ability.AbilityResetCondition;
+import com.mygdx.game.entity.debuff.Debuff;
+import com.mygdx.game.entity.debuff.Debuffs;
 
 import static com.mygdx.game.entity.Character.AbilityState.PRIMARY;
 import static com.mygdx.game.entity.Character.AbilityState.SECONDARY;
@@ -20,22 +22,31 @@ import static com.mygdx.game.texture.Textures.ASSASSIN_STANDING;
 import static com.mygdx.game.texture.Textures.ASSASSIN_TERTIARY;
 
 public class Assassin extends Character {
+	private static final float HEALTH = 10;
+
 	// Skill cooldown in seconds.
 	private static final float PRIMARY_COOLDOWN = 0;
 	private static final float SECONDARY_COOLDOWN = 1;
 	private static final float TERTIARY_COOLDOWN = 2;
 
 	// Skill animation duration in seconds.
-	private static final float PRIMARY_DURATION = 0.5f;
+	private static final float PRIMARY_DURATION = 0.05f;
 	private static final float SECONDARY_DURATION = 0.5f;
 	private static final float TERTIARY_DURATION = 0.5f;
 
-	// influencing dodging
-	private static final int STRAFE_SPEED = 15;
-	private static final int JUMP_SPEED = 15;
+	// Dodge speed
+	private static final float DODGE_SPEED = 20;
+	private static final float DODGE_DIAGONAL_SPEED = 15;
+
+	private Direction dodgeDirection;
 
 	public Assassin(GameScreen game) {
 		super(game);
+	}
+
+	@Override
+	protected float health() {
+		return HEALTH;
 	}
 
 	/* Dodge */
@@ -46,16 +57,35 @@ public class Assassin extends Character {
 					@Override
 					public void call() {
 						Gdx.app.log("Assassin.java", "Primary");
-						int x_vel = 0;
-						switch (getInputDirection()) {
+						dodgeDirection = getInputDirection();
+						ignoreFriction(PRIMARY_DURATION);
+					}
+				})
+				.setAbilityUsing(new AbilityCallback() {
+					@Override
+					public void call() {
+						float velX = 0;
+						float velY = 0;
+						switch (dodgeDirection) {
 							case RIGHT:
-								x_vel = STRAFE_SPEED;
+								velX = DODGE_SPEED;
 								break;
 							case LEFT:
-								x_vel = -STRAFE_SPEED;
+								velX = -DODGE_SPEED;
+								break;
+							case UP:
+								velY = DODGE_SPEED;
+								break;
+							case UP_RIGHT:
+								velX = DODGE_DIAGONAL_SPEED;
+								velY = DODGE_DIAGONAL_SPEED;
+								break;
+							case UP_LEFT:
+								velX = -DODGE_DIAGONAL_SPEED;
+								velY = DODGE_DIAGONAL_SPEED;
 								break;
 						}
-						setVelocity(x_vel, JUMP_SPEED);
+						setVelocity(velX, velY);
 					}
 				})
 				.setResetCondition(new AbilityResetCondition() {

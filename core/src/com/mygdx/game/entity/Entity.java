@@ -1,6 +1,5 @@
 package com.mygdx.game.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,7 +13,7 @@ import com.mygdx.game.shape.Rectangle;
  * LivingEntity represents Characters, Bosses.
  */
 public abstract class Entity<T extends Enum<T>> {
-	public static final int GRAVITY = -2;
+	public static final float GRAVITY = -3;
 
 	private Vector2 position;
 	private Vector2 velocity;
@@ -49,10 +48,13 @@ public abstract class Entity<T extends Enum<T>> {
 	}
 
 	protected abstract T basicState();
+
 	protected abstract Animations<T> basicAnimations();
 
 	protected abstract void update();
+
 	protected abstract void updatePosition(Vector2 position);
+
 	protected abstract void updateVelocity(Vector2 position, Vector2 velocity);
 
 	public void render(SpriteBatch batch) {
@@ -125,7 +127,7 @@ public abstract class Entity<T extends Enum<T>> {
 		position.y = pos.y;
 	}
 
-	public void setVelocity(int x_vel, int y_vel) {
+	public void setVelocity(float x_vel, float y_vel) {
 		velocity.x = x_vel;
 		velocity.y = y_vel;
 	}

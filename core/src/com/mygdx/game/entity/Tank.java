@@ -7,6 +7,7 @@ import com.mygdx.game.Animations;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.ability.Ability;
 import com.mygdx.game.ability.AbilityCallback;
+import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.shape.Rectangle;
 
 import static com.mygdx.game.entity.Character.AbilityState.PRIMARY;
@@ -23,15 +24,27 @@ import static com.mygdx.game.texture.Textures.TANK_TERTIARY;
  * Represents the Tank playable character.
  */
 public class Tank extends Character {
+	private static final float HEALTH = 100;
+
+	private static final float SECONDARY_DAMAGE = 10;
+
+	// Skill debuff duration in seconds.
+	private static final float TERTIARY_DEBUFF_DURATION = 5f;
+
+	// Skill debuff modifiers from 0f - 1f (0% - 100%)
+	private static final float PRIMARY_SLOW_MODIFIER = 0.5f;
+	private static final float SECONDARY_SLOW_MODIFIER = 0.5f;
+	private static final float TERTIARY_SLOW_MODIFIER = 0.5f;
+
 	// Skill cooldown in seconds.
 	private static final float PRIMARY_COOLDOWN = 0;
 	private static final float SECONDARY_COOLDOWN = 1;
-	private static final float TERTIARY_COOLDOWN = 2;
+	private static final float TERTIARY_COOLDOWN = TERTIARY_DEBUFF_DURATION + 2;
 
 	// Skill animation duration in seconds.
-	private static final float PRIMARY_DURATION = 0.5f;
-	private static final float SECONDARY_DURATION = 0.5f;
-	private static final float TERTIARY_DURATION = 0.5f;
+	private static final float PRIMARY_ANIMATION_DURATION = 0.5f;
+	private static final float SECONDARY_ANIMATION_DURATION = 0.5f;
+	private static final float TERTIARY_ANIMATION_DURATION = 0.5f;
 
 	/* Hitboxes */
 	private Rectangle blockHitbox;
@@ -43,14 +56,20 @@ public class Tank extends Character {
 		slashHitbox = new Rectangle();
 	}
 
+	@Override
+	protected float health() {
+		return HEALTH;
+	}
+
 	/* Block */
 	@Override
 	protected Ability initPrimary() {
-		return new Ability(PRIMARY_DURATION, PRIMARY_COOLDOWN)
+		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
 				.setAbilityBegin(new AbilityCallback() {
 					@Override
 					public void call() {
 						Gdx.app.log("Tank.java", "Primary");
+						inflictDebuff(DebuffType.SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
 					}
 				})
 				.setAbilityUsing(new AbilityCallback() {
@@ -74,11 +93,12 @@ public class Tank extends Character {
 	/* Slash */
 	@Override
 	protected Ability initSecondary() {
-		return new Ability(SECONDARY_DURATION, SECONDARY_COOLDOWN)
+		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
 				.setAbilityBegin(new AbilityCallback() {
 					@Override
 					public void call() {
 						Gdx.app.log("Tank.java", "Secondary");
+						inflictDebuff(DebuffType.SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
 					}
 				})
 				.setAbilityUsing(new AbilityCallback() {
@@ -101,11 +121,13 @@ public class Tank extends Character {
 				.addAbilityTask(new AbilityCallback() {
 					@Override
 					public void call() {
-						if (slashHitbox.hitTest(getGame().getBoss().getHitbox())) {
+						Boss1 boss = getGame().getBoss();
+						if (slashHitbox.hitTest(boss.getHitbox())) {
 							Gdx.app.log("Tank.java", "Boss was hit!");
+							boss.damage(SECONDARY_DAMAGE);
 						}
 					}
-				}, SECONDARY_DURATION / 2);
+				}, SECONDARY_ANIMATION_DURATION / 2);
 	}
 
 	@Override
@@ -116,11 +138,12 @@ public class Tank extends Character {
 	/* Fortress */
 	@Override
 	protected Ability initTertiary() {
-		return new Ability(TERTIARY_DURATION, TERTIARY_COOLDOWN)
+		return new Ability(TERTIARY_ANIMATION_DURATION, TERTIARY_COOLDOWN)
 				.setAbilityBegin(new AbilityCallback() {
 					@Override
 					public void call() {
 						Gdx.app.log("Tank.java", "Tertiary");
+						inflictDebuff(DebuffType.SLOW, TERTIARY_SLOW_MODIFIER, TERTIARY_DEBUFF_DURATION);
 					}
 				});
 	}

@@ -1,7 +1,5 @@
 package com.mygdx.game.ability;
 
-import com.badlogic.gdx.utils.Timer;
-
 import java.util.LinkedList;
 
 public class Ability {
@@ -32,6 +30,7 @@ public class Ability {
 	class AbilityTask {
 		AbilityCallback callback;
 		float delay;
+
 		AbilityTask(AbilityCallback callback, float delay) {
 			this.callback = callback;
 			this.delay = delay;

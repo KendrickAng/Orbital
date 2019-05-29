@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.entity.Assassin;
 import com.mygdx.game.entity.Boss1;
 import com.mygdx.game.entity.Character;
+import com.mygdx.game.entity.CharacterController;
+import com.mygdx.game.entity.EntityManager;
 import com.mygdx.game.entity.Tank;
 import com.mygdx.game.texture.TextureManager;
 
