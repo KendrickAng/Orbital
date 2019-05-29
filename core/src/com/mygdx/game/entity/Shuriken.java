@@ -10,6 +10,8 @@ import static com.mygdx.game.entity.Shuriken.MovingState.FLYING;
 import static com.mygdx.game.texture.Textures.SHURIKEN_FLYING;
 
 public class Shuriken extends Entity<Shuriken.MovingState> {
+	private static final float SHURIKEN_DAMAGE = 10;
+
 	public enum MovingState {
 		FLYING
 	}
@@ -33,8 +35,10 @@ public class Shuriken extends Entity<Shuriken.MovingState> {
 
 	@Override
 	protected void update() {
-		if (getHitbox().hitTest(getGame().getBoss().getHitbox())) {
+		Boss1 boss = getGame().getBoss();
+		if (getHitbox().hitTest(boss.getHitbox())) {
 			Gdx.app.log("Shuriken.java", "Boss was hit!");
+			boss.damage(SHURIKEN_DAMAGE);
 			dispose();
 		}
 	}

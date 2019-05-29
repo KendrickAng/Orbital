@@ -1,9 +1,8 @@
-package com.mygdx.game;
+package com.mygdx.game.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.entity.Entity;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +34,7 @@ public class EntityManager {
 		while (iterator.hasNext()) {
 			Entity e = iterator.next();
 			if (e.isDispose()) {
+				// TODO: Doesn't actually dispose class, only removes from EntityManager
 				Gdx.app.log("EntityManager.java", "Entity disposed");
 				priorities.remove(e);
 				iterator.remove();

@@ -1,18 +1,17 @@
-package com.mygdx.game;
+package com.mygdx.game.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.mygdx.game.entity.Assassin;
-import com.mygdx.game.entity.Character;
-import com.mygdx.game.entity.Direction;
-import com.mygdx.game.entity.Tank;
+import com.mygdx.game.GameScreen;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
-import static com.mygdx.game.CharacterType.ASSASSIN;
-import static com.mygdx.game.CharacterType.TANK;
+import static com.mygdx.game.entity.Direction.RIGHT;
+import static com.mygdx.game.entity.Direction.LEFT;
+import static com.mygdx.game.entity.Direction.UP;
+import static com.mygdx.game.entity.Direction.UP_LEFT;
+import static com.mygdx.game.entity.Direction.UP_RIGHT;
 
 public class CharacterController implements InputProcessor {
 	private GameScreen game;
@@ -44,6 +43,10 @@ public class CharacterController implements InputProcessor {
 				inputDirections.add(Direction.RIGHT);
 				character.setInputDirection(resolveInputDirection());
 				break;
+			case Input.Keys.UP:
+				inputDirections.add(UP);
+				character.setInputDirection(resolveInputDirection());
+				break;
 			case Input.Keys.Q:
 				character.usePrimary();
 				break;
@@ -69,6 +72,10 @@ public class CharacterController implements InputProcessor {
 				break;
 			case Input.Keys.RIGHT:
 				inputDirections.remove(Direction.RIGHT);
+				character.setInputDirection(resolveInputDirection());
+				break;
+			case Input.Keys.UP:
+				inputDirections.remove(UP);
 				character.setInputDirection(resolveInputDirection());
 				break;
 		}
@@ -106,15 +113,36 @@ public class CharacterController implements InputProcessor {
 	}
 
 	private Direction resolveInputDirection() {
-		Direction inputDirection = Direction.NONE;
-		// Check that inputDirections doesn't contain RIGHT & LEFT
-		if (!(inputDirections.contains(Direction.RIGHT) && inputDirections.contains(Direction.LEFT))) {
-			if (inputDirections.contains(Direction.RIGHT)) {
-				inputDirection = Direction.RIGHT;
-			} else if (inputDirections.contains(Direction.LEFT)) {
-				inputDirection = Direction.LEFT;
-			}
+		if (!inputDirections.contains(Direction.RIGHT)
+				&& !inputDirections.contains(Direction.LEFT)
+				&& inputDirections.contains(UP)) {
+			return UP;
 		}
-		return inputDirection;
+
+		if (inputDirections.contains(RIGHT)
+				&& !inputDirections.contains(LEFT)
+				&& !inputDirections.contains(UP)) {
+			return RIGHT;
+		}
+
+		if (!inputDirections.contains(Direction.RIGHT)
+				&& inputDirections.contains(Direction.LEFT)
+				&& !inputDirections.contains(UP)) {
+			return LEFT;
+		}
+
+		if (!inputDirections.contains(Direction.RIGHT)
+				&& inputDirections.contains(Direction.LEFT)
+				&& inputDirections.contains(UP)) {
+			return UP_LEFT;
+		}
+
+		if (inputDirections.contains(Direction.RIGHT)
+				&& !inputDirections.contains(Direction.LEFT)
+				&& inputDirections.contains(UP)) {
+			return UP_RIGHT;
+		}
+
+		return Direction.NONE;
 	}
 }
