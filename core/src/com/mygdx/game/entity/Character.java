@@ -6,35 +6,28 @@ import com.mygdx.game.GameScreen;
 import com.mygdx.game.ability.Abilities;
 import com.mygdx.game.ability.Ability;
 import com.mygdx.game.entity.debuff.Debuff;
-import com.mygdx.game.entity.debuff.DebuffBegin;
-import com.mygdx.game.entity.debuff.DebuffCallback;
-import com.mygdx.game.entity.debuff.DebuffEnd;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 
+import java.util.HashSet;
+
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
-import static com.mygdx.game.entity.Character.AbilityState.PRIMARY;
-import static com.mygdx.game.entity.Character.AbilityState.SECONDARY;
-import static com.mygdx.game.entity.Character.AbilityState.TERTIARY;
-import static com.mygdx.game.entity.Character.MovingState.STANDING;
-import static com.mygdx.game.entity.Character.MovingState.WALKING;
+import static com.mygdx.game.entity.Character.States.PRIMARY;
+import static com.mygdx.game.entity.Character.States.SECONDARY;
+import static com.mygdx.game.entity.Character.States.STANDING;
+import static com.mygdx.game.entity.Character.States.TERTIARY;
+import static com.mygdx.game.entity.Character.States.WALKING;
+import static com.mygdx.game.entity.debuff.DebuffType.IGNORE_FRICTION;
 import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
 
 /**
  * Character is a LivingEntity with 3 abilities: Primary, Secondary, Tertiary.
  */
-public abstract class Character extends LivingEntity<Character.MovingState, Character.AbilityState> {
-	public enum MovingState {
-		STANDING, WALKING
-	}
-
-	public enum AbilityState {
+public abstract class Character<R extends Enum> extends LivingEntity<Character.States, R> {
+	public enum States {
+		STANDING, WALKING,
 		PRIMARY, SECONDARY, TERTIARY
-	}
-
-	private enum CustomDebuff {
-		IGNORE_FRICTION
 	}
 
 	private static final float MOVESPEED = 2f;
@@ -50,24 +43,17 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 	private float friction;
 	private boolean falling;
 
-	// TODO: Testing
-	private Debuffs<CustomDebuff> customDebuffs;
-
 	public Character(GameScreen game) {
 		super(game);
 		movespeed = MOVESPEED;
 		friction = FRICTION;
 
 		setPosition(0, MAP_HEIGHT);
-		customDebuffs = new Debuffs<CustomDebuff>()
-				.define(CustomDebuff.IGNORE_FRICTION, new Debuff()
-						.setBegin(() -> setFriction(1))
-						.setEnd(() -> setFriction(FRICTION)));
 	}
 
 	@Override
-	protected MovingState basicState() {
-		return STANDING;
+	protected void states(HashSet<States> states) {
+		states.add(STANDING);
 	}
 
 	/* Abilities */
@@ -78,8 +64,8 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 	protected abstract Ability initTertiary();
 
 	@Override
-	protected Abilities<AbilityState> abilities() {
-		return new Abilities<>(getAbilityStates())
+	protected Abilities<States> abilities() {
+		return new Abilities<>(getStates())
 				.add(PRIMARY, initPrimary())
 				.add(SECONDARY, initSecondary())
 				.add(TERTIARY, initTertiary());
@@ -105,8 +91,13 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 				.setApply(modifier -> setMovespeed(MOVESPEED * (1 - modifier)))
 				.setEnd(() -> setMovespeed(MOVESPEED));
 
+		Debuff ignoreFriction = new Debuff()
+				.setBegin(() -> setFriction(1))
+				.setEnd(() -> setFriction(FRICTION));
+
 		return new Debuffs<DebuffType>()
-				.define(SLOW, slow);
+				.define(SLOW, slow)
+				.define(IGNORE_FRICTION, ignoreFriction);
 	}
 
 	/* Update */
@@ -185,16 +176,16 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 
 	@Override
 	public void renderDebug(ShapeRenderer shapeRenderer) {
-		getHitbox().renderDebug(shapeRenderer);
-		if (getAbilityStates().contains(PRIMARY)) {
+		getAnimations().renderDebug(shapeRenderer);
+		if (getStates().contains(PRIMARY)) {
 			isPrimaryDebug(shapeRenderer);
 		}
 
-		if (getAbilityStates().contains(SECONDARY)) {
+		if (getStates().contains(SECONDARY)) {
 			isSecondaryDebug(shapeRenderer);
 		}
 
-		if (getAbilityStates().contains(TERTIARY)) {
+		if (getStates().contains(TERTIARY)) {
 			isTertiaryDebug(shapeRenderer);
 		}
 	}
@@ -203,17 +194,15 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 	protected void updateDirection(Direction inputDirection) {
 		switch (inputDirection) {
 			case NONE:
-				setBasicState(STANDING);
+				addState(STANDING);
+				removeState(WALKING);
 				break;
 			case RIGHT:
 			case LEFT:
-				setBasicState(WALKING);
+				addState(WALKING);
+				removeState(STANDING);
 				break;
 		}
-	}
-
-	protected void ignoreFriction(float duration) {
-		customDebuffs.inflict(CustomDebuff.IGNORE_FRICTION, 0, duration);
 	}
 
 	/* Getters */

@@ -41,4 +41,20 @@ public class Rectangle {
 	public void renderDebug(ShapeRenderer shapeRenderer) {
 		shapeRenderer.rect(x, y, width, height);
 	}
+
+	public float getX() {
+		return x;
+	}
+
+	public float getY() {
+		return y;
+	}
+
+	public float getWidth() {
+		return width;
+	}
+
+	public float getHeight() {
+		return height;
+	}
 }

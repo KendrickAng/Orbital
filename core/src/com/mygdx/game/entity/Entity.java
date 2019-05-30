@@ -4,15 +4,17 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Animations;
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.animation.Animations;
 import com.mygdx.game.shape.Rectangle;
+
+import java.util.HashSet;
 
 /**
  * Represents all renderable, interactive objects such as throwing stars/falling rocks.
  * LivingEntity represents Characters, Bosses.
  */
-public abstract class Entity<T extends Enum<T>> {
+public abstract class Entity<T extends Enum, R extends Enum> {
 	public static final float GRAVITY = -3;
 
 	private Vector2 position;
@@ -24,32 +26,31 @@ public abstract class Entity<T extends Enum<T>> {
 	private boolean dispose;
 
 	private GameScreen game;
-	private Sprite sprite;
 	private Direction spriteDirection;
 	private Rectangle hitbox;
 
-	private T basicState;
-	private Animations<T> basicAnimations;
+	private HashSet<T> states;
+	private Animations<T, R> animations;
 
 	public Entity(GameScreen game) {
 		this.position = new Vector2();
 		this.velocity = new Vector2();
 
 		this.visible = true;
+		this.spriteDirection = Direction.RIGHT;
 
 		this.game = game;
-		this.hitbox = new Rectangle();
-		this.basicState = basicState();
-		this.basicAnimations = basicAnimations();
-		this.spriteDirection = Direction.RIGHT;
-		updateHitBox();
+		this.states = new HashSet<>();
+		states(states);
+		this.animations = animations();
+		updateHitbox();
 
 		game.getEntityManager().add(this);
 	}
 
-	protected abstract T basicState();
+	protected abstract void states(HashSet<T> states);
 
-	protected abstract Animations<T> basicAnimations();
+	protected abstract Animations<T, R> animations();
 
 	protected abstract void update();
 
@@ -57,51 +58,41 @@ public abstract class Entity<T extends Enum<T>> {
 
 	protected abstract void updateVelocity(Vector2 position, Vector2 velocity);
 
+	protected abstract Rectangle hitbox();
+
 	public void render(SpriteBatch batch) {
 		/* Physics */
 		// Account for velocity
 		updateVelocity(position, velocity);
 		position.x += velocity.x;
 		position.y += velocity.y;
-
-		// Map bounds check
 		updatePosition(position);
 
-		updateHitBox();
-		update();
-
 		/* Animations */
+		updateHitbox();
+		animations.setPosition(position);
 		switch (spriteDirection) {
 			case RIGHT:
-				sprite.setFlip(false, false);
+				animations.setFlip(false, false);
 				break;
 			case LEFT:
-				sprite.setFlip(true, false);
+				animations.setFlip(true, false);
 				break;
 		}
+		animations.render(batch);
 
-		/* Rendering */
-		sprite.setPosition(position.x, position.y);
-		sprite.draw(batch);
+		// General updates
+		update();
+	}
+
+	private void updateHitbox() {
+		hitbox = hitbox();
+		width = hitbox.getWidth();
+		height = hitbox.getHeight();
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {
-		hitbox.renderDebug(shapeRenderer);
-	}
-
-	public Sprite updateAnimation() {
-		return basicAnimations.from(basicState);
-	}
-
-	private void updateHitBox() {
-		this.sprite = updateAnimation();
-		this.width = sprite.getWidth();
-		this.height = sprite.getHeight();
-
-		hitbox.setX(position.x);
-		hitbox.setY(position.y);
-		hitbox.setWidth(width);
-		hitbox.setHeight(height);
+		animations.renderDebug(shapeRenderer);
 	}
 
 	public void dispose() {
@@ -113,8 +104,12 @@ public abstract class Entity<T extends Enum<T>> {
 		this.visible = visible;
 	}
 
-	public void setBasicState(T state) {
-		this.basicState = state;
+	public void addState(T state) {
+		states.add(state);
+	}
+
+	public void removeState(T state) {
+		states.remove(state);
 	}
 
 	public void setPosition(float x, float y) {
@@ -182,12 +177,12 @@ public abstract class Entity<T extends Enum<T>> {
 		return spriteDirection;
 	}
 
-	public T getBasicState() {
-		return basicState;
+	public HashSet<T> getStates() {
+		return states;
 	}
 
-	public Animations<T> getBasicAnimations() {
-		return basicAnimations;
+	public Animations<T, R> getAnimations() {
+		return animations;
 	}
 
 	public GameScreen getGame() {

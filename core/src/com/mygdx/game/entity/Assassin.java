@@ -1,23 +1,22 @@
 package com.mygdx.game.entity;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.Animations;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.ability.Ability;
+import com.mygdx.game.animation.Animations;
+import com.mygdx.game.animation.AnimationsGroup;
+import com.mygdx.game.entity.debuff.DebuffType;
+import com.mygdx.game.shape.Rectangle;
 
-import static com.mygdx.game.entity.Character.AbilityState.PRIMARY;
-import static com.mygdx.game.entity.Character.AbilityState.SECONDARY;
-import static com.mygdx.game.entity.Character.AbilityState.TERTIARY;
-import static com.mygdx.game.entity.Character.MovingState.STANDING;
-import static com.mygdx.game.entity.Character.MovingState.WALKING;
-import static com.mygdx.game.texture.Textures.ASSASSIN_PRIMARY;
-import static com.mygdx.game.texture.Textures.ASSASSIN_SECONDARY;
-import static com.mygdx.game.texture.Textures.ASSASSIN_STANDING;
-import static com.mygdx.game.texture.Textures.ASSASSIN_TERTIARY;
+import static com.mygdx.game.entity.Assassin.Parts.BODY;
+import static com.mygdx.game.entity.Character.States.PRIMARY;
+import static com.mygdx.game.entity.Character.States.SECONDARY;
+import static com.mygdx.game.entity.Character.States.STANDING;
+import static com.mygdx.game.entity.Character.States.TERTIARY;
+import static com.mygdx.game.entity.Character.States.WALKING;
 
-public class Assassin extends Character {
+public class Assassin extends Character<Assassin.Parts> {
 	private static final float HEALTH = 10;
 
 	// Skill cooldown in seconds.
@@ -36,6 +35,10 @@ public class Assassin extends Character {
 
 	private Direction dodgeDirection;
 
+	public enum Parts {
+		BODY
+	}
+
 	public Assassin(GameScreen game) {
 		super(game);
 	}
@@ -52,7 +55,7 @@ public class Assassin extends Character {
 				.setAbilityBegin(() -> {
 					Gdx.app.log("Assassin.java", "Primary");
 					dodgeDirection = getInputDirection();
-					ignoreFriction(PRIMARY_DURATION);
+					inflictDebuff(DebuffType.IGNORE_FRICTION, 1, PRIMARY_DURATION);
 				})
 				.setAbilityUsing(() -> {
 					float velX = 0;
@@ -128,23 +131,38 @@ public class Assassin extends Character {
 
 	/* Animations */
 	@Override
-	protected Animations<MovingState> basicAnimations() {
-		Texture assassin_standing = getGame().getTextureManager().get(ASSASSIN_STANDING);
+	protected Animations<States, Parts> animations() {
+		AnimationsGroup<Parts> standing = new AnimationsGroup<Parts>("Assassin/Standing")
+				.add(BODY, "Body")
+				.load();
 
-		return new Animations<MovingState>()
-				.add(STANDING, assassin_standing, 1)
-				.add(WALKING, assassin_standing, 1);
+		AnimationsGroup<Parts> walking = new AnimationsGroup<Parts>("Assassin/Standing")
+				.add(BODY, "Body")
+				.load();
+
+		AnimationsGroup<Parts> primary = new AnimationsGroup<Parts>("Assassin/Primary")
+				.add(BODY, "Body")
+				.load();
+
+		AnimationsGroup<Parts> secondary = new AnimationsGroup<Parts>("Assassin/Secondary")
+				.add(BODY, "Body")
+				.load();
+
+		AnimationsGroup<Parts> tertiary = new AnimationsGroup<Parts>("Assassin/Tertiary")
+				.add(BODY, "Body")
+				.load();
+
+		return new Animations<States, Parts>(getStates())
+				.add(STANDING, standing, 1)
+				.add(WALKING, walking, 1)
+				.add(PRIMARY, primary, 2)
+				.add(SECONDARY, secondary, 2)
+				.add(TERTIARY, tertiary, 2)
+				.done();
 	}
 
 	@Override
-	protected Animations<AbilityState> abilityAnimations() {
-		Texture assassin_primary = getGame().getTextureManager().get(ASSASSIN_PRIMARY);
-		Texture assassin_secondary = getGame().getTextureManager().get(ASSASSIN_SECONDARY);
-		Texture assassin_tertiary = getGame().getTextureManager().get(ASSASSIN_TERTIARY);
-
-		return new Animations<AbilityState>()
-				.add(PRIMARY, assassin_primary, 1)
-				.add(SECONDARY, assassin_secondary, 1)
-				.add(TERTIARY, assassin_tertiary, 1);
+	protected Rectangle hitbox() {
+		return getAnimations().getHitbox(BODY);
 	}
 }

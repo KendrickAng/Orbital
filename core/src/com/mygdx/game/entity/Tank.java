@@ -1,28 +1,31 @@
 package com.mygdx.game.entity;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.Animations;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.ability.Ability;
+import com.mygdx.game.animation.Animations;
+import com.mygdx.game.animation.AnimationsGroup;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.shape.Rectangle;
 
-import static com.mygdx.game.entity.Character.AbilityState.PRIMARY;
-import static com.mygdx.game.entity.Character.AbilityState.SECONDARY;
-import static com.mygdx.game.entity.Character.AbilityState.TERTIARY;
-import static com.mygdx.game.entity.Character.MovingState.STANDING;
-import static com.mygdx.game.entity.Character.MovingState.WALKING;
-import static com.mygdx.game.texture.Textures.TANK_PRIMARY;
-import static com.mygdx.game.texture.Textures.TANK_SECONDARY;
-import static com.mygdx.game.texture.Textures.TANK_STANDING;
-import static com.mygdx.game.texture.Textures.TANK_TERTIARY;
+import static com.mygdx.game.entity.Character.States.PRIMARY;
+import static com.mygdx.game.entity.Character.States.SECONDARY;
+import static com.mygdx.game.entity.Character.States.STANDING;
+import static com.mygdx.game.entity.Character.States.TERTIARY;
+import static com.mygdx.game.entity.Character.States.WALKING;
+import static com.mygdx.game.entity.Tank.Parts.BODY;
+import static com.mygdx.game.entity.Tank.Parts.LEFT_ARM;
+import static com.mygdx.game.entity.Tank.Parts.LEFT_LEG;
+import static com.mygdx.game.entity.Tank.Parts.RIGHT_ARM;
+import static com.mygdx.game.entity.Tank.Parts.RIGHT_LEG;
+import static com.mygdx.game.entity.Tank.Parts.SHIELD;
+import static com.mygdx.game.entity.Tank.Parts.WEAPON;
 
 /**
  * Represents the Tank playable character.
  */
-public class Tank extends Character {
+public class Tank extends Character<Tank.Parts> {
 	private static final float HEALTH = 100;
 
 	private static final float SECONDARY_DAMAGE = 10;
@@ -48,6 +51,13 @@ public class Tank extends Character {
 	/* Hitboxes */
 	private Rectangle blockHitbox;
 	private Rectangle slashHitbox;
+
+	/*
+	 Order is important! Last enum will be rendered on top.
+	*/
+	public enum Parts {
+		SHIELD, LEFT_ARM, LEFT_LEG, BODY, RIGHT_LEG, WEAPON, RIGHT_ARM
+	}
 
 	public Tank(GameScreen game) {
 		super(game);
@@ -136,23 +146,50 @@ public class Tank extends Character {
 
 	/* Animations */
 	@Override
-	protected Animations<MovingState> basicAnimations() {
-		Texture tank_standing = getGame().getTextureManager().get(TANK_STANDING);
+	protected Animations<States, Parts> animations() {
+		AnimationsGroup<Parts> standing = new AnimationsGroup<Parts>("Tank/Standing")
+				.add(SHIELD, "Shield")
+				.add(LEFT_ARM, "LeftArm")
+				.add(LEFT_LEG, "LeftLeg")
+				.add(BODY, "Body")
+				.add(RIGHT_LEG, "RightLeg")
+				.add(WEAPON, "Weapon")
+				.add(RIGHT_ARM, "RightArm")
+				.load();
 
-		return new Animations<MovingState>()
-				.add(STANDING, tank_standing, 1)
-				.add(WALKING, tank_standing, 1);
+		AnimationsGroup<Parts> walking = new AnimationsGroup<Parts>("Tank/Standing")
+				.add(SHIELD, "Shield")
+				.add(LEFT_ARM, "LeftArm")
+				.add(LEFT_LEG, "LeftLeg")
+				.add(BODY, "Body")
+				.add(RIGHT_LEG, "RightLeg")
+				.add(WEAPON, "Weapon")
+				.add(RIGHT_ARM, "RightArm")
+				.load();
+
+		AnimationsGroup<Parts> primary = new AnimationsGroup<Parts>("Tank/Primary")
+				.add(BODY, "Body")
+				.load();
+
+		AnimationsGroup<Parts> secondary = new AnimationsGroup<Parts>("Tank/Secondary")
+				.add(BODY, "Body")
+				.load();
+
+		AnimationsGroup<Parts> tertiary = new AnimationsGroup<Parts>("Tank/Tertiary")
+				.add(BODY, "Body")
+				.load();
+
+		return new Animations<States, Parts>(getStates())
+				.add(STANDING, standing, 1)
+				.add(WALKING, walking, 1)
+				.add(PRIMARY, primary, 2)
+				.add(SECONDARY, secondary, 2)
+				.add(TERTIARY, tertiary, 2)
+				.done();
 	}
 
 	@Override
-	protected Animations<AbilityState> abilityAnimations() {
-		Texture tank_primary = getGame().getTextureManager().get(TANK_PRIMARY);
-		Texture tank_secondary = getGame().getTextureManager().get(TANK_SECONDARY);
-		Texture tank_tertiary = getGame().getTextureManager().get(TANK_TERTIARY);
-
-		return new Animations<AbilityState>()
-				.add(PRIMARY, tank_primary, 1)
-				.add(SECONDARY, tank_secondary, 1)
-				.add(TERTIARY, tank_tertiary, 1);
+	protected Rectangle hitbox() {
+		return getAnimations().getHitbox(BODY);
 	}
 }
