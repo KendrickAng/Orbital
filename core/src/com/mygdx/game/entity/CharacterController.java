@@ -7,8 +7,8 @@ import com.mygdx.game.GameScreen;
 
 import java.util.HashSet;
 
-import static com.mygdx.game.entity.Direction.RIGHT;
 import static com.mygdx.game.entity.Direction.LEFT;
+import static com.mygdx.game.entity.Direction.RIGHT;
 import static com.mygdx.game.entity.Direction.UP;
 import static com.mygdx.game.entity.Direction.UP_LEFT;
 import static com.mygdx.game.entity.Direction.UP_RIGHT;
@@ -21,7 +21,7 @@ public class CharacterController implements InputProcessor {
 	public CharacterController(GameScreen game) {
 		this.game = game;
 		Gdx.input.setInputProcessor(this);
-		inputDirections = new HashSet<Direction>();
+		inputDirections = new HashSet<>();
 	}
 
 	public void setCharacter(Character character) {

@@ -41,42 +41,12 @@ public class Ability {
 		this.duration = duration;
 		this.cooldown = cooldown;
 
-		this.useCondition = new AbilityUseCondition() {
-			@Override
-			public boolean check(int using) {
-				return using == 0;
-			}
-		};
-
-		this.resetCondition = new AbilityResetCondition() {
-			@Override
-			public boolean check(boolean isOnCooldown) {
-				return !isOnCooldown;
-			}
-		};
-
-		this.abilityBegin = new AbilityCallback() {
-			@Override
-			public void call() {
-
-			}
-		};
-
-		this.abilityUsing = new AbilityCallback() {
-			@Override
-			public void call() {
-
-			}
-		};
-
-		this.abilityEnd = new AbilityCallback() {
-			@Override
-			public void call() {
-
-			}
-		};
-
-		this.abilityTasks = new LinkedList<AbilityTask>();
+		this.useCondition = using -> using == 0;
+		this.resetCondition = isOnCooldown -> !isOnCooldown;
+		this.abilityBegin = () -> {};
+		this.abilityUsing = () -> {};
+		this.abilityEnd = () -> {};
+		this.abilityTasks = new LinkedList<>();
 	}
 
 	/* Calls */

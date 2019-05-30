@@ -61,18 +61,8 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 		setPosition(0, MAP_HEIGHT);
 		customDebuffs = new Debuffs<CustomDebuff>()
 				.define(CustomDebuff.IGNORE_FRICTION, new Debuff()
-						.setBegin(new DebuffBegin() {
-							@Override
-							public void call() {
-								setFriction(1);
-							}
-						})
-						.setEnd(new DebuffEnd() {
-							@Override
-							public void call() {
-								setFriction(FRICTION);
-							}
-						}));
+						.setBegin(() -> setFriction(1))
+						.setEnd(() -> setFriction(FRICTION)));
 	}
 
 	@Override
@@ -89,7 +79,7 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 
 	@Override
 	protected Abilities<AbilityState> abilities() {
-		return new Abilities<AbilityState>(getAbilityStates())
+		return new Abilities<>(getAbilityStates())
 				.add(PRIMARY, initPrimary())
 				.add(SECONDARY, initSecondary())
 				.add(TERTIARY, initTertiary());
@@ -112,18 +102,8 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 	@Override
 	protected Debuffs<DebuffType> debuffs() {
 		Debuff slow = new Debuff()
-				.setApply(new DebuffCallback() {
-					@Override
-					public void call(float modifier) {
-						setMovespeed(MOVESPEED * (1 - modifier));
-					}
-				})
-				.setEnd(new DebuffEnd() {
-					@Override
-					public void call() {
-						setMovespeed(MOVESPEED);
-					}
-				});
+				.setApply(modifier -> setMovespeed(MOVESPEED * (1 - modifier)))
+				.setEnd(() -> setMovespeed(MOVESPEED));
 
 		return new Debuffs<DebuffType>()
 				.define(SLOW, slow);
@@ -168,7 +148,7 @@ public abstract class Character extends LivingEntity<Character.MovingState, Char
 						break;
 					case LEFT:
 					case UP_LEFT:
-						velocity.x -= movespeed * AIR_MOVESPEED;;
+						velocity.x -= movespeed * AIR_MOVESPEED;
 						break;
 				}
 				velocity.x *= AIR_FRICTION;

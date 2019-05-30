@@ -11,7 +11,7 @@ public class TextureGroup<T> {
 	private HashSet<TextureAsset<T>> textures;
 
 	public TextureGroup() {
-		this.textures = new HashSet<TextureAsset<T>>();
+		this.textures = new HashSet<>();
 	}
 
 	// Add a texture to the group

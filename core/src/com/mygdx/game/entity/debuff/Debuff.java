@@ -6,26 +6,9 @@ public class Debuff {
 	private DebuffEnd end;
 
 	public Debuff() {
-		begin = new DebuffBegin() {
-			@Override
-			public void call() {
-
-			}
-		};
-
-		end = new DebuffEnd() {
-			@Override
-			public void call() {
-
-			}
-		};
-
-		apply = new DebuffCallback() {
-			@Override
-			public void call(float modifier) {
-
-			}
-		};
+		begin = () -> {};
+		end = () -> {};
+		apply = modifier -> {};
 	}
 
 	/* Calls */

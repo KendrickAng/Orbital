@@ -32,10 +32,10 @@ public class Abilities<T> {
 		this.timer = new Timer();
 		this.states = states;
 
-		abilities = new HashMap<T, Ability>();
-		usable = new HashMap<T, Ability>();
-		using = new HashMap<T, Timer.Task>();
-		unusable = new HashMap<T, Timer.Task>();
+		abilities = new HashMap<>();
+		usable = new HashMap<>();
+		using = new HashMap<>();
+		unusable = new HashMap<>();
 	}
 
 	/* Add an ability */

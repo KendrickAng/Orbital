@@ -36,7 +36,7 @@ public abstract class LivingEntity<T extends Enum<T>, R extends Enum<R>> extends
 		this.maxHealth = health();
 
 		this.inputDirection = Direction.NONE;
-		this.abilityStates = new HashSet<R>();
+		this.abilityStates = new HashSet<>();
 		this.abilities = abilities();
 		this.abilityAnimations = abilityAnimations();
 		this.debuffs = debuffs();

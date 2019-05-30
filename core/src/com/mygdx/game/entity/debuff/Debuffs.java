@@ -24,13 +24,13 @@ public class Debuffs<T> {
 
 	public Debuffs() {
 		timer = new Timer();
-		debuffs = new HashMap<T, Debuff>();
-		inflicted = new HashMap<T, HashSet<InflictedDebuff>>();
+		debuffs = new HashMap<>();
+		inflicted = new HashMap<>();
 	}
 
 	public Debuffs<T> define(T type, Debuff debuff) {
 		debuffs.put(type, debuff);
-		inflicted.put(type, new HashSet<InflictedDebuff>());
+		inflicted.put(type, new HashSet<>());
 		return this;
 	}
 

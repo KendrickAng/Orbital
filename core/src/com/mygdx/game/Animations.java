@@ -14,8 +14,8 @@ public class Animations<T> {
 	private HashMap<T, Integer> priorities;
 
 	public Animations() {
-		sprites = new HashMap<T, Sprite>();
-		priorities = new HashMap<T, Integer>();
+		sprites = new HashMap<>();
+		priorities = new HashMap<>();
 	}
 
 	// Maps a state to a texture & priority

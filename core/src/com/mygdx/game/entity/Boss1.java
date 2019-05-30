@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Animations;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.ability.Abilities;
+import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
@@ -13,6 +14,7 @@ import static com.mygdx.game.texture.Textures.BOSS1_STANDING;
 
 public class Boss1 extends LivingEntity<Boss1.MovingState, Boss1.AbilityState> {
 	private static final float HEALTH = 1000;
+
 	public enum MovingState {
 		STANDING, WALKING
 	}
@@ -33,7 +35,7 @@ public class Boss1 extends LivingEntity<Boss1.MovingState, Boss1.AbilityState> {
 
 	@Override
 	protected Abilities<AbilityState> abilities() {
-		return new Abilities<AbilityState>(getAbilityStates());
+		return new Abilities<>(getAbilityStates());
 	}
 
 
@@ -55,8 +57,8 @@ public class Boss1 extends LivingEntity<Boss1.MovingState, Boss1.AbilityState> {
 	}
 
 	@Override
-	protected Debuffs debuffs() {
-		return new Debuffs();
+	protected Debuffs<DebuffType> debuffs() {
+		return new Debuffs<>();
 	}
 
 	/* Update */

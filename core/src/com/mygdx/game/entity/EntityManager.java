@@ -17,8 +17,8 @@ public class EntityManager {
 	private HashMap<Entity, Integer> priorities;
 
 	public EntityManager() {
-		entities = new TreeMap<Integer, Entity>();
-		priorities = new HashMap<Entity, Integer>();
+		entities = new TreeMap<>();
+		priorities = new HashMap<>();
 	}
 
 	// Order is important. Last in will be rendered on top.

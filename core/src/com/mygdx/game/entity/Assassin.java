@@ -6,10 +6,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.Animations;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.ability.Ability;
-import com.mygdx.game.ability.AbilityCallback;
-import com.mygdx.game.ability.AbilityResetCondition;
-import com.mygdx.game.entity.debuff.Debuff;
-import com.mygdx.game.entity.debuff.Debuffs;
 
 import static com.mygdx.game.entity.Character.AbilityState.PRIMARY;
 import static com.mygdx.game.entity.Character.AbilityState.SECONDARY;
@@ -53,47 +49,36 @@ public class Assassin extends Character {
 	@Override
 	protected Ability initPrimary() {
 		return new Ability(PRIMARY_DURATION, PRIMARY_COOLDOWN)
-				.setAbilityBegin(new AbilityCallback() {
-					@Override
-					public void call() {
-						Gdx.app.log("Assassin.java", "Primary");
-						dodgeDirection = getInputDirection();
-						ignoreFriction(PRIMARY_DURATION);
-					}
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Assassin.java", "Primary");
+					dodgeDirection = getInputDirection();
+					ignoreFriction(PRIMARY_DURATION);
 				})
-				.setAbilityUsing(new AbilityCallback() {
-					@Override
-					public void call() {
-						float velX = 0;
-						float velY = 0;
-						switch (dodgeDirection) {
-							case RIGHT:
-								velX = DODGE_SPEED;
-								break;
-							case LEFT:
-								velX = -DODGE_SPEED;
-								break;
-							case UP:
-								velY = DODGE_SPEED;
-								break;
-							case UP_RIGHT:
-								velX = DODGE_DIAGONAL_SPEED;
-								velY = DODGE_DIAGONAL_SPEED;
-								break;
-							case UP_LEFT:
-								velX = -DODGE_DIAGONAL_SPEED;
-								velY = DODGE_DIAGONAL_SPEED;
-								break;
-						}
-						setVelocity(velX, velY);
+				.setAbilityUsing(() -> {
+					float velX = 0;
+					float velY = 0;
+					switch (dodgeDirection) {
+						case RIGHT:
+							velX = DODGE_SPEED;
+							break;
+						case LEFT:
+							velX = -DODGE_SPEED;
+							break;
+						case UP:
+							velY = DODGE_SPEED;
+							break;
+						case UP_RIGHT:
+							velX = DODGE_DIAGONAL_SPEED;
+							velY = DODGE_DIAGONAL_SPEED;
+							break;
+						case UP_LEFT:
+							velX = -DODGE_DIAGONAL_SPEED;
+							velY = DODGE_DIAGONAL_SPEED;
+							break;
 					}
+					setVelocity(velX, velY);
 				})
-				.setResetCondition(new AbilityResetCondition() {
-					@Override
-					public boolean check(boolean isOnCooldown) {
-						return !isFalling();
-					}
-				});
+				.setResetCondition(isOnCooldown -> !isFalling());
 	}
 
 	@Override
@@ -105,25 +90,22 @@ public class Assassin extends Character {
 	@Override
 	protected Ability initSecondary() {
 		return new Ability(SECONDARY_DURATION, SECONDARY_COOLDOWN)
-				.setAbilityBegin(new AbilityCallback() {
-					@Override
-					public void call() {
-						Gdx.app.log("Assassin.java", "Secondary");
-						Entity shuriken = new Shuriken(getGame());
-						float x = getX() + getWidth() / 2;
-						float y = getY() + getHeight() / 2;
-						int x_velocity = 0;
-						switch (getSpriteDirection()) {
-							case RIGHT:
-								x_velocity = Shuriken.FLYING_SPEED;
-								break;
-							case LEFT:
-								x_velocity = -Shuriken.FLYING_SPEED;
-								break;
-						}
-						shuriken.setPosition(x, y);
-						shuriken.setVelocity(x_velocity, 0);
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Assassin.java", "Secondary");
+					Entity shuriken = new Shuriken(getGame());
+					float x = getX() + getWidth() / 2;
+					float y = getY() + getHeight() / 2;
+					int x_velocity = 0;
+					switch (getSpriteDirection()) {
+						case RIGHT:
+							x_velocity = Shuriken.FLYING_SPEED;
+							break;
+						case LEFT:
+							x_velocity = -Shuriken.FLYING_SPEED;
+							break;
 					}
+					shuriken.setPosition(x, y);
+					shuriken.setVelocity(x_velocity, 0);
 				});
 	}
 
@@ -136,12 +118,7 @@ public class Assassin extends Character {
 	@Override
 	protected Ability initTertiary() {
 		return new Ability(TERTIARY_DURATION, TERTIARY_COOLDOWN)
-				.setAbilityBegin(new AbilityCallback() {
-					@Override
-					public void call() {
-						Gdx.app.log("Assassin.java", "Tertiary");
-					}
-				});
+				.setAbilityBegin(() -> Gdx.app.log("Assassin.java", "Tertiary"));
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.Animations;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.ability.Ability;
-import com.mygdx.game.ability.AbilityCallback;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.shape.Rectangle;
 
@@ -65,23 +64,17 @@ public class Tank extends Character {
 	@Override
 	protected Ability initPrimary() {
 		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
-				.setAbilityBegin(new AbilityCallback() {
-					@Override
-					public void call() {
-						Gdx.app.log("Tank.java", "Primary");
-						inflictDebuff(DebuffType.SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
-					}
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Tank.java", "Primary");
+					inflictDebuff(DebuffType.SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
 				})
-				.setAbilityUsing(new AbilityCallback() {
-					@Override
-					public void call() {
-						// Update primary block hitbox
-						float SHIELD_OFFSET = getHeight() / 10;
-						blockHitbox.setX(getX() - SHIELD_OFFSET);
-						blockHitbox.setY(getY() - SHIELD_OFFSET);
-						blockHitbox.setWidth(getWidth() + 2 * SHIELD_OFFSET);
-						blockHitbox.setHeight(getHeight() + 2 * SHIELD_OFFSET);
-					}
+				.setAbilityUsing(() -> {
+					// Update primary block hitbox
+					float SHIELD_OFFSET = getHeight() / 10;
+					blockHitbox.setX(getX() - SHIELD_OFFSET);
+					blockHitbox.setY(getY() - SHIELD_OFFSET);
+					blockHitbox.setWidth(getWidth() + 2 * SHIELD_OFFSET);
+					blockHitbox.setHeight(getHeight() + 2 * SHIELD_OFFSET);
 				});
 	}
 
@@ -94,38 +87,29 @@ public class Tank extends Character {
 	@Override
 	protected Ability initSecondary() {
 		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
-				.setAbilityBegin(new AbilityCallback() {
-					@Override
-					public void call() {
-						Gdx.app.log("Tank.java", "Secondary");
-						inflictDebuff(DebuffType.SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Tank.java", "Secondary");
+					inflictDebuff(DebuffType.SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
+				})
+				.setAbilityUsing(() -> {
+					// Update secondary slash hitbox
+					slashHitbox.setY(getY() + getHeight() / 2);
+					slashHitbox.setWidth(getHeight());
+					slashHitbox.setHeight(getWidth() / 2);
+					switch (getSpriteDirection()) {
+						case RIGHT:
+							slashHitbox.setX(getX() + getWidth() / 2);
+							break;
+						case LEFT:
+							slashHitbox.setX(getX() - getHeight() + getWidth() / 2);
+							break;
 					}
 				})
-				.setAbilityUsing(new AbilityCallback() {
-					@Override
-					public void call() {
-						// Update secondary slash hitbox
-						slashHitbox.setY(getY() + getHeight() / 2);
-						slashHitbox.setWidth(getHeight());
-						slashHitbox.setHeight(getWidth() / 2);
-						switch (getSpriteDirection()) {
-							case RIGHT:
-								slashHitbox.setX(getX() + getWidth() / 2);
-								break;
-							case LEFT:
-								slashHitbox.setX(getX() - getHeight() + getWidth() / 2);
-								break;
-						}
-					}
-				})
-				.addAbilityTask(new AbilityCallback() {
-					@Override
-					public void call() {
-						Boss1 boss = getGame().getBoss();
-						if (slashHitbox.hitTest(boss.getHitbox())) {
-							Gdx.app.log("Tank.java", "Boss was hit!");
-							boss.damage(SECONDARY_DAMAGE);
-						}
+				.addAbilityTask(() -> {
+					Boss1 boss = getGame().getBoss();
+					if (slashHitbox.hitTest(boss.getHitbox())) {
+						Gdx.app.log("Tank.java", "Boss was hit!");
+						boss.damage(SECONDARY_DAMAGE);
 					}
 				}, SECONDARY_ANIMATION_DURATION / 2);
 	}
@@ -139,12 +123,9 @@ public class Tank extends Character {
 	@Override
 	protected Ability initTertiary() {
 		return new Ability(TERTIARY_ANIMATION_DURATION, TERTIARY_COOLDOWN)
-				.setAbilityBegin(new AbilityCallback() {
-					@Override
-					public void call() {
-						Gdx.app.log("Tank.java", "Tertiary");
-						inflictDebuff(DebuffType.SLOW, TERTIARY_SLOW_MODIFIER, TERTIARY_DEBUFF_DURATION);
-					}
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Tank.java", "Tertiary");
+					inflictDebuff(DebuffType.SLOW, TERTIARY_SLOW_MODIFIER, TERTIARY_DEBUFF_DURATION);
 				});
 	}
 
