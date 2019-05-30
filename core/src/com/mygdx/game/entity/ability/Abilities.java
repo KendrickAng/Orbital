@@ -1,9 +1,9 @@
-package com.mygdx.game.ability;
+package com.mygdx.game.entity.ability;
 
 import com.badlogic.gdx.utils.Timer;
+import com.mygdx.game.entity.state.StateListener;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -11,26 +11,23 @@ import java.util.Map;
  * What abilities an entity can use.
  * This class will also mutate the states of the entity accordingly.
  */
-public class Abilities<T> {
+public class Abilities<S> implements StateListener<S> {
 	private Timer timer;
 
-	private HashSet<T> states;
-
 	// Abilities defined
-	private HashMap<T, Ability> abilities;
+	private HashMap<S, Ability> abilities;
 
 	// Abilities that can be used
-	private HashMap<T, Ability> usable;
+	private HashMap<S, Ability> usable;
 
 	// Abilities that are currently active
-	private HashMap<T, Timer.Task> using;
+	private HashMap<S, Timer.Task> using;
 
 	// Abilities that cannot be used and need to be checked if they can be reset
-	private HashMap<T, Timer.Task> unusable;
+	private HashMap<S, Timer.Task> unusable;
 
-	public Abilities(HashSet<T> states) {
+	public Abilities() {
 		this.timer = new Timer();
-		this.states = states;
 
 		abilities = new HashMap<>();
 		usable = new HashMap<>();
@@ -38,15 +35,15 @@ public class Abilities<T> {
 		unusable = new HashMap<>();
 	}
 
-	/* Add an ability */
-	public Abilities<T> add(T state, Ability ability) {
+	// Map a state to an ability
+	public Abilities<S> map(S state, Ability ability) {
 		abilities.put(state, ability);
 		usable.put(state, ability);
 		return this;
 	}
 
 	/* Use an ability */
-	public void use(final T state) {
+	public void use(final S state) {
 		final Ability ability = usable.get(state);
 
 		// Check if ability can be used
@@ -66,7 +63,7 @@ public class Abilities<T> {
 
 					// Call ability's end callback
 					ability.end();
-					states.remove(state);
+//					states.remove(state);
 
 					// Ability ended, remove ability from using
 					using.remove(state);
@@ -88,7 +85,7 @@ public class Abilities<T> {
 
 			// Call ability's begin callback
 			ability.begin();
-			states.add(state);
+//			states.add(state);
 
 			// Ability used, remove ability from usable
 			usable.remove(state);
@@ -101,16 +98,16 @@ public class Abilities<T> {
 	/* Update */
 	public void update() {
 		// Execute "using" abilities callback
-		for (Map.Entry<T, Timer.Task> entry : using.entrySet()) {
+		for (Map.Entry<S, Timer.Task> entry : using.entrySet()) {
 			Ability ability = abilities.get(entry.getKey());
 			ability.using();
 		}
 
 		// Check if unusables can be reset
-		Iterator<Map.Entry<T, Timer.Task>> iterator = unusable.entrySet().iterator();
+		Iterator<Map.Entry<S, Timer.Task>> iterator = unusable.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Map.Entry<T, Timer.Task> entry = iterator.next();
-			T state = entry.getKey();
+			Map.Entry<S, Timer.Task> entry = iterator.next();
+			S state = entry.getKey();
 			Timer.Task task = entry.getValue();
 			Ability ability = abilities.get(state);
 
@@ -129,6 +126,17 @@ public class Abilities<T> {
 				iterator.remove();
 			}
 		}
+	}
+
+	// TODO: Implement
+	@Override
+	public void stateAdd(S state) {
+
+	}
+
+	@Override
+	public void stateRemove(S state) {
+
 	}
 
 	// TODO: Reset abilities when switching characters

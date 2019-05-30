@@ -1,31 +1,34 @@
 package com.mygdx.game.entity;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
-import com.mygdx.game.ability.Ability;
-import com.mygdx.game.animation.Animations;
-import com.mygdx.game.animation.AnimationsGroup;
+import com.mygdx.game.entity.ability.Ability;
+import com.mygdx.game.entity.animation.Animations;
+import com.mygdx.game.entity.animation.AnimationsGroup;
 import com.mygdx.game.entity.debuff.DebuffType;
-import com.mygdx.game.shape.Rectangle;
+import com.mygdx.game.entity.part.Boss1Parts;
+import com.mygdx.game.entity.part.TankParts;
+import com.mygdx.game.entity.state.CharacterStates;
 
-import static com.mygdx.game.entity.Character.States.PRIMARY;
-import static com.mygdx.game.entity.Character.States.SECONDARY;
-import static com.mygdx.game.entity.Character.States.STANDING;
-import static com.mygdx.game.entity.Character.States.TERTIARY;
-import static com.mygdx.game.entity.Character.States.WALKING;
-import static com.mygdx.game.entity.Tank.Parts.BODY;
-import static com.mygdx.game.entity.Tank.Parts.LEFT_ARM;
-import static com.mygdx.game.entity.Tank.Parts.LEFT_LEG;
-import static com.mygdx.game.entity.Tank.Parts.RIGHT_ARM;
-import static com.mygdx.game.entity.Tank.Parts.RIGHT_LEG;
-import static com.mygdx.game.entity.Tank.Parts.SHIELD;
-import static com.mygdx.game.entity.Tank.Parts.WEAPON;
+import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
+import static com.mygdx.game.entity.part.TankParts.BODY;
+import static com.mygdx.game.entity.part.TankParts.LEFT_ARM;
+import static com.mygdx.game.entity.part.TankParts.LEFT_LEG;
+import static com.mygdx.game.entity.part.TankParts.RIGHT_ARM;
+import static com.mygdx.game.entity.part.TankParts.RIGHT_LEG;
+import static com.mygdx.game.entity.part.TankParts.SHIELD;
+import static com.mygdx.game.entity.part.TankParts.WEAPON;
+import static com.mygdx.game.entity.state.CharacterStates.PRIMARY;
+import static com.mygdx.game.entity.state.CharacterStates.SECONDARY;
+import static com.mygdx.game.entity.state.CharacterStates.STANDING;
+import static com.mygdx.game.entity.state.CharacterStates.TERTIARY;
+import static com.mygdx.game.entity.state.CharacterStates.WALKING;
 
 /**
  * Represents the Tank playable character.
  */
-public class Tank extends Character<Tank.Parts> {
+public class Tank extends Character<TankParts> {
 	private static final float HEALTH = 100;
 
 	private static final float SECONDARY_DAMAGE = 10;
@@ -48,21 +51,8 @@ public class Tank extends Character<Tank.Parts> {
 	private static final float SECONDARY_ANIMATION_DURATION = 0.5f;
 	private static final float TERTIARY_ANIMATION_DURATION = 0.5f;
 
-	/* Hitboxes */
-	private Rectangle blockHitbox;
-	private Rectangle slashHitbox;
-
-	/*
-	 Order is important! Last enum will be rendered on top.
-	*/
-	public enum Parts {
-		SHIELD, LEFT_ARM, LEFT_LEG, BODY, RIGHT_LEG, WEAPON, RIGHT_ARM
-	}
-
 	public Tank(GameScreen game) {
 		super(game);
-		blockHitbox = new Rectangle();
-		slashHitbox = new Rectangle();
 	}
 
 	@Override
@@ -77,20 +67,7 @@ public class Tank extends Character<Tank.Parts> {
 				.setAbilityBegin(() -> {
 					Gdx.app.log("Tank.java", "Primary");
 					inflictDebuff(DebuffType.SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
-				})
-				.setAbilityUsing(() -> {
-					// Update primary block hitbox
-					float SHIELD_OFFSET = getHeight() / 10;
-					blockHitbox.setX(getX() - SHIELD_OFFSET);
-					blockHitbox.setY(getY() - SHIELD_OFFSET);
-					blockHitbox.setWidth(getWidth() + 2 * SHIELD_OFFSET);
-					blockHitbox.setHeight(getHeight() + 2 * SHIELD_OFFSET);
 				});
-	}
-
-	@Override
-	public void isPrimaryDebug(ShapeRenderer shapeRenderer) {
-		blockHitbox.renderDebug(shapeRenderer);
 	}
 
 	/* Slash */
@@ -100,33 +77,13 @@ public class Tank extends Character<Tank.Parts> {
 				.setAbilityBegin(() -> {
 					Gdx.app.log("Tank.java", "Secondary");
 					inflictDebuff(DebuffType.SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
-				})
-				.setAbilityUsing(() -> {
-					// Update secondary slash hitbox
-					slashHitbox.setY(getY() + getHeight() / 2);
-					slashHitbox.setWidth(getHeight());
-					slashHitbox.setHeight(getWidth() / 2);
-					switch (getSpriteDirection()) {
-						case RIGHT:
-							slashHitbox.setX(getX() + getWidth() / 2);
-							break;
-						case LEFT:
-							slashHitbox.setX(getX() - getHeight() + getWidth() / 2);
-							break;
-					}
-				})
-				.addAbilityTask(() -> {
+				}).addAbilityTask(() -> {
 					Boss1 boss = getGame().getBoss();
-					if (slashHitbox.hitTest(boss.getHitbox())) {
+					if (getHitbox(WEAPON).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
 						Gdx.app.log("Tank.java", "Boss was hit!");
 						boss.damage(SECONDARY_DAMAGE);
 					}
 				}, SECONDARY_ANIMATION_DURATION / 2);
-	}
-
-	@Override
-	public void isSecondaryDebug(ShapeRenderer shapeRenderer) {
-		slashHitbox.renderDebug(shapeRenderer);
 	}
 
 	/* Fortress */
@@ -139,15 +96,11 @@ public class Tank extends Character<Tank.Parts> {
 				});
 	}
 
-	@Override
-	public void isTertiaryDebug(ShapeRenderer shapeRenderer) {
-		shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
-	}
-
 	/* Animations */
+
 	@Override
-	protected Animations<States, Parts> animations() {
-		AnimationsGroup<Parts> standing = new AnimationsGroup<Parts>("Tank/Standing")
+	protected void defineAnimations(Animations<CharacterStates, TankParts> animations) {
+		AnimationsGroup<TankParts> standing = new AnimationsGroup<TankParts>("Tank/Standing", 1)
 				.add(SHIELD, "Shield")
 				.add(LEFT_ARM, "LeftArm")
 				.add(LEFT_LEG, "LeftLeg")
@@ -157,7 +110,7 @@ public class Tank extends Character<Tank.Parts> {
 				.add(RIGHT_ARM, "RightArm")
 				.load();
 
-		AnimationsGroup<Parts> walking = new AnimationsGroup<Parts>("Tank/Standing")
+		AnimationsGroup<TankParts> walking = new AnimationsGroup<TankParts>("Tank/Walking", 1)
 				.add(SHIELD, "Shield")
 				.add(LEFT_ARM, "LeftArm")
 				.add(LEFT_LEG, "LeftLeg")
@@ -167,29 +120,44 @@ public class Tank extends Character<Tank.Parts> {
 				.add(RIGHT_ARM, "RightArm")
 				.load();
 
-		AnimationsGroup<Parts> primary = new AnimationsGroup<Parts>("Tank/Primary")
+		AnimationsGroup<TankParts> primary = new AnimationsGroup<TankParts>("Tank/Primary", 2)
 				.add(BODY, "Body")
 				.load();
 
-		AnimationsGroup<Parts> secondary = new AnimationsGroup<Parts>("Tank/Secondary")
+		AnimationsGroup<TankParts> secondary = new AnimationsGroup<TankParts>("Tank/Secondary", 2)
+				.add(SHIELD, "Shield")
+				.add(LEFT_ARM, "LeftArm")
+				.add(LEFT_LEG, "LeftLeg")
+				.add(BODY, "Body")
+				.add(RIGHT_LEG, "RightLeg")
+				.add(WEAPON, "Weapon")
+				.add(RIGHT_ARM, "RightArm")
+				.load();
+
+		AnimationsGroup<TankParts> tertiary = new AnimationsGroup<TankParts>("Tank/Tertiary", 2)
 				.add(BODY, "Body")
 				.load();
 
-		AnimationsGroup<Parts> tertiary = new AnimationsGroup<Parts>("Tank/Tertiary")
-				.add(BODY, "Body")
-				.load();
-
-		return new Animations<States, Parts>(getStates())
-				.add(STANDING, standing, 1)
-				.add(WALKING, walking, 1)
-				.add(PRIMARY, primary, 2)
-				.add(SECONDARY, secondary, 2)
-				.add(TERTIARY, tertiary, 2)
-				.done();
+		animations.map(STANDING, standing)
+				.map(WALKING, walking)
+				.map(PRIMARY, primary)
+				.map(SECONDARY, secondary)
+				.map(TERTIARY, tertiary);
 	}
 
+
+	/* Update */
 	@Override
-	protected Rectangle hitbox() {
-		return getAnimations().getHitbox(BODY);
+	protected void updatePosition(Vector2 position) {
+		float x = getHitbox(BODY).getX();
+		float width = getHitbox(BODY).getWidth();
+		// TODO: Fix
+		if (position.x < -x) {
+			position.x = -x;
+		}
+
+		if (position.x > GAME_WIDTH - x - width) {
+			position.x = GAME_WIDTH - x - width;
+		}
 	}
 }

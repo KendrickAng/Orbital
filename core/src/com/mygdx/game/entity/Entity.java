@@ -1,64 +1,62 @@
 package com.mygdx.game.entity;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
-import com.mygdx.game.animation.Animations;
+import com.mygdx.game.entity.animation.Animations;
+import com.mygdx.game.entity.part.Parts;
+import com.mygdx.game.entity.state.States;
 import com.mygdx.game.shape.Rectangle;
-
-import java.util.HashSet;
 
 /**
  * Represents all renderable, interactive objects such as throwing stars/falling rocks.
  * LivingEntity represents Characters, Bosses.
  */
-public abstract class Entity<T extends Enum, R extends Enum> {
+public abstract class Entity<S extends Enum, P extends Enum> {
 	public static final float GRAVITY = -3;
 
 	private Vector2 position;
 	private Vector2 velocity;
-	private float width;
-	private float height;
 
 	private boolean visible;
 	private boolean dispose;
 
 	private GameScreen game;
 	private Direction spriteDirection;
-	private Rectangle hitbox;
 
-	private HashSet<T> states;
-	private Animations<T, R> animations;
+	private States<S> states;
+	private Parts<P> parts;
+	private Animations<S, P> animations;
 
 	public Entity(GameScreen game) {
 		this.position = new Vector2();
 		this.velocity = new Vector2();
 
+		this.game = game;
 		this.visible = true;
 		this.spriteDirection = Direction.RIGHT;
 
-		this.game = game;
-		this.states = new HashSet<>();
-		states(states);
-		this.animations = animations();
-		updateHitbox();
+		this.states = new States<>();
+		this.parts = new Parts<>(position);
+		this.animations = new Animations<>(parts);
+		this.states.addListener(animations);
+
+		defineAnimations(animations);
+		defineStates(states);
 
 		game.getEntityManager().add(this);
 	}
 
-	protected abstract void states(HashSet<T> states);
+	protected abstract void defineStates(States<S> states);
 
-	protected abstract Animations<T, R> animations();
+	protected abstract void defineAnimations(Animations<S, P> animations);
 
 	protected abstract void update();
 
 	protected abstract void updatePosition(Vector2 position);
 
 	protected abstract void updateVelocity(Vector2 position, Vector2 velocity);
-
-	protected abstract Rectangle hitbox();
 
 	public void render(SpriteBatch batch) {
 		/* Physics */
@@ -68,31 +66,23 @@ public abstract class Entity<T extends Enum, R extends Enum> {
 		position.y += velocity.y;
 		updatePosition(position);
 
-		/* Animations */
-		updateHitbox();
-		animations.setPosition(position);
+		/* Render */
 		switch (spriteDirection) {
 			case RIGHT:
-				animations.setFlip(false, false);
+				parts.setFlip(false, false);
 				break;
 			case LEFT:
-				animations.setFlip(true, false);
+				parts.setFlip(true, false);
 				break;
 		}
-		animations.render(batch);
+		parts.render(batch);
 
 		// General updates
 		update();
 	}
 
-	private void updateHitbox() {
-		hitbox = hitbox();
-		width = hitbox.getWidth();
-		height = hitbox.getHeight();
-	}
-
 	public void renderDebug(ShapeRenderer shapeRenderer) {
-		animations.renderDebug(shapeRenderer);
+		parts.renderDebug(shapeRenderer);
 	}
 
 	public void dispose() {
@@ -104,12 +94,12 @@ public abstract class Entity<T extends Enum, R extends Enum> {
 		this.visible = visible;
 	}
 
-	public void addState(T state) {
-		states.add(state);
+	public void addState(S state) {
+		states.addState(state);
 	}
 
-	public void removeState(T state) {
-		states.remove(state);
+	public void removeState(S state) {
+		states.removeState(state);
 	}
 
 	public void setPosition(float x, float y) {
@@ -145,24 +135,8 @@ public abstract class Entity<T extends Enum, R extends Enum> {
 		return dispose;
 	}
 
-	public float getX() {
-		return position.x;
-	}
-
-	public float getY() {
-		return position.y;
-	}
-
-	public float getWidth() {
-		return this.width;
-	}
-
-	public float getHeight() {
-		return this.height;
-	}
-
-	public Rectangle getHitbox() {
-		return hitbox;
+	public Rectangle getHitbox(P part) {
+		return parts.getHitbox(part);
 	}
 
 	public Vector2 getPosition() {
@@ -177,11 +151,7 @@ public abstract class Entity<T extends Enum, R extends Enum> {
 		return spriteDirection;
 	}
 
-	public HashSet<T> getStates() {
-		return states;
-	}
-
-	public Animations<T, R> getAnimations() {
+	public Animations<S, P> getAnimations() {
 		return animations;
 	}
 

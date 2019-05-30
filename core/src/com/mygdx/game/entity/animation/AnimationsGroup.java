@@ -1,4 +1,4 @@
-package com.mygdx.game.animation;
+package com.mygdx.game.entity.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -6,30 +6,32 @@ import com.badlogic.gdx.graphics.Pixmap;
 
 import java.util.HashMap;
 
-public class AnimationsGroup<T> {
+public class AnimationsGroup<P> implements Comparable<AnimationsGroup> {
+	private int priority;
 	private String directory;
-	private HashMap<String, T> parts;
-	private HashMap<T, Animation> animations;
+	private HashMap<String, P> parts;
+	private HashMap<P, Animation> animations;
 
-	public AnimationsGroup(String directory) {
+	public AnimationsGroup(String directory, int priority) {
+		this.priority = priority;
 		this.directory = directory;
 		this.parts = new HashMap<>();
 		this.animations = new HashMap<>();
 	}
 
-	public AnimationsGroup<T> add(T part, String filename) {
+	public AnimationsGroup<P> add(P part, String filename) {
 		parts.put(filename, part);
 		animations.put(part, new Animation());
 		return this;
 	}
 
-	public AnimationsGroup<T> load() {
+	public AnimationsGroup<P> load() {
 		FileHandle[] files = Gdx.files.internal(directory).list();
 		for (FileHandle file : files) {
 			String[] n = file.nameWithoutExtension().split("_");
 			int id = Integer.parseInt(n[0]);
 			String name = n[1];
-			T part = parts.get(name);
+			P part = parts.get(name);
 			if (part != null) {
 				animations.get(part).put(id, new Pixmap(file));
 			}
@@ -37,7 +39,12 @@ public class AnimationsGroup<T> {
 		return this;
 	}
 
-	public HashMap<T, Animation> getAnimations() {
+	public HashMap<P, Animation> getAnimations() {
 		return animations;
+	}
+
+	@Override
+	public int compareTo(AnimationsGroup o) {
+		return o.priority - priority;
 	}
 }

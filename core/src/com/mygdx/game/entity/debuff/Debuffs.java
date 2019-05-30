@@ -28,7 +28,7 @@ public class Debuffs<T> {
 		inflicted = new HashMap<>();
 	}
 
-	public Debuffs<T> define(T type, Debuff debuff) {
+	public Debuffs<T> map(T type, Debuff debuff) {
 		debuffs.put(type, debuff);
 		inflicted.put(type, new HashSet<>());
 		return this;

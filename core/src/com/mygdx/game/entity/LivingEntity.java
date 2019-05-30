@@ -2,7 +2,7 @@ package com.mygdx.game.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.GameScreen;
-import com.mygdx.game.ability.Abilities;
+import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 
@@ -30,15 +30,18 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 		this.maxHealth = health();
 
 		this.inputDirection = Direction.NONE;
-		this.abilities = abilities();
-		this.debuffs = debuffs();
+		this.abilities = new Abilities<>();
+		this.debuffs = new Debuffs<>();
+
+		defineAbilities(abilities);
+		defineDebuffs(debuffs);
 	}
 
 	protected abstract float health();
 
-	protected abstract Abilities<T> abilities();
+	protected abstract void defineAbilities(Abilities<T> abilities);
 
-	protected abstract Debuffs<DebuffType> debuffs();
+	protected abstract void defineDebuffs(Debuffs<DebuffType> debuffs);
 
 	protected abstract void updateDirection(Direction inputDirection);
 

@@ -1,22 +1,25 @@
 package com.mygdx.game.entity;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
-import com.mygdx.game.ability.Ability;
-import com.mygdx.game.animation.Animations;
-import com.mygdx.game.animation.AnimationsGroup;
+import com.mygdx.game.entity.ability.Ability;
+import com.mygdx.game.entity.animation.Animations;
+import com.mygdx.game.entity.animation.AnimationsGroup;
 import com.mygdx.game.entity.debuff.DebuffType;
+import com.mygdx.game.entity.part.AssassinParts;
+import com.mygdx.game.entity.state.CharacterStates;
 import com.mygdx.game.shape.Rectangle;
 
-import static com.mygdx.game.entity.Assassin.Parts.BODY;
-import static com.mygdx.game.entity.Character.States.PRIMARY;
-import static com.mygdx.game.entity.Character.States.SECONDARY;
-import static com.mygdx.game.entity.Character.States.STANDING;
-import static com.mygdx.game.entity.Character.States.TERTIARY;
-import static com.mygdx.game.entity.Character.States.WALKING;
+import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
+import static com.mygdx.game.entity.part.AssassinParts.BODY;
+import static com.mygdx.game.entity.state.CharacterStates.PRIMARY;
+import static com.mygdx.game.entity.state.CharacterStates.SECONDARY;
+import static com.mygdx.game.entity.state.CharacterStates.STANDING;
+import static com.mygdx.game.entity.state.CharacterStates.TERTIARY;
+import static com.mygdx.game.entity.state.CharacterStates.WALKING;
 
-public class Assassin extends Character<Assassin.Parts> {
+public class Assassin extends Character<AssassinParts> {
 	private static final float HEALTH = 10;
 
 	// Skill cooldown in seconds.
@@ -34,10 +37,6 @@ public class Assassin extends Character<Assassin.Parts> {
 	private static final float DODGE_DIAGONAL_SPEED = 15;
 
 	private Direction dodgeDirection;
-
-	public enum Parts {
-		BODY
-	}
 
 	public Assassin(GameScreen game) {
 		super(game);
@@ -84,11 +83,6 @@ public class Assassin extends Character<Assassin.Parts> {
 				.setResetCondition(isOnCooldown -> !isFalling());
 	}
 
-	@Override
-	public void isPrimaryDebug(ShapeRenderer shapeRenderer) {
-
-	}
-
 	/* Stars */
 	@Override
 	protected Ability initSecondary() {
@@ -96,8 +90,9 @@ public class Assassin extends Character<Assassin.Parts> {
 				.setAbilityBegin(() -> {
 					Gdx.app.log("Assassin.java", "Secondary");
 					Entity shuriken = new Shuriken(getGame());
-					float x = getX() + getWidth() / 2;
-					float y = getY() + getHeight() / 2;
+					Rectangle body = getHitbox(BODY);
+					float x = body.getX() + body.getWidth() / 2;
+					float y = body.getY() + body.getHeight() / 2;
 					int x_velocity = 0;
 					switch (getSpriteDirection()) {
 						case RIGHT:
@@ -112,11 +107,6 @@ public class Assassin extends Character<Assassin.Parts> {
 				});
 	}
 
-	@Override
-	public void isSecondaryDebug(ShapeRenderer shapeRenderer) {
-
-	}
-
 	/* Cleanse */
 	@Override
 	protected Ability initTertiary() {
@@ -124,45 +114,46 @@ public class Assassin extends Character<Assassin.Parts> {
 				.setAbilityBegin(() -> Gdx.app.log("Assassin.java", "Tertiary"));
 	}
 
-	@Override
-	public void isTertiaryDebug(ShapeRenderer shapeRenderer) {
-		shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
-	}
-
 	/* Animations */
 	@Override
-	protected Animations<States, Parts> animations() {
-		AnimationsGroup<Parts> standing = new AnimationsGroup<Parts>("Assassin/Standing")
+	protected void defineAnimations(Animations<CharacterStates, AssassinParts> animations) {
+		AnimationsGroup<AssassinParts> standing = new AnimationsGroup<AssassinParts>("Assassin/Standing", 1)
 				.add(BODY, "Body")
 				.load();
 
-		AnimationsGroup<Parts> walking = new AnimationsGroup<Parts>("Assassin/Standing")
+		AnimationsGroup<AssassinParts> walking = new AnimationsGroup<AssassinParts>("Assassin/Standing", 1)
 				.add(BODY, "Body")
 				.load();
 
-		AnimationsGroup<Parts> primary = new AnimationsGroup<Parts>("Assassin/Primary")
+		AnimationsGroup<AssassinParts> primary = new AnimationsGroup<AssassinParts>("Assassin/Primary", 2)
 				.add(BODY, "Body")
 				.load();
 
-		AnimationsGroup<Parts> secondary = new AnimationsGroup<Parts>("Assassin/Secondary")
+		AnimationsGroup<AssassinParts> secondary = new AnimationsGroup<AssassinParts>("Assassin/Secondary", 2)
 				.add(BODY, "Body")
 				.load();
 
-		AnimationsGroup<Parts> tertiary = new AnimationsGroup<Parts>("Assassin/Tertiary")
+		AnimationsGroup<AssassinParts> tertiary = new AnimationsGroup<AssassinParts>("Assassin/Tertiary", 2)
 				.add(BODY, "Body")
 				.load();
 
-		return new Animations<States, Parts>(getStates())
-				.add(STANDING, standing, 1)
-				.add(WALKING, walking, 1)
-				.add(PRIMARY, primary, 2)
-				.add(SECONDARY, secondary, 2)
-				.add(TERTIARY, tertiary, 2)
-				.done();
+		animations.map(STANDING, standing)
+				.map(WALKING, walking)
+				.map(PRIMARY, primary)
+				.map(SECONDARY, secondary)
+				.map(TERTIARY, tertiary);
 	}
 
 	@Override
-	protected Rectangle hitbox() {
-		return getAnimations().getHitbox(BODY);
+	protected void updatePosition(Vector2 position) {
+		float x = getHitbox(BODY).getX();
+		float width = getHitbox(BODY).getWidth();
+		if (position.x < -x) {
+			position.x = -x;
+		}
+
+		if (position.x > GAME_WIDTH - x - width) {
+			position.x = GAME_WIDTH - x - width;
+		}
 	}
 }

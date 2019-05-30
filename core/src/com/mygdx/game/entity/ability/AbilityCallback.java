@@ -1,4 +1,4 @@
-package com.mygdx.game.ability;
+package com.mygdx.game.entity.ability;
 
 /**
  * Ability callback after it is finished.

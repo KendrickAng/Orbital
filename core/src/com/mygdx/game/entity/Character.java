@@ -1,35 +1,28 @@
 package com.mygdx.game.entity;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
-import com.mygdx.game.ability.Abilities;
-import com.mygdx.game.ability.Ability;
+import com.mygdx.game.entity.ability.Abilities;
+import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
+import com.mygdx.game.entity.state.CharacterStates;
+import com.mygdx.game.entity.state.States;
 
-import java.util.HashSet;
-
-import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
-import static com.mygdx.game.entity.Character.States.PRIMARY;
-import static com.mygdx.game.entity.Character.States.SECONDARY;
-import static com.mygdx.game.entity.Character.States.STANDING;
-import static com.mygdx.game.entity.Character.States.TERTIARY;
-import static com.mygdx.game.entity.Character.States.WALKING;
 import static com.mygdx.game.entity.debuff.DebuffType.IGNORE_FRICTION;
 import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
+import static com.mygdx.game.entity.state.CharacterStates.PRIMARY;
+import static com.mygdx.game.entity.state.CharacterStates.SECONDARY;
+import static com.mygdx.game.entity.state.CharacterStates.STANDING;
+import static com.mygdx.game.entity.state.CharacterStates.TERTIARY;
+import static com.mygdx.game.entity.state.CharacterStates.WALKING;
 
 /**
  * Character is a LivingEntity with 3 abilities: Primary, Secondary, Tertiary.
  */
-public abstract class Character<R extends Enum> extends LivingEntity<Character.States, R> {
-	public enum States {
-		STANDING, WALKING,
-		PRIMARY, SECONDARY, TERTIARY
-	}
-
+public abstract class Character<R extends Enum> extends LivingEntity<CharacterStates, R> {
 	private static final float MOVESPEED = 2f;
 
 	// Movespeed is multiplied by this constant in air
@@ -51,9 +44,10 @@ public abstract class Character<R extends Enum> extends LivingEntity<Character.S
 		setPosition(0, MAP_HEIGHT);
 	}
 
+
 	@Override
-	protected void states(HashSet<States> states) {
-		states.add(STANDING);
+	protected void defineStates(States<CharacterStates> states) {
+		states.addState(STANDING);
 	}
 
 	/* Abilities */
@@ -64,11 +58,10 @@ public abstract class Character<R extends Enum> extends LivingEntity<Character.S
 	protected abstract Ability initTertiary();
 
 	@Override
-	protected Abilities<States> abilities() {
-		return new Abilities<>(getStates())
-				.add(PRIMARY, initPrimary())
-				.add(SECONDARY, initSecondary())
-				.add(TERTIARY, initTertiary());
+	protected void defineAbilities(Abilities<CharacterStates> abilities) {
+		abilities.map(PRIMARY, initPrimary())
+				.map(SECONDARY, initSecondary())
+				.map(TERTIARY, initTertiary());
 	}
 
 	public void usePrimary() {
@@ -86,7 +79,7 @@ public abstract class Character<R extends Enum> extends LivingEntity<Character.S
 	/* Debuffs */
 
 	@Override
-	protected Debuffs<DebuffType> debuffs() {
+	protected void defineDebuffs(Debuffs<DebuffType> debuffs) {
 		Debuff slow = new Debuff()
 				.setApply(modifier -> setMovespeed(MOVESPEED * (1 - modifier)))
 				.setEnd(() -> setMovespeed(MOVESPEED));
@@ -95,21 +88,8 @@ public abstract class Character<R extends Enum> extends LivingEntity<Character.S
 				.setBegin(() -> setFriction(1))
 				.setEnd(() -> setFriction(FRICTION));
 
-		return new Debuffs<DebuffType>()
-				.define(SLOW, slow)
-				.define(IGNORE_FRICTION, ignoreFriction);
-	}
-
-	/* Update */
-	@Override
-	protected void updatePosition(Vector2 position) {
-		if (position.x < 0) {
-			position.x = 0;
-		}
-
-		if (position.x > GAME_WIDTH - getWidth()) {
-			position.x = GAME_WIDTH - getWidth();
-		}
+		debuffs.map(SLOW, slow)
+				.map(IGNORE_FRICTION, ignoreFriction);
 	}
 
 	@Override
@@ -164,29 +144,6 @@ public abstract class Character<R extends Enum> extends LivingEntity<Character.S
 					break;
 			}
 			velocity.x *= friction;
-		}
-	}
-
-	/* Debug rendering. */
-	protected abstract void isPrimaryDebug(ShapeRenderer shapeRenderer);
-
-	protected abstract void isSecondaryDebug(ShapeRenderer shapeRenderer);
-
-	protected abstract void isTertiaryDebug(ShapeRenderer shapeRenderer);
-
-	@Override
-	public void renderDebug(ShapeRenderer shapeRenderer) {
-		getAnimations().renderDebug(shapeRenderer);
-		if (getStates().contains(PRIMARY)) {
-			isPrimaryDebug(shapeRenderer);
-		}
-
-		if (getStates().contains(SECONDARY)) {
-			isSecondaryDebug(shapeRenderer);
-		}
-
-		if (getStates().contains(TERTIARY)) {
-			isTertiaryDebug(shapeRenderer);
 		}
 	}
 

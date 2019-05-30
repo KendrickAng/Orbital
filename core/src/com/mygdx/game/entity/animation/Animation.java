@@ -1,4 +1,4 @@
-package com.mygdx.game.animation;
+package com.mygdx.game.entity.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
