@@ -11,6 +11,9 @@ import com.mygdx.game.entity.part.Boss1Parts;
 import com.mygdx.game.entity.state.Boss1States;
 import com.mygdx.game.entity.state.States;
 
+import java.util.Collections;
+import java.util.HashMap;
+
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.part.Boss1Parts.BODY;
@@ -47,11 +50,12 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	/* Animations */
 	@Override
 	protected void defineAnimations(Animations<Boss1States, Boss1Parts> animations) {
-		AnimationsGroup<Boss1Parts> standing = new AnimationsGroup<Boss1Parts>("Boss1/Standing", 1)
-				.add(BODY, "Body")
-				.load();
+		HashMap<String, Boss1Parts> filenames = new HashMap<>();
+		filenames.put("Body", BODY);
 
-		animations.map(STANDING, standing);
+		AnimationsGroup<Boss1Parts> standing = new AnimationsGroup<>("Boss1/Standing", filenames);
+
+		animations.map(Collections.singleton(STANDING), standing);
 	}
 
 	/* Update */

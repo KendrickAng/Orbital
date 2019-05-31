@@ -10,6 +10,9 @@ import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.part.AssassinParts;
 import com.mygdx.game.entity.state.CharacterStates;
 
+import java.util.Collections;
+import java.util.HashMap;
+
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.entity.part.AssassinParts.BODY;
 import static com.mygdx.game.entity.state.CharacterStates.STANDING;
@@ -112,11 +115,12 @@ public class Assassin extends Character<AssassinParts> {
 	/* Animations */
 	@Override
 	protected void defineAnimations(Animations<CharacterStates, AssassinParts> animations) {
-		AnimationsGroup<AssassinParts> standing = new AnimationsGroup<AssassinParts>("Assassin/Standing", 1)
-				.add(BODY, "Body")
-				.load();
+		HashMap<String, AssassinParts> filenames = new HashMap<>();
+		filenames.put("Body", BODY);
 
-		animations.map(STANDING, standing);
+		AnimationsGroup<AssassinParts> standing = new AnimationsGroup<>("Assassin/Standing", filenames);
+
+		animations.map(Collections.singleton(STANDING), standing);
 	}
 
 	@Override

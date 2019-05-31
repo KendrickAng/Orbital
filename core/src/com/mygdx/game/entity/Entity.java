@@ -27,7 +27,6 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 	private States<S> states;
 	private Parts<P> parts;
-	private Animations<S, P> animations;
 
 	public Entity(GameScreen game) {
 		this.position = new Vector2();
@@ -39,9 +38,9 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 		this.states = new States<>();
 		this.parts = new Parts<>(position);
-		this.animations = new Animations<>(parts);
-		this.states.addListener(animations);
+		Animations<S, P> animations = new Animations<>(parts);
 
+		addStateListener(animations);
 		defineAnimations(animations);
 		defineStates(states);
 

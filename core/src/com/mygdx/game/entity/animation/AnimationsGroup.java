@@ -3,48 +3,48 @@ package com.mygdx.game.entity.animation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
-public class AnimationsGroup<P> implements Comparable<AnimationsGroup> {
-	private int priority;
-	private String directory;
-	private HashMap<String, P> parts;
-	private HashMap<P, Animation> animations;
+public class AnimationsGroup<P extends Enum> {
+	private HashMap<P, Animation> parts;
+	private TreeMap<P, Animation> animations;
 
-	public AnimationsGroup(String directory, int priority) {
-		this.priority = priority;
-		this.directory = directory;
-		this.parts = new HashMap<>();
-		this.animations = new HashMap<>();
-	}
+	public AnimationsGroup(String directory, HashMap<String, P> filenames) {
+		parts = new HashMap<>();
+		animations = new TreeMap<>();
 
-	public AnimationsGroup<P> add(P part, String filename) {
-		parts.put(filename, part);
-		animations.put(part, new Animation());
-		return this;
-	}
+		for (P part : filenames.values()) {
+			Animation animation = new Animation();
+			parts.put(part, animation);
+			animations.put(part, animation);
+		}
 
-	public AnimationsGroup<P> load() {
 		FileHandle[] files = Gdx.files.internal(directory).list();
 		for (FileHandle file : files) {
 			String[] n = file.nameWithoutExtension().split("_");
 			int frame = Integer.parseInt(n[0]);
 			String name = n[1];
-			P part = parts.get(name);
-			if (part != null) {
-				animations.get(part).put(frame, new Pixmap(file));
-			}
+
+			P part = filenames.get(name);
+			Animation animation = parts.get(part);
+			animation.put(frame, new Pixmap(file));
 		}
-		return this;
 	}
 
-	public HashMap<P, Animation> getAnimations() {
+	public void setPosition(Vector2 position) {
+		for (Animation animation : parts.values()) {
+			animation.setPosition(position);
+		}
+	}
+
+	public HashMap<P, Animation> getParts() {
+		return parts;
+	}
+
+	public TreeMap<P, Animation> getAnimations() {
 		return animations;
-	}
-
-	@Override
-	public int compareTo(AnimationsGroup o) {
-		return o.priority - priority;
 	}
 }

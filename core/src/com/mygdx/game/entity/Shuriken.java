@@ -10,6 +10,9 @@ import com.mygdx.game.entity.part.ShurikenParts;
 import com.mygdx.game.entity.state.ShurikenStates;
 import com.mygdx.game.entity.state.States;
 
+import java.util.Collections;
+import java.util.HashMap;
+
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.entity.part.ShurikenParts.BODY;
 import static com.mygdx.game.entity.state.ShurikenStates.FLYING;
@@ -30,11 +33,12 @@ public class Shuriken extends Entity<ShurikenStates, ShurikenParts> {
 
 	@Override
 	protected void defineAnimations(Animations<ShurikenStates, ShurikenParts> animations) {
-		AnimationsGroup<ShurikenParts> flying = new AnimationsGroup<ShurikenParts>("Assassin/Shuriken", 1)
-				.add(BODY, "Body")
-				.load();
+		HashMap<String, ShurikenParts> filenames = new HashMap<>();
+		filenames.put("Body", BODY);
 
-		animations.map(FLYING, flying);
+		AnimationsGroup<ShurikenParts> flying = new AnimationsGroup<>("Assassin/Shuriken", filenames);
+
+		animations.map(Collections.singleton(FLYING), flying);
 	}
 
 	@Override

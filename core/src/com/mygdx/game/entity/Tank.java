@@ -11,6 +11,10 @@ import com.mygdx.game.entity.part.Boss1Parts;
 import com.mygdx.game.entity.part.TankParts;
 import com.mygdx.game.entity.state.CharacterStates;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.entity.part.TankParts.BODY;
 import static com.mygdx.game.entity.part.TankParts.LEFT_ARM;
@@ -99,50 +103,26 @@ public class Tank extends Character<TankParts> {
 
 	@Override
 	protected void defineAnimations(Animations<CharacterStates, TankParts> animations) {
-		AnimationsGroup<TankParts> standing = new AnimationsGroup<TankParts>("Tank/Standing", 1)
-				.add(SHIELD, "Shield")
-				.add(LEFT_ARM, "LeftArm")
-				.add(LEFT_LEG, "LeftLeg")
-				.add(BODY, "Body")
-				.add(RIGHT_LEG, "RightLeg")
-				.add(WEAPON, "Weapon")
-				.add(RIGHT_ARM, "RightArm")
-				.load();
+		HashMap<String, TankParts> filenames = new HashMap<>();
+		filenames.put("Shield", SHIELD);
+		filenames.put("LeftArm", LEFT_ARM);
+		filenames.put("LeftLeg", LEFT_LEG);
+		filenames.put("Body", BODY);
+		filenames.put("RightLeg", RIGHT_LEG);
+		filenames.put("Weapon", WEAPON);
+		filenames.put("RightArm", RIGHT_ARM);
 
-		AnimationsGroup<TankParts> walking = new AnimationsGroup<TankParts>("Tank/Walking", 1)
-				.add(SHIELD, "Shield")
-				.add(LEFT_ARM, "LeftArm")
-				.add(LEFT_LEG, "LeftLeg")
-				.add(BODY, "Body")
-				.add(RIGHT_LEG, "RightLeg")
-				.add(WEAPON, "Weapon")
-				.add(RIGHT_ARM, "RightArm")
-				.load();
+		AnimationsGroup<TankParts> standing = new AnimationsGroup<>("Tank/Standing", filenames);
+		AnimationsGroup<TankParts> walking = new AnimationsGroup<>("Tank/Walking", filenames);
+		AnimationsGroup<TankParts> primary = new AnimationsGroup<>("Tank/Primary", filenames);
+		AnimationsGroup<TankParts> secondary = new AnimationsGroup<>("Tank/Secondary", filenames);
 
-		AnimationsGroup<TankParts> primary = new AnimationsGroup<TankParts>("Tank/Primary", 2)
-				.add(SHIELD, "Shield")
-				.add(LEFT_ARM, "LeftArm")
-				.add(LEFT_LEG, "LeftLeg")
-				.add(BODY, "Body")
-				.add(RIGHT_LEG, "RightLeg")
-				.add(WEAPON, "Weapon")
-				.add(RIGHT_ARM, "RightArm")
-				.load();
-
-		AnimationsGroup<TankParts> secondary = new AnimationsGroup<TankParts>("Tank/Secondary", 2)
-				.add(SHIELD, "Shield")
-				.add(LEFT_ARM, "LeftArm")
-				.add(LEFT_LEG, "LeftLeg")
-				.add(BODY, "Body")
-				.add(RIGHT_LEG, "RightLeg")
-				.add(WEAPON, "Weapon")
-				.add(RIGHT_ARM, "RightArm")
-				.load();
-
-		animations.map(STANDING, standing)
-				.map(WALKING, walking)
-				.map(PRIMARY, primary)
-				.map(SECONDARY, secondary);
+		animations.map(Collections.singleton(STANDING), standing)
+				.map(Collections.singleton(WALKING), walking)
+				.map(Arrays.asList(PRIMARY, STANDING), primary)
+				.map(Arrays.asList(PRIMARY, WALKING), primary)
+				.map(Arrays.asList(SECONDARY, STANDING), secondary)
+				.map(Arrays.asList(SECONDARY, WALKING), secondary);
 	}
 
 
