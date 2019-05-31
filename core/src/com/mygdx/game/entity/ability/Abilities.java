@@ -9,9 +9,8 @@ import java.util.Map;
 
 /**
  * What abilities an entity can use.
- * This class will also mutate the states of the entity accordingly.
  */
-public class Abilities<S> implements StateListener<S> {
+public class Abilities<S extends Enum> implements StateListener<S> {
 	private Timer timer;
 
 	// Abilities defined
@@ -21,7 +20,7 @@ public class Abilities<S> implements StateListener<S> {
 	private HashMap<S, Ability> usable;
 
 	// Abilities that are currently active
-	private HashMap<S, Timer.Task> using;
+	private HashMap<S, Ability> using;
 
 	// Abilities that cannot be used and need to be checked if they can be reset
 	private HashMap<S, Timer.Task> unusable;
@@ -42,65 +41,11 @@ public class Abilities<S> implements StateListener<S> {
 		return this;
 	}
 
-	/* Use an ability */
-	public void use(final S state) {
-		final Ability ability = usable.get(state);
-
-		// Check if ability can be used
-		if (ability != null && ability.canUse(using.size())) {
-			// Schedule a task for when ability ends
-			Timer.Task endTask = timer.scheduleTask(new Timer.Task() {
-				@Override
-				public void run() {
-					// Schedule a task for when ability goes off cooldown
-					Timer.Task cooldownTask = timer.scheduleTask(new Timer.Task() {
-						@Override
-						public void run() {
-							// Set task to null
-							unusable.put(state, null);
-						}
-					}, ability.getCooldown());
-
-					// Call ability's end callback
-					ability.end();
-//					states.remove(state);
-
-					// Ability ended, remove ability from using
-					using.remove(state);
-
-					// Ability ended, add ability to unusable
-					unusable.put(state, cooldownTask);
-				}
-			}, ability.getDuration());
-
-			// Schedule a task for each AbilityTask
-			for (final Ability.AbilityTask task : ability.getAbilityTasks()) {
-				timer.scheduleTask(new Timer.Task() {
-					@Override
-					public void run() {
-						task.callback.call();
-					}
-				}, task.delay);
-			}
-
-			// Call ability's begin callback
-			ability.begin();
-//			states.add(state);
-
-			// Ability used, remove ability from usable
-			usable.remove(state);
-
-			// Ability used, add ability to using
-			using.put(state, endTask);
-		}
-	}
-
 	/* Update */
 	public void update() {
 		// Execute "using" abilities callback
-		for (Map.Entry<S, Timer.Task> entry : using.entrySet()) {
-			Ability ability = abilities.get(entry.getKey());
-			ability.using();
+		for (Map.Entry<S, Ability> entry : using.entrySet()) {
+			entry.getValue().using();
 		}
 
 		// Check if unusables can be reset
@@ -128,15 +73,66 @@ public class Abilities<S> implements StateListener<S> {
 		}
 	}
 
-	// TODO: Implement
+	@Override
+	public boolean stateAddValid(S state) {
+		if (abilities.containsKey(state)) {
+			Ability ability = usable.get(state);
+			return ability != null && ability.canUse(using.size());
+		}
+		return true;
+	}
+
 	@Override
 	public void stateAdd(S state) {
+		if (abilities.containsKey(state)) {
+			Ability ability = usable.get(state);
 
+			// Schedule a task for each AbilityTask
+			for (final Ability.AbilityTask task : ability.getAbilityTasks()) {
+				timer.scheduleTask(new Timer.Task() {
+					@Override
+					public void run() {
+						task.callback.call();
+					}
+				}, task.delay);
+			}
+
+			// Call ability's begin callback
+			ability.begin();
+
+			// Ability used, remove ability from usable
+			usable.remove(state);
+
+			// Ability used, add ability to using
+			using.put(state, ability);
+		}
 	}
 
 	@Override
 	public void stateRemove(S state) {
+		if (abilities.containsKey(state)) {
+			Ability ability = using.get(state);
 
+			if (ability != null) {
+				// Schedule a task for when ability goes off cooldown
+				Timer.Task cooldownTask = timer.scheduleTask(new Timer.Task() {
+					@Override
+					public void run() {
+						// Set task to null
+						unusable.put(state, null);
+					}
+				}, ability.getCooldown());
+
+				// Call ability's end callback
+				ability.end();
+
+				// Ability ended, remove ability from using
+				using.remove(state);
+
+				// Ability ended, add ability to unusable
+				unusable.put(state, cooldownTask);
+			}
+		}
 	}
 
 	// TODO: Reset abilities when switching characters

@@ -22,7 +22,6 @@ import static com.mygdx.game.entity.part.TankParts.WEAPON;
 import static com.mygdx.game.entity.state.CharacterStates.PRIMARY;
 import static com.mygdx.game.entity.state.CharacterStates.SECONDARY;
 import static com.mygdx.game.entity.state.CharacterStates.STANDING;
-import static com.mygdx.game.entity.state.CharacterStates.TERTIARY;
 import static com.mygdx.game.entity.state.CharacterStates.WALKING;
 
 /**
@@ -38,7 +37,7 @@ public class Tank extends Character<TankParts> {
 
 	// Skill debuff modifiers from 0f - 1f (0% - 100%)
 	private static final float PRIMARY_SLOW_MODIFIER = 0.5f;
-	private static final float SECONDARY_SLOW_MODIFIER = 0.5f;
+	private static final float SECONDARY_SLOW_MODIFIER = 0.9f;
 	private static final float TERTIARY_SLOW_MODIFIER = 0.5f;
 
 	// Skill cooldown in seconds.
@@ -121,7 +120,13 @@ public class Tank extends Character<TankParts> {
 				.load();
 
 		AnimationsGroup<TankParts> primary = new AnimationsGroup<TankParts>("Tank/Primary", 2)
+				.add(SHIELD, "Shield")
+				.add(LEFT_ARM, "LeftArm")
+				.add(LEFT_LEG, "LeftLeg")
 				.add(BODY, "Body")
+				.add(RIGHT_LEG, "RightLeg")
+				.add(WEAPON, "Weapon")
+				.add(RIGHT_ARM, "RightArm")
 				.load();
 
 		AnimationsGroup<TankParts> secondary = new AnimationsGroup<TankParts>("Tank/Secondary", 2)
@@ -134,24 +139,18 @@ public class Tank extends Character<TankParts> {
 				.add(RIGHT_ARM, "RightArm")
 				.load();
 
-		AnimationsGroup<TankParts> tertiary = new AnimationsGroup<TankParts>("Tank/Tertiary", 2)
-				.add(BODY, "Body")
-				.load();
-
 		animations.map(STANDING, standing)
 				.map(WALKING, walking)
 				.map(PRIMARY, primary)
-				.map(SECONDARY, secondary)
-				.map(TERTIARY, tertiary);
+				.map(SECONDARY, secondary);
 	}
 
 
 	/* Update */
 	@Override
 	protected void updatePosition(Vector2 position) {
-		float x = getHitbox(BODY).getX();
+		float x = getHitbox(BODY).getOffsetX();
 		float width = getHitbox(BODY).getWidth();
-		// TODO: Fix
 		if (position.x < -x) {
 			position.x = -x;
 		}

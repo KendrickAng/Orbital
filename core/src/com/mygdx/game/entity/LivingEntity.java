@@ -32,6 +32,7 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 		this.inputDirection = Direction.NONE;
 		this.abilities = new Abilities<>();
 		this.debuffs = new Debuffs<>();
+		addStateListener(abilities);
 
 		defineAbilities(abilities);
 		defineDebuffs(debuffs);

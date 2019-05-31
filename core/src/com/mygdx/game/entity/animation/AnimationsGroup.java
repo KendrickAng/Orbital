@@ -29,11 +29,11 @@ public class AnimationsGroup<P> implements Comparable<AnimationsGroup> {
 		FileHandle[] files = Gdx.files.internal(directory).list();
 		for (FileHandle file : files) {
 			String[] n = file.nameWithoutExtension().split("_");
-			int id = Integer.parseInt(n[0]);
+			int frame = Integer.parseInt(n[0]);
 			String name = n[1];
 			P part = parts.get(name);
 			if (part != null) {
-				animations.get(part).put(id, new Pixmap(file));
+				animations.get(part).put(frame, new Pixmap(file));
 			}
 		}
 		return this;

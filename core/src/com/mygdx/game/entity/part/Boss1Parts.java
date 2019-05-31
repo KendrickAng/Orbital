@@ -1,5 +1,5 @@
 package com.mygdx.game.entity.part;
 
-public enum  Boss1Parts {
+public enum Boss1Parts {
 	BODY
 }

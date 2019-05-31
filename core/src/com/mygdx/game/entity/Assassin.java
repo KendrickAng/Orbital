@@ -9,15 +9,10 @@ import com.mygdx.game.entity.animation.AnimationsGroup;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.part.AssassinParts;
 import com.mygdx.game.entity.state.CharacterStates;
-import com.mygdx.game.shape.Rectangle;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.entity.part.AssassinParts.BODY;
-import static com.mygdx.game.entity.state.CharacterStates.PRIMARY;
-import static com.mygdx.game.entity.state.CharacterStates.SECONDARY;
 import static com.mygdx.game.entity.state.CharacterStates.STANDING;
-import static com.mygdx.game.entity.state.CharacterStates.TERTIARY;
-import static com.mygdx.game.entity.state.CharacterStates.WALKING;
 
 public class Assassin extends Character<AssassinParts> {
 	private static final float HEALTH = 10;
@@ -90,7 +85,7 @@ public class Assassin extends Character<AssassinParts> {
 				.setAbilityBegin(() -> {
 					Gdx.app.log("Assassin.java", "Secondary");
 					Entity shuriken = new Shuriken(getGame());
-					Rectangle body = getHitbox(BODY);
+					Hitbox body = getHitbox(BODY);
 					float x = body.getX() + body.getWidth() / 2;
 					float y = body.getY() + body.getHeight() / 2;
 					int x_velocity = 0;
@@ -121,32 +116,12 @@ public class Assassin extends Character<AssassinParts> {
 				.add(BODY, "Body")
 				.load();
 
-		AnimationsGroup<AssassinParts> walking = new AnimationsGroup<AssassinParts>("Assassin/Standing", 1)
-				.add(BODY, "Body")
-				.load();
-
-		AnimationsGroup<AssassinParts> primary = new AnimationsGroup<AssassinParts>("Assassin/Primary", 2)
-				.add(BODY, "Body")
-				.load();
-
-		AnimationsGroup<AssassinParts> secondary = new AnimationsGroup<AssassinParts>("Assassin/Secondary", 2)
-				.add(BODY, "Body")
-				.load();
-
-		AnimationsGroup<AssassinParts> tertiary = new AnimationsGroup<AssassinParts>("Assassin/Tertiary", 2)
-				.add(BODY, "Body")
-				.load();
-
-		animations.map(STANDING, standing)
-				.map(WALKING, walking)
-				.map(PRIMARY, primary)
-				.map(SECONDARY, secondary)
-				.map(TERTIARY, tertiary);
+		animations.map(STANDING, standing);
 	}
 
 	@Override
 	protected void updatePosition(Vector2 position) {
-		float x = getHitbox(BODY).getX();
+		float x = getHitbox(BODY).getOffsetX();
 		float width = getHitbox(BODY).getWidth();
 		if (position.x < -x) {
 			position.x = -x;

@@ -36,6 +36,10 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 	private float friction;
 	private boolean falling;
 
+	private Ability primary;
+	private Ability secondary;
+	private Ability tertiary;
+
 	public Character(GameScreen game) {
 		super(game);
 		movespeed = MOVESPEED;
@@ -57,23 +61,39 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 
 	protected abstract Ability initTertiary();
 
+	protected Ability getPrimary() {
+		return primary;
+	}
+
+	protected Ability getSecondary() {
+		return secondary;
+	}
+
+	protected Ability getTertiary() {
+		return tertiary;
+	}
+
 	@Override
 	protected void defineAbilities(Abilities<CharacterStates> abilities) {
-		abilities.map(PRIMARY, initPrimary())
-				.map(SECONDARY, initSecondary())
-				.map(TERTIARY, initTertiary());
+		primary = initPrimary();
+		secondary = initSecondary();
+		tertiary = initTertiary();
+
+		abilities.map(PRIMARY, primary)
+				.map(SECONDARY, secondary)
+				.map(TERTIARY, tertiary);
 	}
 
 	public void usePrimary() {
-		getAbilities().use(PRIMARY);
+		scheduleState(PRIMARY, primary.getDuration());
 	}
 
 	public void useSecondary() {
-		getAbilities().use(SECONDARY);
+		scheduleState(SECONDARY, secondary.getDuration());
 	}
 
 	public void useTertiary() {
-		getAbilities().use(TERTIARY);
+		scheduleState(TERTIARY, tertiary.getDuration());
 	}
 
 	/* Debuffs */
@@ -81,7 +101,12 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 	@Override
 	protected void defineDebuffs(Debuffs<DebuffType> debuffs) {
 		Debuff slow = new Debuff()
-				.setApply(modifier -> setMovespeed(MOVESPEED * (1 - modifier)))
+				.setApply(modifier -> {
+					if (modifier > 1) {
+						modifier = 1;
+					}
+					setMovespeed(MOVESPEED * (1 - modifier));
+				})
 				.setEnd(() -> setMovespeed(MOVESPEED));
 
 		Debuff ignoreFriction = new Debuff()

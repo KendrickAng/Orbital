@@ -3,8 +3,8 @@ package com.mygdx.game.entity.part;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.animation.Animation;
-import com.mygdx.game.shape.Rectangle;
 
 import java.util.TreeMap;
 
@@ -21,12 +21,12 @@ public class Parts<P extends Enum> {
 	}
 
 	public void put(P part, Animation animation) {
+		animation.setPosition(position);
 		parts.put(part, animation);
 	}
 
 	public void render(SpriteBatch batch) {
 		for (Animation animation : parts.values()) {
-			animation.setPosition(position);
 			animation.setFlip(flipX, flipY);
 			animation.render(batch);
 		}
@@ -44,7 +44,7 @@ public class Parts<P extends Enum> {
 		this.flipY = flipY;
 	}
 
-	public Rectangle getHitbox(P part) {
+	public Hitbox getHitbox(P part) {
 		return parts.get(part).getHitbox();
 	}
 }

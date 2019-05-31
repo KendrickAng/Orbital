@@ -43,9 +43,12 @@ public class Ability {
 
 		this.useCondition = using -> using == 0;
 		this.resetCondition = isOnCooldown -> !isOnCooldown;
-		this.abilityBegin = () -> {};
-		this.abilityUsing = () -> {};
-		this.abilityEnd = () -> {};
+		this.abilityBegin = () -> {
+		};
+		this.abilityUsing = () -> {
+		};
+		this.abilityEnd = () -> {
+		};
 		this.abilityTasks = new LinkedList<>();
 	}
 

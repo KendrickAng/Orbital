@@ -1,5 +1,5 @@
 package com.mygdx.game.entity.state;
 
-public enum  ShurikenStates {
+public enum ShurikenStates {
 	FLYING
 }

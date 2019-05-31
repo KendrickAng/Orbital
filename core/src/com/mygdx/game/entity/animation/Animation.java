@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.shape.Rectangle;
+import com.mygdx.game.entity.Hitbox;
 
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -23,40 +23,18 @@ public class Animation {
 	private boolean loop = true;
 
 	private TreeMap<Integer, Sprite> frames;
-	private HashMap<Integer, Rectangle> hitboxes;
+	private HashMap<Integer, Hitbox> hitboxes;
 
 	public Animation() {
-		position = new Vector2();
 		frames = new TreeMap<>();
 		hitboxes = new HashMap<>();
 	}
 
-	public void put(int id, Pixmap pixmap) {
-		frames.put(id, new Sprite(new Texture(pixmap)));
+	public void put(int frame, Pixmap pixmap) {
+		frames.put(frame, new Sprite(new Texture(pixmap)));
+		hitboxes.put(frame, new Hitbox(pixmap));
 
-		int minX = Integer.MAX_VALUE;
-		int maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE;
-		int maxY = Integer.MIN_VALUE;
-		for (int y = 0; y < pixmap.getHeight(); y++) {
-			for (int x = 0; x < pixmap.getWidth(); x++) {
-				if ((pixmap.getPixel(x, y) & 0x000000ff) == 0x000000ff) {
-					minX = Math.min(x, minX);
-					maxX = Math.max(x, maxX);
-					minY = Math.min(y, minY);
-					maxY = Math.max(y, maxY);
-				}
-			}
-		}
-
-		Rectangle hitbox = new Rectangle();
-		hitbox.setX(minX);
-		hitbox.setY(pixmap.getHeight() - maxY);
-		hitbox.setWidth(maxX - minX);
-		hitbox.setHeight(maxY - minY);
-		hitboxes.put(id, hitbox);
-
-		size = Math.max(id + 1, size);
+		size = Math.max(frame + 1, size);
 		pixmap.dispose();
 	}
 
@@ -86,13 +64,10 @@ public class Animation {
 		time += Gdx.graphics.getDeltaTime();
 	}
 
-	public Rectangle getHitbox() {
-		Rectangle hitbox = hitboxes.get(frame);
-		Rectangle rectangle = new Rectangle();
-		rectangle.setX(position.x + hitbox.getX());
-		rectangle.setY(position.y + hitbox.getY());
-		rectangle.setWidth(hitbox.getWidth());
-		rectangle.setHeight(hitbox.getHeight());
-		return rectangle;
+	public Hitbox getHitbox() {
+		Hitbox hitbox = hitboxes.get(frame);
+		hitbox.setPosition(position);
+		hitbox.setFlip(flipX, flipY);
+		return hitbox;
 	}
 }

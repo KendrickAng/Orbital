@@ -6,9 +6,12 @@ public class Debuff {
 	private DebuffEnd end;
 
 	public Debuff() {
-		begin = () -> {};
-		end = () -> {};
-		apply = modifier -> {};
+		begin = () -> {
+		};
+		end = () -> {
+		};
+		apply = modifier -> {
+		};
 	}
 
 	/* Calls */

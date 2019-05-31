@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.part.Parts;
+import com.mygdx.game.entity.state.StateListener;
 import com.mygdx.game.entity.state.States;
-import com.mygdx.game.shape.Rectangle;
 
 /**
  * Represents all renderable, interactive objects such as throwing stars/falling rocks.
@@ -60,7 +60,6 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 	public void render(SpriteBatch batch) {
 		/* Physics */
-		// Account for velocity
 		updateVelocity(position, velocity);
 		position.x += velocity.x;
 		position.y += velocity.y;
@@ -90,6 +89,10 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 	}
 
 	/* Setters */
+	public void addStateListener(StateListener<S> listener) {
+		states.addListener(listener);
+	}
+
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
@@ -100,6 +103,10 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 	public void removeState(S state) {
 		states.removeState(state);
+	}
+
+	public void scheduleState(S state, float duration) {
+		states.scheduleState(state, duration);
 	}
 
 	public void setPosition(float x, float y) {
@@ -135,7 +142,7 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 		return dispose;
 	}
 
-	public Rectangle getHitbox(P part) {
+	public Hitbox getHitbox(P part) {
 		return parts.getHitbox(part);
 	}
 
@@ -149,10 +156,6 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 	public Direction getSpriteDirection() {
 		return spriteDirection;
-	}
-
-	public Animations<S, P> getAnimations() {
-		return animations;
 	}
 
 	public GameScreen getGame() {
