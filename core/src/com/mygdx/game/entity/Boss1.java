@@ -17,6 +17,10 @@ import java.util.HashMap;
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.part.Boss1Parts.BODY;
+import static com.mygdx.game.entity.part.Boss1Parts.LEFT_ARM;
+import static com.mygdx.game.entity.part.Boss1Parts.LEFT_LEG;
+import static com.mygdx.game.entity.part.Boss1Parts.RIGHT_ARM;
+import static com.mygdx.game.entity.part.Boss1Parts.RIGHT_LEG;
 import static com.mygdx.game.entity.state.Boss1States.STANDING;
 
 public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
@@ -24,7 +28,8 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 
 	public Boss1(GameScreen game) {
 		super(game);
-		setPosition(GAME_WIDTH - getHitbox(BODY).getWidth(), MAP_HEIGHT);
+		// TODO: Should be width of pixmap
+		setPosition(GAME_WIDTH - 320, MAP_HEIGHT);
 	}
 
 	@Override
@@ -51,9 +56,14 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	@Override
 	protected void defineAnimations(Animations<Boss1States, Boss1Parts> animations) {
 		HashMap<String, Boss1Parts> filenames = new HashMap<>();
+		filenames.put("RightArm", RIGHT_ARM);
 		filenames.put("Body", BODY);
+		filenames.put("RightLeg", RIGHT_LEG);
+		filenames.put("LeftLeg", LEFT_LEG);
+		filenames.put("LeftArm", LEFT_ARM);
 
 		AnimationsGroup<Boss1Parts> standing = new AnimationsGroup<>("Boss1/Standing", filenames);
+		standing.setDuration(2);
 
 		animations.map(Collections.singleton(STANDING), standing);
 	}

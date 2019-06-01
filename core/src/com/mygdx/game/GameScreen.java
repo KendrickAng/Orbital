@@ -15,6 +15,8 @@ import com.mygdx.game.entity.EntityManager;
 import com.mygdx.game.entity.Tank;
 import com.mygdx.game.texture.TextureManager;
 
+import static com.mygdx.game.MyGdxGame.DEBUG;
+
 public class GameScreen implements Screen {
 	// Game reference.
 	private MyGdxGame game;
@@ -72,10 +74,12 @@ public class GameScreen implements Screen {
 		batch.end();
 
 		/* Debug */
-		shapeRenderer.setProjectionMatrix(camera.combined);
-		shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-		entityManager.renderDebugAll(shapeRenderer);
-		shapeRenderer.end();
+		if (DEBUG) {
+			shapeRenderer.setProjectionMatrix(camera.combined);
+			shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+			entityManager.renderDebugAll(shapeRenderer);
+			shapeRenderer.end();
+		}
 	}
 
 	@Override

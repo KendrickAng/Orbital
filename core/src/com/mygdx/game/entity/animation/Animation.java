@@ -17,7 +17,7 @@ public class Animation {
 	private boolean flipY;
 
 	private float time;
-	private float duration = 1f;
+	private float duration;
 	private int frame;
 	private int size;
 	private boolean loop = true;
@@ -26,6 +26,7 @@ public class Animation {
 	private HashMap<Integer, Hitbox> hitboxes;
 
 	public Animation() {
+		this.duration = 1;
 		frames = new TreeMap<>();
 		hitboxes = new HashMap<>();
 	}
@@ -45,6 +46,10 @@ public class Animation {
 	public void setFlip(boolean flipX, boolean flipY) {
 		this.flipX = flipX;
 		this.flipY = flipY;
+	}
+
+	public void setDuration(float duration) {
+		this.duration = duration;
 	}
 
 	public void render(SpriteBatch batch) {

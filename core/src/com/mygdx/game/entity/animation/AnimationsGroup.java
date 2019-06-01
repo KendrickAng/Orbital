@@ -40,6 +40,12 @@ public class AnimationsGroup<P extends Enum> {
 		}
 	}
 
+	public void setDuration(float duration) {
+		for (Animation animation : parts.values()) {
+			animation.setDuration(duration);
+		}
+	}
+
 	public HashMap<P, Animation> getParts() {
 		return parts;
 	}
