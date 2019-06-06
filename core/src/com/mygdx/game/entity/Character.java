@@ -36,6 +36,7 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 	private float friction;
 	private boolean falling;
 
+	// these are just definitions of the Ability.
 	private Ability primary;
 	private Ability secondary;
 	private Ability tertiary;
@@ -73,6 +74,7 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 		return tertiary;
 	}
 
+	// where all abilities for all characters are defined.
 	@Override
 	protected void defineAbilities(Abilities<CharacterStates> abilities) {
 		primary = initPrimary();
@@ -84,6 +86,7 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 				.map(TERTIARY, tertiary);
 	}
 
+	// Gives a state to the character, then removes it after the duration.
 	public void usePrimary() {
 		scheduleState(PRIMARY, primary.getDuration());
 	}
@@ -98,13 +101,16 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 
 	/* Debuffs */
 
+	// where all debuffs for all characters are defined.
 	@Override
 	protected void defineDebuffs(Debuffs<DebuffType> debuffs) {
 		Debuff slow = new Debuff()
 				.setApply(modifier -> {
+					// modifiers must never go above 1. See overallModifier() in Debuffs.
 					if (modifier > 1) {
 						modifier = 1;
 					}
+					// accounts for percentage slow, e.g 40% slow -> modifier = 0.4.
 					setMovespeed(MOVESPEED * (1 - modifier));
 				})
 				.setEnd(() -> setMovespeed(MOVESPEED));

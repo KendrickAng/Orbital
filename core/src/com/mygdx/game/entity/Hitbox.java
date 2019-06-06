@@ -25,6 +25,7 @@ public class Hitbox {
 		int maxX = Integer.MIN_VALUE;
 		int minY = Integer.MAX_VALUE;
 		int maxY = Integer.MIN_VALUE;
+		// loop through all pixels in pixmap and update minmaxX/minmaxY
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				if ((pixmap.getPixel(x, y) & 0x000000ff) == 0x000000ff) {

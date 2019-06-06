@@ -8,12 +8,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * What abilities an entity can use.
+ * What abilities an entity can use. What S can be is defined in Character's defineAbilities().
  */
 public class Abilities<S extends Enum> implements StateListener<S> {
 	private Timer timer;
 
-	// Abilities defined
+	// Abilities defined. Library.
 	private HashMap<S, Ability> abilities;
 
 	// Abilities that can be used
@@ -36,12 +36,12 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 
 	// Map a state to an ability
 	public Abilities<S> map(S state, Ability ability) {
-		abilities.put(state, ability);
-		usable.put(state, ability);
+		abilities.put(state, ability); // never changes once defined.
+		usable.put(state, ability); // an ability is removed from HM and put in using when the ability is used, until cooldown is up.
 		return this;
 	}
 
-	/* Update */
+	/* Update is called every iteration of the game loop. */
 	public void update() {
 		// Execute "using" abilities callback
 		for (Map.Entry<S, Ability> entry : using.entrySet()) {
@@ -73,6 +73,7 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 		}
 	}
 
+	// valid add if the key-pair is in usable AND no other abilities being used (0).
 	@Override
 	public boolean stateAddValid(S state) {
 		if (abilities.containsKey(state)) {
@@ -82,6 +83,7 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 		return true;
 	}
 
+	// Detects there's an ability being used in States, and activates the logic.
 	@Override
 	public void stateAdd(S state) {
 		if (abilities.containsKey(state)) {

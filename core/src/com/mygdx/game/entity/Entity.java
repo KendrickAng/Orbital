@@ -40,6 +40,7 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 		this.parts = new Parts<>(position);
 		Animations<S, P> animations = new Animations<>(parts);
 
+		// adds animations, a statelistener, to State's HashSet
 		addStateListener(animations);
 		defineAnimations(animations);
 		defineStates(states);

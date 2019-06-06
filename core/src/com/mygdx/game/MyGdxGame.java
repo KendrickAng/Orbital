@@ -14,7 +14,7 @@ public class MyGdxGame extends Game {
 	public static final int GAME_WIDTH = 600;
 	public static final int GAME_HEIGHT = 380;
 	public static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	// TODO: Tile the background.
 	private SpriteBatch batch;

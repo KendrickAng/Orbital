@@ -24,7 +24,10 @@ public class Ability {
 	// Called once when ability ends
 	private AbilityCallback abilityEnd;
 
-	// Each task is called once after a set delay
+	/*
+	Each task is called once after a set delay. Example usage: Since Tank's slash has a windup
+	animation, the hitbox checking task only happens halfway through secondary animation duration.
+	 */
 	private LinkedList<AbilityTask> abilityTasks;
 
 	class AbilityTask {
@@ -42,7 +45,7 @@ public class Ability {
 		this.cooldown = cooldown;
 
 		this.useCondition = using -> using == 0;
-		this.resetCondition = isOnCooldown -> !isOnCooldown;
+		this.resetCondition = isOnCooldown -> !isOnCooldown; // whether cooldown can "go off".
 		this.abilityBegin = () -> {
 		};
 		this.abilityUsing = () -> {

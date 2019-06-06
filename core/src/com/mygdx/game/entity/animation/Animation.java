@@ -31,6 +31,7 @@ public class Animation {
 		hitboxes = new HashMap<>();
 	}
 
+	// maps the pixmap Sprite and Hitbox to corresponding frame number.
 	public void put(int frame, Pixmap pixmap) {
 		frames.put(frame, new Sprite(new Texture(pixmap)));
 		hitboxes.put(frame, new Hitbox(pixmap));
@@ -53,12 +54,12 @@ public class Animation {
 	}
 
 	public void render(SpriteBatch batch) {
-		if (time >= duration && loop) {
+		if (time >= duration && loop) { // loop mechanism
 			time = 0;
 		}
 
 		if (time < duration) {
-			frame = (int) (time / duration * size);
+			frame = (int) (time / duration * size); // ?
 
 			Sprite sprite = frames.get(frame);
 			sprite.setPosition(position.x, position.y);
@@ -69,6 +70,7 @@ public class Animation {
 		time += Gdx.graphics.getDeltaTime();
 	}
 
+	// returns the hitbox with correct position and flip.
 	public Hitbox getHitbox() {
 		Hitbox hitbox = hitboxes.get(frame);
 		hitbox.setPosition(position);

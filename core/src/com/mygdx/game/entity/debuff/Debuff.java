@@ -2,6 +2,7 @@ package com.mygdx.game.entity.debuff;
 
 public class Debuff {
 	private DebuffBegin begin;
+	// called when you inflict a debuff AND when the debuff ends.
 	private DebuffCallback apply;
 	private DebuffEnd end;
 

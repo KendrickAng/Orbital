@@ -9,21 +9,24 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 public class AnimationsGroup<P extends Enum> {
-	private HashMap<P, Animation> parts;
+	private HashMap<P, Animation> parts; // a unique Part maps to the same Animation instance.
 	private TreeMap<P, Animation> animations;
 
 	public AnimationsGroup(String directory, HashMap<String, P> filenames) {
 		parts = new HashMap<>();
 		animations = new TreeMap<>();
 
+		// map all parts to an empty animation, populates parts.
 		for (P part : filenames.values()) {
 			Animation animation = new Animation();
 			parts.put(part, animation);
 			animations.put(part, animation);
 		}
 
+		// returns filehandles for a directory.
 		FileHandle[] files = Gdx.files.internal(directory).list();
 		for (FileHandle file : files) {
+			// populates the animations in order, ensuring order dictated in assets name is followed.
 			String[] n = file.nameWithoutExtension().split("_");
 			int frame = Integer.parseInt(n[0]);
 			String name = n[1];

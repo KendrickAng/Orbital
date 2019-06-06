@@ -10,14 +10,16 @@ import java.util.Iterator;
 An effect on a LivingEntity over a duration of time.
  */
 public class Debuffs<T> {
+	// only used to schedule new tasks in inflict().
 	private Timer timer;
-	// Definitions of all debuffs for the LivingEntity
+	// Definitions of all debuffs for the LivingEntity. Same across all characters.
 	private HashMap<T, Debuff> debuffs;
 
 	// Debuffs that are inflicted on the LivingEntity
 	private HashMap<T, HashSet<InflictedDebuff>> inflicted;
 
 	private class InflictedDebuff {
+		// added for cleanse. Supposedly task.cancel() everything.
 		private Timer.Task task;
 		private float modifier;
 	}
@@ -34,10 +36,12 @@ public class Debuffs<T> {
 		return this;
 	}
 
-	// Modifier is from 0f to 1f. (0% - 100%)
+	// Modifier is from 0f to 1f. (0% - 100%). Main business logic on how functional interfaces DebuffX are called.
 	public Debuffs inflict(final T type, final float modifier, float duration) {
+		// get the debuff from the map using the enum T.
 		final Debuff debuff = debuffs.get(type);
-		final HashSet<InflictedDebuff> debuffs = inflicted.get(type);
+		// allows for different sources of debuffs (E.g by boss and self-inflicted)
+		final HashSet<InflictedDebuff> localDebuffs = inflicted.get(type);
 
 		final InflictedDebuff inflictedDebuff = new InflictedDebuff();
 		inflictedDebuff.modifier = modifier;
@@ -45,28 +49,28 @@ public class Debuffs<T> {
 			@Override
 			public void run() {
 				// Debuff ended, untrack InflictedDebuff
-				debuffs.remove(inflictedDebuff);
+				localDebuffs.remove(inflictedDebuff);
 
-				// Debuff ended, recalculate overall modifier
-				debuff.apply(overallModifier(debuffs));
+				// Debuff ended, recalculate overall modifier before applying.
+				debuff.apply(overallModifier(localDebuffs));
 
 				// This is the last debuff of this type, call end
-				if (debuffs.isEmpty()) {
+				if (localDebuffs.isEmpty()) {
 					debuff.end();
 				}
 			}
 		}, duration);
 
 		// This is the first debuff of this type, call begin
-		if (debuffs.isEmpty()) {
+		if (localDebuffs.isEmpty()) {
 			debuff.begin();
 		}
 
 		// Track InflictedDebuff
-		debuffs.add(inflictedDebuff);
+		localDebuffs.add(inflictedDebuff);
 
 		// Debuff begin, calculate overall modifier
-		debuff.apply(overallModifier(debuffs));
+		debuff.apply(overallModifier(localDebuffs));
 		return this;
 	}
 

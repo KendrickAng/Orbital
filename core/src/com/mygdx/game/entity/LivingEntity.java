@@ -32,7 +32,7 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 		this.inputDirection = Direction.NONE;
 		this.abilities = new Abilities<>();
 		this.debuffs = new Debuffs<>();
-		addStateListener(abilities);
+		super.addStateListener(abilities);
 
 		defineAbilities(abilities);
 		defineDebuffs(debuffs);
@@ -40,8 +40,10 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 
 	protected abstract float health();
 
+	// creates new instances of Ability for primary, secondary and tertiary and maps the corrs CharacterState enum to Ability.
 	protected abstract void defineAbilities(Abilities<T> abilities);
 
+	// called when an instance of LivingEntity is created.
 	protected abstract void defineDebuffs(Debuffs<DebuffType> debuffs);
 
 	protected abstract void updateDirection(Direction inputDirection);
