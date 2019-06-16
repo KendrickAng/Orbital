@@ -10,8 +10,10 @@ import com.mygdx.game.entity.animation.AnimationsGroup;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+// TODO: Integrate parts with animations group and remove parts.
+// for getting hitboxes in O(1) and rendering the player.
 public class Parts<P extends Enum> {
-	private Vector2 position;
+	private Vector2 position;// bottom left of the 160 by 80.
 	private boolean flipX;
 	private boolean flipY;
 
@@ -22,6 +24,7 @@ public class Parts<P extends Enum> {
 		this.position = position;
 	}
 
+	// locks in a new animation group to render() in Entity.
 	public void setAnimationsGroup(AnimationsGroup<P> group) {
 		group.setPosition(position);
 		this.parts = group.getParts();

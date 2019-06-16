@@ -8,6 +8,10 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+/**
+ * Contains all the animations for a certain group e.g Standing.
+ * @param <P> the enum grouping all the parts that need to be animated.
+ */
 public class AnimationsGroup<P extends Enum> {
 	private HashMap<P, Animation> parts; // a unique Part maps to the same Animation instance.
 	private TreeMap<P, Animation> animations;

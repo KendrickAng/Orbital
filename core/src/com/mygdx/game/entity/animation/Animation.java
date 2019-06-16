@@ -11,6 +11,9 @@ import com.mygdx.game.entity.Hitbox;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+/**
+ * The animation of one body part in a given state.
+ */
 public class Animation {
 	private Vector2 position;
 	private boolean flipX;

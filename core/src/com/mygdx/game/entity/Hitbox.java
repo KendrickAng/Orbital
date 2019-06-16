@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.shape.Rectangle;
 
 public class Hitbox {
-	private Vector2 position;
+	private Vector2 position; // position of image from the screen's origin.
 
-	private int x;
+	private int x; // offsetX
 	private int y;
 	private int width;
 	private int height;
@@ -28,6 +28,7 @@ public class Hitbox {
 		// loop through all pixels in pixmap and update minmaxX/minmaxY
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
+				// check for transparent pixel.
 				if ((pixmap.getPixel(x, y) & 0x000000ff) == 0x000000ff) {
 					minX = Math.min(x, minX);
 					maxX = Math.max(x, maxX);
@@ -62,6 +63,7 @@ public class Hitbox {
 		hitbox.renderDebug(shapeRenderer);
 	}
 
+	// sets the hitbox to position defined by vector2 position.
 	private void updateHitbox() {
 		if (flipX) {
 			hitbox.setX(position.x + width - x - hitbox.getWidth());

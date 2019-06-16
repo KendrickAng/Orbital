@@ -29,7 +29,7 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 	private Parts<P> parts;
 
 	public Entity(GameScreen game) {
-		this.position = new Vector2();
+		this.position = new Vector2(); // position always starts at (0,0)
 		this.velocity = new Vector2();
 
 		this.game = game;
