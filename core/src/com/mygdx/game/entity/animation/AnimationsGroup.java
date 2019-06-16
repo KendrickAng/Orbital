@@ -3,7 +3,10 @@ package com.mygdx.game.entity.animation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.entity.Hitbox;
 
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -13,10 +16,26 @@ import java.util.TreeMap;
  * @param <P> the enum grouping all the parts that need to be animated.
  */
 public class AnimationsGroup<P extends Enum> {
-	private HashMap<P, Animation> parts; // a unique Part maps to the same Animation instance.
-	private TreeMap<P, Animation> animations;
+	/* -----------------MIGRATED FROM PARTS----------------- */
+	private Vector2 position;// bottom left of the 160 by 80.
+	private boolean flipX;
+	private boolean flipY;
+	/* -----------------MIGRATED FROM PARTS----------------- */
 
+	private HashMap<P, Animation> parts; // Hashmap allows O(1) retrieval, and used for debug
+	private TreeMap<P, Animation> animations; // Treemap ensures player is rendered above Boss
+
+	// For dynamic AnimationsGroup belonging to Animations instance.
+	public AnimationsGroup(Vector2 position) {
+		this.position = position;
+	}
+
+	// For loading of static AnimationGroup stores.
 	public AnimationsGroup(String directory, HashMap<String, P> filenames) {
+		/* -----------------MIGRATED FROM PARTS----------------- */
+		position = new Vector2();
+		/* -----------------MIGRATED FROM PARTS----------------- */
+
 		parts = new HashMap<>();
 		animations = new TreeMap<>();
 
@@ -40,6 +59,38 @@ public class AnimationsGroup<P extends Enum> {
 			animation.put(frame, new Pixmap(file));
 		}
 	}
+
+	/* -----------------MIGRATED FROM PARTS----------------- */
+	public void render(SpriteBatch batch) {
+		for (Animation animation : animations.values()) {
+			animation.setFlip(flipX, flipY);
+			animation.render(batch);
+		}
+	}
+
+	public void renderDebug(ShapeRenderer shapeRenderer) {
+		for (Animation animation : parts.values()) {
+			animation.getHitbox().renderDebug(shapeRenderer);
+		}
+	}
+
+	/* Setters */
+	public void setFlip(boolean flipX, boolean flipY) {
+		this.flipX = flipX;
+		this.flipY = flipY;
+	}
+
+	// locks in a new animation group to render() in Entity.
+	public void setAnimationsGroup(AnimationsGroup<P> group) {
+		group.setPosition(position);
+		this.parts = group.getParts();
+		this.animations = group.getAnimations();
+	}
+
+	public Hitbox getHitbox(P part) {
+		return parts.get(part).getHitbox();
+	}
+	/* -----------------MIGRATED FROM PARTS----------------- */
 
 	public void setPosition(Vector2 position) {
 		for (Animation animation : parts.values()) {

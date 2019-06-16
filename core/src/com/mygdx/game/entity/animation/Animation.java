@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
- * The animation of one body part in a given state.
+ * The animation of one body part in a given state. Once instance of this is responsible for the
+ * entire animation cycle of a state (E.g Standing). Check android/assets to see the order of render.
  */
 public class Animation {
 	private Vector2 position;

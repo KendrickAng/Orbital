@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.animation.Animations;
-import com.mygdx.game.entity.part.Parts;
+import com.mygdx.game.entity.animation.AnimationsGroup;
 import com.mygdx.game.entity.state.StateListener;
 import com.mygdx.game.entity.state.States;
 
@@ -15,6 +15,10 @@ import com.mygdx.game.entity.state.States;
  */
 public abstract class Entity<S extends Enum, P extends Enum> {
 	public static final float GRAVITY = -3;
+
+	/* -----------------MIGRATED FROM PARTS----------------- */
+	private AnimationsGroup<P> dynamicAnimations;
+	/* -----------------MIGRATED FROM PARTS----------------- */
 
 	private Vector2 position;
 	private Vector2 velocity;
@@ -26,9 +30,9 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 	private Direction spriteDirection;
 
 	private States<S> states;
-	private Parts<P> parts;
 
 	public Entity(GameScreen game) {
+
 		this.position = new Vector2(); // position always starts at (0,0)
 		this.velocity = new Vector2();
 
@@ -37,8 +41,11 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 		this.spriteDirection = Direction.RIGHT;
 
 		this.states = new States<>();
-		this.parts = new Parts<>(position);
-		Animations<S, P> animations = new Animations<>(parts);
+
+		/* -----------------MIGRATED FROM PARTS----------------- */
+		this.dynamicAnimations = new AnimationsGroup<P>(position); // changes over course of game
+		Animations<S, P> animations = new Animations<>(dynamicAnimations);
+		/* -----------------MIGRATED FROM PARTS----------------- */
 
 		// adds animations, a statelistener, to State's HashSet
 		addStateListener(animations);
@@ -68,20 +75,20 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 		/* Render */
 		switch (spriteDirection) {
 			case RIGHT:
-				parts.setFlip(false, false);
+				dynamicAnimations.setFlip(false, false);
 				break;
 			case LEFT:
-				parts.setFlip(true, false);
+				dynamicAnimations.setFlip(true, false);
 				break;
 		}
-		parts.render(batch);
+		dynamicAnimations.render(batch);
 
 		// General updates
 		update();
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {
-		parts.renderDebug(shapeRenderer);
+		dynamicAnimations.renderDebug(shapeRenderer);
 	}
 
 	public void dispose() {
@@ -143,7 +150,7 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 	}
 
 	public Hitbox getHitbox(P part) {
-		return parts.getHitbox(part);
+		return dynamicAnimations.getHitbox(part);
 	}
 
 	public Vector2 getPosition() {

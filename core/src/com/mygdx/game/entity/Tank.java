@@ -112,10 +112,11 @@ public class Tank extends Character<TankParts> {
 		filenames.put("Weapon", WEAPON);
 		filenames.put("RightArm", RIGHT_ARM);
 
-		AnimationsGroup<TankParts> standing = new AnimationsGroup<>("Tank/Standing", filenames);
-		AnimationsGroup<TankParts> walking = new AnimationsGroup<>("Tank/Walking", filenames);
-		AnimationsGroup<TankParts> primary = new AnimationsGroup<>("Tank/Primary", filenames);
-		AnimationsGroup<TankParts> secondary = new AnimationsGroup<>("Tank/Secondary", filenames);
+		// Static animations. Will not be mutated again.
+		final AnimationsGroup<TankParts> standing = new AnimationsGroup<>("Tank/Standing", filenames);
+		final AnimationsGroup<TankParts> walking = new AnimationsGroup<>("Tank/Walking", filenames);
+		final AnimationsGroup<TankParts> primary = new AnimationsGroup<>("Tank/Primary", filenames);
+		final AnimationsGroup<TankParts> secondary = new AnimationsGroup<>("Tank/Secondary", filenames);
 
 		animations.map(Collections.singleton(STANDING), standing)
 				.map(Collections.singleton(WALKING), walking)
