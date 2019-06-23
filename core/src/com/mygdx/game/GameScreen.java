@@ -1,18 +1,15 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.entity.Assassin;
-import com.mygdx.game.entity.Boss1;
+import com.mygdx.game.entity.*;
 import com.mygdx.game.entity.Character;
-import com.mygdx.game.entity.CharacterController;
-import com.mygdx.game.entity.EntityManager;
-import com.mygdx.game.entity.Tank;
 import com.mygdx.game.texture.TextureManager;
 
 import static com.mygdx.game.MyGdxGame.DEBUG;
@@ -24,7 +21,8 @@ public class GameScreen implements Screen {
 	// For debugging.
 	private ShapeRenderer shapeRenderer;
 
-	private CharacterController controller;
+	private BossController bossController;
+	private CharacterController playerController;
 	private EntityManager entityManager;
 	private Background background;
 
@@ -44,8 +42,15 @@ public class GameScreen implements Screen {
 		this.assassin = new Assassin(this);
 		assassin.setVisible(false);
 
-		this.controller = new CharacterController(this);
-		controller.setCharacter(tank);
+		// Order of render in entityManager depends on order of Entity() creation.
+		this.playerController = new CharacterController(this);
+		playerController.setCharacter(tank);
+		this.bossController = new BossController(this);
+		bossController.setBoss(boss);
+
+		// An input multiplexer sends input to both controllers at once.
+		InputMultiplexer inputMultiplexer = new InputMultiplexer(playerController, bossController);
+		Gdx.input.setInputProcessor(inputMultiplexer);
 
 		this.background = new Background(game.getTextureManager());
 		this.shapeRenderer = new ShapeRenderer();
@@ -107,14 +112,14 @@ public class GameScreen implements Screen {
 
 	public void switchCharacter() {
 		Gdx.app.log("GameScreen.java", "Switched Characters");
-		Character prev = controller.getCharacter();
+		Character prev = playerController.getCharacter();
 		Character next = prev.equals(tank) ? assassin : tank;
 		next.setPosition(prev.getPosition());
 		next.setVelocity(prev.getVelocity());
 		next.setSpriteDirection(prev.getSpriteDirection());
 		next.setInputDirection(prev.getInputDirection());
 
-		controller.setCharacter(next);
+		playerController.setCharacter(next);
 		prev.setVisible(false);
 		next.setVisible(true);
 	}

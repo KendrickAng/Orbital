@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.entity.Hitbox;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.TreeMap;
 
@@ -66,11 +67,11 @@ public class Animation {
 			frame = (int) (time / duration * size); // ?
 
 			Sprite sprite = frames.get(frame);
+			if (sprite == null) throw new NullPointerException("Animation.java: Sprite not found");
 			sprite.setPosition(position.x, position.y);
 			sprite.setFlip(flipX, flipY);
 			sprite.draw(batch);
 		}
-
 		time += Gdx.graphics.getDeltaTime();
 	}
 

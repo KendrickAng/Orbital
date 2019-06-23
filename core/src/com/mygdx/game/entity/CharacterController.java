@@ -20,7 +20,6 @@ public class CharacterController implements InputProcessor {
 
 	public CharacterController(GameScreen game) {
 		this.game = game;
-		Gdx.input.setInputProcessor(this);
 		inputDirections = new HashSet<>();
 	}
 
@@ -34,52 +33,65 @@ public class CharacterController implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
+		boolean eventHandled = false;
 		switch (keycode) {
 			case Input.Keys.LEFT:
 				inputDirections.add(Direction.LEFT);
 				character.setInputDirection(resolveInputDirection());
+				eventHandled = true;
 				break;
 			case Input.Keys.RIGHT:
 				inputDirections.add(Direction.RIGHT);
 				character.setInputDirection(resolveInputDirection());
+				eventHandled = true;
 				break;
 			case Input.Keys.UP:
 				inputDirections.add(UP);
 				character.setInputDirection(resolveInputDirection());
+				eventHandled = true;
 				break;
 			case Input.Keys.Q:
 				character.usePrimary();
+				eventHandled = true;
 				break;
 			case Input.Keys.W:
 				character.useSecondary();
+				eventHandled = true;
 				break;
 			case Input.Keys.E:
 				character.useTertiary();
+				eventHandled = true;
 				break;
 			case Input.Keys.R: // switch characters
 				game.switchCharacter();
+				eventHandled = true;
 				break;
 		}
-		return true;
+		Gdx.app.log("CharacterController", "event handle: " + eventHandled);
+		return eventHandled;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
+		boolean eventHandled = false;
 		switch (keycode) {
 			case Input.Keys.LEFT:
 				inputDirections.remove(Direction.LEFT);
 				character.setInputDirection(resolveInputDirection());
+				eventHandled = true;
 				break;
 			case Input.Keys.RIGHT:
 				inputDirections.remove(Direction.RIGHT);
 				character.setInputDirection(resolveInputDirection());
+				eventHandled = true;
 				break;
 			case Input.Keys.UP:
 				inputDirections.remove(UP);
 				character.setInputDirection(resolveInputDirection());
+				eventHandled = true;
 				break;
 		}
-		return true;
+		return eventHandled;
 	}
 
 	@Override

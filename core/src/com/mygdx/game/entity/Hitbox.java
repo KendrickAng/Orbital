@@ -10,7 +10,7 @@ public class Hitbox {
 
 	private int x; // offsetX
 	private int y;
-	private int width;
+	private int width; // pixmap width
 	private int height;
 	private Rectangle hitbox;
 

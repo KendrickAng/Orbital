@@ -49,7 +49,6 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 		setPosition(0, MAP_HEIGHT);
 	}
 
-
 	@Override
 	protected void defineStates(States<CharacterStates> states) {
 		states.addState(STANDING);
@@ -86,17 +85,17 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 				.map(TERTIARY, tertiary);
 	}
 
-	// Gives a state to the character, then removes it after the duration.
+	// scheduleState() places the state in Entity's States class
 	public void usePrimary() {
-		scheduleState(PRIMARY, primary.getDuration());
+		super.scheduleState(PRIMARY, primary.getDuration());
 	}
 
 	public void useSecondary() {
-		scheduleState(SECONDARY, secondary.getDuration());
+		super.scheduleState(SECONDARY, secondary.getDuration());
 	}
 
 	public void useTertiary() {
-		scheduleState(TERTIARY, tertiary.getDuration());
+		super.scheduleState(TERTIARY, tertiary.getDuration());
 	}
 
 	/* Debuffs */
@@ -182,7 +181,7 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 	protected void updateDirection(Direction inputDirection) {
 		switch (inputDirection) {
 			case NONE:
-				addState(STANDING);
+				addState(STANDING); // entity's addState and removeState
 				removeState(WALKING);
 				break;
 			case RIGHT:
