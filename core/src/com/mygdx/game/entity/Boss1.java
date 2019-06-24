@@ -9,6 +9,7 @@ import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.animation.AnimationsGroup;
+import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 import com.mygdx.game.entity.part.Boss1Parts;
@@ -23,6 +24,7 @@ import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.Direction.LEFT;
 import static com.mygdx.game.entity.Direction.RIGHT;
+import static com.mygdx.game.entity.debuff.DebuffType.*;
 import static com.mygdx.game.entity.part.Boss1Parts.*;
 import static com.mygdx.game.entity.state.Boss1States.*;
 
@@ -34,6 +36,16 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	private static final float HEALTH = 1000;
 	private static final float MOVESPEED = 1f;
 	private static final float FRICTION = 0.6f;
+
+	private static final float PRIMARY_SLOW_MODIFIER = 1f;
+
+	// skill cooldown in seconds.
+	private static final float PRIMARY_COOLDOWN = 1f;
+	private static final float SECONDARY_COOLDOWN = 1f;
+
+	/// skill animation duration in seconds.
+	private static final float PRIMARY_ANIMATION_DURATION = 1f;
+	private static final float SECONDARY_ANIMATION_DURATION = 2f; // optimal timings for animations.
 
 	private float movespeed;
 	private float friction;
@@ -80,16 +92,35 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 
 	/* Abilities */
 	public Ability initPrimary() {
-		return null;
+		// TODO: Define abilities here
+		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Boss1.java", "Primary");
+					inflictDebuff(DebuffType.SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
+				});
 	}
 
 	public Ability initSecondary() {
-		return null;
+		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Boss1.java", "Secondary");
+				});
 	}
 
 	@Override
 	protected void defineDebuffs(Debuffs<DebuffType> debuffs) {
+		Debuff slow = new Debuff()
+				.setApply(modifier -> {
+					// modifiers must never go above 1. See overallModifier() in Debuffs.
+					if (modifier > 1) {
+						modifier = 1;
+					}
+					// accounts for percentage slow, e.g 40% slow -> modifier = 0.4.
+					this.movespeed = (MOVESPEED * (1 - modifier));
+				})
+				.setEnd(() -> this.movespeed = MOVESPEED);
 
+		debuffs.map(SLOW, slow);
 	}
 
 	/* Animations */
@@ -104,12 +135,17 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 
 		final AnimationsGroup<Boss1Parts> standing = new AnimationsGroup<>("Boss1/Standing", filenames);
 		standing.setDuration(2);
+		// TODO: Replace with actual walking animations.
+		final AnimationsGroup<Boss1Parts> walking = new AnimationsGroup<>("Boss1/Standing", filenames);
 		final AnimationsGroup<Boss1Parts> primary = new AnimationsGroup<>("Boss1/Smash", filenames);
 		final AnimationsGroup<Boss1Parts> secondary = new AnimationsGroup<>("Boss1/Earthquake", filenames);
 
 		animations.map(Collections.singleton(STANDING), standing)
 				.map(Arrays.asList(STANDING, PRIMARY), primary)
-				.map(Arrays.asList(STANDING, SECONDARY), secondary);
+				.map(Arrays.asList(STANDING, SECONDARY), secondary)
+				.map(Collections.singleton(WALKING), walking)
+				.map(Arrays.asList(WALKING, PRIMARY), primary)
+				.map(Arrays.asList(WALKING, SECONDARY), secondary);
 	}
 
 	/* Update */
@@ -157,7 +193,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 		// calculate change in position due to velocity.
 		switch(super.getInputDirection()) {
 			case RIGHT:
-				velocity.x += movespeed; // TODO: More Weird sprite behaviour
+				velocity.x += movespeed;
 				break;
 			case LEFT:
 				velocity.x -= movespeed;

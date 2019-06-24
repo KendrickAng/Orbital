@@ -38,13 +38,13 @@ public class BossController implements InputProcessor {
                 boss.setInputDirection(resolveInputDirection());
                 eventHandled = true;
                 break;
-//            case Input.Keys.Z: // primary smash
-//                boss.usePrimary();
-//                eventHandled = true;
-//                break;
-//            case Input.Keys.X: // secondary rocks
-//                boss.useSecondary();
-//                eventHandled = false;
+            case Input.Keys.Z: // primary smash
+                boss.usePrimary();
+                eventHandled = true;
+                break;
+            case Input.Keys.X: // secondary rocks
+                boss.useSecondary();
+                eventHandled = false;
         }
         return eventHandled;
     }

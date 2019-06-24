@@ -45,9 +45,9 @@ public class Tank extends Character<TankParts> {
 	private static final float TERTIARY_SLOW_MODIFIER = 0.5f;
 
 	// Skill cooldown in seconds.
-	private static final float PRIMARY_COOLDOWN = 0;
-	private static final float SECONDARY_COOLDOWN = 1;
-	private static final float TERTIARY_COOLDOWN = TERTIARY_DEBUFF_DURATION + 2;
+	private static final float PRIMARY_COOLDOWN = 0f;
+	private static final float SECONDARY_COOLDOWN = 1f;
+	private static final float TERTIARY_COOLDOWN = TERTIARY_DEBUFF_DURATION + 2f;
 
 	// Skill animation duration in seconds.
 	private static final float PRIMARY_ANIMATION_DURATION = 0.5f;
