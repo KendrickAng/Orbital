@@ -8,6 +8,7 @@ import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.animation.AnimationsGroup;
+import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 import com.mygdx.game.entity.part.Boss1Parts;
@@ -32,6 +33,7 @@ import static com.mygdx.game.entity.state.Boss1States.PRIMARY;
 import static com.mygdx.game.entity.state.Boss1States.SECONDARY;
 import static com.mygdx.game.entity.state.Boss1States.STANDING;
 import static com.mygdx.game.entity.state.Boss1States.WALKING;
+import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
 
 /*
 Responsibilities: Defines abilities, maps Ability states to Ability instances, handles
@@ -42,11 +44,14 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	private static final float MOVESPEED = 1f;
 	private static final float FRICTION = 0.6f;
 
-	private static final float PRIMARY_COOLDOWN = 1;
-	private static final float SECONDARY_COOLDOWN = 1;
+	private static final float PRIMARY_COOLDOWN = 1f;
+	private static final float SECONDARY_COOLDOWN = 1f;
 
-	private static final float PRIMARY_ANIMATION_DURATION = 1;
-	private static final float SECONDARY_ANIMATION_DURATION = 1;
+	private static final float PRIMARY_SLOW_MODIFIER = 1f;
+	private static final float SECONDARY_SLOW_MODIFIER = 1f;
+
+	private static final float PRIMARY_ANIMATION_DURATION = 1f;
+	private static final float SECONDARY_ANIMATION_DURATION = 1f;
 
 	private float movespeed;
 	private float friction;
@@ -93,16 +98,35 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 
 	/* Abilities */
 	public Ability initPrimary() {
-		return new Ability(PRIMARY_COOLDOWN, PRIMARY_ANIMATION_DURATION);
+		return new Ability(PRIMARY_COOLDOWN, PRIMARY_ANIMATION_DURATION)
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Boss1.java", "Primary");
+					inflictDebuff(SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
+				});
 	}
 
 	public Ability initSecondary() {
-		return new Ability(SECONDARY_COOLDOWN, SECONDARY_ANIMATION_DURATION);
+		return new Ability(SECONDARY_COOLDOWN, SECONDARY_ANIMATION_DURATION)
+				.setAbilityBegin(() -> {
+					Gdx.app.log("Boss1.java", "Secondary");
+					inflictDebuff(SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
+				});
 	}
 
 	@Override
 	protected void defineDebuffs(Debuffs<DebuffType> debuffs) {
+		Debuff slow = new Debuff()
+				.setApply(modifier -> {
+					// modifiers must never go above 1. See overallModifier() in Debuffs.
+					if (modifier > 1) {
+						modifier = 1;
+					}
+					// accounts for percentage slow, e.g 40% slow -> modifier = 0.4.
+					this.movespeed = (MOVESPEED * (1 - modifier));
+				})
+				.setEnd(() -> this.movespeed = MOVESPEED);
 
+		debuffs.map(SLOW, slow);
 	}
 
 	/* Animations */
@@ -174,7 +198,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 		// calculate change in position due to velocity.
 		switch (super.getInputDirection()) {
 			case RIGHT:
-				velocity.x += movespeed; // TODO: More Weird sprite behaviour
+				velocity.x += movespeed;
 				break;
 			case LEFT:
 				velocity.x -= movespeed;
