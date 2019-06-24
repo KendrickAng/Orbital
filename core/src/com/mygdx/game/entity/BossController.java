@@ -9,7 +9,6 @@ import java.util.HashSet;
 
 import static com.mygdx.game.entity.Direction.*;
 
-// TODO: The start of something new
 public class BossController implements InputProcessor {
     private GameScreen game;
     private Boss1 boss;
@@ -44,7 +43,12 @@ public class BossController implements InputProcessor {
                 break;
             case Input.Keys.X: // secondary rocks
                 boss.useSecondary();
-                eventHandled = false;
+                eventHandled = true;
+                break;
+            case Input.Keys.C: // tertiary roll
+                boss.useTertiary();
+                eventHandled = true;
+                break;
         }
         return eventHandled;
     }

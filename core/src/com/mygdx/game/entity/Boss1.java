@@ -29,11 +29,8 @@ import static com.mygdx.game.entity.part.Boss1Parts.LEFT_LEG;
 import static com.mygdx.game.entity.part.Boss1Parts.RIGHT_ARM;
 import static com.mygdx.game.entity.part.Boss1Parts.RIGHT_LEG;
 import static com.mygdx.game.entity.part.Boss1Parts.SHOCKWAVE;
-import static com.mygdx.game.entity.state.Boss1States.PRIMARY;
-import static com.mygdx.game.entity.state.Boss1States.SECONDARY;
-import static com.mygdx.game.entity.state.Boss1States.STANDING;
-import static com.mygdx.game.entity.state.Boss1States.WALKING;
 import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
+import static com.mygdx.game.entity.state.Boss1States.*;
 
 /*
 Responsibilities: Defines abilities, maps Ability states to Ability instances, handles
@@ -46,18 +43,21 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 
 	private static final float PRIMARY_COOLDOWN = 1f;
 	private static final float SECONDARY_COOLDOWN = 1f;
+	private static final float TERTIARY_COOLDOWN = 1f;
 
 	private static final float PRIMARY_SLOW_MODIFIER = 1f;
 	private static final float SECONDARY_SLOW_MODIFIER = 1f;
 
 	private static final float PRIMARY_ANIMATION_DURATION = 1f;
 	private static final float SECONDARY_ANIMATION_DURATION = 1f;
+	private static final float TERTIARY_ANIMATION_DURATION = 2f;
 
 	private float movespeed;
 	private float friction;
 
 	private Ability primary;
 	private Ability secondary;
+	private Ability tertiary;
 
 	public Boss1(GameScreen game) {
 		super(game);
@@ -83,9 +83,11 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 		// smash
 		primary = initPrimary();
 		secondary = initSecondary();
+		tertiary = initTertiary();
 
 		abilities.map(PRIMARY, primary)
-				.map(SECONDARY, secondary);
+				.map(SECONDARY, secondary)
+				.map(TERTIARY, tertiary);
 	}
 
 	public void usePrimary() {
@@ -95,6 +97,8 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	public void useSecondary() {
 		super.scheduleState(SECONDARY, secondary.getDuration());
 	}
+
+	public void useTertiary() { super.scheduleState(TERTIARY, tertiary.getDuration()); }
 
 	/* Abilities */
 	public Ability initPrimary() {
@@ -111,6 +115,11 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 					Gdx.app.log("Boss1.java", "Secondary");
 					inflictDebuff(SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
 				});
+	}
+
+	public Ability initTertiary() {
+		// TODO: define ability
+		return new Ability(TERTIARY_COOLDOWN, TERTIARY_ANIMATION_DURATION);
 	}
 
 	@Override
@@ -144,13 +153,16 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 		standing.setDuration(2);
 		final AnimationsGroup<Boss1Parts> primary = new AnimationsGroup<>("Boss1/Smash", filenames);
 		final AnimationsGroup<Boss1Parts> secondary = new AnimationsGroup<>("Boss1/Earthquake", filenames);
+		final AnimationsGroup<Boss1Parts> tertiary = new AnimationsGroup<>("Boss1/Roll", filenames);
 
 		animations.map(Collections.singleton(STANDING), standing)
 				.map(Collections.singleton(WALKING), standing)
 				.map(Arrays.asList(STANDING, PRIMARY), primary)
 				.map(Arrays.asList(WALKING, PRIMARY), primary)
 				.map(Arrays.asList(STANDING, SECONDARY), secondary)
-				.map(Arrays.asList(WALKING, SECONDARY), secondary);
+				.map(Arrays.asList(WALKING, SECONDARY), secondary)
+				.map(Arrays.asList(STANDING, TERTIARY), tertiary)
+				.map(Arrays.asList(WALKING, TERTIARY), tertiary);
 	}
 
 	/* Update */
