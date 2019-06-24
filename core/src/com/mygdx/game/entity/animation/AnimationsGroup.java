@@ -13,14 +13,13 @@ import java.util.TreeMap;
 
 /**
  * Contains all the animations for a certain group e.g Standing.
+ *
  * @param <P> the enum grouping all the parts that need to be animated.
  */
 public class AnimationsGroup<P extends Enum> {
-	/* -----------------MIGRATED FROM PARTS----------------- */
 	private Vector2 position;// bottom left of the 160 by 80.
 	private boolean flipX;
 	private boolean flipY;
-	/* -----------------MIGRATED FROM PARTS----------------- */
 
 	private HashMap<P, Animation> parts; // Hashmap allows O(1) retrieval, and used for debug
 	private TreeMap<P, Animation> animations; // Treemap ensures player is rendered above Boss
@@ -32,10 +31,7 @@ public class AnimationsGroup<P extends Enum> {
 
 	// For loading of static AnimationGroup stores.
 	public AnimationsGroup(String directory, HashMap<String, P> filenames) {
-		/* -----------------MIGRATED FROM PARTS----------------- */
 		position = new Vector2();
-		/* -----------------MIGRATED FROM PARTS----------------- */
-
 		parts = new HashMap<>();
 		animations = new TreeMap<>();
 
@@ -49,18 +45,21 @@ public class AnimationsGroup<P extends Enum> {
 		// returns filehandles for a directory.
 		FileHandle[] files = Gdx.files.internal(directory).list();
 		for (FileHandle file : files) {
-			// populates the animations in order, ensuring order dictated in assets name is followed.
-			String[] n = file.nameWithoutExtension().split("_");
-			int frame = Integer.parseInt(n[0]);
-			String name = n[1];
+			if (!file.isDirectory()) {
+				// populates the animations in order, ensuring order dictated in assets name is followed.
+				String[] n = file.nameWithoutExtension().split("_");
+				int frame = Integer.parseInt(n[0]);
+				String name = n[1];
 
-			P part = filenames.get(name);
-			Animation animation = parts.get(part);
-			animation.put(frame, new Pixmap(file));
+				P part = filenames.get(name);
+				if (part != null) {
+					Animation animation = parts.get(part);
+					animation.put(frame, new Pixmap(file));
+				}
+			}
 		}
 	}
 
-	/* -----------------MIGRATED FROM PARTS----------------- */
 	public void render(SpriteBatch batch) {
 		for (Animation animation : animations.values()) {
 			animation.setFlip(flipX, flipY);
@@ -70,7 +69,10 @@ public class AnimationsGroup<P extends Enum> {
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {
 		for (Animation animation : parts.values()) {
-			animation.getHitbox().renderDebug(shapeRenderer);
+			Hitbox hitbox = animation.getHitbox();
+			if (hitbox != null) {
+				hitbox.renderDebug(shapeRenderer);
+			}
 		}
 	}
 
@@ -90,7 +92,6 @@ public class AnimationsGroup<P extends Enum> {
 	public Hitbox getHitbox(P part) {
 		return parts.get(part).getHitbox();
 	}
-	/* -----------------MIGRATED FROM PARTS----------------- */
 
 	public void setPosition(Vector2 position) {
 		for (Animation animation : parts.values()) {

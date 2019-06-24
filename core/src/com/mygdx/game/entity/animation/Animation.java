@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.entity.Hitbox;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.TreeMap;
 
@@ -25,6 +24,8 @@ public class Animation {
 	private float duration;
 	private int frame;
 	private int size;
+
+	// TODO: Implement looping
 	private boolean loop = true;
 
 	private TreeMap<Integer, Sprite> frames;
@@ -67,10 +68,11 @@ public class Animation {
 			frame = (int) (time / duration * size); // ?
 
 			Sprite sprite = frames.get(frame);
-			if (sprite == null) throw new NullPointerException("Animation.java: Sprite not found");
-			sprite.setPosition(position.x, position.y);
-			sprite.setFlip(flipX, flipY);
-			sprite.draw(batch);
+			if (sprite != null) {
+				sprite.setPosition(position.x, position.y);
+				sprite.setFlip(flipX, flipY);
+				sprite.draw(batch);
+			}
 		}
 		time += Gdx.graphics.getDeltaTime();
 	}
@@ -78,8 +80,12 @@ public class Animation {
 	// returns the hitbox with correct position and flip.
 	public Hitbox getHitbox() {
 		Hitbox hitbox = hitboxes.get(frame);
-		hitbox.setPosition(position);
-		hitbox.setFlip(flipX, flipY);
-		return hitbox;
+		if (hitbox == null) {
+			return null;
+		} else {
+			hitbox.setPosition(position);
+			hitbox.setFlip(flipX, flipY);
+			return hitbox;
+		}
 	}
 }
