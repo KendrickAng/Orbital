@@ -11,6 +11,7 @@ import com.mygdx.game.entity.state.CharacterStates;
 import com.mygdx.game.entity.state.States;
 
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.entity.debuff.DebuffType.IGNORE_MOVE_DIRECTION;
 import static com.mygdx.game.entity.debuff.DebuffType.IGNORE_FRICTION;
 import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
 import static com.mygdx.game.entity.state.CharacterStates.PRIMARY;
@@ -40,6 +41,7 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 	private Ability primary;
 	private Ability secondary;
 	private Ability tertiary;
+	private boolean ignoreMoveDirection;
 
 	public Character(GameScreen game) {
 		super(game);
@@ -60,18 +62,6 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 	protected abstract Ability initSecondary();
 
 	protected abstract Ability initTertiary();
-
-	protected Ability getPrimary() {
-		return primary;
-	}
-
-	protected Ability getSecondary() {
-		return secondary;
-	}
-
-	protected Ability getTertiary() {
-		return tertiary;
-	}
 
 	// where all abilities for all characters are defined.
 	@Override
@@ -105,34 +95,41 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 	protected void defineDebuffs(Debuffs<DebuffType> debuffs) {
 		Debuff slow = new Debuff()
 				.setApply(modifier -> {
-					// modifiers must never go above 1. See overallModifier() in Debuffs.
+					// Slow can't go above 100%.
 					if (modifier > 1) {
 						modifier = 1;
 					}
 					// accounts for percentage slow, e.g 40% slow -> modifier = 0.4.
-					setMovespeed(MOVESPEED * (1 - modifier));
+					this.movespeed = MOVESPEED * (1 - modifier);
 				})
-				.setEnd(() -> setMovespeed(MOVESPEED));
+				.setEnd(() -> this.movespeed = MOVESPEED);
 
 		Debuff ignoreFriction = new Debuff()
-				.setBegin(() -> setFriction(1))
-				.setEnd(() -> setFriction(FRICTION));
+				.setBegin(() -> this.friction = 1)
+				.setEnd(() -> this.friction = FRICTION);
+
+		Debuff ignoreMoveDirection = new Debuff()
+				.setBegin(() -> this.ignoreMoveDirection = true)
+				.setEnd(() -> this.ignoreMoveDirection = false);
 
 		debuffs.map(SLOW, slow)
-				.map(IGNORE_FRICTION, ignoreFriction);
+				.map(IGNORE_FRICTION, ignoreFriction)
+				.map(IGNORE_MOVE_DIRECTION, ignoreMoveDirection);
 	}
 
 	@Override
 	protected void updateVelocity(Vector2 position, Vector2 velocity) {
-		switch (getInputDirection()) {
-			case RIGHT:
-			case UP_RIGHT:
-				setSpriteDirection(Direction.RIGHT);
-				break;
-			case LEFT:
-			case UP_LEFT:
-				setSpriteDirection(Direction.LEFT);
-				break;
+		if (!ignoreMoveDirection) {
+			switch (getInputDirection()) {
+				case RIGHT:
+				case UP_RIGHT:
+					setSpriteDirection(Direction.RIGHT);
+					break;
+				case LEFT:
+				case UP_LEFT:
+					setSpriteDirection(Direction.LEFT);
+					break;
+			}
 		}
 
 		if (position.y > MAP_HEIGHT) {
@@ -195,13 +192,5 @@ public abstract class Character<R extends Enum> extends LivingEntity<CharacterSt
 	/* Getters */
 	public boolean isFalling() {
 		return falling;
-	}
-
-	private void setMovespeed(float speed) {
-		movespeed = speed;
-	}
-
-	private void setFriction(float friction) {
-		this.friction = friction;
 	}
 }

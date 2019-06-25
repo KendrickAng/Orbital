@@ -71,6 +71,7 @@ public class Tank extends Character<TankParts> {
 		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
 				.setAbilityBegin(() -> {
 					inflictDebuff(DebuffType.SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
+					inflictDebuff(DebuffType.IGNORE_MOVE_DIRECTION, 0, PRIMARY_ANIMATION_DURATION);
 				});
 	}
 
@@ -80,6 +81,7 @@ public class Tank extends Character<TankParts> {
 		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
 				.setAbilityBegin(() -> {
 					inflictDebuff(DebuffType.SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
+					inflictDebuff(DebuffType.IGNORE_MOVE_DIRECTION, 0, SECONDARY_ANIMATION_DURATION);
 				}).addAbilityTask(() -> {
 					Boss1 boss = getGame().getBoss();
 					if (getHitbox(WEAPON).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
