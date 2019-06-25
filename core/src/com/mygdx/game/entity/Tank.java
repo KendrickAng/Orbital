@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.ability.Ability;
+import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
-import com.mygdx.game.entity.animation.AnimationsGroup;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.part.Boss1Parts;
 import com.mygdx.game.entity.part.TankParts;
@@ -50,6 +50,8 @@ public class Tank extends Character<TankParts> {
 	private static final float TERTIARY_COOLDOWN = TERTIARY_DEBUFF_DURATION + 2f;
 
 	// Skill animation duration in seconds.
+	private static final float STANDING_ANIMATION_DURATION = 1f;
+	private static final float WALKING_ANIMATION_DURATION = 1f;
 	private static final float PRIMARY_ANIMATION_DURATION = 0.5f;
 	private static final float SECONDARY_ANIMATION_DURATION = 0.5f;
 	private static final float TERTIARY_ANIMATION_DURATION = 0.5f;
@@ -68,7 +70,6 @@ public class Tank extends Character<TankParts> {
 	protected Ability initPrimary() {
 		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					Gdx.app.log("Tank.java", "Primary");
 					inflictDebuff(DebuffType.SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
 				});
 	}
@@ -78,7 +79,6 @@ public class Tank extends Character<TankParts> {
 	protected Ability initSecondary() {
 		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					Gdx.app.log("Tank.java", "Secondary");
 					inflictDebuff(DebuffType.SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
 				}).addAbilityTask(() -> {
 					Boss1 boss = getGame().getBoss();
@@ -113,10 +113,15 @@ public class Tank extends Character<TankParts> {
 		filenames.put("RightArm", RIGHT_ARM);
 
 		// Static animations. Will not be mutated again.
-		final AnimationsGroup<TankParts> standing = new AnimationsGroup<>("Tank/Standing", filenames);
-		final AnimationsGroup<TankParts> walking = new AnimationsGroup<>("Tank/Walking", filenames);
-		final AnimationsGroup<TankParts> primary = new AnimationsGroup<>("Tank/Primary", filenames);
-		final AnimationsGroup<TankParts> secondary = new AnimationsGroup<>("Tank/Secondary", filenames);
+		final Animation<TankParts> standing = new Animation<>(STANDING_ANIMATION_DURATION, true);
+		final Animation<TankParts> walking = new Animation<>(WALKING_ANIMATION_DURATION, true);
+		final Animation<TankParts> primary = new Animation<>(PRIMARY_ANIMATION_DURATION, false);
+		final Animation<TankParts> secondary = new Animation<>(SECONDARY_ANIMATION_DURATION, false);
+
+		standing.load("Tank/Standing", filenames);
+		walking.load("Tank/Walking", filenames);
+		primary.load("Tank/Primary", filenames);
+		secondary.load("Tank/Secondary", filenames);
 
 		animations.map(Collections.singleton(STANDING), standing)
 				.map(Collections.singleton(WALKING), walking)

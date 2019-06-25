@@ -24,52 +24,45 @@ public class BossController implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        boolean eventHandled = false;
         switch(keycode) {
             case Input.Keys.J:
-                Gdx.app.log("BossController.java", "handling left input DOWN");
                 inputDirections.add(Direction.LEFT);
                 boss.setInputDirection(resolveInputDirection());
-                eventHandled = true;
                 break;
             case Input.Keys.L:
                 inputDirections.add(Direction.RIGHT);
                 boss.setInputDirection(resolveInputDirection());
-                eventHandled = true;
                 break;
             case Input.Keys.Z: // primary smash
                 boss.usePrimary();
-                eventHandled = true;
                 break;
             case Input.Keys.X: // secondary rocks
                 boss.useSecondary();
-                eventHandled = true;
                 break;
             case Input.Keys.C: // tertiary roll
                 boss.useTertiary();
-                eventHandled = true;
                 break;
+            default:
+                return false;
         }
-        return eventHandled;
+        return true;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        boolean eventHandled = false;
         switch (keycode) {
             case Input.Keys.J:
-                Gdx.app.log("BossController.java", "handling left input UP");
                 inputDirections.remove(Direction.LEFT);
                 boss.setInputDirection(resolveInputDirection());
-                eventHandled = true;
                 break;
             case Input.Keys.L:
                 inputDirections.remove(Direction.RIGHT);
                 boss.setInputDirection(resolveInputDirection());
-                eventHandled = true;
                 break;
+            default:
+                return false;
         }
-        return eventHandled;
+        return true;
     }
 
     @Override

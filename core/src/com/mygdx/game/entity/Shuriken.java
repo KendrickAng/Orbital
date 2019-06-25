@@ -3,8 +3,8 @@ package com.mygdx.game.entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
-import com.mygdx.game.entity.animation.AnimationsGroup;
 import com.mygdx.game.entity.part.Boss1Parts;
 import com.mygdx.game.entity.part.ShurikenParts;
 import com.mygdx.game.entity.state.ShurikenStates;
@@ -36,7 +36,8 @@ public class Shuriken extends Entity<ShurikenStates, ShurikenParts> {
 		HashMap<String, ShurikenParts> filenames = new HashMap<>();
 		filenames.put("Body", BODY);
 
-		AnimationsGroup<ShurikenParts> flying = new AnimationsGroup<>("Assassin/Shuriken", filenames);
+		Animation<ShurikenParts> flying = new Animation<>(0, false);
+		flying.load("Assassin/Shuriken", filenames);
 
 		animations.map(Collections.singleton(FLYING), flying);
 	}

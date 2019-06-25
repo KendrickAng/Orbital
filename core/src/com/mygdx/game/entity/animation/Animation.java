@@ -1,91 +1,129 @@
 package com.mygdx.game.entity.animation;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.entity.Hitbox;
 
 import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
- * The animation of one body part in a given state. Once instance of this is responsible for the
- * entire animation cycle of a state (E.g Standing). Check android/assets to see the order of render.
+ * Contains all the animations for a certain state e.g Standing.
+ *
+ * @param <P> the enum grouping all the parts that need to be animated.
  */
-public class Animation {
-	private Vector2 position;
-	private boolean flipX;
-	private boolean flipY;
-
-	private float time;
-	private float duration;
+public class Animation<P extends Enum> {
 	private int frame;
-	private int size;
+	private int frames;
 
-	// TODO: Implement looping
-	private boolean loop = true;
+	// Total animation duration
+	private float duration;
+	private boolean loop;
 
-	private TreeMap<Integer, Sprite> frames;
-	private HashMap<Integer, Hitbox> hitboxes;
+	private Timer timer;
+	private HashMap<P, AnimationPart> parts; // Hashmap allows O(1) retrieval, and used for debug
+	private TreeMap<P, AnimationPart> animations; // Treemap parts are rendered in order
 
-	public Animation() {
-		this.duration = 1;
-		frames = new TreeMap<>();
-		hitboxes = new HashMap<>();
-	}
-
-	// maps the pixmap Sprite and Hitbox to corresponding frame number.
-	public void put(int frame, Pixmap pixmap) {
-		frames.put(frame, new Sprite(new Texture(pixmap)));
-		hitboxes.put(frame, new Hitbox(pixmap));
-
-		size = Math.max(frame + 1, size);
-		pixmap.dispose();
-	}
-
-	public void setPosition(Vector2 position) {
-		this.position = position;
-	}
-
-	public void setFlip(boolean flipX, boolean flipY) {
-		this.flipX = flipX;
-		this.flipY = flipY;
-	}
-
-	public void setDuration(float duration) {
+	// Load Animation assets
+	public Animation(float duration, boolean loop) {
 		this.duration = duration;
+		this.loop = loop;
+		this.timer = new Timer();
+		this.parts = new HashMap<>();
+		this.animations = new TreeMap<>();
 	}
 
-	public void render(SpriteBatch batch) {
-		if (time >= duration && loop) { // loop mechanism
-			time = 0;
+	public void load(String directory, HashMap<String, P> filenames) {
+		// map all parts to an empty animation, populates parts.
+		for (P part : filenames.values()) {
+			AnimationPart animation = new AnimationPart();
+			parts.put(part, animation);
+			animations.put(part, animation);
 		}
 
-		if (time < duration) {
-			frame = (int) (time / duration * size); // ?
+		// returns filehandles for a directory.
+		FileHandle[] files = Gdx.files.internal(directory).list();
+		for (FileHandle file : files) {
+			if (!file.isDirectory()) {
+				// populates the animations in order, ensuring order dictated in assets name is followed.
+				String[] n = file.nameWithoutExtension().split("_");
+				int frame = Integer.parseInt(n[0]);
+				String name = n[1];
 
-			Sprite sprite = frames.get(frame);
+				P part = filenames.get(name);
+				if (part == null) {
+					Gdx.app.error("Animation.java", "Part '" + name + "' is not defined.");
+				} else {
+					AnimationPart animation = parts.get(part);
+					animation.put(frame, new Pixmap(file));
+					frames = Math.max(frames, frame + 1);
+				}
+			}
+		}
+	}
+
+	public void begin() {
+		frame = 0;
+		timer.clear();
+		nextFrame();
+	}
+
+	private void nextFrame() {
+		if (frame < frames - 1) {
+			timer.scheduleTask(new Timer.Task() {
+				@Override
+				public void run() {
+					Animation.this.frame++;
+					Animation.this.nextFrame();
+				}
+			}, duration / frames);
+		} else if (loop) {
+			timer.scheduleTask(new Timer.Task() {
+				@Override
+				public void run() {
+					Animation.this.frame = 0;
+					Animation.this.nextFrame();
+				}
+			}, duration / frames);
+		}
+	}
+
+	public void render(SpriteBatch batch, Vector2 position, boolean flipX, boolean flipY) {
+		for (AnimationPart part : animations.values()) {
+			Sprite sprite = part.getSprite(frame);
+
+			// Ignore undefined sprites
 			if (sprite != null) {
 				sprite.setPosition(position.x, position.y);
 				sprite.setFlip(flipX, flipY);
 				sprite.draw(batch);
+
+				Hitbox hitbox = part.getHitbox(frame);
+				hitbox.setPosition(position);
+				hitbox.setFlip(flipX, flipY);
 			}
 		}
-		time += Gdx.graphics.getDeltaTime();
 	}
 
-	// returns the hitbox with correct position and flip.
-	public Hitbox getHitbox() {
-		Hitbox hitbox = hitboxes.get(frame);
-		if (hitbox == null) {
-			return null;
-		} else {
-			hitbox.setPosition(position);
-			hitbox.setFlip(flipX, flipY);
-			return hitbox;
+	public void renderDebug(ShapeRenderer shapeRenderer, Vector2 position, boolean flipX, boolean flipY) {
+		for (AnimationPart part : animations.values()) {
+			Hitbox hitbox = part.getHitbox(frame);
+
+			// Ignore undefined hitboxes
+			if (hitbox != null) {
+				hitbox.renderDebug(shapeRenderer);
+			}
 		}
+	}
+
+	/* Getters */
+	public Hitbox getHitbox(P part) {
+		return parts.get(part).getHitbox(frame);
 	}
 }

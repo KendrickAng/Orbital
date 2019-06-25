@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
+import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
-import com.mygdx.game.entity.animation.AnimationsGroup;
 import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
@@ -48,9 +48,10 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	private static final float PRIMARY_SLOW_MODIFIER = 1f;
 	private static final float SECONDARY_SLOW_MODIFIER = 1f;
 
+	private static final float STANDING_ANIMATION_DURATION = 2f;
 	private static final float PRIMARY_ANIMATION_DURATION = 1f;
 	private static final float SECONDARY_ANIMATION_DURATION = 1f;
-	private static final float TERTIARY_ANIMATION_DURATION = 2f;
+	private static final float TERTIARY_ANIMATION_DURATION = 1f;
 
 	private float movespeed;
 	private float friction;
@@ -102,24 +103,22 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 
 	/* Abilities */
 	public Ability initPrimary() {
-		return new Ability(PRIMARY_COOLDOWN, PRIMARY_ANIMATION_DURATION)
+		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					Gdx.app.log("Boss1.java", "Primary");
 					inflictDebuff(SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
 				});
 	}
 
 	public Ability initSecondary() {
-		return new Ability(SECONDARY_COOLDOWN, SECONDARY_ANIMATION_DURATION)
+		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					Gdx.app.log("Boss1.java", "Secondary");
 					inflictDebuff(SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
 				});
 	}
 
 	public Ability initTertiary() {
 		// TODO: define ability
-		return new Ability(TERTIARY_COOLDOWN, TERTIARY_ANIMATION_DURATION);
+		return new Ability(TERTIARY_ANIMATION_DURATION, TERTIARY_COOLDOWN);
 	}
 
 	@Override
@@ -149,18 +148,20 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 		filenames.put("LeftArm", LEFT_ARM);
 		filenames.put("Shockwave", SHOCKWAVE);
 
-		final AnimationsGroup<Boss1Parts> standing = new AnimationsGroup<>("Boss1/Standing", filenames);
-		standing.setDuration(2);
-		final AnimationsGroup<Boss1Parts> primary = new AnimationsGroup<>("Boss1/Smash", filenames);
-		final AnimationsGroup<Boss1Parts> secondary = new AnimationsGroup<>("Boss1/Earthquake", filenames);
-		final AnimationsGroup<Boss1Parts> tertiary = new AnimationsGroup<>("Boss1/Roll", filenames);
+		Animation<Boss1Parts> standing = new Animation<>(STANDING_ANIMATION_DURATION, true);
+		Animation<Boss1Parts> primary = new Animation<>(PRIMARY_ANIMATION_DURATION, false);
+		Animation<Boss1Parts> secondary = new Animation<>(SECONDARY_ANIMATION_DURATION, false);
+		Animation<Boss1Parts> tertiary = new Animation<>(TERTIARY_ANIMATION_DURATION, false);
+
+		standing.load("Boss1/Standing", filenames);
+		primary.load("Boss1/Smash", filenames);
+		secondary.load("Boss1/Earthquake", filenames);
+		tertiary.load("Boss1/Roll", filenames);
 
 		animations.map(Collections.singleton(STANDING), standing)
 				.map(Collections.singleton(WALKING), standing)
 				.map(Arrays.asList(STANDING, PRIMARY), primary)
-				.map(Arrays.asList(WALKING, PRIMARY), primary)
 				.map(Arrays.asList(STANDING, SECONDARY), secondary)
-				.map(Arrays.asList(WALKING, SECONDARY), secondary)
 				.map(Arrays.asList(STANDING, TERTIARY), tertiary)
 				.map(Arrays.asList(WALKING, TERTIARY), tertiary);
 	}
