@@ -8,13 +8,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.entity.Assassin;
-import com.mygdx.game.entity.Boss1;
-import com.mygdx.game.entity.BossController;
-import com.mygdx.game.entity.Character;
-import com.mygdx.game.entity.CharacterController;
+import com.mygdx.game.entity.boss1.Boss1AI;
+import com.mygdx.game.entity.character.Assassin;
+import com.mygdx.game.entity.boss1.Boss1;
+import com.mygdx.game.entity.boss1.Boss1Controller;
+import com.mygdx.game.entity.character.Character;
+import com.mygdx.game.entity.character.CharacterController;
 import com.mygdx.game.entity.EntityManager;
-import com.mygdx.game.entity.Tank;
+import com.mygdx.game.entity.character.Tank;
 import com.mygdx.game.texture.TextureManager;
 
 import static com.mygdx.game.MyGdxGame.DEBUG;
@@ -26,15 +27,15 @@ public class GameScreen implements Screen {
 	// For debugging.
 	private ShapeRenderer shapeRenderer;
 
-	private BossController bossController;
 	private CharacterController playerController;
 	private EntityManager entityManager;
 	private Background background;
 
 	/* Entities */
-	private Boss1 boss;
+	private Character character;
 	private Tank tank;
 	private Assassin assassin;
+	private Boss1 boss1;
 
 	public GameScreen(MyGdxGame game) {
 		// init rectangle to (0, 0)
@@ -42,16 +43,18 @@ public class GameScreen implements Screen {
 		this.entityManager = new EntityManager();
 
 		/* Entities */
-		this.boss = new Boss1(this);
+		// Order of render in entityManager depends on order of Entity() creation.
+		this.boss1 = new Boss1(this);
+
 		this.tank = new Tank(this);
 		this.assassin = new Assassin(this);
 		assassin.setVisible(false);
+		this.character = tank;
 
-		// Order of render in entityManager depends on order of Entity() creation.
+		/* Input */
+		new Boss1AI(this);
 		this.playerController = new CharacterController(this);
-		playerController.setCharacter(tank);
-		this.bossController = new BossController(this);
-		bossController.setBoss(boss);
+		Boss1Controller bossController = new Boss1Controller(this);
 
 		// An input multiplexer sends input to both controllers at once.
 		InputMultiplexer inputMultiplexer = new InputMultiplexer(playerController, bossController);
@@ -117,21 +120,26 @@ public class GameScreen implements Screen {
 
 	public void switchCharacter() {
 		Gdx.app.log("GameScreen.java", "Switched Characters");
-		Character prev = playerController.getCharacter();
+		Character prev = character;
 		Character next = prev.equals(tank) ? assassin : tank;
+		prev.setVisible(false);
 		next.setPosition(prev.getPosition());
 		next.setVelocity(prev.getVelocity());
 		next.setSpriteDirection(prev.getSpriteDirection());
 		next.setInputDirection(prev.getInputDirection());
-
-		playerController.setCharacter(next);
-		prev.setVisible(false);
 		next.setVisible(true);
+
+		character = next;
+		playerController.update();
 	}
 
 	/* Getters */
-	public Boss1 getBoss() {
-		return boss;
+	public Character getCharacter() {
+		return character;
+	}
+
+	public Boss1 getBoss1() {
+		return boss1;
 	}
 
 	public EntityManager getEntityManager() {

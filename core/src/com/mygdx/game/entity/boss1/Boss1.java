@@ -1,9 +1,11 @@
-package com.mygdx.game.entity;
+package com.mygdx.game.entity.boss1;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.entity.Direction;
+import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
@@ -24,6 +26,7 @@ import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.Direction.LEFT;
 import static com.mygdx.game.entity.Direction.RIGHT;
 import static com.mygdx.game.entity.debuff.DebuffType.IGNORE_MOVE_INPUT;
+import static com.mygdx.game.entity.debuff.DebuffType.ROLLING;
 import static com.mygdx.game.entity.part.Boss1Parts.BODY;
 import static com.mygdx.game.entity.part.Boss1Parts.LEFT_ARM;
 import static com.mygdx.game.entity.part.Boss1Parts.LEFT_LEG;
@@ -40,6 +43,7 @@ sprite position, direction, motion.
 public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	private static final float HEALTH = 1000;
 	private static final float MOVESPEED = 1f;
+	private static final float ROLL_SPEED = 4f;
 	private static final float FRICTION = 0.6f;
 
 	private static final float PRIMARY_COOLDOWN = 1f;
@@ -57,6 +61,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	private float movespeed;
 	private float friction;
 	private boolean ignoreMoveInput;
+	private boolean rolling;
 
 	private Ability primary;
 	private Ability secondary;
@@ -125,9 +130,14 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	}
 
 	public Ability initTertiary() {
-		// TODO: define ability
-		// TODO: FSM possibility
-		return new Ability(TERTIARY_ANIMATION_DURATION, TERTIARY_COOLDOWN);
+		return new Ability(TERTIARY_ANIMATION_DURATION, TERTIARY_COOLDOWN)
+				.setAbilityBegin(() -> {
+					addState(STANDING);
+					removeState(WALKING);
+					inflictDebuff(IGNORE_MOVE_INPUT, 0, TERTIARY_ANIMATION_DURATION);
+				}).addAbilityTask(() -> {
+					inflictDebuff(ROLLING, 0, TERTIARY_ANIMATION_DURATION - 0.3f);
+				}, 0.3f);
 	}
 
 	@Override
@@ -147,8 +157,13 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 				.setBegin(() -> this.ignoreMoveInput = true)
 				.setEnd(() -> this.ignoreMoveInput = false);
 
+		Debuff rolling = new Debuff()
+				.setBegin(() -> this.rolling = true)
+				.setEnd(() -> this.rolling = false);
+
 		debuffs.map(SLOW, slow)
-				.map(IGNORE_MOVE_INPUT, ignoreMoveInput);
+				.map(IGNORE_MOVE_INPUT, ignoreMoveInput)
+				.map(ROLLING, rolling);
 	}
 
 	/* Animations */
@@ -221,6 +236,17 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 					break;
 				case RIGHT:
 					setSpriteDirection(LEFT); // TODO: Weird sprite behaviour
+					break;
+			}
+		}
+
+		if (rolling) {
+			switch (super.getSpriteDirection()) {
+				case LEFT:
+					velocity.x += ROLL_SPEED;
+					break;
+				case RIGHT:
+					velocity.x -= ROLL_SPEED;
 					break;
 			}
 		}

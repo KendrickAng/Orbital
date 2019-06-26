@@ -1,8 +1,12 @@
-package com.mygdx.game.entity;
+package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.entity.Direction;
+import com.mygdx.game.entity.Entity;
+import com.mygdx.game.entity.Hitbox;
+import com.mygdx.game.entity.Shuriken;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;

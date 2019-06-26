@@ -1,4 +1,4 @@
-package com.mygdx.game.entity;
+package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -6,6 +6,7 @@ import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
+import com.mygdx.game.entity.boss1.Boss1;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.part.Boss1Parts;
 import com.mygdx.game.entity.part.TankParts;
@@ -83,7 +84,7 @@ public class Tank extends Character<TankParts> {
 					inflictDebuff(DebuffType.SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
 					inflictDebuff(DebuffType.IGNORE_MOVE_DIRECTION, 0, SECONDARY_ANIMATION_DURATION);
 				}).addAbilityTask(() -> {
-					Boss1 boss = getGame().getBoss();
+					Boss1 boss = getGame().getBoss1();
 					if (getHitbox(WEAPON).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
 						Gdx.app.log("Tank.java", "Boss was hit!");
 						boss.damage(SECONDARY_DAMAGE);

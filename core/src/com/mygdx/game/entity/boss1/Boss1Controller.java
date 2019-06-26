@@ -1,46 +1,42 @@
-package com.mygdx.game.entity;
+package com.mygdx.game.entity.boss1;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.entity.Direction;
 
 import java.util.HashSet;
 
 import static com.mygdx.game.entity.Direction.*;
 
-public class BossController implements InputProcessor {
-    private GameScreen game;
-    private Boss1 boss;
+public class Boss1Controller implements InputProcessor {
+    private Boss1 boss1;
     private HashSet<Direction> inputDirections;
 
-    public BossController(GameScreen game) {
-        this.game = game;
+    public Boss1Controller(GameScreen game) {
+        this.boss1 = game.getBoss1();
         inputDirections = new HashSet<>();
     }
-
-    public void setBoss(Boss1 boss) { this.boss = boss;}
-    public Boss1 getBoss() { return this.boss; }
 
     @Override
     public boolean keyDown(int keycode) {
         switch(keycode) {
             case Input.Keys.J:
                 inputDirections.add(Direction.LEFT);
-                boss.setInputDirection(resolveInputDirection());
+                boss1.setInputDirection(resolveInputDirection());
                 break;
             case Input.Keys.L:
                 inputDirections.add(Direction.RIGHT);
-                boss.setInputDirection(resolveInputDirection());
+                boss1.setInputDirection(resolveInputDirection());
                 break;
             case Input.Keys.Z: // primary smash
-                boss.usePrimary();
+                boss1.usePrimary();
                 break;
             case Input.Keys.X: // secondary rocks
-                boss.useSecondary();
+                boss1.useSecondary();
                 break;
             case Input.Keys.C: // tertiary roll
-                boss.useTertiary();
+                boss1.useTertiary();
                 break;
             default:
                 return false;
@@ -53,11 +49,11 @@ public class BossController implements InputProcessor {
         switch (keycode) {
             case Input.Keys.J:
                 inputDirections.remove(Direction.LEFT);
-                boss.setInputDirection(resolveInputDirection());
+                boss1.setInputDirection(resolveInputDirection());
                 break;
             case Input.Keys.L:
                 inputDirections.remove(Direction.RIGHT);
-                boss.setInputDirection(resolveInputDirection());
+                boss1.setInputDirection(resolveInputDirection());
                 break;
             default:
                 return false;

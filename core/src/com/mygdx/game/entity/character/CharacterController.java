@@ -1,9 +1,9 @@
-package com.mygdx.game.entity;
+package com.mygdx.game.entity.character;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.entity.Direction;
 
 import java.util.HashSet;
 
@@ -20,15 +20,12 @@ public class CharacterController implements InputProcessor {
 
 	public CharacterController(GameScreen game) {
 		this.game = game;
+		this.character = game.getCharacter();
 		inputDirections = new HashSet<>();
 	}
 
-	public void setCharacter(Character character) {
-		this.character = character;
-	}
-
-	public Character getCharacter() {
-		return character;
+	public void update() {
+		character = game.getCharacter();
 	}
 
 	@Override

@@ -25,7 +25,7 @@ public class Hitbox {
 		int maxX = Integer.MIN_VALUE;
 		int minY = Integer.MAX_VALUE;
 		int maxY = Integer.MIN_VALUE;
-		// loop through all pixels in pixmap and update minmaxX/minmaxY
+		// loop through all pixels in pixmap and start minmaxX/minmaxY
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				// check for transparent pixel.

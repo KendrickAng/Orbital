@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
+import com.mygdx.game.entity.boss1.Boss1;
 import com.mygdx.game.entity.part.Boss1Parts;
 import com.mygdx.game.entity.part.ShurikenParts;
 import com.mygdx.game.entity.state.ShurikenStates;
@@ -44,7 +45,7 @@ public class Shuriken extends Entity<ShurikenStates, ShurikenParts> {
 
 	@Override
 	protected void update() {
-		Boss1 boss = getGame().getBoss();
+		Boss1 boss = getGame().getBoss1();
 		if (getHitbox(BODY).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
 			Gdx.app.log("Shuriken.java", "Boss was hit!");
 			boss.damage(SHURIKEN_DAMAGE);
