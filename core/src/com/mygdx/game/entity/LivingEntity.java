@@ -81,4 +81,8 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 	public Direction getInputDirection() {
 		return inputDirection;
 	}
+
+	public Debuffs<DebuffType> getDebuffs() {
+		return this.debuffs;
+	}
 }

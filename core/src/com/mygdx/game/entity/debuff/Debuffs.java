@@ -87,4 +87,8 @@ public class Debuffs<T> {
 			return 0;
 		}
 	}
+
+	public HashMap<T, HashSet<InflictedDebuff>> getInflicted() {
+		return this.inflicted;
+	}
 }

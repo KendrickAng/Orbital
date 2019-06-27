@@ -16,6 +16,7 @@ import java.util.Collection;
 /**
  * Detects collisions between two classes.
  */
+// TODO: Remove this class. Remove changes made in Entity class. getIsIdle().
 public class CollisionManager {
     private GameScreen game;
 

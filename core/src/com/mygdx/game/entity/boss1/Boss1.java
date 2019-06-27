@@ -10,10 +10,15 @@ import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
+import com.mygdx.game.entity.character.Assassin;
+import com.mygdx.game.entity.character.Character;
+import com.mygdx.game.entity.character.Tank;
 import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
+import com.mygdx.game.entity.part.AssassinParts;
 import com.mygdx.game.entity.part.Boss1Parts;
+import com.mygdx.game.entity.part.TankParts;
 import com.mygdx.game.entity.state.Boss1States;
 import com.mygdx.game.entity.state.States;
 
@@ -45,6 +50,10 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	private static final float MOVESPEED = 1f;
 	private static final float ROLL_SPEED = 4f;
 	private static final float FRICTION = 0.6f;
+
+	private static final float PRIMARY_DAMAGE = 10;
+	private static final float SECONDARY_DAMAGE = 20;
+	private static final float TERTIARY_DAMAGE = 30;
 
 	private static final float PRIMARY_COOLDOWN = 1f;
 	private static final float SECONDARY_COOLDOWN = 1f;
@@ -109,6 +118,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	public void useTertiary() { super.scheduleState(TERTIARY, tertiary.getDuration()); }
 
 	/* Abilities */
+	// Slam
 	public Ability initPrimary() {
 		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
 				.setAbilityBegin(() -> {
@@ -116,9 +126,28 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 					removeState(WALKING);
 					inflictDebuff(SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, PRIMARY_ANIMATION_DURATION);
-				});
+				})
+				.addAbilityTask(() -> {
+					Character c = super.getGame().getCharacter();
+					if (c instanceof Assassin) {
+						if (this.getHitbox(RIGHT_ARM).hitTest(c.getHitbox(AssassinParts.BODY)) ||
+								this.getHitbox(LEFT_ARM).hitTest(c.getHitbox(AssassinParts.BODY))) {
+							Gdx.app.log("Boss1.java", "Assassin was hit by primary!");
+							c.damage(PRIMARY_DAMAGE);
+						}
+					}
+					if (c instanceof Tank) {
+						// TODO: Game crashes when slam used for (PRIMARY_ANIMATION_DURATION / 2). Nullpointerexception. Why?
+						if (this.getHitbox(RIGHT_ARM).hitTest(c.getHitbox(TankParts.BODY)) ||
+								this.getHitbox(LEFT_ARM).hitTest(c.getHitbox(TankParts.BODY))) {
+							Gdx.app.log("Boss1.java", "Tank was hit by primary!");
+							c.damage(PRIMARY_DAMAGE);
+						}
+					}
+				}, PRIMARY_ANIMATION_DURATION / 2f);
 	}
 
+	// Stomp with shockwave
 	public Ability initSecondary() {
 		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
 				.setAbilityBegin(() -> {
@@ -126,16 +155,56 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 					removeState(WALKING);
 					inflictDebuff(SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, SECONDARY_ANIMATION_DURATION);
-				});
+				})
+				.addAbilityTask(() -> {
+					Character c = super.getGame().getCharacter();
+					if (c instanceof Assassin) {
+						if (this.getHitbox(RIGHT_LEG).hitTest(c.getHitbox(AssassinParts.BODY)) ||
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.LEFT_LEG)) ||
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.RIGHT_LEG))) {
+							Gdx.app.log("Boss1.java", "Assassin was hit by secondary!");
+							c.damage(PRIMARY_DAMAGE);
+						}
+					}
+					if (c instanceof Tank) {
+						if (this.getHitbox(RIGHT_LEG).hitTest(c.getHitbox(TankParts.BODY)) ||
+								// TODO: Game crashes on shockwave. Nullpointer exception. Why?
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(TankParts.LEFT_LEG)) ||
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.RIGHT_LEG))) {
+							Gdx.app.log("Boss1.java", "Tank was hit by secondary!");
+							c.damage(SECONDARY_DAMAGE);
+						}
+					}
+				}, SECONDARY_ANIMATION_DURATION * (3f / 4));
 	}
 
+	// Roll
 	public Ability initTertiary() {
 		return new Ability(TERTIARY_ANIMATION_DURATION, TERTIARY_COOLDOWN)
 				.setAbilityBegin(() -> {
 					addState(STANDING);
 					removeState(WALKING);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, TERTIARY_ANIMATION_DURATION);
-				}).addAbilityTask(() -> {
+				})
+				.setAbilityUsing(() -> {
+					Character c = super.getGame().getCharacter();
+					if (c instanceof Assassin) {
+						if (!super.getDebuffs().getInflicted().get(ROLLING).isEmpty() &&
+								this.getHitbox(BODY).hitTest(c.getHitbox(AssassinParts.BODY))) {
+							Gdx.app.log("Boss1.java", "Assassin was hit by tertiary!");
+							c.damage(TERTIARY_DAMAGE);
+						}
+					}
+					// TODO: Nullpointerexception again. What's going on?
+					if (c instanceof Tank) {
+						if (!super.getDebuffs().getInflicted().get(ROLLING).isEmpty() &&
+								this.getHitbox(BODY).hitTest(c.getHitbox(TankParts.BODY))) {
+							Gdx.app.log("Boss1.java", "Tank was hit by tertiary!");
+							c.damage(TERTIARY_DAMAGE);
+						}
+					}
+				})
+				.addAbilityTask(() -> {
 					inflictDebuff(ROLLING, 0, TERTIARY_ANIMATION_DURATION - 0.3f);
 				}, 0.3f);
 	}

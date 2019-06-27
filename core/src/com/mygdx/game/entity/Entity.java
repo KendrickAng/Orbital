@@ -173,7 +173,7 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 		return this.game;
 	}
 
-	private Collection<S> getStates() { return this.animations.getStates(); }
+	public Collection<S> getStates() { return this.animations.getStates(); }
 
 	// This function is dependent on class and package names.
 	public boolean getIsIdle() {

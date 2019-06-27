@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.entity.part.AssassinParts.BODY;
+import static com.mygdx.game.entity.part.AssassinParts.*;
 import static com.mygdx.game.entity.state.CharacterStates.STANDING;
 
 public class Assassin extends Character<AssassinParts> {
@@ -121,6 +121,10 @@ public class Assassin extends Character<AssassinParts> {
 	protected void defineAnimations(Animations<CharacterStates, AssassinParts> animations) {
 		HashMap<String, AssassinParts> filenames = new HashMap<>();
 		filenames.put("Body", BODY);
+		filenames.put("LeftArm", LEFT_ARM);
+		filenames.put("LeftLeg", LEFT_LEG);
+		filenames.put("RightArm", RIGHT_ARM);
+		filenames.put("RightLeg", RIGHT_LEG);
 
 		Animation<AssassinParts> standing = new Animation<>(STANDING_ANIMATION_DURATION, true);
 		standing.load("Assassin/Standing", filenames);
