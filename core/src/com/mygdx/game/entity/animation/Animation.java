@@ -94,24 +94,24 @@ public class Animation<P extends Enum> {
 		}
 	}
 
-	public void render(SpriteBatch batch, Vector2 position, boolean flipX, boolean flipY) {
+	public void render(SpriteBatch batch, Vector2 position, boolean flipX) {
 		for (AnimationPart part : animations.values()) {
 			Sprite sprite = part.getSprite(frame);
 
 			// Ignore undefined sprites
 			if (sprite != null) {
 				sprite.setPosition(position.x, position.y);
-				sprite.setFlip(flipX, flipY);
+				sprite.setFlip(flipX, false);
 				sprite.draw(batch);
 
 				Hitbox hitbox = part.getHitbox(frame);
 				hitbox.setPosition(position);
-				hitbox.setFlip(flipX, flipY);
+				hitbox.setFlip(flipX, false);
 			}
 		}
 	}
 
-	public void renderDebug(ShapeRenderer shapeRenderer, Vector2 position, boolean flipX, boolean flipY) {
+	public void renderDebug(ShapeRenderer shapeRenderer, Vector2 position, boolean flipX) {
 		for (AnimationPart part : animations.values()) {
 			Hitbox hitbox = part.getHitbox(frame);
 

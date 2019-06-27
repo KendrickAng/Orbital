@@ -8,17 +8,13 @@ import com.mygdx.game.entity.debuff.Debuffs;
 
 /**
  * An Entity which has:
+ * - Health
  * - Abilities
  * - Debuffs
- * - Health
- * - Is Controllable
  */
 public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entity<T, R> {
 	private float health;
 	private float maxHealth;
-
-	// Affected by key presses from input processor
-	private Direction inputDirection;
 
 	private Abilities<T> abilities;
 	private Debuffs<DebuffType> debuffs;
@@ -29,11 +25,10 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 		this.health = health();
 		this.maxHealth = health();
 
-		this.inputDirection = Direction.NONE;
 		this.abilities = new Abilities<>();
 		this.debuffs = new Debuffs<>();
-		super.addStateListener(abilities);
 
+		addStateListener(abilities);
 		defineAbilities(abilities);
 		defineDebuffs(debuffs);
 	}
@@ -46,8 +41,6 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 	// called when an instance of LivingEntity is created.
 	protected abstract void defineDebuffs(Debuffs<DebuffType> debuffs);
 
-	protected abstract void updateDirection(Direction inputDirection);
-
 	/* Update */
 	@Override
 	public void update() {
@@ -59,11 +52,6 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 	}
 
 	/* Setters */
-	public void setInputDirection(Direction direction) {
-		inputDirection = direction;
-		updateDirection(inputDirection);
-	}
-
 	public void inflictDebuff(DebuffType type, float modifier, float duration) {
 		debuffs.inflict(type, modifier, duration);
 	}
@@ -71,14 +59,5 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 	public void damage(float damage) {
 		health -= damage;
 		Gdx.app.log("LivingEntity.java", "HP: " + health);
-	}
-
-	/* Getters */
-	Abilities<T> getAbilities() {
-		return abilities;
-	}
-
-	public Direction getInputDirection() {
-		return inputDirection;
 	}
 }

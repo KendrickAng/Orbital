@@ -46,9 +46,9 @@ public class Boss1AI {
 					break;
 				case 2:
 					if (displacement > 0) {
-						boss1.setSpriteDirection(Direction.RIGHT);
+						boss1.setFlipX(Direction.RIGHT);
 					} else {
-						boss1.setSpriteDirection(Direction.LEFT);
+						boss1.setFlipX(Direction.LEFT);
 					}
 					boss1.useTertiary();
 					duration = TERTIARY_DELAY;
@@ -66,9 +66,9 @@ public class Boss1AI {
 					break;
 				case 2:
 					if (displacement > 0) {
-						boss1.setSpriteDirection(Direction.RIGHT);
+						boss1.setFlipX(Direction.RIGHT);
 					} else {
-						boss1.setSpriteDirection(Direction.LEFT);
+						boss1.setFlipX(Direction.LEFT);
 					}
 					boss1.useTertiary();
 					duration = TERTIARY_DELAY;

@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
-import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.state.StateListener;
 import com.mygdx.game.entity.state.States;
@@ -23,7 +22,6 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 	private boolean dispose;
 
 	private GameScreen game;
-	private Direction spriteDirection;
 
 	private States<S> states;
 	private Animations<S, P> animations;
@@ -35,7 +33,6 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 		this.game = game;
 		this.visible = true;
-		this.spriteDirection = Direction.RIGHT;
 
 		this.states = new States<>();
 		this.animations = new Animations<>(position);
@@ -63,17 +60,10 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 		updateVelocity(position, velocity);
 		position.x += velocity.x;
 		position.y += velocity.y;
+
 		updatePosition(position);
 
 		/* Render */
-		switch (spriteDirection) {
-			case RIGHT:
-				animations.setFlip(false, false);
-				break;
-			case LEFT:
-				animations.setFlip(true, false);
-				break;
-		}
 		animations.render(batch);
 
 		// General updates
@@ -89,24 +79,16 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 	}
 
 	/* Setters */
+	public void setState(S state) {
+		states.setState(state);
+	}
+
 	public void addStateListener(StateListener<S> listener) {
 		states.addListener(listener);
 	}
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
-	}
-
-	public void addState(S state) {
-		states.addState(state);
-	}
-
-	public void removeState(S state) {
-		states.removeState(state);
-	}
-
-	public void scheduleState(S state, float duration) {
-		states.scheduleState(state, duration);
 	}
 
 	public void setPosition(float x, float y) {
@@ -129,8 +111,8 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 		velocity.y = vel.y;
 	}
 
-	public void setSpriteDirection(Direction spriteDirection) {
-		this.spriteDirection = spriteDirection;
+	public void setFlipX(boolean flip) {
+		animations.setFlipX(flip);
 	}
 
 	/* Getters */
@@ -140,6 +122,10 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 	public boolean isDispose() {
 		return dispose;
+	}
+
+	public S getState() {
+		return states.getState();
 	}
 
 	public Hitbox getHitbox(P part) {
@@ -154,8 +140,8 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 		return velocity;
 	}
 
-	public Direction getSpriteDirection() {
-		return spriteDirection;
+	public boolean getFlipX() {
+		return animations.getFlipX();
 	}
 
 	public GameScreen getGame() {

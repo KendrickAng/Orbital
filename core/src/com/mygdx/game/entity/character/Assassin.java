@@ -18,10 +18,20 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
+import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.part.AssassinParts.BODY;
 import static com.mygdx.game.entity.state.CharacterStates.STANDING;
+import static com.mygdx.game.entity.state.CharacterStates.WALKING;
 
 public class Assassin extends Character<AssassinParts> {
+	private static final float MOVESPEED = 2f;
+	// Movespeed is multiplied by this constant in air
+	private static final float AIR_MOVESPEED = 0.1f;
+
+	// Velocity is multiplied by these constants
+	private static final float FRICTION = 0.6f;
+	private static final float AIR_FRICTION = 0.95f;
+
 	private static final float HEALTH = 10;
 
 	// Skill cooldown in seconds.
@@ -96,7 +106,7 @@ public class Assassin extends Character<AssassinParts> {
 					float x = body.getX() + body.getWidth() / 2;
 					float y = body.getY() + body.getHeight() / 2;
 					int x_velocity = 0;
-					switch (getSpriteDirection()) {
+					switch (getFlipX()) {
 						case RIGHT:
 							x_velocity = Shuriken.FLYING_SPEED;
 							break;
@@ -138,6 +148,62 @@ public class Assassin extends Character<AssassinParts> {
 
 		if (position.x > GAME_WIDTH - x - width) {
 			position.x = GAME_WIDTH - x - width;
+		}
+	}
+
+	@Override
+	protected void updateVelocity(Vector2 position, Vector2 velocity) {
+		switch (getState()) {
+			case WALKING:
+				if (getFlipX()) {
+					velocity.x -= MOVESPEED;
+				} else {
+					velocity.x += MOVESPEED;
+				}
+				velocity.x *= FRICTION;
+				break;
+			case PRIMARY:
+				if (getFlipX()) {
+					velocity.x -= MOVESPEED * AIR_MOVESPEED;
+				} else {
+					velocity.x += MOVESPEED * AIR_MOVESPEED;
+				}
+				break;
+		}
+
+		if (position.y > MAP_HEIGHT) {
+			falling = true;
+		}
+
+		// Airborne
+		if (falling) {
+			if (position.y > MAP_HEIGHT) {
+				if (getState() == WALKING) {
+					if (getFlipX()) {
+						velocity.x -= movespeed * AIR_MOVESPEED;
+					} else {
+						velocity.x += movespeed * AIR_MOVESPEED;
+					}
+				}
+				velocity.x *= AIR_FRICTION;
+				velocity.y += GRAVITY;
+			} else {
+				// Touched ground
+				velocity.y = 0;
+				position.y = MAP_HEIGHT;
+				falling = false;
+			}
+
+			// Not Airborne
+		} else {
+			if (getState() == WALKING) {
+				if (getFlipX()) {
+					velocity.x -= movespeed;
+				} else {
+					velocity.x += movespeed;
+				}
+			}
+			velocity.x *= friction;
 		}
 	}
 }

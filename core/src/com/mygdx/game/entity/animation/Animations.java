@@ -18,15 +18,11 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 
 	private Vector2 position;// bottom left of the 160 by 80.
 	private boolean flipX;
-	private boolean flipY;
 
 	private Animation<P> animation;
 
-	// States that are currently active
-	private HashSet<S> states;
-
 	// Map of states to animation
-	private HashMap<HashSet<S>, Animation<P>> animations; // E.g {WALKING,PRIMARY} -> Agroup
+	private HashMap<S, Animation<P>> animations; // E.g {WALKING,PRIMARY} -> Agroup
 
 	public Animations(Vector2 position) {
 		this.position = position;
@@ -35,25 +31,19 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 	}
 
 	@Override
-	public boolean stateAddValid(S state) {
+	public boolean stateValid(S state) {
 		return true;
 	}
 
 	@Override
-	public void stateAdd(S state) {
+	public void stateChange(S state) {
 		states.add(state);
 		updateAnimation();
 	}
 
-	@Override
-	public void stateRemove(S state) {
-		states.remove(state);
-		updateAnimation();
-	}
-
 	// Maps a state to a group. Allows for character to be both standing and walking and using a skill.
-	public Animations<S, P> map(Collection<S> states, Animation<P> animation) {
-		animations.put(new HashSet<>(states), animation); // E.g {STANDING, WALKING} -> primary
+	public Animations<S, P> map(S state, Animation<P> animation) {
+		animations.put(state, animation); // E.g {STANDING, WALKING} -> primary
 		return this;
 	}
 
@@ -69,20 +59,23 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 	}
 
 	public void render(SpriteBatch batch) {
-		animation.render(batch, position, flipX, flipY);
+		animation.render(batch, position, flipX);
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {
-		animation.renderDebug(shapeRenderer, position, flipX, flipY);
+		animation.renderDebug(shapeRenderer, position, flipX);
 	}
 
 	/* Setters */
-	public void setFlip(boolean flipX, boolean flipY) {
-		this.flipX = flipX;
-		this.flipY = flipY;
+	public void setFlipX(boolean flip) {
+		flipX = flip;
 	}
 
 	/* Getters */
+	public boolean getFlipX() {
+		return flipX;
+	}
+
 	public Hitbox getHitbox(P part) {
 		return animation.getHitbox(part);
 	}

@@ -112,7 +112,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	public Ability initPrimary() {
 		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					addState(STANDING);
+					setState(STANDING);
 					removeState(WALKING);
 					inflictDebuff(SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, PRIMARY_ANIMATION_DURATION);
@@ -122,7 +122,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	public Ability initSecondary() {
 		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					addState(STANDING);
+					setState(STANDING);
 					removeState(WALKING);
 					inflictDebuff(SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, SECONDARY_ANIMATION_DURATION);
@@ -132,7 +132,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	public Ability initTertiary() {
 		return new Ability(TERTIARY_ANIMATION_DURATION, TERTIARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					addState(STANDING);
+					setState(STANDING);
 					removeState(WALKING);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, TERTIARY_ANIMATION_DURATION);
 				}).addAbilityTask(() -> {
@@ -200,12 +200,12 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 		if (!ignoreMoveInput) {
 			switch (inputDirection) {
 				case NONE:
-					addState(STANDING);
+					setState(STANDING);
 					removeState(WALKING);
 					break;
 				case RIGHT:
 				case LEFT:
-					addState(WALKING);
+					setState(WALKING);
 					removeState(STANDING);
 					break;
 			}
@@ -232,16 +232,16 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 		if (!ignoreMoveInput) {
 			switch (super.getInputDirection()) {
 				case LEFT:
-					setSpriteDirection(RIGHT); // from Entity
+					setFlipX(RIGHT); // from Entity
 					break;
 				case RIGHT:
-					setSpriteDirection(LEFT); // TODO: Weird sprite behaviour
+					setFlipX(LEFT); // TODO: Weird sprite behaviour
 					break;
 			}
 		}
 
 		if (rolling) {
-			switch (super.getSpriteDirection()) {
+			switch (super.getFlipX()) {
 				case LEFT:
 					velocity.x += ROLL_SPEED;
 					break;

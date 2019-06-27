@@ -125,7 +125,7 @@ public class GameScreen implements Screen {
 		prev.setVisible(false);
 		next.setPosition(prev.getPosition());
 		next.setVelocity(prev.getVelocity());
-		next.setSpriteDirection(prev.getSpriteDirection());
+		next.setFlipX(prev.getFlipX());
 		next.setInputDirection(prev.getInputDirection());
 		next.setVisible(true);
 

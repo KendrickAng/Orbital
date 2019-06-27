@@ -73,19 +73,18 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 		}
 	}
 
-	// valid add if the key-pair is in usable AND no other abilities being used (0).
 	@Override
-	public boolean stateAddValid(S state) {
+	public boolean stateValid(S state) {
 		if (abilities.containsKey(state)) {
-			Ability ability = usable.get(state);
-			return ability != null && ability.canUse(using.size());
+			Ability ability = abilities.get(state);
+			return ability.ready();
 		}
 		return true;
 	}
 
 	// Detects there's an ability being used in States, and activates the logic.
 	@Override
-	public void stateAdd(S state) {
+	public void stateChange(S state) {
 		if (abilities.containsKey(state)) {
 			Ability ability = usable.get(state);
 
@@ -105,35 +104,8 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 			// Ability used, remove ability from usable
 			usable.remove(state);
 
-			// Ability used, add ability to using
+			// Ability used, map ability to using
 			using.put(state, ability);
-		}
-	}
-
-	@Override
-	public void stateRemove(S state) {
-		if (abilities.containsKey(state)) {
-			Ability ability = using.get(state);
-
-			if (ability != null) {
-				// Schedule a task for when ability goes off cooldown
-				Timer.Task cooldownTask = timer.scheduleTask(new Timer.Task() {
-					@Override
-					public void run() {
-						// Set task to null
-						unusable.put(state, null);
-					}
-				}, ability.getCooldown());
-
-				// Call ability's end callback
-				ability.end();
-
-				// Ability ended, remove ability from using
-				using.remove(state);
-
-				// Ability ended, add ability to unusable
-				unusable.put(state, cooldownTask);
-			}
 		}
 	}
 
