@@ -92,7 +92,7 @@ public class Assassin extends Character<AssassinParts> {
 		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
 				.setAbilityBegin(() -> {
 					Entity shuriken = new Shuriken(getGame());
-					Hitbox body = getHitbox(BODY);
+					Hitbox body = super.getHitbox(BODY);
 					float x = body.getX() + body.getWidth() / 2;
 					float y = body.getY() + body.getHeight() / 2;
 					int x_velocity = 0;

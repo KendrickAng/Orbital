@@ -12,7 +12,7 @@ public class Hitbox {
 	private int y;
 	private int width; // pixmap width
 	private int height;
-	private Rectangle hitbox;
+	private Rectangle hitbox; // contain width and height of sprite
 
 	private boolean flipX;
 

@@ -20,7 +20,7 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 	private boolean flipX;
 	private boolean flipY;
 
-	private Animation<P> animation;
+	private Animation<P> animation; // Dynamic animation (?)
 
 	// States that are currently active
 	private HashSet<S> states;
@@ -85,5 +85,9 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 	/* Getters */
 	public Hitbox getHitbox(P part) {
 		return animation.getHitbox(part);
+	}
+
+	public Collection<S> getStates() {
+		return this.states;
 	}
 }

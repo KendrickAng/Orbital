@@ -2,6 +2,7 @@ package com.mygdx.game.entity.state;
 
 import com.badlogic.gdx.utils.Timer;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 public class States<S extends Enum> {

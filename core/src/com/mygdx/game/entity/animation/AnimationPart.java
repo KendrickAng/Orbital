@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.entity.Hitbox;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeMap;
 
@@ -36,4 +37,6 @@ public class AnimationPart {
 	public Hitbox getHitbox(int frame) {
 		return hitboxes.get(frame);
 	}
+
+	public Collection<Hitbox> getHitboxes() { return hitboxes.values(); }
 }

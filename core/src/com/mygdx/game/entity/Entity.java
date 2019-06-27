@@ -1,19 +1,30 @@
 package com.mygdx.game.entity;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
+import com.mygdx.game.entity.state.Boss1States;
+import com.mygdx.game.entity.state.CharacterStates;
 import com.mygdx.game.entity.state.StateListener;
 import com.mygdx.game.entity.state.States;
+
+import java.util.Collection;
+
+import static com.mygdx.game.entity.state.CharacterStates.*;
 
 /**
  * Represents all renderable, interactive objects such as throwing stars/falling rocks.
  * LivingEntity represents Characters, Bosses.
  */
 public abstract class Entity<S extends Enum, P extends Enum> {
+	private static final String ASSASSINCLASSNAME = "class com.mygdx.game.entity.character.Assassin";
+	private static final String TANKCLASSNAME = "class com.mygdx.game.entity.character.Tank";
+	private static final String BOSSCLASSNAME = "class com.mygdx.game.entity.boss1.Boss1";
+
 	public static final float GRAVITY = -3;
 
 	private Vector2 position;
@@ -160,5 +171,26 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 	public GameScreen getGame() {
 		return this.game;
+	}
+
+	private Collection<S> getStates() { return this.animations.getStates(); }
+
+	// This function is dependent on class and package names.
+	public boolean getIsIdle() {
+		switch(this.getClass().toString()) {
+			case ASSASSINCLASSNAME:
+			case TANKCLASSNAME:
+				Collection cStates = this.getStates();
+				return !(cStates.contains(CharacterStates.PRIMARY) ||
+						cStates.contains(CharacterStates.SECONDARY) ||
+						cStates.contains(CharacterStates.TERTIARY));
+			case BOSSCLASSNAME:
+				Collection bStates = this.getStates();
+				return !(bStates.contains(Boss1States.PRIMARY) ||
+						bStates.contains(Boss1States.SECONDARY) ||
+						bStates.contains(Boss1States.TERTIARY));
+			default:
+				return false;
+		}
 	}
 }

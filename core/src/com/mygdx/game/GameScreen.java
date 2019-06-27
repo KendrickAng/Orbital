@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.entity.CollisionManager;
 import com.mygdx.game.entity.boss1.Boss1AI;
 import com.mygdx.game.entity.character.Assassin;
 import com.mygdx.game.entity.boss1.Boss1;
@@ -21,6 +22,8 @@ import com.mygdx.game.texture.TextureManager;
 import static com.mygdx.game.MyGdxGame.DEBUG;
 
 public class GameScreen implements Screen {
+	private static final boolean ACTIVATE_AI = false; // switch to activate boss ACTIVATE_AI.
+
 	// Game reference.
 	private MyGdxGame game;
 
@@ -29,6 +32,7 @@ public class GameScreen implements Screen {
 
 	private CharacterController playerController;
 	private EntityManager entityManager;
+	private CollisionManager collisionManager;
 	private Background background;
 
 	/* Entities */
@@ -41,6 +45,7 @@ public class GameScreen implements Screen {
 		// init rectangle to (0, 0)
 		this.game = game;
 		this.entityManager = new EntityManager();
+		this.collisionManager = new CollisionManager(this);
 
 		/* Entities */
 		// Order of render in entityManager depends on order of Entity() creation.
@@ -52,7 +57,7 @@ public class GameScreen implements Screen {
 		this.character = tank;
 
 		/* Input */
-		new Boss1AI(this);
+		if (ACTIVATE_AI) new Boss1AI(this);
 		this.playerController = new CharacterController(this);
 		Boss1Controller bossController = new Boss1Controller(this);
 
@@ -85,6 +90,9 @@ public class GameScreen implements Screen {
 		background.render(batch);
 		entityManager.renderAll(batch);
 		batch.end();
+
+		/* Collision detection */
+		collisionManager.colliding(character, boss1);
 
 		/* Debug */
 		if (DEBUG) {

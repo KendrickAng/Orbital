@@ -85,7 +85,7 @@ public class Tank extends Character<TankParts> {
 					inflictDebuff(DebuffType.IGNORE_MOVE_DIRECTION, 0, SECONDARY_ANIMATION_DURATION);
 				}).addAbilityTask(() -> {
 					Boss1 boss = getGame().getBoss1();
-					if (getHitbox(WEAPON).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
+					if (this.getHitbox(WEAPON).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
 						Gdx.app.log("Tank.java", "Boss was hit!");
 						boss.damage(SECONDARY_DAMAGE);
 					}
@@ -138,8 +138,8 @@ public class Tank extends Character<TankParts> {
 	/* Update */
 	@Override
 	protected void updatePosition(Vector2 position) {
-		float x = getHitbox(BODY).getOffsetX();
-		float width = getHitbox(BODY).getWidth();
+		float x = super.getHitbox(BODY).getOffsetX();
+		float width = super.getHitbox(BODY).getWidth();
 		if (position.x < -x) {
 			position.x = -x;
 		}
