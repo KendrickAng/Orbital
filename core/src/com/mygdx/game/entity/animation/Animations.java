@@ -22,7 +22,7 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 	private Animation<P> animation;
 
 	// Map of states to animation
-	private HashMap<S, Animation<P>> animations; // E.g {WALKING,PRIMARY} -> Agroup
+	private HashMap<S, Animation<P>> animations; // E.g {WALKING_LEFT,PRIMARY} -> Agroup
 
 	public Animations(Vector2 position) {
 		this.position = position;
@@ -43,7 +43,7 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 
 	// Maps a state to a group. Allows for character to be both standing and walking and using a skill.
 	public Animations<S, P> map(S state, Animation<P> animation) {
-		animations.put(state, animation); // E.g {STANDING, WALKING} -> primary
+		animations.put(state, animation); // E.g {STANDING, WALKING_LEFT} -> primary
 		return this;
 	}
 

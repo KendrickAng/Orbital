@@ -3,6 +3,7 @@ package com.mygdx.game.entity;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.ability.Abilities;
+import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 
@@ -12,12 +13,12 @@ import com.mygdx.game.entity.debuff.Debuffs;
  * - Abilities
  * - Debuffs
  */
-public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entity<T, R> {
+public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enum> extends Entity<I, S, P> {
 	private float health;
 	private float maxHealth;
 
-	private Abilities<T> abilities;
-	private Debuffs<DebuffType> debuffs;
+	private Abilities<S> abilities;
+	private Debuffs debuffs;
 
 	public LivingEntity(GameScreen game) {
 		super(game);
@@ -26,7 +27,7 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 		this.maxHealth = health();
 
 		this.abilities = new Abilities<>();
-		this.debuffs = new Debuffs<>();
+		this.debuffs = new Debuffs();
 
 		addStateListener(abilities);
 		defineAbilities(abilities);
@@ -36,10 +37,10 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 	protected abstract float health();
 
 	// creates new instances of Ability for primary, secondary and tertiary and maps the corrs CharacterState enum to Ability.
-	protected abstract void defineAbilities(Abilities<T> abilities);
+	protected abstract void defineAbilities(Abilities<S> abilities);
 
 	// called when an instance of LivingEntity is created.
-	protected abstract void defineDebuffs(Debuffs<DebuffType> debuffs);
+	protected abstract void defineDebuffs(Debuffs debuffs);
 
 	/* Update */
 	@Override
@@ -51,9 +52,12 @@ public abstract class LivingEntity<T extends Enum, R extends Enum> extends Entit
 		abilities.update();
 	}
 
-	/* Setters */
-	public void inflictDebuff(DebuffType type, float modifier, float duration) {
-		debuffs.inflict(type, modifier, duration);
+	public void inflictDebuff(Debuff debuff) {
+		debuffs.inflict(debuff);
+	}
+
+	public void cancelDebuff(Debuff debuff) {
+		debuffs.cancel(debuff);
 	}
 
 	public void damage(float damage) {

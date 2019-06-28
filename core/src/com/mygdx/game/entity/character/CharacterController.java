@@ -8,13 +8,10 @@ import com.mygdx.game.entity.Direction;
 import java.util.HashSet;
 
 import static com.mygdx.game.entity.Direction.LEFT;
-import static com.mygdx.game.entity.Direction.NONE;
 import static com.mygdx.game.entity.Direction.RIGHT;
 import static com.mygdx.game.entity.Direction.UP;
 import static com.mygdx.game.entity.Direction.UP_LEFT;
 import static com.mygdx.game.entity.Direction.UP_RIGHT;
-import static com.mygdx.game.entity.state.CharacterStates.STANDING;
-import static com.mygdx.game.entity.state.CharacterStates.WALKING;
 
 public class CharacterController implements InputProcessor {
 	private GameScreen game;
@@ -36,21 +33,11 @@ public class CharacterController implements InputProcessor {
 		switch (keycode) {
 			case Input.Keys.LEFT:
 				inputDirections.add(Direction.LEFT);
-				switch (resolveInputDirection()) {
-					case LEFT:
-					case UP_LEFT:
-						character.setWalking();
-						break;
-				}
+				character.input(resolveInputDirection());
 				break;
 			case Input.Keys.RIGHT:
 				inputDirections.add(Direction.RIGHT);
-				switch (resolveInputDirection()) {
-					case RIGHT:
-					case UP_RIGHT:
-						character.setWalking();
-						break;
-				}
+				character.input(resolveInputDirection());
 				break;
 			case Input.Keys.UP:
 				inputDirections.add(UP);
@@ -78,15 +65,11 @@ public class CharacterController implements InputProcessor {
 		switch (keycode) {
 			case Input.Keys.LEFT:
 				inputDirections.remove(Direction.LEFT);
-				if (resolveInputDirection() == NONE) {
-					character.setStanding();
-				}
+				character.input(resolveInputDirection());
 				break;
 			case Input.Keys.RIGHT:
 				inputDirections.remove(Direction.RIGHT);
-				if (resolveInputDirection() == NONE) {
-					character.setStanding();
-				}
+				character.input(resolveInputDirection());
 				break;
 			case Input.Keys.UP:
 				inputDirections.remove(UP);

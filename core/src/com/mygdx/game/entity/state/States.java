@@ -2,11 +2,10 @@ package com.mygdx.game.entity.state;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
-public class States<S extends Enum> {
-	private S state;
-	private HashMap<S, HashSet<S>> states;
+public class States<I extends Enum, S extends Enum> {
+	private State<I, S> state;
+	private HashMap<S, State<I, S>> states;
 	private HashSet<StateListener<S>> listeners;
 
 	public States() {
@@ -18,31 +17,42 @@ public class States<S extends Enum> {
 		listeners.add(stateListener);
 	}
 
-	public States<S> mapState(S state, List<S> edges) {
-		states.put(state, new HashSet<>(edges));
+	public States<I, S> add(State<I, S> state) {
+		if (this.state == null) {
+			this.state = state;
+		}
+
+		states.put(state.getName(), state);
 		return this;
 	}
 
-	public void setState(S state) {
-		if (this.state == null) {
-			this.state = state;
+	public void input(I input) {
+		S name = this.state.getEdge(input);
+		if (name == null) {
+			return;
+		}
 
-		} else if (states.get(this.state).contains(state)) {
-			for (StateListener<S> listener : listeners) {
-				if (!listener.stateValid(state)) {
-					return;
-				}
+		State<I, S> toState = states.get(name);
+		if (toState == null) {
+			return;
+		}
+
+		for (StateListener<S> listener : listeners) {
+			if (!listener.stateValid(toState.getName())) {
+				return;
 			}
+		}
 
-			this.state = state;
+		this.state.end();
+		this.state = toState;
+		this.state.begin();
 
-			for (StateListener<S> listener : listeners) {
-				listener.stateChange(state);
-			}
+		for (StateListener<S> listener : listeners) {
+			listener.stateChange(toState.getName());
 		}
 	}
 
-	public S getState() {
-		return state;
+	public void update() {
+		this.state.update();
 	}
 }

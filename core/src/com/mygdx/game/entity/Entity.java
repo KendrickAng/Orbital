@@ -12,7 +12,7 @@ import com.mygdx.game.entity.state.States;
  * Represents all renderable, interactive objects such as throwing stars/falling rocks.
  * LivingEntity represents Characters, Bosses.
  */
-public abstract class Entity<S extends Enum, P extends Enum> {
+public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	public static final float GRAVITY = -3;
 
 	private Vector2 position;
@@ -23,7 +23,7 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 	private GameScreen game;
 
-	private States<S> states;
+	private States<I, S> states;
 	private Animations<S, P> animations;
 
 	public Entity(GameScreen game) {
@@ -39,13 +39,14 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 
 		// adds animations, a statelistener, to State's HashSet
 		addStateListener(animations);
+
 		defineAnimations(animations);
 		defineStates(states);
 
 		game.getEntityManager().add(this);
 	}
 
-	protected abstract void defineStates(States<S> states);
+	protected abstract void defineStates(States<I, S> states);
 
 	protected abstract void defineAnimations(Animations<S, P> animations);
 
@@ -79,8 +80,8 @@ public abstract class Entity<S extends Enum, P extends Enum> {
 	}
 
 	/* Setters */
-	public void setState(S state) {
-		states.setState(state);
+	public void input(I input) {
+		states.input(input);
 	}
 
 	public void addStateListener(StateListener<S> listener) {

@@ -10,7 +10,7 @@ import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
-import com.mygdx.game.entity.debuff.Debuff;
+import com.mygdx.game.entity.debuff.DebuffDefinition;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 import com.mygdx.game.entity.part.Boss1Parts;
@@ -112,7 +112,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	public Ability initPrimary() {
 		return new Ability(PRIMARY_ANIMATION_DURATION, PRIMARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					setState(STANDING);
+					input(STANDING);
 					removeState(WALKING);
 					inflictDebuff(SLOW, PRIMARY_SLOW_MODIFIER, PRIMARY_ANIMATION_DURATION);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, PRIMARY_ANIMATION_DURATION);
@@ -122,7 +122,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	public Ability initSecondary() {
 		return new Ability(SECONDARY_ANIMATION_DURATION, SECONDARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					setState(STANDING);
+					input(STANDING);
 					removeState(WALKING);
 					inflictDebuff(SLOW, SECONDARY_SLOW_MODIFIER, SECONDARY_ANIMATION_DURATION);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, SECONDARY_ANIMATION_DURATION);
@@ -132,7 +132,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 	public Ability initTertiary() {
 		return new Ability(TERTIARY_ANIMATION_DURATION, TERTIARY_COOLDOWN)
 				.setAbilityBegin(() -> {
-					setState(STANDING);
+					input(STANDING);
 					removeState(WALKING);
 					inflictDebuff(IGNORE_MOVE_INPUT, 0, TERTIARY_ANIMATION_DURATION);
 				}).addAbilityTask(() -> {
@@ -142,7 +142,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 
 	@Override
 	protected void defineDebuffs(Debuffs<DebuffType> debuffs) {
-		Debuff slow = new Debuff()
+		DebuffDefinition slow = new DebuffDefinition()
 				.setApply(modifier -> {
 					// Slow can't go above 100%.
 					if (modifier > 1) {
@@ -153,11 +153,11 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 				})
 				.setEnd(() -> this.movespeed = MOVESPEED);
 
-		Debuff ignoreMoveInput = new Debuff()
+		DebuffDefinition ignoreMoveInput = new DebuffDefinition()
 				.setBegin(() -> this.ignoreMoveInput = true)
 				.setEnd(() -> this.ignoreMoveInput = false);
 
-		Debuff rolling = new Debuff()
+		DebuffDefinition rolling = new DebuffDefinition()
 				.setBegin(() -> this.rolling = true)
 				.setEnd(() -> this.rolling = false);
 
@@ -200,12 +200,12 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 		if (!ignoreMoveInput) {
 			switch (inputDirection) {
 				case NONE:
-					setState(STANDING);
+					input(STANDING);
 					removeState(WALKING);
 					break;
 				case RIGHT:
 				case LEFT:
-					setState(WALKING);
+					input(WALKING);
 					removeState(STANDING);
 					break;
 			}
