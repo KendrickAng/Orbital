@@ -15,7 +15,7 @@ public class Textures {
 	/* TANK */
 	/*
 	public static final AssetDescriptor<Texture> TANK_STANDING = new AssetDescriptor<>(Gdx.files.internal("Tank/Standing.png"), Texture.class);
-	public static final AssetDescriptor<Texture> TANK_PRIMARY = new AssetDescriptor<>(Gdx.files.internal("Tank/Primary.png"), Texture.class);
+	public static final AssetDescriptor<Texture> TANK_PRIMARY = new AssetDescriptor<>(Gdx.files.internal("Tank/Secondary.png"), Texture.class);
 	public static final AssetDescriptor<Texture> TANK_SECONDARY = new AssetDescriptor<>(Gdx.files.internal("Tank/Secondary.png"), Texture.class);
 	public static final AssetDescriptor<Texture> TANK_TERTIARY = new AssetDescriptor<>(Gdx.files.internal("Tank/Tertiary.png"), Texture.class);
 	public static TextureGroup<Texture> TANK = new TextureGroup<Texture>()
@@ -26,7 +26,7 @@ public class Textures {
 
 	// ASSASSIN
 	public static final AssetDescriptor<Texture> ASSASSIN_STANDING = new AssetDescriptor<>(Gdx.files.internal("Assassin/Standing.png"), Texture.class);
-	public static final AssetDescriptor<Texture> ASSASSIN_PRIMARY = new AssetDescriptor<>(Gdx.files.internal("Assassin/Primary.png"), Texture.class);
+	public static final AssetDescriptor<Texture> ASSASSIN_PRIMARY = new AssetDescriptor<>(Gdx.files.internal("Assassin/Secondary.png"), Texture.class);
 	public static final AssetDescriptor<Texture> ASSASSIN_SECONDARY = new AssetDescriptor<>(Gdx.files.internal("Assassin/Secondary.png"), Texture.class);
 	public static final AssetDescriptor<Texture> ASSASSIN_TERTIARY = new AssetDescriptor<>(Gdx.files.internal("Assassin/Tertiary.png"), Texture.class);
 	public static TextureGroup<Texture> ASSASSIN = new TextureGroup<Texture>()

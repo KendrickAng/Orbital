@@ -14,12 +14,13 @@ import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.part.AssassinParts;
 import com.mygdx.game.entity.state.CharacterStates;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.entity.part.AssassinParts.*;
-import static com.mygdx.game.entity.state.CharacterStates.STANDING;
+import static com.mygdx.game.entity.state.CharacterStates.*;
 
 public class Assassin extends Character<AssassinParts> {
 	private static final float HEALTH = 10;
@@ -34,7 +35,7 @@ public class Assassin extends Character<AssassinParts> {
 	private static final float WALKING_ANIMATION_DURATION = 1f;
 	private static final float PRIMARY_ANIMATION_DURATION = 0.05f;
 	private static final float SECONDARY_ANIMATION_DURATION = 0.5f;
-	private static final float TERTIARY_ANIMATION_DURATION = 0.5f;
+	private static final float TERTIARY_ANIMATION_DURATION = 2f;
 
 	// Dodge speed
 	private static final float DODGE_SPEED = 20;
@@ -127,9 +128,21 @@ public class Assassin extends Character<AssassinParts> {
 		filenames.put("RightLeg", RIGHT_LEG);
 
 		Animation<AssassinParts> standing = new Animation<>(STANDING_ANIMATION_DURATION, true);
-		standing.load("Assassin/Standing", filenames);
+		Animation<AssassinParts> walking = new Animation<>(WALKING_ANIMATION_DURATION, true);
+		Animation<AssassinParts> primary = new Animation<>(PRIMARY_ANIMATION_DURATION, false);
+		Animation<AssassinParts> secondary = new Animation<>(SECONDARY_ANIMATION_DURATION, false);
 
-		animations.map(Collections.singleton(STANDING), standing);
+		standing.load("Assassin/Standing", filenames);
+		walking.load("Assassin/Walking", filenames);
+		primary.load("Assassin/Primary", filenames);
+		secondary.load("Assassin/Secondary", filenames);
+
+		animations.map(Collections.singleton(STANDING), standing)
+				.map(Arrays.asList(STANDING, SECONDARY), secondary)
+				.map(Arrays.asList(STANDING, PRIMARY), primary)
+				.map(Collections.singleton(WALKING), walking)
+				.map(Arrays.asList(WALKING, SECONDARY), secondary)
+				.map(Arrays.asList(WALKING, PRIMARY), primary);
 	}
 
 	@Override

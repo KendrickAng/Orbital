@@ -23,7 +23,7 @@ import static com.mygdx.game.entity.state.CharacterStates.TERTIARY;
 import static com.mygdx.game.entity.state.CharacterStates.WALKING;
 
 /**
- * Character is a LivingEntity with 3 abilities: Primary, Secondary, Tertiary.
+ * Character is a LivingEntity with 3 abilities: Secondary, Secondary, Tertiary.
  */
 public abstract class Character<R extends Enum> extends LivingEntity<CharacterStates, R> {
 	private static final float MOVESPEED = 2f;
