@@ -29,6 +29,7 @@ public class Boss1AI {
 		float distance = Math.abs(displacement);
 		float duration = 0;
 
+		/*
 		boss1.setInputDirection(Direction.NONE);
 		if (distance > 80) {
 			switch (MathUtils.random(0, 2)) {
@@ -82,5 +83,6 @@ public class Boss1AI {
 				Boss1AI.this.run();
 			}
 		}, duration);
+		*/
 	}
 }

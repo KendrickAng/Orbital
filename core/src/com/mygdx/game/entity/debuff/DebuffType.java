@@ -1,5 +1,5 @@
 package com.mygdx.game.entity.debuff;
 
 public enum DebuffType {
-	SLOW
+	SLOW, DAMAGE_REDUCTION
 }

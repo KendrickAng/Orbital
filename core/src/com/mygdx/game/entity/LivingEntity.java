@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.debuff.Debuff;
-import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 
 /**
@@ -17,7 +16,6 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	private float health;
 	private float maxHealth;
 
-	private Abilities<S> abilities;
 	private Debuffs debuffs;
 
 	public LivingEntity(GameScreen game) {
@@ -26,7 +24,7 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		this.health = health();
 		this.maxHealth = health();
 
-		this.abilities = new Abilities<>();
+		Abilities<S> abilities = new Abilities<>();
 		this.debuffs = new Debuffs();
 
 		addStateListener(abilities);
@@ -48,8 +46,6 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		if (health <= 0) {
 			dispose();
 		}
-
-		abilities.update();
 	}
 
 	public void inflictDebuff(Debuff debuff) {
@@ -63,5 +59,9 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	public void damage(float damage) {
 		health -= damage;
 		Gdx.app.log("LivingEntity.java", "HP: " + health);
+	}
+
+	public float getMaxHealth() {
+		return maxHealth;
 	}
 }

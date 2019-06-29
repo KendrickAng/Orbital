@@ -1,4 +1,4 @@
-package com.mygdx.game.entity.state;
+package com.mygdx.game.entity.character;
 
 public enum  TankStates {
 	STANDING, WALKING_LEFT, WALKING_RIGHT,

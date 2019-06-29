@@ -16,12 +16,10 @@ import static com.mygdx.game.entity.Direction.UP_RIGHT;
 public class CharacterController implements InputProcessor {
 	private GameScreen game;
 	private Character character;
-	private HashSet<Direction> inputDirections;
 
 	public CharacterController(GameScreen game) {
 		this.game = game;
 		this.character = game.getCharacter();
-		inputDirections = new HashSet<>();
 	}
 
 	public void update() {
@@ -32,24 +30,21 @@ public class CharacterController implements InputProcessor {
 	public boolean keyDown(int keycode) {
 		switch (keycode) {
 			case Input.Keys.LEFT:
-				inputDirections.add(Direction.LEFT);
-				character.input(resolveInputDirection());
+				character.useLeft(true);
 				break;
 			case Input.Keys.RIGHT:
-				inputDirections.add(Direction.RIGHT);
-				character.input(resolveInputDirection());
+				character.useRight(true);
 				break;
 			case Input.Keys.UP:
-				inputDirections.add(UP);
 				break;
 			case Input.Keys.Q:
-				character.usePrimary();
+				character.usePrimary(true);
 				break;
 			case Input.Keys.W:
-				character.useSecondary();
+				character.useSecondary(true);
 				break;
 			case Input.Keys.E:
-				character.useTertiary();
+				character.useTertiary(true);
 				break;
 			case Input.Keys.R: // switch characters
 				game.switchCharacter();
@@ -64,15 +59,21 @@ public class CharacterController implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 			case Input.Keys.LEFT:
-				inputDirections.remove(Direction.LEFT);
-				character.input(resolveInputDirection());
+				character.useLeft(false);
 				break;
 			case Input.Keys.RIGHT:
-				inputDirections.remove(Direction.RIGHT);
-				character.input(resolveInputDirection());
+				character.useRight(false);
 				break;
 			case Input.Keys.UP:
-				inputDirections.remove(UP);
+				break;
+			case Input.Keys.Q:
+				character.usePrimary(false);
+				break;
+			case Input.Keys.W:
+				character.useSecondary(false);
+				break;
+			case Input.Keys.E:
+				character.useTertiary(false);
 				break;
 			default:
 				return false;
@@ -110,6 +111,7 @@ public class CharacterController implements InputProcessor {
 		return true;
 	}
 
+	/*
 	private Direction resolveInputDirection() {
 		if (!inputDirections.contains(Direction.RIGHT)
 				&& !inputDirections.contains(Direction.LEFT)
@@ -143,4 +145,5 @@ public class CharacterController implements InputProcessor {
 
 		return Direction.NONE;
 	}
+	*/
 }

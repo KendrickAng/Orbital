@@ -29,14 +29,17 @@ public class Animation<P extends Enum> {
 	private Timer timer;
 	private HashMap<P, AnimationPart> parts; // Hashmap allows O(1) retrieval, and used for debug
 	private TreeMap<P, AnimationPart> animations; // Treemap parts are rendered in order
+	private HashMap<Integer, AnimationFrameTask> tasks;
 
 	// Load Animation assets
 	public Animation(float duration, boolean loop) {
 		this.duration = duration;
 		this.loop = loop;
 		this.timer = new Timer();
+
 		this.parts = new HashMap<>();
 		this.animations = new TreeMap<>();
+		this.tasks = new HashMap<>();
 	}
 
 	public void load(String directory, HashMap<String, P> filenames) {
@@ -68,19 +71,29 @@ public class Animation<P extends Enum> {
 		}
 	}
 
+	public Animation<P> defineFrameTask(int frame, AnimationFrameTask task) {
+		tasks.put(frame, task);
+		return this;
+	}
+
 	public void begin() {
 		frame = 0;
 		timer.clear();
-		nextFrame();
+		updateFrame();
 	}
 
-	private void nextFrame() {
+	private void updateFrame() {
+		AnimationFrameTask task = tasks.get(frame);
+		if (task != null) {
+			task.call();
+		}
+
 		if (frame < frames - 1) {
 			timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
 					Animation.this.frame++;
-					Animation.this.nextFrame();
+					Animation.this.updateFrame();
 				}
 			}, duration / frames);
 		} else if (loop) {
@@ -88,7 +101,7 @@ public class Animation<P extends Enum> {
 				@Override
 				public void run() {
 					Animation.this.frame = 0;
-					Animation.this.nextFrame();
+					Animation.this.updateFrame();
 				}
 			}, duration / frames);
 		}

@@ -50,25 +50,22 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 
 	protected abstract void defineAnimations(Animations<S, P> animations);
 
+	// General updates
 	protected abstract void update();
 
 	protected abstract void updatePosition(Vector2 position);
 
-	protected abstract void updateVelocity(Vector2 position, Vector2 velocity);
-
 	public void render(SpriteBatch batch) {
 		/* Physics */
-		updateVelocity(position, velocity);
+		states.updateVelocity(velocity);
 		position.x += velocity.x;
 		position.y += velocity.y;
 
 		updatePosition(position);
+		update();
 
 		/* Render */
 		animations.render(batch);
-
-		// General updates
-		update();
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {
@@ -125,10 +122,6 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		return dispose;
 	}
 
-	public S getState() {
-		return states.getState();
-	}
-
 	public Hitbox getHitbox(P part) {
 		return animations.getHitbox(part);
 	}
@@ -141,7 +134,7 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		return velocity;
 	}
 
-	public boolean getFlipX() {
+	public boolean isFlipX() {
 		return animations.getFlipX();
 	}
 

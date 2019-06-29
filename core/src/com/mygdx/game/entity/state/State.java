@@ -1,11 +1,13 @@
 package com.mygdx.game.entity.state;
 
+import com.badlogic.gdx.math.Vector2;
+
 import java.util.HashMap;
 
 public class State<I, S> {
 	private S name;
 	private StateBegin stateBegin;
-	private StateUpdate stateUpdate;
+	private StateUpdateVelocity stateUpdateVelocity;
 	private StateEnd stateEnd;
 	private HashMap<I, S> edges;
 
@@ -19,8 +21,8 @@ public class State<I, S> {
 		return this;
 	}
 
-	public State<I, S> defindUpdate(StateUpdate update) {
-		this.stateUpdate = update;
+	public State<I, S> defineUpdateVelocity(StateUpdateVelocity update) {
+		this.stateUpdateVelocity = update;
 		return this;
 	}
 
@@ -40,9 +42,9 @@ public class State<I, S> {
 		}
 	}
 
-	public void update() {
-		if (stateUpdate != null) {
-			stateUpdate.update();
+	public void updateVelocity(Vector2 velocity) {
+		if (stateUpdateVelocity != null) {
+			stateUpdateVelocity.updateVelocity(velocity);
 		}
 	}
 

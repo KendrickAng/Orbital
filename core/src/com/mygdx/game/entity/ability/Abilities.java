@@ -1,111 +1,63 @@
 package com.mygdx.game.entity.ability;
 
-import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.entity.state.StateListener;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.HashSet;
 
 /**
- * What abilities an entity can use. What S can be is defined in Character's defineAbilities().
+ * Abilities manager.
  */
 public class Abilities<S extends Enum> implements StateListener<S> {
-	private Timer timer;
+	// Abilities to use in state.
+	private HashMap<S, Ability> abilitiesUse;
 
-	// Abilities defined. Library.
-	private HashMap<S, Ability> abilities;
-
-	// Abilities that can be used
-	private HashMap<S, Ability> usable;
-
-	// Abilities that are currently active
-	private HashMap<S, Ability> using;
-
-	// Abilities that cannot be used and need to be checked if they can be reset
-	private HashMap<S, Timer.Task> unusable;
+	// Abilities to cancel in state.
+	private HashMap<S, HashSet<Ability>> abilitiesCancel;
 
 	public Abilities() {
-		this.timer = new Timer();
-
-		abilities = new HashMap<>();
-		usable = new HashMap<>();
-		using = new HashMap<>();
-		unusable = new HashMap<>();
+		abilitiesUse = new HashMap<>();
+		abilitiesCancel = new HashMap<>();
 	}
 
-	// Map a state to an ability
-	public Abilities<S> map(S state, Ability ability) {
-		abilities.put(state, ability); // never changes once defined.
-		usable.put(state, ability); // an ability is removed from HM and put in using when the ability is used, until cooldown is up.
+	// Map a state to an ability to use. (1 to 1)
+	public Abilities<S> defineUse(S state, Ability ability) {
+		abilitiesUse.put(state, ability);
 		return this;
 	}
 
-	/* Update is called every iteration of the game loop. */
-	public void update() {
-		// Execute "using" abilities callback
-		for (Map.Entry<S, Ability> entry : using.entrySet()) {
-			entry.getValue().using();
+	// Add an ability to be cancelled when in a state.
+	public Abilities<S> addCancel(S state, Ability ability) {
+		HashSet<Ability> abilitiesCancel = this.abilitiesCancel.get(state);
+		if (abilitiesCancel == null) {
+			abilitiesCancel = new HashSet<>();
+			this.abilitiesCancel.put(state, abilitiesCancel);
 		}
-
-		// Check if unusables can be reset
-		Iterator<Map.Entry<S, Timer.Task>> iterator = unusable.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Map.Entry<S, Timer.Task> entry = iterator.next();
-			S state = entry.getKey();
-			Timer.Task task = entry.getValue();
-			Ability ability = abilities.get(state);
-
-			// Is on cooldown if cooldown task is still running
-			boolean isOnCooldown = task != null;
-			if (ability.canReset(isOnCooldown)) {
-				if (isOnCooldown) {
-					// Cancel task if still running
-					task.cancel();
-				}
-
-				// Put original ability back in usable
-				usable.put(state, ability);
-
-				// Remove ability from unusable
-				iterator.remove();
-			}
-		}
+		abilitiesCancel.add(ability);
+		return this;
 	}
+
 
 	@Override
 	public boolean stateValid(S state) {
-		if (abilities.containsKey(state)) {
-			Ability ability = abilities.get(state);
-			return ability.ready();
+		if (abilitiesUse.containsKey(state)) {
+			Ability ability = abilitiesUse.get(state);
+			return ability.isReady();
 		}
 		return true;
 	}
 
-	// Detects there's an ability being used in States, and activates the logic.
 	@Override
 	public void stateChange(S state) {
-		if (abilities.containsKey(state)) {
-			Ability ability = usable.get(state);
-
-			// Schedule a task for each AbilityTask
-			for (final Ability.AbilityTask task : ability.getAbilityTasks()) {
-				timer.scheduleTask(new Timer.Task() {
-					@Override
-					public void run() {
-						task.callback.call();
-					}
-				}, task.delay);
-			}
-
-			// Call ability's begin callback
+		if (abilitiesUse.containsKey(state)) {
+			Ability ability = abilitiesUse.get(state);
 			ability.begin();
+		}
 
-			// Ability used, remove ability from usable
-			usable.remove(state);
-
-			// Ability used, map ability to using
-			using.put(state, ability);
+		if (abilitiesCancel.containsKey(state)) {
+			for (Ability ability : abilitiesCancel.get(state)) {
+				ability.end();
+			}
 		}
 	}
 

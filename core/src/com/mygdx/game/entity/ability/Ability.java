@@ -1,122 +1,77 @@
 package com.mygdx.game.entity.ability;
 
-import java.util.LinkedList;
+import com.badlogic.gdx.utils.Timer;
 
 public class Ability {
-	// Set the state of the entity for this duration
-	private float duration;
-
-	// Ability will be off cooldown in this time
+	// Ability will be off cooldown after this time
 	private float cooldown;
 
-	// Function to check if ability can be used
-	private AbilityUseCondition useCondition;
+	private boolean using;
+	private boolean ready;
 
-	// Function to check if ability is ready to go off cooldown (reset)
-	private AbilityResetCondition resetCondition;
+	private Timer timer;
 
 	// Called once when ability begins
-	private AbilityCallback abilityBegin;
-
-	// Called when ability is active
-	private AbilityCallback abilityUsing;
+	private AbilityBegin abilityBegin;
 
 	// Called once when ability ends
-	private AbilityCallback abilityEnd;
+	private AbilityEnd abilityEnd;
 
-	/*
-	Each task is called once after a set delay. Example usage: Since Tank's slash has a windup
-	animation, the hitbox checking task only happens halfway through secondary animation duration.
-	 */
-	private LinkedList<AbilityTask> abilityTasks;
-
-	class AbilityTask {
-		AbilityCallback callback;
-		float delay;
-
-		AbilityTask(AbilityCallback callback, float delay) {
-			this.callback = callback;
-			this.delay = delay;
-		}
-	}
-
-	public Ability(float duration, float cooldown) {
-		this.duration = duration;
+	public Ability(float cooldown) {
 		this.cooldown = cooldown;
-
-		this.useCondition = using -> using == 0;
-		this.resetCondition = isOnCooldown -> !isOnCooldown; // whether cooldown can "go off".
-		this.abilityBegin = () -> {
-		};
-		this.abilityUsing = () -> {
-		};
-		this.abilityEnd = () -> {
-		};
-		this.abilityTasks = new LinkedList<>();
+		this.ready = true;
+		this.timer = new Timer();
 	}
 
 	/* Calls */
 	public void begin() {
-		abilityBegin.call();
-	}
+		// Ensure that abilityBegin is called only once.
+		if (!using) {
+			using = true;
 
-	public void using() {
-		abilityUsing.call();
+			if (abilityBegin != null) {
+				abilityBegin.begin();
+			}
+		}
 	}
 
 	public void end() {
-		abilityEnd.call();
+		// Ensure that abilityEnd is called only once.
+		if (using) {
+			using = false;
+			ready = false;
+			timer.scheduleTask(new Timer.Task() {
+				@Override
+				public void run() {
+					ready = true;
+				}
+			}, cooldown);
+
+			if (abilityEnd != null) {
+				abilityEnd.end();
+			}
+		}
+	}
+
+	// Reset cooldown of the ability
+	public void reset() {
+		timer.clear();
+		ready = true;
 	}
 
 	/* Setters */
-	public Ability setUseCondition(AbilityUseCondition useCondition) {
-		this.useCondition = useCondition;
-		return this;
-	}
-
-	public Ability setResetCondition(AbilityResetCondition resetCondition) {
-		this.resetCondition = resetCondition;
-		return this;
-	}
-
-	public Ability setAbilityBegin(AbilityCallback abilityBegin) {
+	public Ability defineBegin(AbilityBegin abilityBegin) {
 		this.abilityBegin = abilityBegin;
 		return this;
 	}
 
-	public Ability setAbilityUsing(AbilityCallback abilityUsing) {
-		this.abilityUsing = abilityUsing;
-		return this;
-	}
-
-	public Ability setAbilityEnd(AbilityCallback abilityEnd) {
+	public Ability defineEnd(AbilityEnd abilityEnd) {
 		this.abilityEnd = abilityEnd;
 		return this;
 	}
 
-	public Ability addAbilityTask(AbilityCallback abilityCallback, float delay) {
-		abilityTasks.add(new AbilityTask(abilityCallback, delay));
-		return this;
-	}
-
 	/* Getters */
-	public boolean canUse(int using) {
-		return useCondition.check(using);
-	}
-
-	public boolean canReset(boolean isOnCooldown) {
-		return resetCondition.check(isOnCooldown);
-	}
-
-	public float getDuration() {
-		return duration;
-	}
-
-	public float getCooldown() {
-		return cooldown;
-	}
-
-	public LinkedList<AbilityTask> getAbilityTasks() {
-		return abilityTasks;
+	public boolean isReady() {
+		return ready;
 	}
 }
