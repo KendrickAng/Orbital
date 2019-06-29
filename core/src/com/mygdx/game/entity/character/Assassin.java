@@ -23,7 +23,7 @@ import static com.mygdx.game.entity.part.AssassinParts.*;
 import static com.mygdx.game.entity.state.CharacterStates.*;
 
 public class Assassin extends Character<AssassinParts> {
-	private static final float HEALTH = 10;
+	private static final float HEALTH = 50;
 
 	// Skill cooldown in seconds.
 	private static final float PRIMARY_COOLDOWN = 0;

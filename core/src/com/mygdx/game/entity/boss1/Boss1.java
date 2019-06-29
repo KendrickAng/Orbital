@@ -137,7 +137,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 						}
 					}
 					if (c instanceof Tank) {
-						// TODO: Game crashes when slam used for (PRIMARY_ANIMATION_DURATION / 2). Nullpointerexception. Why?
+						// TODO: Game crashes when slam used for (PRIMARY_ANIMATION_DURATION l/ 2). Nullpointerexception. Why?
 						if (this.getHitbox(RIGHT_ARM).hitTest(c.getHitbox(TankParts.BODY)) ||
 								this.getHitbox(LEFT_ARM).hitTest(c.getHitbox(TankParts.BODY))) {
 							Gdx.app.log("Boss1.java", "Tank was hit by primary!");
@@ -170,7 +170,7 @@ public class Boss1 extends LivingEntity<Boss1States, Boss1Parts> {
 						if (this.getHitbox(RIGHT_LEG).hitTest(c.getHitbox(TankParts.BODY)) ||
 								// TODO: Game crashes on shockwave. Nullpointer exception. Why?
 								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(TankParts.LEFT_LEG)) ||
-								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.RIGHT_LEG))) {
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(TankParts.RIGHT_LEG))) {
 							Gdx.app.log("Boss1.java", "Tank was hit by secondary!");
 							c.damage(SECONDARY_DAMAGE);
 						}

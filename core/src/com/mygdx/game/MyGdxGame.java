@@ -15,6 +15,8 @@ public class MyGdxGame extends Game {
 	public static final int GAME_HEIGHT = 380;
 	public static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
 	public static final boolean DEBUG = true;
+	public static final String TITLE = "PRESS ANY KEY TO BEGIN";
+	public static final int TITLE_FONTSIZE = 20;
 
 	private SpriteBatch batch;
 	private BitmapFont font;
