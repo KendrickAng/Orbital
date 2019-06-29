@@ -3,6 +3,7 @@ package com.mygdx.game.entity.animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.entity.EntityData;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.state.StateListener;
 
@@ -13,17 +14,14 @@ import java.util.HashMap;
  */
 public class Animations<S extends Enum, P extends Enum> implements StateListener<S> {
 	// E.g P = AssassinParts. Animation contains a map of all enum parts of AssassinParts to corrs. AnimationPart instance
-
-	private Vector2 position;// bottom left of the 160 by 80.
-	private boolean flipX;
-
+	private EntityData entityData;
 	private Animation<P> animation;
 
 	// Map of states to animation
 	private HashMap<S, Animation<P>> animations;
 
-	public Animations(Vector2 position) {
-		this.position = position;
+	public Animations(EntityData entityData) {
+		this.entityData = entityData;
 		this.animations = new HashMap<>();
 	}
 
@@ -37,7 +35,8 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 		Animation<P> animation = animations.get(state);
 
 		// Ignore null animations
-		if (animation != null) {
+		// Ignore same animation
+		if (animation != null && this.animation != animation) {
 			this.animation = animation;
 			this.animation.begin();
 		}
@@ -45,26 +44,17 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 
 	// Maps a state to a group.
 	public Animations<S, P> map(S state, Animation<P> animation) {
+		animation.load(entityData);
 		animations.put(state, animation);
 		return this;
 	}
 
 	public void render(SpriteBatch batch) {
-		animation.render(batch, position, flipX);
+		animation.render(batch, entityData.getPosition(), entityData.getFlipX().get());
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {
-		animation.renderDebug(shapeRenderer, position, flipX);
-	}
-
-	/* Setters */
-	public void setFlipX(boolean flip) {
-		flipX = flip;
-	}
-
-	/* Getters */
-	public boolean getFlipX() {
-		return flipX;
+		animation.renderDebug(shapeRenderer);
 	}
 
 	public Hitbox getHitbox(P part) {

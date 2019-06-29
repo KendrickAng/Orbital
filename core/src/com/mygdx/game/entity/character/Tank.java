@@ -1,7 +1,6 @@
 package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
@@ -28,11 +27,16 @@ import static com.mygdx.game.entity.character.CharacterInput.SECONDARY_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.SECONDARY_KEYUP;
 import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYUP;
-import static com.mygdx.game.entity.character.TankStates.PRIMARY_STANDING;
-import static com.mygdx.game.entity.character.TankStates.PRIMARY_WALKING_LEFT;
-import static com.mygdx.game.entity.character.TankStates.PRIMARY_WALKING_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.PRIMARY;
+import static com.mygdx.game.entity.character.TankStates.PRIMARY_LEFT;
+import static com.mygdx.game.entity.character.TankStates.PRIMARY_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.PRIMARY_RIGHT;
 import static com.mygdx.game.entity.character.TankStates.SECONDARY;
+import static com.mygdx.game.entity.character.TankStates.SECONDARY_LEFT;
+import static com.mygdx.game.entity.character.TankStates.SECONDARY_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.SECONDARY_RIGHT;
 import static com.mygdx.game.entity.character.TankStates.STANDING;
+import static com.mygdx.game.entity.character.TankStates.STANDING_LEFT_RIGHT;
 import static com.mygdx.game.entity.character.TankStates.TERTIARY;
 import static com.mygdx.game.entity.character.TankStates.WALKING_LEFT;
 import static com.mygdx.game.entity.character.TankStates.WALKING_RIGHT;
@@ -49,7 +53,6 @@ import static com.mygdx.game.entity.part.TankParts.WEAPON;
  */
 public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 	private static final float MOVESPEED = 2f;
-	private static final float FRICTION = 0.6f;
 
 	private static final float HEALTH = 100;
 
@@ -90,66 +93,89 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 	@Override
 	protected void defineStates(States<CharacterInput, TankStates> states) {
 		states.add(new State<CharacterInput, TankStates>(STANDING)
-				.defineUpdateVelocity((velocity) -> velocity.x *= FRICTION)
 				.addEdge(LEFT_KEYDOWN, WALKING_LEFT)
 				.addEdge(RIGHT_KEYDOWN, WALKING_RIGHT)
-				.addEdge(LEFT_KEYUP, WALKING_RIGHT)
-				.addEdge(RIGHT_KEYUP, WALKING_LEFT)
-				.addEdge(PRIMARY_KEYDOWN, PRIMARY_STANDING)
+				.addEdge(PRIMARY_KEYDOWN, PRIMARY)
 				.addEdge(SECONDARY_KEYDOWN, SECONDARY)
 				.addEdge(TERTIARY_KEYDOWN, TERTIARY))
 
+				.add(new State<CharacterInput, TankStates>(STANDING_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, WALKING_RIGHT)
+						.addEdge(RIGHT_KEYUP, WALKING_LEFT)
+						.addEdge(PRIMARY_KEYDOWN, PRIMARY_LEFT_RIGHT)
+						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT_RIGHT))
+
 				.add(new State<CharacterInput, TankStates>(WALKING_LEFT)
-						.defineBegin(() -> setFlipX(true))
-						.defineUpdateVelocity((velocity) -> {
-							velocity.x -= MOVESPEED * (1 - getSlow());
-							velocity.x *= FRICTION;
+						.defineBegin(() -> getFlipX().set(true))
+						.defineUpdate(() -> {
+							getPosition().x -= MOVESPEED * (1 - getSlow());
+							checkWithinMap();
 						})
 						.addEdge(LEFT_KEYUP, STANDING)
-						.addEdge(RIGHT_KEYDOWN, STANDING)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_WALKING_LEFT))
+						.addEdge(RIGHT_KEYDOWN, STANDING_LEFT_RIGHT)
+						.addEdge(PRIMARY_KEYDOWN, PRIMARY_LEFT)
+						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT))
 
 				.add(new State<CharacterInput, TankStates>(WALKING_RIGHT)
-						.defineBegin(() -> setFlipX(false))
-						.defineUpdateVelocity((velocity) -> {
-							velocity.x += MOVESPEED * (1 - getSlow());
-							velocity.x *= FRICTION;
+						.defineBegin(() -> getFlipX().set(false))
+						.defineUpdate(() -> {
+							getPosition().x += MOVESPEED * (1 - getSlow());
+							checkWithinMap();
 						})
 						.addEdge(RIGHT_KEYUP, STANDING)
-						.addEdge(LEFT_KEYDOWN, STANDING)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_WALKING_RIGHT))
+						.addEdge(LEFT_KEYDOWN, STANDING_LEFT_RIGHT)
+						.addEdge(PRIMARY_KEYDOWN, PRIMARY_RIGHT)
+						.addEdge(SECONDARY_KEYDOWN, SECONDARY_RIGHT))
 
 				/* Block */
-				.add(new State<CharacterInput, TankStates>(PRIMARY_STANDING)
-						.defineUpdateVelocity((velocity) -> velocity.x *= FRICTION)
-						.addEdge(LEFT_KEYDOWN, PRIMARY_WALKING_LEFT)
-						.addEdge(RIGHT_KEYDOWN, PRIMARY_WALKING_RIGHT)
-						.addEdge(LEFT_KEYUP, PRIMARY_WALKING_RIGHT)
-						.addEdge(RIGHT_KEYUP, PRIMARY_WALKING_LEFT)
+				.add(new State<CharacterInput, TankStates>(PRIMARY)
+						.addEdge(LEFT_KEYDOWN, PRIMARY_LEFT)
+						.addEdge(RIGHT_KEYDOWN, PRIMARY_RIGHT)
 						.addEdge(PRIMARY_KEYUP, STANDING))
 
-				.add(new State<CharacterInput, TankStates>(PRIMARY_WALKING_LEFT)
-						.defineUpdateVelocity((velocity) -> {
-							velocity.x -= MOVESPEED * (1 - getSlow());
-							velocity.x *= FRICTION;
+				.add(new State<CharacterInput, TankStates>(PRIMARY_LEFT)
+						.defineUpdate(() -> {
+							getPosition().x -= MOVESPEED * (1 - getSlow());
+							checkWithinMap();
 						})
-						.addEdge(LEFT_KEYUP, PRIMARY_STANDING)
-						.addEdge(RIGHT_KEYDOWN, PRIMARY_STANDING)
+						.addEdge(LEFT_KEYUP, PRIMARY)
+						.addEdge(RIGHT_KEYDOWN, PRIMARY_LEFT_RIGHT)
 						.addEdge(PRIMARY_KEYUP, WALKING_LEFT))
 
-				.add(new State<CharacterInput, TankStates>(PRIMARY_WALKING_RIGHT)
-						.defineUpdateVelocity((velocity) -> {
-							velocity.x += MOVESPEED * (1 - getSlow());
-							velocity.x *= FRICTION;
+				.add(new State<CharacterInput, TankStates>(PRIMARY_RIGHT)
+						.defineUpdate(() -> {
+							getPosition().x += MOVESPEED * (1 - getSlow());
+							checkWithinMap();
 						})
-						.addEdge(RIGHT_KEYUP, PRIMARY_STANDING)
-						.addEdge(LEFT_KEYDOWN, PRIMARY_STANDING)
+						.addEdge(RIGHT_KEYUP, PRIMARY)
+						.addEdge(LEFT_KEYDOWN, PRIMARY_LEFT_RIGHT)
 						.addEdge(PRIMARY_KEYUP, WALKING_RIGHT))
+
+				.add(new State<CharacterInput, TankStates>(PRIMARY_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, PRIMARY_RIGHT)
+						.addEdge(RIGHT_KEYUP, PRIMARY_LEFT)
+						.addEdge(PRIMARY_KEYUP, STANDING_LEFT_RIGHT))
 
 				/* Slash */
 				.add(new State<CharacterInput, TankStates>(SECONDARY)
-						.defineUpdateVelocity((velocity) -> velocity.x *= FRICTION)
+						.addEdge(LEFT_KEYDOWN, SECONDARY_LEFT)
+						.addEdge(RIGHT_KEYDOWN, SECONDARY_RIGHT)
 						.addEdge(SECONDARY_KEYUP, STANDING))
+
+				.add(new State<CharacterInput, TankStates>(SECONDARY_LEFT)
+						.addEdge(LEFT_KEYUP, SECONDARY)
+						.addEdge(RIGHT_KEYDOWN, SECONDARY_LEFT_RIGHT)
+						.addEdge(SECONDARY_KEYUP, WALKING_LEFT))
+
+				.add(new State<CharacterInput, TankStates>(SECONDARY_RIGHT)
+						.addEdge(RIGHT_KEYUP, SECONDARY)
+						.addEdge(LEFT_KEYDOWN, SECONDARY_LEFT_RIGHT)
+						.addEdge(SECONDARY_KEYUP, WALKING_RIGHT))
+
+				.add(new State<CharacterInput, TankStates>(SECONDARY_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, SECONDARY_RIGHT)
+						.addEdge(RIGHT_KEYUP, SECONDARY_LEFT)
+						.addEdge(SECONDARY_KEYUP, STANDING_LEFT_RIGHT))
 
 				/* Fortress */
 				.add(new State<CharacterInput, TankStates>(TERTIARY)
@@ -167,31 +193,43 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 		filenames.put("Weapon", WEAPON);
 		filenames.put("RightArm", RIGHT_ARM);
 
-		Animation<TankParts> standing = new Animation<>(STANDING_ANIMATION_DURATION, true);
-		Animation<TankParts> walking = new Animation<>(WALKING_ANIMATION_DURATION, true);
-		Animation<TankParts> primary = new Animation<TankParts>(PRIMARY_ANIMATION_DURATION, false)
-				.defineFrameTask(1, () -> inflictDebuff(primaryArmorDebuff));
-		Animation<TankParts> secondary = new Animation<TankParts>(SECONDARY_ANIMATION_DURATION, false)
-				.defineFrameTask(1, () -> {
-					Boss1 boss = getGame().getBoss1();
-					if (getHitbox(WEAPON).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
-						Gdx.app.log("Tank.java", "Boss was hit!");
-						boss.damage(SECONDARY_DAMAGE);
-					}
-				});
+		Animation<TankParts> standing =
+				new Animation<>(STANDING_ANIMATION_DURATION, "Tank/Standing", filenames)
+						.loop();
 
-		standing.load("Tank/Standing", filenames);
-		walking.load("Tank/Walking", filenames);
-		primary.load("Tank/Primary", filenames);
-		secondary.load("Tank/Secondary", filenames);
+		Animation<TankParts> walking =
+				new Animation<>(WALKING_ANIMATION_DURATION, "Tank/Walking", filenames)
+						.loop();
+
+		Animation<TankParts> primary =
+				new Animation<>(PRIMARY_ANIMATION_DURATION, "Tank/Primary", filenames)
+						.defineFrameTask(1, () -> inflictDebuff(primaryArmorDebuff));
+
+		Animation<TankParts> secondary =
+				new Animation<>(SECONDARY_ANIMATION_DURATION, "Tank/Secondary", filenames)
+						.defineFrameTask(0, () -> {
+							Boss1 boss1 = getGame().getBoss1();
+							if (getHitbox(WEAPON).hitTest(boss1.getHitbox(Boss1Parts.BODY))) {
+								Gdx.app.log("Tank.java", "Boss was hit!");
+								boss1.damage(SECONDARY_DAMAGE);
+							}
+						})
+						.defineEnd(() -> input(SECONDARY_KEYUP));
 
 		animations.map(STANDING, standing)
+				.map(STANDING_LEFT_RIGHT, standing)
 				.map(WALKING_LEFT, walking)
 				.map(WALKING_RIGHT, walking)
-				.map(PRIMARY_STANDING, primary)
-				.map(PRIMARY_WALKING_LEFT, primary)
-				.map(PRIMARY_WALKING_RIGHT, primary)
-				.map(SECONDARY, secondary);
+
+				.map(PRIMARY, primary)
+				.map(PRIMARY_LEFT_RIGHT, primary)
+				.map(PRIMARY_LEFT, primary)
+				.map(PRIMARY_RIGHT, primary)
+
+				.map(SECONDARY, secondary)
+				.map(SECONDARY_LEFT, secondary)
+				.map(SECONDARY_RIGHT, secondary)
+				.map(SECONDARY_LEFT_RIGHT, secondary);
 	}
 
 	@Override
@@ -200,49 +238,55 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 		Debuff tertiaryDebuff = new Debuff(DebuffType.SLOW, TERTIARY_SLOW_MODIFIER, TERTIARY_DEBUFF_DURATION);
 
 		/* Block */
-		Ability primary = new Ability(PRIMARY_COOLDOWN)
-				.defineBegin(() -> inflictDebuff(primarySlowDebuff))
+		Ability<TankStates> primary = new Ability<TankStates>(PRIMARY_COOLDOWN);
+		primary.defineBegin((state) -> inflictDebuff(primarySlowDebuff))
 				.defineEnd(() -> {
 					cancelDebuff(primarySlowDebuff);
 					cancelDebuff(primaryArmorDebuff);
+					primary.reset();
 				});
 
 		/* Slash */
-		Ability secondary = new Ability(SECONDARY_COOLDOWN);
+		Ability<TankStates> secondary = new Ability<TankStates>(SECONDARY_COOLDOWN);
 
 		/* Fortress */
-		Ability tertiary = new Ability(TERTIARY_COOLDOWN)
-				.defineBegin(() -> {
+		Ability<TankStates> tertiary = new Ability<TankStates>(TERTIARY_COOLDOWN)
+				.defineBegin((state) -> {
 					Gdx.app.log("Tank.java", "Tertiary");
 					inflictDebuff(tertiaryDebuff);
 				});
 
-		abilities.addCancel(STANDING, primary)
-				.addCancel(WALKING_LEFT, primary)
-				.addCancel(WALKING_RIGHT, primary)
-				.defineUse(PRIMARY_STANDING, primary)
-				.defineUse(PRIMARY_WALKING_LEFT, primary)
-				.defineUse(PRIMARY_WALKING_RIGHT, primary)
+		abilities.addBegin(PRIMARY, primary)
+				.addBegin(PRIMARY_LEFT, primary)
+				.addBegin(PRIMARY_RIGHT, primary)
+				.addBegin(PRIMARY_LEFT_RIGHT, primary)
+				.addEnd(STANDING, primary)
+				.addEnd(WALKING_LEFT, primary)
+				.addEnd(WALKING_RIGHT, primary)
+				.addEnd(STANDING_LEFT_RIGHT, primary)
 
-				.addCancel(STANDING, secondary)
-				.defineUse(SECONDARY, secondary)
+				.addBegin(SECONDARY, secondary)
+				.addBegin(SECONDARY_LEFT, secondary)
+				.addBegin(SECONDARY_RIGHT, secondary)
+				.addBegin(SECONDARY_LEFT_RIGHT, secondary)
+				.addEnd(STANDING, secondary)
+				.addEnd(WALKING_LEFT, secondary)
+				.addEnd(WALKING_RIGHT, secondary)
+				.addEnd(STANDING_LEFT_RIGHT, secondary)
 
-				.addCancel(STANDING, tertiary)
-				.defineUse(TERTIARY, tertiary);
+				.addBegin(TERTIARY, tertiary)
+				.addEnd(STANDING, tertiary);
 	}
 
-
-	/* Update */
-	@Override
-	protected void updatePosition(Vector2 position) {
+	private void checkWithinMap() {
 		float x = getHitbox(BODY).getOffsetX();
 		float width = getHitbox(BODY).getWidth();
-		if (position.x < -x) {
-			position.x = -x;
+		if (getPosition().x < -x) {
+			getPosition().x = -x;
 		}
 
-		if (position.x > GAME_WIDTH - x - width) {
-			position.x = GAME_WIDTH - x - width;
+		if (getPosition().x > GAME_WIDTH - x - width) {
+			getPosition().x = GAME_WIDTH - x - width;
 		}
 	}
 
@@ -254,6 +298,8 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 		*/
 	}
 
+
+	// TODO: Abstract these out
 	@Override
 	protected void useLeft(boolean keydown) {
 		if (keydown) {
@@ -273,6 +319,11 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 	}
 
 	@Override
+	protected void useUp(boolean keydown) {
+
+	}
+
+	@Override
 	protected void usePrimary(boolean keydown) {
 		if (keydown) {
 			input(PRIMARY_KEYDOWN);
@@ -285,8 +336,6 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 	protected void useSecondary(boolean keydown) {
 		if (keydown) {
 			input(SECONDARY_KEYDOWN);
-		} else {
-			input(SECONDARY_KEYUP);
 		}
 	}
 

@@ -123,9 +123,11 @@ public class GameScreen implements Screen {
 		Character prev = character;
 		Character next = prev.equals(tank) ? assassin : tank;
 		prev.setVisible(false);
+		/*
 		next.setPosition(prev.getPosition());
 		next.setVelocity(prev.getVelocity());
 		next.setFlipX(prev.isFlipX());
+		*/
 		next.setVisible(true);
 
 		character = next;

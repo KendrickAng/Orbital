@@ -40,14 +40,6 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	// called when an instance of LivingEntity is created.
 	protected abstract void defineDebuffs(Debuffs debuffs);
 
-	/* Update */
-	@Override
-	public void update() {
-		if (health <= 0) {
-			dispose();
-		}
-	}
-
 	public void inflictDebuff(Debuff debuff) {
 		debuffs.inflict(debuff);
 	}
@@ -59,6 +51,9 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	public void damage(float damage) {
 		health -= damage;
 		Gdx.app.log("LivingEntity.java", "HP: " + health);
+		if (health <= 0) {
+			dispose();
+		}
 	}
 
 	public float getMaxHealth() {

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
+import com.mygdx.game.entity.EntityData;
 import com.mygdx.game.entity.Hitbox;
 
 import java.util.HashMap;
@@ -19,11 +20,14 @@ import java.util.TreeMap;
  * @param <P> the enum grouping all the parts that need to be animated.
  */
 public class Animation<P extends Enum> {
-	private int frame;
-	private int frames;
-
 	// Total animation duration
 	private float duration;
+	private String directory;
+	private HashMap<String, P> filenames;
+
+	private int frame;
+	private int frames;
+	private boolean loaded;
 	private boolean loop;
 
 	private Timer timer;
@@ -31,41 +35,48 @@ public class Animation<P extends Enum> {
 	private TreeMap<P, AnimationPart> animations; // Treemap parts are rendered in order
 	private HashMap<Integer, AnimationFrameTask> tasks;
 
-	// Load Animation assets
-	public Animation(float duration, boolean loop) {
-		this.duration = duration;
-		this.loop = loop;
-		this.timer = new Timer();
+	private AnimationEnd animationEnd;
 
+	public Animation(float duration, String directory, HashMap<String, P> filenames) {
+		this.duration = duration;
+		this.directory = directory;
+		this.filenames = filenames;
+
+		this.timer = new Timer();
 		this.parts = new HashMap<>();
 		this.animations = new TreeMap<>();
 		this.tasks = new HashMap<>();
 	}
 
-	public void load(String directory, HashMap<String, P> filenames) {
-		// map all parts to an empty animation, populates parts.
-		for (P part : filenames.values()) {
-			AnimationPart animation = new AnimationPart();
-			parts.put(part, animation);
-			animations.put(part, animation);
-		}
+	// Load Animation assets
+	public void load(EntityData entityData) {
+		if (!loaded) {
+			loaded = true;
 
-		// returns filehandles for a directory.
-		FileHandle[] files = Gdx.files.internal(directory).list();
-		for (FileHandle file : files) {
-			if (!file.isDirectory()) {
-				// populates the animations in order, ensuring order dictated in assets name is followed.
-				String[] n = file.nameWithoutExtension().split("_");
-				int frame = Integer.parseInt(n[0]);
-				String name = n[1];
+			// map all parts to an empty animation, populates parts.
+			for (P part : filenames.values()) {
+				AnimationPart animation = new AnimationPart(entityData);
+				parts.put(part, animation);
+				animations.put(part, animation);
+			}
 
-				P part = filenames.get(name);
-				if (part == null) {
-					Gdx.app.error("Animation.java", "Part '" + name + "' is not defined.");
-				} else {
-					AnimationPart animation = parts.get(part);
-					animation.put(frame, new Pixmap(file));
-					frames = Math.max(frames, frame + 1);
+			// returns filehandles for a directory.
+			FileHandle[] files = Gdx.files.internal(directory).list();
+			for (FileHandle file : files) {
+				if (!file.isDirectory()) {
+					// populates the animations in order, ensuring order dictated in assets name is followed.
+					String[] n = file.nameWithoutExtension().split("_");
+					int frame = Integer.parseInt(n[0]);
+					String name = n[1];
+
+					P part = filenames.get(name);
+					if (part == null) {
+						Gdx.app.error("Animation.java", "Part '" + name + "' is not defined.");
+					} else {
+						AnimationPart animation = parts.get(part);
+						animation.put(frame, new Pixmap(file));
+						frames = Math.max(frames, frame + 1);
+					}
 				}
 			}
 		}
@@ -73,6 +84,11 @@ public class Animation<P extends Enum> {
 
 	public Animation<P> defineFrameTask(int frame, AnimationFrameTask task) {
 		tasks.put(frame, task);
+		return this;
+	}
+
+	public Animation<P> defineEnd(AnimationEnd animationEnd) {
+		this.animationEnd = animationEnd;
 		return this;
 	}
 
@@ -104,6 +120,13 @@ public class Animation<P extends Enum> {
 					Animation.this.updateFrame();
 				}
 			}, duration / frames);
+		} else if (animationEnd != null) {
+			timer.scheduleTask(new Timer.Task() {
+				@Override
+				public void run() {
+					animationEnd.end();
+				}
+			}, duration / frames);
 		}
 	}
 
@@ -116,15 +139,11 @@ public class Animation<P extends Enum> {
 				sprite.setPosition(position.x, position.y);
 				sprite.setFlip(flipX, false);
 				sprite.draw(batch);
-
-				Hitbox hitbox = part.getHitbox(frame);
-				hitbox.setPosition(position);
-				hitbox.setFlip(flipX, false);
 			}
 		}
 	}
 
-	public void renderDebug(ShapeRenderer shapeRenderer, Vector2 position, boolean flipX) {
+	public void renderDebug(ShapeRenderer shapeRenderer) {
 		for (AnimationPart part : animations.values()) {
 			Hitbox hitbox = part.getHitbox(frame);
 
@@ -133,6 +152,19 @@ public class Animation<P extends Enum> {
 				hitbox.renderDebug(shapeRenderer);
 			}
 		}
+	}
+
+	public Animation<P> loop() {
+		this.loop = true;
+		return this;
+	}
+
+	public void setPosition() {
+
+	}
+
+	public void setFlipX() {
+
 	}
 
 	/* Getters */

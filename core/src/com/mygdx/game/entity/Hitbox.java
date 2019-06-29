@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.shape.Rectangle;
 
 public class Hitbox {
-	private Vector2 position; // position of image from the screen's origin.
+	private EntityData entityData;
 
 	private int x; // offsetX
 	private int y;
@@ -14,9 +14,8 @@ public class Hitbox {
 	private int height;
 	private Rectangle hitbox;
 
-	private boolean flipX;
-
-	public Hitbox(Pixmap pixmap) {
+	public Hitbox(EntityData entityData, Pixmap pixmap) {
+		this.entityData = entityData;
 		this.width = pixmap.getWidth();
 		this.height = pixmap.getHeight();
 		this.hitbox = new Rectangle();
@@ -44,14 +43,6 @@ public class Hitbox {
 		hitbox.setHeight(maxY - minY);
 	}
 
-	public void setPosition(Vector2 position) {
-		this.position = position;
-	}
-
-	public void setFlip(boolean flipX, boolean flipY) {
-		this.flipX = flipX;
-	}
-
 	public boolean hitTest(Hitbox hitbox) {
 		updateHitbox();
 		hitbox.updateHitbox();
@@ -65,12 +56,12 @@ public class Hitbox {
 
 	// sets the hitbox to position defined by vector2 position.
 	private void updateHitbox() {
-		if (flipX) {
-			hitbox.setX(position.x + width - x - hitbox.getWidth());
+		if (entityData.getFlipX().get()) {
+			hitbox.setX(entityData.getPosition().x + width - x - hitbox.getWidth());
 		} else {
-			hitbox.setX(position.x + x);
+			hitbox.setX(entityData.getPosition().x + x);
 		}
-		hitbox.setY(position.y + y);
+		hitbox.setY(entityData.getPosition().y + y);
 	}
 
 	public float getOffsetX() {

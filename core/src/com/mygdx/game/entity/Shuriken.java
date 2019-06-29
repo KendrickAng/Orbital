@@ -11,12 +11,11 @@ import com.mygdx.game.entity.part.ShurikenParts;
 import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 
-import java.util.Collections;
 import java.util.HashMap;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.entity.part.ShurikenParts.BODY;
 import static com.mygdx.game.entity.ShurikenStates.FLYING;
+import static com.mygdx.game.entity.part.ShurikenParts.BODY;
 
 public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	private static final float SHURIKEN_DAMAGE = 10;
@@ -29,11 +28,24 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	@Override
 	protected void defineStates(States<Enum, ShurikenStates> states) {
 		states.add(new State<Enum, ShurikenStates>(FLYING)
-				.defineUpdateVelocity(velocity -> {
-					if (isFlipX()) {
-						velocity.x = FLYING_SPEED;
+				.defineUpdate(() -> {
+					if (getFlipX().get()) {
+						getPosition().x += FLYING_SPEED;
 					} else {
-						velocity.x = FLYING_SPEED;
+						getPosition().x -= FLYING_SPEED;
+					}
+
+					if (getPosition().x < 0) {
+						dispose();
+					} else if (getPosition().x > GAME_WIDTH - getHitbox(BODY).getWidth()) {
+						dispose();
+					} else {
+						Boss1 boss = getGame().getBoss1();
+						if (getHitbox(BODY).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
+							Gdx.app.log("Shuriken.java", "Boss was hit!");
+							boss.damage(SHURIKEN_DAMAGE);
+							dispose();
+						}
 					}
 				}));
 	}
@@ -43,30 +55,9 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 		HashMap<String, ShurikenParts> filenames = new HashMap<>();
 		filenames.put("Body", BODY);
 
-		Animation<ShurikenParts> flying = new Animation<>(0, false);
-		flying.load("Assassin/Shuriken", filenames);
+		Animation<ShurikenParts> flying =
+				new Animation<>(0, "Assassin/Shuriken", filenames);
 
 		animations.map(FLYING, flying);
-	}
-
-	@Override
-	protected void updatePosition(Vector2 position) {
-		if (position.x < 0) {
-			dispose();
-		}
-
-		if (position.x > GAME_WIDTH - getHitbox(BODY).getWidth()) {
-			dispose();
-		}
-	}
-
-	@Override
-	protected void update() {
-		Boss1 boss = getGame().getBoss1();
-		if (getHitbox(BODY).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
-			Gdx.app.log("Shuriken.java", "Boss was hit!");
-			boss.damage(SHURIKEN_DAMAGE);
-			dispose();
-		}
 	}
 }

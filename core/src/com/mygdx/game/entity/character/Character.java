@@ -17,7 +17,7 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 
 	public Character(GameScreen game) {
 		super(game);
-		setPosition(0, MAP_HEIGHT);
+		getPosition().y = MAP_HEIGHT;
 	}
 
 	/* Debuffs */
@@ -50,12 +50,10 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 		return slow;
 	}
 
-	public void setFlipX(boolean flip) {
-		super.setFlipX(flip);
-	}
-
+	// TODO: Abstract these out
 	protected abstract void useLeft(boolean keydown);
 	protected abstract void useRight(boolean keydown);
+	protected abstract void useUp(boolean keydown);
 	protected abstract void usePrimary(boolean keydown);
 	protected abstract void useSecondary(boolean keydown);
 	protected abstract void useTertiary(boolean keydown);

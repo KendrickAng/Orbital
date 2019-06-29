@@ -1,5 +1,5 @@
 package com.mygdx.game.entity.ability;
 
-public interface AbilityBegin {
-	void begin();
+public interface AbilityBegin<S> {
+	void begin(S state);
 }

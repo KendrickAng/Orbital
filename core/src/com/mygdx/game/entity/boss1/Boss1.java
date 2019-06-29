@@ -1,8 +1,5 @@
 package com.mygdx.game.entity.boss1;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.ability.Abilities;
@@ -62,10 +59,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 	public Boss1(GameScreen game) {
 		super(game);
-
-		// use width of pixmap
-		int xOffset = new Pixmap(Gdx.files.internal("Boss1/Standing/0_Body.png")).getWidth();
-		setPosition(GAME_WIDTH - xOffset, MAP_HEIGHT);
+		getPosition().x = GAME_WIDTH - 320;
+		getPosition().y = MAP_HEIGHT;
 	}
 
 	@Override
@@ -76,9 +71,6 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	@Override
 	protected void defineStates(States<Boss1Input, Boss1States> states) {
 		states.add(new State<Boss1Input, Boss1States>(STANDING)
-				.defineUpdateVelocity((velocity) -> {
-					velocity.x *= FRICTION;
-				})
 				.addEdge(LEFT_KEYDOWN, WALKING_LEFT)
 				.addEdge(RIGHT_KEYDOWN, WALKING_RIGHT)
 				.addEdge(SLAM_KEYDOWN, SLAM)
@@ -86,18 +78,18 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				.addEdge(ROLL_KEYDOWN, ROLL))
 
 				.add(new State<Boss1Input, Boss1States>(WALKING_LEFT)
-						.defineBegin(() -> setFlipX(false))
-						.defineUpdateVelocity((velocity) -> {
-							velocity.x -= WALKING_SPEED;
-							velocity.x *= FRICTION;
+						.defineBegin(() -> getFlipX().set(false))
+						.defineUpdate(() -> {
+							getPosition().x -= WALKING_SPEED;
+							checkWithinMap();
 						})
 						.addEdge(LEFT_KEYUP, STANDING))
 
 				.add(new State<Boss1Input, Boss1States>(WALKING_RIGHT)
-						.defineBegin(() -> setFlipX(true))
-						.defineUpdateVelocity((velocity) -> {
-							velocity.x += WALKING_SPEED;
-							velocity.x *= FRICTION;
+						.defineBegin(() -> getFlipX().set(true))
+						.defineUpdate(() -> {
+							getPosition().x += WALKING_SPEED;
+							checkWithinMap();
 						})
 						.addEdge(RIGHT_KEYUP, STANDING))
 
@@ -108,15 +100,14 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 						.addEdge(EARTHQUAKE_KEYUP, STANDING))
 
 				.add(new State<Boss1Input, Boss1States>(ROLL)
-						.defineUpdateVelocity((velocity -> {
-							if (isFlipX()) {
-								velocity.x += ROLL_SPEED;
-								velocity.x *= FRICTION;
+						.defineUpdate(() -> {
+							if (getFlipX().get()) {
+								getPosition().x += ROLL_SPEED;
 							} else {
-								velocity.x -= ROLL_SPEED;
-								velocity.x *= FRICTION;
+								getPosition().x -= ROLL_SPEED;
 							}
-						}))
+							checkWithinMap();
+						})
 						.addEdge(ROLL_KEYUP, STANDING));
 	}
 
@@ -126,9 +117,9 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 		Ability earthquake = new Ability(EARTHQUAKE_COOLDOWN);
 		Ability roll = new Ability(ROLL_COOLDOWN);
 
-		abilities.defineUse(SLAM, slam)
-				.defineUse(EARTHQUAKE, earthquake)
-				.defineUse(ROLL, roll);
+		abilities.addBegin(SLAM, slam)
+				.addBegin(EARTHQUAKE, earthquake)
+				.addBegin(ROLL, roll);
 	}
 
 	@Override
@@ -147,15 +138,18 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 		filenames.put("LeftArm", LEFT_ARM);
 		filenames.put("Shockwave", SHOCKWAVE);
 
-		Animation<Boss1Parts> standing = new Animation<>(STANDING_ANIMATION_DURATION, true);
-		Animation<Boss1Parts> slam = new Animation<>(SLAM_ANIMATION_DURATION, false);
-		Animation<Boss1Parts> earthquake = new Animation<>(EARTHQUAKE_ANIMATION_DURATION, false);
-		Animation<Boss1Parts> roll = new Animation<>(ROLL_ANIMATION_DURATION, false);
+		Animation<Boss1Parts> standing =
+				new Animation<>(STANDING_ANIMATION_DURATION, "Boss1/Standing", filenames)
+						.loop();
 
-		standing.load("Boss1/Standing", filenames);
-		slam.load("Boss1/Smash", filenames);
-		earthquake.load("Boss1/Earthquake", filenames);
-		roll.load("Boss1/Roll", filenames);
+		Animation<Boss1Parts> slam =
+				new Animation<>(SLAM_ANIMATION_DURATION, "Boss1/Smash", filenames);
+
+		Animation<Boss1Parts> earthquake =
+				new Animation<>(EARTHQUAKE_ANIMATION_DURATION, "Boss1/Earthquake", filenames);
+
+		Animation<Boss1Parts> roll =
+				new Animation<>(ROLL_ANIMATION_DURATION, "Boss1/Roll", filenames);
 
 		animations.map(STANDING, standing)
 				.map(WALKING_LEFT, standing)
@@ -165,17 +159,15 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				.map(ROLL, roll);
 	}
 
-	@Override
-	protected void updatePosition(Vector2 position) {
-		// prevent boss from moving off screen
+	private void checkWithinMap() {
 		float x = getHitbox(BODY).getOffsetX();
 		float width = getHitbox(BODY).getWidth();
-		if (position.x < -x) {
-			position.x = -x;
+		if (getPosition().x < -x) {
+			getPosition().x = -x;
 		}
 
-		if (position.x > GAME_WIDTH - x - width) {
-			position.x = GAME_WIDTH - x - width;
+		if (getPosition().x > GAME_WIDTH - x - width) {
+			getPosition().x = GAME_WIDTH - x - width;
 		}
 	}
 }

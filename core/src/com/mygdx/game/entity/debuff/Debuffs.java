@@ -38,6 +38,7 @@ public class Debuffs {
 		HashSet<Debuff> debuffs = inflicted.get(debuff.getType());
 
 		// Cancel debuff after debuff duration
+		// Debuffs with 0 duration will be infinitely long.
 		if (debuff.getDuration() > 0) {
 			timer.scheduleTask(new Timer.Task() {
 				@Override

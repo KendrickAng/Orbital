@@ -1,7 +1,5 @@
 package com.mygdx.game.entity.state;
 
-import com.badlogic.gdx.math.Vector2;
-
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -57,7 +55,7 @@ public class States<I extends Enum, S extends Enum> {
 		}
 	}
 
-	public void updateVelocity(Vector2 velocity) {
-		this.state.updateVelocity(velocity);
+	public void update() {
+		this.state.update();
 	}
 }

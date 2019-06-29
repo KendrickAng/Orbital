@@ -36,6 +36,7 @@ public class CharacterController implements InputProcessor {
 				character.useRight(true);
 				break;
 			case Input.Keys.UP:
+				character.useUp(true);
 				break;
 			case Input.Keys.Q:
 				character.usePrimary(true);
@@ -65,6 +66,7 @@ public class CharacterController implements InputProcessor {
 				character.useRight(false);
 				break;
 			case Input.Keys.UP:
+				character.useUp(false);
 				break;
 			case Input.Keys.Q:
 				character.usePrimary(false);

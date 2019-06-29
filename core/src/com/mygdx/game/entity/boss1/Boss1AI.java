@@ -24,12 +24,12 @@ public class Boss1AI {
 	}
 
 	private void run() {
+		/*
 		Character character = game.getCharacter();
 		float displacement = boss1.getPosition().x + 80 - character.getPosition().x;
 		float distance = Math.abs(displacement);
 		float duration = 0;
 
-		/*
 		boss1.setInputDirection(Direction.NONE);
 		if (distance > 80) {
 			switch (MathUtils.random(0, 2)) {

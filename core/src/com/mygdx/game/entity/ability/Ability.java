@@ -2,7 +2,7 @@ package com.mygdx.game.entity.ability;
 
 import com.badlogic.gdx.utils.Timer;
 
-public class Ability {
+public class Ability<S> {
 	// Ability will be off cooldown after this time
 	private float cooldown;
 
@@ -12,7 +12,7 @@ public class Ability {
 	private Timer timer;
 
 	// Called once when ability begins
-	private AbilityBegin abilityBegin;
+	private AbilityBegin<S> abilityBegin;
 
 	// Called once when ability ends
 	private AbilityEnd abilityEnd;
@@ -24,13 +24,13 @@ public class Ability {
 	}
 
 	/* Calls */
-	public void begin() {
+	public void begin(S state) {
 		// Ensure that abilityBegin is called only once.
 		if (!using) {
 			using = true;
 
 			if (abilityBegin != null) {
-				abilityBegin.begin();
+				abilityBegin.begin(state);
 			}
 		}
 	}
@@ -40,12 +40,16 @@ public class Ability {
 		if (using) {
 			using = false;
 			ready = false;
-			timer.scheduleTask(new Timer.Task() {
-				@Override
-				public void run() {
-					ready = true;
-				}
-			}, cooldown);
+
+			// Abilities with 0 cooldown will be infinitely long.
+			if (cooldown > 0) {
+				timer.scheduleTask(new Timer.Task() {
+					@Override
+					public void run() {
+						ready = true;
+					}
+				}, cooldown);
+			}
 
 			if (abilityEnd != null) {
 				abilityEnd.end();
@@ -60,12 +64,12 @@ public class Ability {
 	}
 
 	/* Setters */
-	public Ability defineBegin(AbilityBegin abilityBegin) {
+	public Ability<S> defineBegin(AbilityBegin<S> abilityBegin) {
 		this.abilityBegin = abilityBegin;
 		return this;
 	}
 
-	public Ability defineEnd(AbilityEnd abilityEnd) {
+	public Ability<S> defineEnd(AbilityEnd abilityEnd) {
 		this.abilityEnd = abilityEnd;
 		return this;
 	}
