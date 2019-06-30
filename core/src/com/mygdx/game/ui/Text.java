@@ -1,6 +1,7 @@
 package com.mygdx.game.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,19 +10,18 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.shape.Rectangle;
 
+import static com.mygdx.game.ui.ContentAlignment.CENTER;
+
 public class Text extends RectangleUI {
     private MyGdxGame game;
     private String text;
     private BitmapFont bitmapFont;
 
-    public Text(String text, int size) {
+    public Text(String text, int size, MyGdxGame game) {
         this.generateBitmapFont(size);
         this.generateText(text);
-    }
-
-    public Text attach(MyGdxGame game) {
         this.game = game;
-        return this;
+        this.setAlignment(CENTER);
     }
 
     private Text generateText(String text) {
@@ -68,4 +68,7 @@ public class Text extends RectangleUI {
         SpriteBatch batch = this.game.getSpriteBatch();
         bitmapFont.draw(batch, text, xOrigin, yOrigin);
     }
+
+    /* Getters */
+    public String getText() { return this.text; }
 }

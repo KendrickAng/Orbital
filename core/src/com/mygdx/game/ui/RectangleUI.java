@@ -86,4 +86,5 @@ public abstract class RectangleUI {
     public float getX() { return this.x; }
     public float getY() { return this.y; }
     public Rectangle getRectangle() { return this.rectangle; }
+    public ContentAlignment getAlignment() { return this.alignment; }
 }

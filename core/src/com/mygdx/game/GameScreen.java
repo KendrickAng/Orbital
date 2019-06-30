@@ -60,8 +60,9 @@ public class GameScreen implements Screen {
 		Boss1Controller bossController = new Boss1Controller(this);
 
 		// An input multiplexer sends input to both controllers at once.
-		InputMultiplexer inputMultiplexer = new InputMultiplexer(playerController, bossController);
-		Gdx.input.setInputProcessor(inputMultiplexer);
+		InputMultiplexer inputMultiplexer = game.getInputMultiplexer();
+		inputMultiplexer.addProcessor(playerController);
+		inputMultiplexer.addProcessor(bossController);
 
 		this.background = new Background(game.getTextureManager());
 		this.shapeRenderer = new ShapeRenderer();
