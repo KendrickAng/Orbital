@@ -204,11 +204,12 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	}
 
 	public boolean damageTest(Hitbox hitbox, float damage) {
-		if (getHitbox(BODY).hitTest(hitbox) ||
+		if (!isDispose() &&
+				(getHitbox(BODY).hitTest(hitbox) ||
 				getHitbox(LEFT_LEG).hitTest(hitbox) ||
 				getHitbox(RIGHT_LEG).hitTest(hitbox) ||
 				getHitbox(LEFT_ARM).hitTest(hitbox) ||
-				getHitbox(RIGHT_ARM).hitTest(hitbox)) {
+				getHitbox(RIGHT_ARM).hitTest(hitbox))) {
 			inflictDamage(damage);
 			return true;
 		}

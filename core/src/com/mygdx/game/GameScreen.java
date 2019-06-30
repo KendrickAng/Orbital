@@ -110,9 +110,9 @@ public class GameScreen implements Screen {
 		background.render(batch);
 		entityManager.renderAll(batch);
 
-		if (character == tank) {
+		if (character == tank && !tank.isDispose()) {
 			tankBar.render(batch);
-		} else if (character == assassin) {
+		} else if (character == assassin && !assassin.isDispose()) {
 			assassinBar.render(batch);
 		}
 
@@ -164,7 +164,6 @@ public class GameScreen implements Screen {
 			} else if (character == assassin && !tank.isDispose()) {
 				character = tank;
 			} else {
-				character = null;
 				return;
 			}
 

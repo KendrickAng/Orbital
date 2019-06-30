@@ -292,11 +292,12 @@ public class Tank extends Character<TankStates, TankParts> {
 
 	@Override
 	public boolean hitTest(Hitbox hitbox) {
-		return getHitbox(BODY).hitTest(hitbox) ||
+		return !isDispose() &&
+				(getHitbox(BODY).hitTest(hitbox) ||
 				getHitbox(LEFT_LEG).hitTest(hitbox) ||
 				getHitbox(RIGHT_LEG).hitTest(hitbox) ||
 				getHitbox(LEFT_ARM).hitTest(hitbox) ||
-				getHitbox(RIGHT_ARM).hitTest(hitbox);
+				getHitbox(RIGHT_ARM).hitTest(hitbox));
 	}
 
 	// TODO: Abstract these out
