@@ -24,7 +24,7 @@ task debug(dependsOn: classes, type: JavaExec) {
 }
 
 task dist(type: Jar) {
-    from files(new File(buildDir, "classes/main"))
+    from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
     from {configurations.compile.collect {zipTree(it)}}
     from files(project.assetsDir)
@@ -34,9 +34,9 @@ task dist(type: Jar) {
     }
 }
 
-/*
 dist.dependsOn classes
 
+/*
 eclipse {
     project {
         name = appName + "-desktop"

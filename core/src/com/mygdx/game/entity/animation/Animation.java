@@ -13,6 +13,7 @@ import com.mygdx.game.entity.Hitbox;
 
 import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.logging.FileHandler;
 
 /**
  * Contains all the animations for a certain state e.g Standing.
@@ -23,7 +24,7 @@ public class Animation<P extends Enum> {
 	// Total animation duration
 	private float duration;
 	private String directory;
-	private HashMap<String, P> filenames;
+	private HashMap<P, String> filenames;
 
 	private int frame;
 	private int frames;
@@ -37,8 +38,9 @@ public class Animation<P extends Enum> {
 
 	private AnimationEnd animationEnd;
 
-	public Animation(float duration, String directory, HashMap<String, P> filenames) {
+	public Animation(float duration, int frames, String directory, HashMap<P, String> filenames) {
 		this.duration = duration;
+		this.frames = frames;
 		this.directory = directory;
 		this.filenames = filenames;
 
@@ -54,28 +56,22 @@ public class Animation<P extends Enum> {
 			loaded = true;
 
 			// map all parts to an empty animation, populates parts.
-			for (P part : filenames.values()) {
+			for (P part : filenames.keySet()) {
 				AnimationPart animation = new AnimationPart(entityData);
 				parts.put(part, animation);
 				animations.put(part, animation);
 			}
 
-			// returns filehandles for a directory.
-			FileHandle[] files = Gdx.files.internal(directory).list();
-			for (FileHandle file : files) {
-				if (!file.isDirectory()) {
-					// populates the animations in order, ensuring order dictated in assets name is followed.
-					String[] n = file.nameWithoutExtension().split("_");
-					int frame = Integer.parseInt(n[0]);
-					String name = n[1];
+			for (P part : filenames.keySet()) {
+				AnimationPart animation = new AnimationPart(entityData);
+				parts.put(part, animation);
+				animations.put(part, animation);
 
-					P part = filenames.get(name);
-					if (part == null) {
-						Gdx.app.error("Animation.java", "Part '" + name + "' is not defined.");
-					} else {
-						AnimationPart animation = parts.get(part);
-						animation.put(frame, new Pixmap(file));
-						frames = Math.max(frames, frame + 1);
+				for (int i = 0; i < frames; i++) {
+					String name = directory + "/" + i + "_" + filenames.get(part) + ".png";
+					FileHandle fileHandle = Gdx.files.internal(name);
+					if (fileHandle.exists()) {
+						animation.put(i, new Pixmap(fileHandle));
 					}
 				}
 			}

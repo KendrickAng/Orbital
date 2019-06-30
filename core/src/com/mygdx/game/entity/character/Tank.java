@@ -189,29 +189,29 @@ public class Tank extends Character<TankStates, TankParts> {
 
 	@Override
 	protected void defineAnimations(Animations<TankStates, TankParts> animations) {
-		HashMap<String, TankParts> filenames = new HashMap<>();
-		filenames.put("Shield", SHIELD);
-		filenames.put("LeftArm", LEFT_ARM);
-		filenames.put("LeftLeg", LEFT_LEG);
-		filenames.put("Body", BODY);
-		filenames.put("RightLeg", RIGHT_LEG);
-		filenames.put("Weapon", WEAPON);
-		filenames.put("RightArm", RIGHT_ARM);
+		HashMap<TankParts, String> filenames = new HashMap<>();
+		filenames.put(SHIELD, "Shield");
+		filenames.put(LEFT_ARM, "LeftArm");
+		filenames.put(LEFT_LEG, "LeftLeg");
+		filenames.put(BODY, "Body");
+		filenames.put(RIGHT_LEG, "RightLeg");
+		filenames.put(WEAPON, "Weapon");
+		filenames.put(RIGHT_ARM, "RightArm");
 
 		Animation<TankParts> standing =
-				new Animation<>(STANDING_ANIMATION_DURATION, "Tank/Standing", filenames)
+				new Animation<>(STANDING_ANIMATION_DURATION, 2, "Tank/Standing", filenames)
 						.loop();
 
 		Animation<TankParts> walking =
-				new Animation<>(WALKING_ANIMATION_DURATION, "Tank/Walking", filenames)
+				new Animation<>(WALKING_ANIMATION_DURATION, 2, "Tank/Walking", filenames)
 						.loop();
 
 		Animation<TankParts> primary =
-				new Animation<>(PRIMARY_ANIMATION_DURATION, "Tank/Primary", filenames)
+				new Animation<>(PRIMARY_ANIMATION_DURATION, 1, "Tank/Primary", filenames)
 						.defineFrameTask(0, () -> inflictDebuff(primaryArmorDebuff));
 
 		Animation<TankParts> secondary =
-				new Animation<>(SECONDARY_ANIMATION_DURATION, "Tank/Secondary", filenames)
+				new Animation<>(SECONDARY_ANIMATION_DURATION, 1, "Tank/Secondary", filenames)
 						.defineFrameTask(0, () -> getGame().getBoss1()
 								.damageTest(getHitbox(WEAPON), SECONDARY_DAMAGE))
 						.defineEnd(() -> input(SECONDARY_KEYUP));

@@ -321,27 +321,27 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 
 	@Override
 	protected void defineAnimations(Animations<AssassinStates, AssassinParts> animations) {
-		HashMap<String, AssassinParts> filenames = new HashMap<>();
-		filenames.put("Body", BODY);
-		filenames.put("LeftArm", LEFT_ARM);
-		filenames.put("LeftLeg", LEFT_LEG);
-		filenames.put("RightArm", RIGHT_ARM);
-		filenames.put("RightLeg", RIGHT_LEG);
+		HashMap<AssassinParts, String> filenames = new HashMap<>();
+		filenames.put(BODY, "Body");
+		filenames.put(LEFT_ARM, "LeftArm");
+		filenames.put(LEFT_LEG, "LeftLeg");
+		filenames.put(RIGHT_ARM, "RightArm");
+		filenames.put(RIGHT_LEG, "RightLeg");
 
 		Animation<AssassinParts> standing =
-				new Animation<>(STANDING_ANIMATION_DURATION, "Assassin/Standing", filenames)
+				new Animation<>(STANDING_ANIMATION_DURATION, 2, "Assassin/Standing", filenames)
 						.loop();
 
 		Animation<AssassinParts> walking =
-				new Animation<>(WALKING_ANIMATION_DURATION, "Assassin/Walking", filenames)
+				new Animation<>(WALKING_ANIMATION_DURATION, 8, "Assassin/Walking", filenames)
 						.loop();
 
 		Animation<AssassinParts> primary =
-				new Animation<>(PRIMARY_ANIMATION_DURATION, "Assassin/Primary", filenames)
+				new Animation<>(PRIMARY_ANIMATION_DURATION, 1, "Assassin/Primary", filenames)
 						.defineEnd(() -> input(PRIMARY_KEYUP));
 
 		Animation<AssassinParts> secondary =
-				new Animation<>(SECONDARY_ANIMATION_DURATION, "Assassin/Secondary", filenames)
+				new Animation<>(SECONDARY_ANIMATION_DURATION, 2, "Assassin/Secondary", filenames)
 						.defineEnd(() -> input(SECONDARY_KEYUP));
 
 		animations.map(STANDING, standing)

@@ -27,7 +27,12 @@ public class Boss1AI {
 		this.game = game;
 		this.timer = new Timer();
 		this.boss1 = game.getBoss1();
-		run();
+		timer.scheduleTask(new Timer.Task() {
+			@Override
+			public void run() {
+				Boss1AI.this.run();
+			}
+		}, 2);
 	}
 
 	private void run() {

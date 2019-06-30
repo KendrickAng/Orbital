@@ -53,11 +53,11 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 
 	@Override
 	protected void defineAnimations(Animations<ShurikenStates, ShurikenParts> animations) {
-		HashMap<String, ShurikenParts> filenames = new HashMap<>();
-		filenames.put("Body", BODY);
+		HashMap<ShurikenParts, String> filenames = new HashMap<>();
+		filenames.put(BODY, "Body");
 
 		Animation<ShurikenParts> flying =
-				new Animation<>(0, "Assassin/Shuriken", filenames);
+				new Animation<>(0, 1, "Assassin/Shuriken", filenames);
 
 		animations.map(FLYING, flying);
 	}

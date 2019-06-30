@@ -1,5 +1,6 @@
 package com.mygdx.game.entity.boss1;
 
+import com.badlogic.gdx.Gdx;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
@@ -149,20 +150,20 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	/* Animations */
 	@Override
 	protected void defineAnimations(Animations<Boss1States, Boss1Parts> animations) {
-		HashMap<String, Boss1Parts> filenames = new HashMap<>();
-		filenames.put("RightArm", RIGHT_ARM);
-		filenames.put("Body", BODY);
-		filenames.put("RightLeg", RIGHT_LEG);
-		filenames.put("LeftLeg", LEFT_LEG);
-		filenames.put("LeftArm", LEFT_ARM);
-		filenames.put("Shockwave", SHOCKWAVE);
+		HashMap<Boss1Parts, String> filenames = new HashMap<>();
+		filenames.put(RIGHT_ARM, "RightArm");
+		filenames.put(BODY, "Body");
+		filenames.put(RIGHT_LEG, "RightLeg");
+		filenames.put(LEFT_LEG, "LeftLeg");
+		filenames.put(LEFT_ARM, "LeftArm");
+		filenames.put(SHOCKWAVE, "Shockwave");
 
 		Animation<Boss1Parts> standing =
-				new Animation<>(STANDING_ANIMATION_DURATION, "Boss1/Standing", filenames)
+				new Animation<>(STANDING_ANIMATION_DURATION, 2, "Boss1/Standing", filenames)
 						.loop();
 
 		Animation<Boss1Parts> slam =
-				new Animation<>(SLAM_ANIMATION_DURATION, "Boss1/Smash", filenames)
+				new Animation<>(SLAM_ANIMATION_DURATION, 2, "Boss1/Smash", filenames)
 						.defineFrameTask(1, () -> {
 							Character character = getGame().getCharacter();
 							character.damageTest(getHitbox(RIGHT_ARM), SLAM_DAMAGE);
@@ -171,7 +172,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 						.defineEnd(() -> input(SLAM_KEYUP));
 
 		Animation<Boss1Parts> earthquake =
-				new Animation<>(EARTHQUAKE_ANIMATION_DURATION, "Boss1/Earthquake", filenames)
+				new Animation<>(EARTHQUAKE_ANIMATION_DURATION, 2, "Boss1/Earthquake", filenames)
 						.defineFrameTask(1, () -> {
 							Character character = getGame().getCharacter();
 							character.damageTest(getHitbox(SHOCKWAVE), EARTHQUAKE_DAMAGE);
@@ -179,7 +180,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 						.defineEnd(() -> input(EARTHQUAKE_KEYUP));
 
 		Animation<Boss1Parts> roll =
-				new Animation<>(ROLL_ANIMATION_DURATION, "Boss1/Roll", filenames)
+				new Animation<>(ROLL_ANIMATION_DURATION, 12, "Boss1/Roll", filenames)
 						.defineFrameTask(3, () -> rolling = true)
 						.defineEnd(() -> input(ROLL_KEYUP));
 
