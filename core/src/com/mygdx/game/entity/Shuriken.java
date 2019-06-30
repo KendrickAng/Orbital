@@ -1,7 +1,6 @@
 package com.mygdx.game.entity;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
@@ -19,10 +18,13 @@ import static com.mygdx.game.entity.part.ShurikenParts.BODY;
 
 public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	private static final float SHURIKEN_DAMAGE = 10;
-	public static final int FLYING_SPEED = 20;
+	private static final int FLYING_SPEED = 20;
 
-	public Shuriken(GameScreen game) {
+	public Shuriken(GameScreen game, float x, float y, boolean flipX) {
 		super(game);
+		getPosition().x = x;
+		getPosition().y = y;
+		getFlipX().set(flipX);
 	}
 
 	@Override
@@ -30,9 +32,9 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 		states.add(new State<Enum, ShurikenStates>(FLYING)
 				.defineUpdate(() -> {
 					if (getFlipX().get()) {
-						getPosition().x += FLYING_SPEED;
-					} else {
 						getPosition().x -= FLYING_SPEED;
+					} else {
+						getPosition().x += FLYING_SPEED;
 					}
 
 					if (getPosition().x < 0) {

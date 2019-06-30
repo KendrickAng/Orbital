@@ -238,7 +238,7 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 		Debuff tertiaryDebuff = new Debuff(DebuffType.SLOW, TERTIARY_SLOW_MODIFIER, TERTIARY_DEBUFF_DURATION);
 
 		/* Block */
-		Ability<TankStates> primary = new Ability<TankStates>(PRIMARY_COOLDOWN);
+		Ability<TankStates> primary = new Ability<>(PRIMARY_COOLDOWN);
 		primary.defineBegin((state) -> inflictDebuff(primarySlowDebuff))
 				.defineEnd(() -> {
 					cancelDebuff(primarySlowDebuff);
@@ -247,7 +247,7 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 				});
 
 		/* Slash */
-		Ability<TankStates> secondary = new Ability<TankStates>(SECONDARY_COOLDOWN);
+		Ability<TankStates> secondary = new Ability<>(SECONDARY_COOLDOWN);
 
 		/* Fortress */
 		Ability<TankStates> tertiary = new Ability<TankStates>(TERTIARY_COOLDOWN)
