@@ -48,6 +48,10 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float ROLL_SPEED = 4f;
 	private static final float FRICTION = 0.6f;
 
+	private static final float PRIMARY_DAMAGE = 10;
+	private static final float SECONDARY_DAMAGE = 20;
+	private static final float TERTIARY_DAMAGE = 30;
+
 	private static final float SLAM_COOLDOWN = 1f;
 	private static final float EARTHQUAKE_COOLDOWN = 1f;
 	private static final float ROLL_COOLDOWN = 1f;
@@ -130,6 +134,71 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 				.addBegin(ROLL, roll)
 				.addEnd(STANDING, roll);
+
+		/*
+				.addAbilityTask(() -> {
+					Character c = super.getGame().getCharacter();
+					if (c instanceof Assassin) {
+						if (this.getHitbox(RIGHT_ARM).hitTest(c.getHitbox(AssassinParts.BODY)) ||
+								this.getHitbox(LEFT_ARM).hitTest(c.getHitbox(AssassinParts.BODY))) {
+							Gdx.app.log("Boss1.java", "Assassin was hit by primary!");
+							c.damage(PRIMARY_DAMAGE);
+						}
+					}
+					if (c instanceof Tank) {
+						// TODO: Game crashes when slam used for (PRIMARY_ANIMATION_DURATION / 2). Nullpointerexception. Why?
+						if (this.getHitbox(RIGHT_ARM).hitTest(c.getHitbox(TankParts.BODY)) ||
+								this.getHitbox(LEFT_ARM).hitTest(c.getHitbox(TankParts.BODY))) {
+							Gdx.app.log("Boss1.java", "Tank was hit by primary!");
+							c.damage(PRIMARY_DAMAGE);
+						}
+					}
+
+				}, PRIMARY_ANIMATION_DURATION / 2f);
+
+				.addAbilityTask(() -> {
+					Character c = super.getGame().getCharacter();
+					if (c instanceof Assassin) {
+						if (this.getHitbox(RIGHT_LEG).hitTest(c.getHitbox(AssassinParts.BODY)) ||
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.LEFT_LEG)) ||
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.RIGHT_LEG))) {
+							Gdx.app.log("Boss1.java", "Assassin was hit by secondary!");
+							c.damage(PRIMARY_DAMAGE);
+						}
+					}
+					if (c instanceof Tank) {
+						if (this.getHitbox(RIGHT_LEG).hitTest(c.getHitbox(TankParts.BODY)) ||
+								// TODO: Game crashes on shockwave. Nullpointer exception. Why?
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(TankParts.LEFT_LEG)) ||
+								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.RIGHT_LEG))) {
+							Gdx.app.log("Boss1.java", "Tank was hit by secondary!");
+							c.damage(SECONDARY_DAMAGE);
+						}
+					}
+				}, SECONDARY_ANIMATION_DURATION * (3f / 4));
+
+				.setAbilityUsing(() -> {
+					Character c = super.getGame().getCharacter();
+					if (c instanceof Assassin) {
+						if (!super.getDebuffs().getInflicted().get(ROLLING).isEmpty() &&
+								this.getHitbox(BODY).hitTest(c.getHitbox(AssassinParts.BODY))) {
+							Gdx.app.log("Boss1.java", "Assassin was hit by tertiary!");
+							c.damage(TERTIARY_DAMAGE);
+						}
+					}
+					// TODO: Nullpointerexception again. What's going on?
+					if (c instanceof Tank) {
+						if (!super.getDebuffs().getInflicted().get(ROLLING).isEmpty() &&
+								this.getHitbox(BODY).hitTest(c.getHitbox(TankParts.BODY))) {
+							Gdx.app.log("Boss1.java", "Tank was hit by tertiary!");
+							c.damage(TERTIARY_DAMAGE);
+						}
+					}
+				})
+				.addAbilityTask(() -> {
+					inflictDebuff(ROLLING, 0, TERTIARY_ANIMATION_DURATION - 0.3f);
+				}, 0.3f);
+		*/
 	}
 
 	@Override

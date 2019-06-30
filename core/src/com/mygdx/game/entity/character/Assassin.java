@@ -56,6 +56,11 @@ import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYUP;
 import static com.mygdx.game.entity.character.CharacterInput.UP_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.UP_KEYUP;
 import static com.mygdx.game.entity.part.AssassinParts.BODY;
+import static com.mygdx.game.entity.part.AssassinParts.LEFT_ARM;
+import static com.mygdx.game.entity.part.AssassinParts.LEFT_LEG;
+import static com.mygdx.game.entity.part.AssassinParts.RIGHT_ARM;
+import static com.mygdx.game.entity.part.AssassinParts.RIGHT_LEG;
+
 
 public class Assassin extends Character<AssassinStates, AssassinParts> {
 	private static final float MOVESPEED = 2f;
@@ -78,7 +83,7 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 	private static final float WALKING_ANIMATION_DURATION = 1f;
 	private static final float PRIMARY_ANIMATION_DURATION = 0.05f;
 	private static final float SECONDARY_ANIMATION_DURATION = 0.5f;
-	private static final float TERTIARY_ANIMATION_DURATION = 0.5f;
+	private static final float TERTIARY_ANIMATION_DURATION = 2f;
 
 	// Dodge speed
 	private static final float DODGE_SPEED = 20;
@@ -315,9 +320,17 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 	protected void defineAnimations(Animations<AssassinStates, AssassinParts> animations) {
 		HashMap<String, AssassinParts> filenames = new HashMap<>();
 		filenames.put("Body", BODY);
+		filenames.put("LeftArm", LEFT_ARM);
+		filenames.put("LeftLeg", LEFT_LEG);
+		filenames.put("RightArm", RIGHT_ARM);
+		filenames.put("RightLeg", RIGHT_LEG);
 
 		Animation<AssassinParts> standing =
 				new Animation<>(STANDING_ANIMATION_DURATION, "Assassin/Standing", filenames)
+						.loop();
+
+		Animation<AssassinParts> walking =
+				new Animation<>(WALKING_ANIMATION_DURATION, "Assassin/Walking", filenames)
 						.loop();
 
 		Animation<AssassinParts> primary =
@@ -330,12 +343,12 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 
 		animations.map(STANDING, standing)
 				.map(STANDING_LEFT_RIGHT, standing)
-				.map(WALKING_LEFT, standing)
-				.map(WALKING_RIGHT, standing)
+				.map(WALKING_LEFT, walking)
+				.map(WALKING_RIGHT, walking)
 				.map(STANDING_UP, standing)
 				.map(STANDING_UP_LEFT_RIGHT, standing)
-				.map(WALKING_UP_LEFT, standing)
-				.map(WALKING_UP_RIGHT, standing)
+				.map(WALKING_UP_LEFT, walking)
+				.map(WALKING_UP_RIGHT, walking)
 
 				.map(PRIMARY_LEFT, primary)
 				.map(PRIMARY_RIGHT, primary)

@@ -5,15 +5,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.GameScreen;
 
 import static com.mygdx.game.entity.boss1.Boss1Input.EARTHQUAKE_KEYDOWN;
-import static com.mygdx.game.entity.boss1.Boss1Input.EARTHQUAKE_KEYUP;
 import static com.mygdx.game.entity.boss1.Boss1Input.LEFT_KEYDOWN;
 import static com.mygdx.game.entity.boss1.Boss1Input.LEFT_KEYUP;
 import static com.mygdx.game.entity.boss1.Boss1Input.RIGHT_KEYDOWN;
 import static com.mygdx.game.entity.boss1.Boss1Input.RIGHT_KEYUP;
 import static com.mygdx.game.entity.boss1.Boss1Input.ROLL_KEYDOWN;
-import static com.mygdx.game.entity.boss1.Boss1Input.ROLL_KEYUP;
 import static com.mygdx.game.entity.boss1.Boss1Input.SLAM_KEYDOWN;
-import static com.mygdx.game.entity.boss1.Boss1Input.SLAM_KEYUP;
 
 public class Boss1Controller implements InputProcessor {
 	private Boss1 boss1;

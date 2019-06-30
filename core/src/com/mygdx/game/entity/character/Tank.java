@@ -208,7 +208,7 @@ public class Tank extends Character<TankStates, TankParts> {
 
 		Animation<TankParts> primary =
 				new Animation<>(PRIMARY_ANIMATION_DURATION, "Tank/Primary", filenames)
-						.defineFrameTask(1, () -> inflictDebuff(primaryArmorDebuff));
+						.defineFrameTask(0, () -> inflictDebuff(primaryArmorDebuff));
 
 		Animation<TankParts> secondary =
 				new Animation<>(SECONDARY_ANIMATION_DURATION, "Tank/Secondary", filenames)

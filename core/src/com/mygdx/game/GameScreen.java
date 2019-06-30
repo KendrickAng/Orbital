@@ -24,6 +24,8 @@ import static com.mygdx.game.MyGdxGame.DEBUG;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 
 public class GameScreen implements Screen {
+	private static final boolean ACTIVATE_AI = true; // switch to activate boss ACTIVATE_AI.
+
 	// Game reference.
 	private MyGdxGame game;
 
@@ -55,7 +57,9 @@ public class GameScreen implements Screen {
 		this.character = tank;
 
 		/* Input */
-		new Boss1AI(this);
+		if (ACTIVATE_AI) {
+			new Boss1AI(this);
+		}
 		this.playerController = new CharacterController(this);
 		Boss1Controller bossController = new Boss1Controller(this);
 

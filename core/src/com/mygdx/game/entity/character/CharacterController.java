@@ -7,7 +7,6 @@ import com.mygdx.game.GameScreen;
 import java.util.HashSet;
 
 import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYUP;
 import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.UP_KEYDOWN;
 

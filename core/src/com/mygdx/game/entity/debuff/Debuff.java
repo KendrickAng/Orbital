@@ -4,6 +4,7 @@ public class Debuff {
 	private DebuffType type;
 	private float modifier;
 	private float duration;
+
 	public Debuff(DebuffType type, float modifier, float duration) {
 		this.type = type;
 		this.modifier = modifier;

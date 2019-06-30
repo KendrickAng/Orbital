@@ -2,7 +2,6 @@ package com.mygdx.game.entity;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.shape.Rectangle;
 
 public class Hitbox {
@@ -12,7 +11,7 @@ public class Hitbox {
 	private int y;
 	private int width; // pixmap width
 	private int height;
-	private Rectangle hitbox;
+	private Rectangle hitbox; // contain width and height of sprite
 
 	public Hitbox(EntityData entityData, Pixmap pixmap) {
 		this.entityData = entityData;
