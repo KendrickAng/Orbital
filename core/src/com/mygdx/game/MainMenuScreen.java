@@ -76,6 +76,8 @@ public class MainMenuScreen implements Screen {
 						.setPaddingY(SETTINGS_BUTTON_PADDING_Y)
 						.setCallback(() -> {
 							game.setScreen(new SettingsScreen(game));
+							game.getInputMultiplexer().removeProcessor(playButton);
+							game.getInputMultiplexer().removeProcessor(settingsButton);
 							dispose();
 						});
 		// Add input processors

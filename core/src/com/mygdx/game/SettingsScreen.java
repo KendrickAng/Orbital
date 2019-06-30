@@ -52,8 +52,10 @@ public class SettingsScreen implements Screen {
                         .setPaddingY(EXIT_BUTTON_PADDING_Y)
                         .setCallback(() -> {
                             game.setScreen(new MainMenuScreen(game));
+                            game.getInputMultiplexer().removeProcessor(exitButton);
                             dispose();
                         });
+        this.game.getInputMultiplexer().addProcessor(exitButton);
     }
 
     @Override
