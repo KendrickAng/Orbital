@@ -61,8 +61,8 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	}
 
 	/* Setters */
-	public void input(I input) {
-		states.input(input);
+	public boolean input(I input) {
+		return states.input(input);
 	}
 
 	public void addStateListener(StateListener<S> listener) {
@@ -86,11 +86,11 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		return animations.getHitbox(part);
 	}
 
-	protected Vector2 getPosition() {
+	public Vector2 getPosition() {
 		return data.getPosition();
 	}
 
-	protected MutableBoolean getFlipX() {
+	public MutableBoolean getFlipX() {
 		return data.getFlipX();
 	}
 

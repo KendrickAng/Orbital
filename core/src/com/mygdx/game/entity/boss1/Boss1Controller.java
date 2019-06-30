@@ -55,15 +55,6 @@ public class Boss1Controller implements InputProcessor {
 			case Input.Keys.L:
 				boss1.input(RIGHT_KEYUP);
 				break;
-			case Input.Keys.Z: // primary smash
-				boss1.input(SLAM_KEYUP);
-				break;
-			case Input.Keys.X: // secondary rocks
-				boss1.input(EARTHQUAKE_KEYUP);
-				break;
-			case Input.Keys.C: // tertiary roll
-				boss1.input(ROLL_KEYUP);
-				break;
 			default:
 				return false;
 		}

@@ -8,17 +8,20 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.entity.boss1.Boss1AI;
-import com.mygdx.game.entity.character.Assassin;
+import com.mygdx.game.entity.EntityManager;
 import com.mygdx.game.entity.boss1.Boss1;
+import com.mygdx.game.entity.boss1.Boss1AI;
 import com.mygdx.game.entity.boss1.Boss1Controller;
+import com.mygdx.game.entity.character.Assassin;
 import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.character.CharacterController;
-import com.mygdx.game.entity.EntityManager;
+import com.mygdx.game.entity.character.CharacterInput;
 import com.mygdx.game.entity.character.Tank;
-import com.mygdx.game.texture.TextureManager;
+
+import java.util.HashSet;
 
 import static com.mygdx.game.MyGdxGame.DEBUG;
+import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 
 public class GameScreen implements Screen {
 	// Game reference.
@@ -118,20 +121,25 @@ public class GameScreen implements Screen {
 		shapeRenderer.dispose();
 	}
 
-	public void switchCharacter() {
-		Gdx.app.log("GameScreen.java", "Switched Characters");
-		Character prev = character;
-		Character next = prev.equals(tank) ? assassin : tank;
-		prev.setVisible(false);
-		/*
-		next.setPosition(prev.getPosition());
-		next.setVelocity(prev.getVelocity());
-		next.setFlipX(prev.isFlipX());
-		*/
-		next.setVisible(true);
+	public void switchCharacter(HashSet<CharacterInput> inputs) {
+		if (character.useSwitchCharacter()) {
+			character.setVisible(false);
+			float x = character.getPosition().x;
+			boolean flipX = character.getFlipX().get();
 
-		character = next;
-		playerController.update();
+			Character next = character.equals(tank) ? assassin : tank;
+			for (CharacterInput input : inputs) {
+				next.input(input);
+			}
+			next.setVisible(true);
+			next.getPosition().x = x;
+			next.getPosition().y = MAP_HEIGHT;
+			next.getFlipX().set(flipX);
+
+			character = next;
+			playerController.update();
+			Gdx.app.log("GameScreen.java", "Switched Characters");
+		}
 	}
 
 	/* Getters */
@@ -145,9 +153,5 @@ public class GameScreen implements Screen {
 
 	public EntityManager getEntityManager() {
 		return entityManager;
-	}
-
-	public TextureManager getTextureManager() {
-		return game.getTextureManager();
 	}
 }

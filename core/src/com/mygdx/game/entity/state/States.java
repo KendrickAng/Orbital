@@ -29,20 +29,20 @@ public class States<I extends Enum, S extends Enum> {
 		return this;
 	}
 
-	public void input(I input) {
+	public boolean input(I input) {
 		S name = this.state.getEdge(input);
 		if (name == null) {
-			return;
+			return false;
 		}
 
 		State<I, S> toState = states.get(name);
 		if (toState == null) {
-			return;
+			return false;
 		}
 
 		for (StateListener<S> listener : listeners) {
 			if (!listener.stateValid(toState.getName())) {
-				return;
+				return false;
 			}
 		}
 
@@ -53,6 +53,8 @@ public class States<I extends Enum, S extends Enum> {
 		for (StateListener<S> listener : listeners) {
 			listener.stateChange(toState.getName());
 		}
+
+		return true;
 	}
 
 	public void update() {

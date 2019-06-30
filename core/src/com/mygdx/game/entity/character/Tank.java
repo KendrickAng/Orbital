@@ -25,6 +25,7 @@ import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYUP;
 import static com.mygdx.game.entity.character.CharacterInput.SECONDARY_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.SECONDARY_KEYUP;
+import static com.mygdx.game.entity.character.CharacterInput.SWITCH_CHARACTER;
 import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYUP;
 import static com.mygdx.game.entity.character.TankStates.PRIMARY;
@@ -51,7 +52,7 @@ import static com.mygdx.game.entity.part.TankParts.WEAPON;
 /**
  * Represents the Tank playable character.
  */
-public class Tank extends Character<CharacterInput, TankStates, TankParts> {
+public class Tank extends Character<TankStates, TankParts> {
 	private static final float MOVESPEED = 2f;
 
 	private static final float HEALTH = 100;
@@ -97,13 +98,15 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 				.addEdge(RIGHT_KEYDOWN, WALKING_RIGHT)
 				.addEdge(PRIMARY_KEYDOWN, PRIMARY)
 				.addEdge(SECONDARY_KEYDOWN, SECONDARY)
-				.addEdge(TERTIARY_KEYDOWN, TERTIARY))
+				.addEdge(TERTIARY_KEYDOWN, TERTIARY)
+				.addEdge(SWITCH_CHARACTER, STANDING))
 
 				.add(new State<CharacterInput, TankStates>(STANDING_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, WALKING_RIGHT)
 						.addEdge(RIGHT_KEYUP, WALKING_LEFT)
 						.addEdge(PRIMARY_KEYDOWN, PRIMARY_LEFT_RIGHT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT_RIGHT))
+						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT_RIGHT)
+						.addEdge(SWITCH_CHARACTER, STANDING))
 
 				.add(new State<CharacterInput, TankStates>(WALKING_LEFT)
 						.defineBegin(() -> getFlipX().set(true))
@@ -114,7 +117,8 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 						.addEdge(LEFT_KEYUP, STANDING)
 						.addEdge(RIGHT_KEYDOWN, STANDING_LEFT_RIGHT)
 						.addEdge(PRIMARY_KEYDOWN, PRIMARY_LEFT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT))
+						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT)
+						.addEdge(SWITCH_CHARACTER, STANDING))
 
 				.add(new State<CharacterInput, TankStates>(WALKING_RIGHT)
 						.defineBegin(() -> getFlipX().set(false))
@@ -125,7 +129,8 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 						.addEdge(RIGHT_KEYUP, STANDING)
 						.addEdge(LEFT_KEYDOWN, STANDING_LEFT_RIGHT)
 						.addEdge(PRIMARY_KEYDOWN, PRIMARY_RIGHT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_RIGHT))
+						.addEdge(SECONDARY_KEYDOWN, SECONDARY_RIGHT)
+						.addEdge(SWITCH_CHARACTER, STANDING))
 
 				/* Block */
 				.add(new State<CharacterInput, TankStates>(PRIMARY)
@@ -346,5 +351,10 @@ public class Tank extends Character<CharacterInput, TankStates, TankParts> {
 		} else {
 			input(TERTIARY_KEYUP);
 		}
+	}
+
+	@Override
+	public boolean useSwitchCharacter() {
+		return input(SWITCH_CHARACTER);
 	}
 }

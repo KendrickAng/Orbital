@@ -57,6 +57,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float EARTHQUAKE_ANIMATION_DURATION = 1f;
 	private static final float ROLL_ANIMATION_DURATION = 1f;
 
+	private boolean rolling;
+
 	public Boss1(GameScreen game) {
 		super(game);
 		getPosition().x = GAME_WIDTH - 320;
@@ -101,25 +103,33 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 				.add(new State<Boss1Input, Boss1States>(ROLL)
 						.defineUpdate(() -> {
-							if (getFlipX().get()) {
-								getPosition().x += ROLL_SPEED;
-							} else {
-								getPosition().x -= ROLL_SPEED;
+							if (rolling) {
+								if (getFlipX().get()) {
+									getPosition().x += ROLL_SPEED;
+								} else {
+									getPosition().x -= ROLL_SPEED;
+								}
+								checkWithinMap();
 							}
-							checkWithinMap();
 						})
 						.addEdge(ROLL_KEYUP, STANDING));
 	}
 
 	@Override
 	protected void defineAbilities(Abilities<Boss1States> abilities) {
-		Ability slam = new Ability(SLAM_COOLDOWN);
-		Ability earthquake = new Ability(EARTHQUAKE_COOLDOWN);
-		Ability roll = new Ability(ROLL_COOLDOWN);
+		Ability<Boss1States> slam = new Ability<>(SLAM_COOLDOWN);
+		Ability<Boss1States> earthquake = new Ability<>(EARTHQUAKE_COOLDOWN);
+		Ability<Boss1States> roll = new Ability<Boss1States>(ROLL_COOLDOWN)
+				.defineEnd(() -> rolling = false);
 
 		abilities.addBegin(SLAM, slam)
+				.addEnd(STANDING, slam)
+
 				.addBegin(EARTHQUAKE, earthquake)
-				.addBegin(ROLL, roll);
+				.addEnd(STANDING, earthquake)
+
+				.addBegin(ROLL, roll)
+				.addEnd(STANDING, roll);
 	}
 
 	@Override
@@ -143,13 +153,17 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 						.loop();
 
 		Animation<Boss1Parts> slam =
-				new Animation<>(SLAM_ANIMATION_DURATION, "Boss1/Smash", filenames);
+				new Animation<>(SLAM_ANIMATION_DURATION, "Boss1/Smash", filenames)
+						.defineEnd(() -> input(SLAM_KEYUP));
 
 		Animation<Boss1Parts> earthquake =
-				new Animation<>(EARTHQUAKE_ANIMATION_DURATION, "Boss1/Earthquake", filenames);
+				new Animation<>(EARTHQUAKE_ANIMATION_DURATION, "Boss1/Earthquake", filenames)
+						.defineEnd(() -> input(EARTHQUAKE_KEYUP));
 
 		Animation<Boss1Parts> roll =
-				new Animation<>(ROLL_ANIMATION_DURATION, "Boss1/Roll", filenames);
+				new Animation<>(ROLL_ANIMATION_DURATION, "Boss1/Roll", filenames)
+						.defineFrameTask(3, () -> rolling = true)
+						.defineEnd(() -> input(ROLL_KEYUP));
 
 		animations.map(STANDING, standing)
 				.map(WALKING_LEFT, standing)
