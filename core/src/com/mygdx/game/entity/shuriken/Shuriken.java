@@ -1,7 +1,8 @@
-package com.mygdx.game.entity;
+package com.mygdx.game.entity.shuriken;
 
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.entity.Entity;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.boss1.Boss1;
@@ -13,7 +14,7 @@ import com.mygdx.game.entity.state.States;
 import java.util.HashMap;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.entity.ShurikenStates.FLYING;
+import static com.mygdx.game.entity.shuriken.ShurikenStates.FLYING;
 import static com.mygdx.game.entity.part.ShurikenParts.BODY;
 
 public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
@@ -42,10 +43,8 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 					} else if (getPosition().x > GAME_WIDTH - getHitbox(BODY).getWidth()) {
 						dispose();
 					} else {
-						Boss1 boss = getGame().getBoss1();
-						if (getHitbox(BODY).hitTest(boss.getHitbox(Boss1Parts.BODY))) {
-							Gdx.app.log("Shuriken.java", "Boss was hit!");
-							boss.damage(SHURIKEN_DAMAGE);
+						if (getGame().getBoss1()
+								.damageTest(getHitbox(BODY), SHURIKEN_DAMAGE)) {
 							dispose();
 						}
 					}

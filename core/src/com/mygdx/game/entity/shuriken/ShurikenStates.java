@@ -1,4 +1,4 @@
-package com.mygdx.game.entity;
+package com.mygdx.game.entity.shuriken;
 
 public enum ShurikenStates {
 	FLYING

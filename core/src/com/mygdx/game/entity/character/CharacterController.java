@@ -50,7 +50,7 @@ public class CharacterController implements InputProcessor {
 				character.useTertiary(true);
 				break;
 			case Input.Keys.R: // switch characters
-				game.switchCharacter(inputs);
+				game.switchCharacter();
 				break;
 			default:
 				return false;
@@ -116,5 +116,9 @@ public class CharacterController implements InputProcessor {
 	@Override
 	public boolean scrolled(int amount) {
 		return true;
+	}
+
+	public HashSet<CharacterInput> getInputs() {
+		return inputs;
 	}
 }

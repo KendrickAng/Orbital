@@ -38,8 +38,4 @@ public class AnimationPart {
 	public Hitbox getHitbox(int frame) {
 		return hitboxes.get(frame);
 	}
-
-	public Collection<Hitbox> getHitboxes() {
-		return hitboxes.values();
-	}
 }

@@ -1,5 +1,6 @@
 package com.mygdx.game.entity;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -14,11 +15,6 @@ import com.mygdx.game.entity.state.States;
  * LivingEntity represents Characters, Bosses.
  */
 public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
-	/*
-	private static final String ASSASSINCLASSNAME = "class com.mygdx.game.entity.character.Assassin";
-	private static final String TANKCLASSNAME = "class com.mygdx.game.entity.character.Tank";
-	private static final String BOSSCLASSNAME = "class com.mygdx.game.entity.boss1.Boss1";
-	*/
 	public static final float GRAVITY = -3;
 
 	private GameScreen game;
@@ -66,12 +62,12 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	}
 
 	/* Setters */
-	public boolean input(I input) {
-		return states.input(input);
+	protected void addStateListener(StateListener<S> listener) {
+		states.addListener(listener);
 	}
 
-	public void addStateListener(StateListener<S> listener) {
-		states.addListener(listener);
+	public boolean input(I input) {
+		return states.input(input);
 	}
 
 	public void setVisible(boolean visible) {
@@ -99,30 +95,11 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		return data.getFlipX();
 	}
 
+	public Color getColor() {
+		return data.getColor();
+	}
+
 	public GameScreen getGame() {
 		return this.game;
 	}
-
-	/*
-	public Collection<S> getStates() { return this.animations.getStates(); }
-
-	// This function is dependent on class and package names.
-	public boolean getIsIdle() {
-		switch(this.getClass().toString()) {
-			case ASSASSINCLASSNAME:
-			case TANKCLASSNAME:
-				Collection cStates = this.getStates();
-				return !(cStates.contains(CharacterStates.PRIMARY) ||
-						cStates.contains(CharacterStates.SECONDARY) ||
-						cStates.contains(CharacterStates.TERTIARY));
-			case BOSSCLASSNAME:
-				Collection bStates = this.getStates();
-				return !(bStates.contains(Boss1States.PRIMARY) ||
-						bStates.contains(Boss1States.SECONDARY) ||
-						bStates.contains(Boss1States.TERTIARY));
-			default:
-				return false;
-		}
-	}
-	*/
 }

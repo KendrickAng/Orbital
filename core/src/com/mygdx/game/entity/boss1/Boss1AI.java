@@ -15,7 +15,6 @@ import static com.mygdx.game.entity.boss1.Boss1Input.SLAM_KEYDOWN;
 
 public class Boss1AI {
 	private GameScreen game;
-	private Boss1 boss1;
 	private Timer timer;
 
 	private static final float WALKING_DURATION = 0.5f;
@@ -25,13 +24,17 @@ public class Boss1AI {
 
 	public Boss1AI(GameScreen game) {
 		this.game = game;
-		this.boss1 = game.getBoss1();
 		this.timer = new Timer();
 		run();
 	}
 
 	private void run() {
+		Boss1 boss1 = game.getBoss1();
 		Character character = game.getCharacter();
+		if (character == null || boss1.isDispose()) {
+			return;
+		}
+
 		float displacement = boss1.getPosition().x + 80 - character.getPosition().x;
 		float distance = Math.abs(displacement);
 		float duration = 0;

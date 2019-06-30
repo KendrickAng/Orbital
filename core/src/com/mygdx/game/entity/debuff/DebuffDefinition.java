@@ -6,40 +6,37 @@ public class DebuffDefinition {
 	private DebuffCallback apply;
 	private DebuffEnd end;
 
-	public DebuffDefinition() {
-		begin = () -> {
-		};
-		end = () -> {
-		};
-		apply = modifier -> {
-		};
-	}
-
 	/* Calls */
 	public void begin() {
-		begin.call();
+		if (begin != null) {
+			begin.call();
+		}
 	}
 
 	public void apply(float modifier) {
-		apply.call(modifier);
+		if (apply != null) {
+			apply.call(modifier);
+		}
 	}
 
 	public void end() {
-		end.call();
+		if (end != null) {
+			end.call();
+		}
 	}
 
 	/* Setters */
-	public DebuffDefinition setBegin(DebuffBegin begin) {
+	public DebuffDefinition defineBegin(DebuffBegin begin) {
 		this.begin = begin;
 		return this;
 	}
 
-	public DebuffDefinition setApply(DebuffCallback apply) {
+	public DebuffDefinition defineApply(DebuffCallback apply) {
 		this.apply = apply;
 		return this;
 	}
 
-	public DebuffDefinition setEnd(DebuffEnd end) {
+	public DebuffDefinition defineEnd(DebuffEnd end) {
 		this.end = end;
 		return this;
 	}

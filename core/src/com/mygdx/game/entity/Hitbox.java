@@ -2,30 +2,29 @@ package com.mygdx.game.entity;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.shape.Rectangle;
 
 public class Hitbox {
 	private EntityData entityData;
 
-	private int x; // offsetX
-	private int y;
-	private int width; // pixmap width
+	private int width;
 	private int height;
-	private Rectangle hitbox; // contain width and height of sprite
+	private int offsetX;
+	private int offsetY;
+	private int pixmapWidth;
+	private int pixmapHeight;
 
 	public Hitbox(EntityData entityData, Pixmap pixmap) {
 		this.entityData = entityData;
-		this.width = pixmap.getWidth();
-		this.height = pixmap.getHeight();
-		this.hitbox = new Rectangle();
+		this.pixmapWidth = pixmap.getWidth();
+		this.pixmapHeight = pixmap.getHeight();
 
 		int minX = Integer.MAX_VALUE;
 		int maxX = Integer.MIN_VALUE;
 		int minY = Integer.MAX_VALUE;
 		int maxY = Integer.MIN_VALUE;
 		// loop through all pixels in pixmap and start minmaxX/minmaxY
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < pixmapHeight; y++) {
+			for (int x = 0; x < pixmapWidth; x++) {
 				// check for transparent pixel.
 				if ((pixmap.getPixel(x, y) & 0x000000ff) == 0x000000ff) {
 					minX = Math.min(x, minX);
@@ -36,52 +35,45 @@ public class Hitbox {
 			}
 		}
 
-		this.x = minX;
-		this.y = height - maxY;
-		hitbox.setWidth(maxX - minX);
-		hitbox.setHeight(maxY - minY);
+		offsetX = minX;
+		offsetY = pixmapHeight - maxY;
+		width = maxX - minX;
+		height = maxY - minY;
 	}
 
+	// AABB collision
 	public boolean hitTest(Hitbox hitbox) {
-		updateHitbox();
-		hitbox.updateHitbox();
-		return this.hitbox.hitTest(hitbox.hitbox);
+		return getX() < hitbox.getX() + hitbox.getWidth() &&
+				getX() + getWidth() > hitbox.getX() &&
+				getY() < hitbox.getY() + hitbox.getHeight() &&
+				getY() + getHeight() > hitbox.getY();
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {
-		updateHitbox();
-		hitbox.renderDebug(shapeRenderer);
-	}
-
-	// sets the hitbox to position defined by vector2 position.
-	private void updateHitbox() {
-		if (entityData.getFlipX().get()) {
-			hitbox.setX(entityData.getPosition().x + width - x - hitbox.getWidth());
-		} else {
-			hitbox.setX(entityData.getPosition().x + x);
-		}
-		hitbox.setY(entityData.getPosition().y + y);
-	}
-
-	public float getOffsetX() {
-		return x;
+		shapeRenderer.rect(getX(), getY(), width, height);
 	}
 
 	public float getX() {
-		updateHitbox();
-		return hitbox.getX();
+		if (entityData.getFlipX().get()) {
+			return entityData.getPosition().x + pixmapWidth - offsetX - width;
+		} else {
+			return entityData.getPosition().x + offsetX;
+		}
 	}
 
 	public float getY() {
-		updateHitbox();
-		return hitbox.getY();
+		return entityData.getPosition().y + offsetY;
+	}
+
+	public float getOffsetX() {
+		return offsetX;
 	}
 
 	public float getWidth() {
-		return hitbox.getWidth();
+		return width;
 	}
 
 	public float getHeight() {
-		return hitbox.getHeight();
+		return height;
 	}
 }

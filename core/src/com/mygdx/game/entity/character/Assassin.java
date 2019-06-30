@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.entity.Hitbox;
-import com.mygdx.game.entity.Shuriken;
+import com.mygdx.game.entity.debuff.Debuff;
+import com.mygdx.game.entity.debuff.DebuffType;
+import com.mygdx.game.entity.shuriken.Shuriken;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
@@ -55,6 +57,7 @@ import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYUP;
 import static com.mygdx.game.entity.character.CharacterInput.UP_KEYDOWN;
 import static com.mygdx.game.entity.character.CharacterInput.UP_KEYUP;
+import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
 import static com.mygdx.game.entity.part.AssassinParts.BODY;
 import static com.mygdx.game.entity.part.AssassinParts.LEFT_ARM;
 import static com.mygdx.game.entity.part.AssassinParts.LEFT_LEG;
@@ -71,7 +74,7 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 	private static final float FRICTION = 0.6f;
 	private static final float AIR_FRICTION = 0.95f;
 
-	private static final float HEALTH = 10;
+	private static final float HEALTH = 50;
 
 	// Skill cooldown in seconds.
 	private static final float PRIMARY_COOLDOWN = 0;
@@ -404,6 +407,7 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 						default:
 							falling = false;
 					}
+					inflictDebuff(new Debuff(DAMAGE_REDUCTION, 1f, PRIMARY_ANIMATION_DURATION * 2));
 				})
 				.defineEnd(() -> {
 					if (primaryGround) {
@@ -498,6 +502,14 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 		}
 	}
 
+	@Override
+	public boolean hitTest(Hitbox hitbox) {
+		return getHitbox(BODY).hitTest(hitbox) ||
+				getHitbox(LEFT_LEG).hitTest(hitbox) ||
+				getHitbox(RIGHT_LEG).hitTest(hitbox) ||
+				getHitbox(LEFT_ARM).hitTest(hitbox) ||
+				getHitbox(RIGHT_ARM).hitTest(hitbox);
+	}
 
 	// TODO: Abstract these out
 	@Override

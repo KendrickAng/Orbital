@@ -1,12 +1,12 @@
 package com.mygdx.game.entity.character;
 
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.debuff.DebuffDefinition;
 import com.mygdx.game.entity.debuff.Debuffs;
 
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
-import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
 import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
 
 /**
@@ -24,8 +24,8 @@ public abstract class Character<S extends Enum, P extends Enum> extends LivingEn
 	// where all debuffs for all characters are defined.
 	@Override
 	protected void defineDebuffs(Debuffs debuffs) {
-		DebuffDefinition slow = new DebuffDefinition()
-				.setApply(modifier -> {
+		debuffs.map(SLOW, new DebuffDefinition()
+				.defineApply(modifier -> {
 					// Slow can't go above 100%.
 					if (modifier > 1) {
 						modifier = 1;
@@ -33,22 +33,22 @@ public abstract class Character<S extends Enum, P extends Enum> extends LivingEn
 					// accounts for percentage slow, e.g 40% slow -> modifier = 0.4.
 					this.slow = modifier;
 				})
-				.setEnd(() -> this.slow = 0);
-
-		DebuffDefinition damageReduction = new DebuffDefinition()
-				.setApply(modifier -> {
-					if (modifier > 1) {
-						modifier = 1;
-					}
-				});
-
-		debuffs.map(SLOW, slow)
-				.map(DAMAGE_REDUCTION, damageReduction);
+				.defineEnd(() -> this.slow = 0));
 	}
 
 	public float getSlow() {
 		return slow;
 	}
+
+	public boolean damageTest(Hitbox hitbox, float damage) {
+		if (hitTest(hitbox)) {
+			inflictDamage(damage);
+			return true;
+		}
+		return false;
+	}
+
+	protected abstract boolean hitTest(Hitbox hitbox);
 
 	// TODO: Abstract these out
 	protected abstract void useLeft(boolean keydown);

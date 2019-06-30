@@ -1,11 +1,13 @@
 package com.mygdx.game.entity.boss1;
 
 import com.mygdx.game.GameScreen;
+import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
+import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.debuff.Debuffs;
 import com.mygdx.game.entity.part.Boss1Parts;
 import com.mygdx.game.entity.state.State;
@@ -48,9 +50,9 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float ROLL_SPEED = 4f;
 	private static final float FRICTION = 0.6f;
 
-	private static final float PRIMARY_DAMAGE = 10;
-	private static final float SECONDARY_DAMAGE = 20;
-	private static final float TERTIARY_DAMAGE = 30;
+	private static final float SLAM_DAMAGE = 20;
+	private static final float EARTHQUAKE_DAMAGE = 20;
+	private static final float ROLL_DAMAGE = 10;
 
 	private static final float SLAM_COOLDOWN = 1f;
 	private static final float EARTHQUAKE_COOLDOWN = 1f;
@@ -114,6 +116,9 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 									getPosition().x -= ROLL_SPEED;
 								}
 								checkWithinMap();
+
+								Character character = getGame().getCharacter();
+								character.damageTest(getHitbox(BODY), ROLL_DAMAGE);
 							}
 						})
 						.addEdge(ROLL_KEYUP, STANDING));
@@ -134,71 +139,6 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 				.addBegin(ROLL, roll)
 				.addEnd(STANDING, roll);
-
-		/*
-				.addAbilityTask(() -> {
-					Character c = super.getGame().getCharacter();
-					if (c instanceof Assassin) {
-						if (this.getHitbox(RIGHT_ARM).hitTest(c.getHitbox(AssassinParts.BODY)) ||
-								this.getHitbox(LEFT_ARM).hitTest(c.getHitbox(AssassinParts.BODY))) {
-							Gdx.app.log("Boss1.java", "Assassin was hit by primary!");
-							c.damage(PRIMARY_DAMAGE);
-						}
-					}
-					if (c instanceof Tank) {
-						// TODO: Game crashes when slam used for (PRIMARY_ANIMATION_DURATION / 2). Nullpointerexception. Why?
-						if (this.getHitbox(RIGHT_ARM).hitTest(c.getHitbox(TankParts.BODY)) ||
-								this.getHitbox(LEFT_ARM).hitTest(c.getHitbox(TankParts.BODY))) {
-							Gdx.app.log("Boss1.java", "Tank was hit by primary!");
-							c.damage(PRIMARY_DAMAGE);
-						}
-					}
-
-				}, PRIMARY_ANIMATION_DURATION / 2f);
-
-				.addAbilityTask(() -> {
-					Character c = super.getGame().getCharacter();
-					if (c instanceof Assassin) {
-						if (this.getHitbox(RIGHT_LEG).hitTest(c.getHitbox(AssassinParts.BODY)) ||
-								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.LEFT_LEG)) ||
-								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.RIGHT_LEG))) {
-							Gdx.app.log("Boss1.java", "Assassin was hit by secondary!");
-							c.damage(PRIMARY_DAMAGE);
-						}
-					}
-					if (c instanceof Tank) {
-						if (this.getHitbox(RIGHT_LEG).hitTest(c.getHitbox(TankParts.BODY)) ||
-								// TODO: Game crashes on shockwave. Nullpointer exception. Why?
-								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(TankParts.LEFT_LEG)) ||
-								this.getHitbox(SHOCKWAVE).hitTest(c.getHitbox(AssassinParts.RIGHT_LEG))) {
-							Gdx.app.log("Boss1.java", "Tank was hit by secondary!");
-							c.damage(SECONDARY_DAMAGE);
-						}
-					}
-				}, SECONDARY_ANIMATION_DURATION * (3f / 4));
-
-				.setAbilityUsing(() -> {
-					Character c = super.getGame().getCharacter();
-					if (c instanceof Assassin) {
-						if (!super.getDebuffs().getInflicted().get(ROLLING).isEmpty() &&
-								this.getHitbox(BODY).hitTest(c.getHitbox(AssassinParts.BODY))) {
-							Gdx.app.log("Boss1.java", "Assassin was hit by tertiary!");
-							c.damage(TERTIARY_DAMAGE);
-						}
-					}
-					// TODO: Nullpointerexception again. What's going on?
-					if (c instanceof Tank) {
-						if (!super.getDebuffs().getInflicted().get(ROLLING).isEmpty() &&
-								this.getHitbox(BODY).hitTest(c.getHitbox(TankParts.BODY))) {
-							Gdx.app.log("Boss1.java", "Tank was hit by tertiary!");
-							c.damage(TERTIARY_DAMAGE);
-						}
-					}
-				})
-				.addAbilityTask(() -> {
-					inflictDebuff(ROLLING, 0, TERTIARY_ANIMATION_DURATION - 0.3f);
-				}, 0.3f);
-		*/
 	}
 
 	@Override
@@ -223,10 +163,19 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 		Animation<Boss1Parts> slam =
 				new Animation<>(SLAM_ANIMATION_DURATION, "Boss1/Smash", filenames)
+						.defineFrameTask(1, () -> {
+							Character character = getGame().getCharacter();
+							character.damageTest(getHitbox(RIGHT_ARM), SLAM_DAMAGE);
+							character.damageTest(getHitbox(LEFT_ARM), SLAM_DAMAGE);
+						})
 						.defineEnd(() -> input(SLAM_KEYUP));
 
 		Animation<Boss1Parts> earthquake =
 				new Animation<>(EARTHQUAKE_ANIMATION_DURATION, "Boss1/Earthquake", filenames)
+						.defineFrameTask(1, () -> {
+							Character character = getGame().getCharacter();
+							character.damageTest(getHitbox(SHOCKWAVE), EARTHQUAKE_DAMAGE);
+						})
 						.defineEnd(() -> input(EARTHQUAKE_KEYUP));
 
 		Animation<Boss1Parts> roll =
@@ -252,5 +201,17 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 		if (getPosition().x > GAME_WIDTH - x - width) {
 			getPosition().x = GAME_WIDTH - x - width;
 		}
+	}
+
+	public boolean damageTest(Hitbox hitbox, float damage) {
+		if (getHitbox(BODY).hitTest(hitbox) ||
+				getHitbox(LEFT_LEG).hitTest(hitbox) ||
+				getHitbox(RIGHT_LEG).hitTest(hitbox) ||
+				getHitbox(LEFT_ARM).hitTest(hitbox) ||
+				getHitbox(RIGHT_ARM).hitTest(hitbox)) {
+			inflictDamage(damage);
+			return true;
+		}
+		return false;
 	}
 }

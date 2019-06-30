@@ -60,6 +60,4 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 			}
 		}
 	}
-
-	// TODO: Reset abilities when switching characters
 }

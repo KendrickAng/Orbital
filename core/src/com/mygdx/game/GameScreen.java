@@ -17,15 +17,15 @@ import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.character.CharacterController;
 import com.mygdx.game.entity.character.CharacterInput;
 import com.mygdx.game.entity.character.Tank;
+import com.mygdx.game.entity.healthbar.AssassinBar;
+import com.mygdx.game.entity.healthbar.BossBar;
+import com.mygdx.game.entity.healthbar.TankBar;
 
-import java.util.HashSet;
-
+import static com.mygdx.game.MyGdxGame.BOSS1_AI;
 import static com.mygdx.game.MyGdxGame.DEBUG;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 
 public class GameScreen implements Screen {
-	private static final boolean ACTIVATE_AI = true; // switch to activate boss ACTIVATE_AI.
-
 	// Game reference.
 	private MyGdxGame game;
 
@@ -42,6 +42,10 @@ public class GameScreen implements Screen {
 	private Assassin assassin;
 	private Boss1 boss1;
 
+	private TankBar tankBar;
+	private AssassinBar assassinBar;
+	private BossBar bossBar;
+
 	public GameScreen(MyGdxGame game) {
 		// init rectangle to (0, 0)
 		this.game = game;
@@ -57,7 +61,7 @@ public class GameScreen implements Screen {
 		this.character = tank;
 
 		/* Input */
-		if (ACTIVATE_AI) {
+		if (BOSS1_AI) {
 			new Boss1AI(this);
 		}
 		this.playerController = new CharacterController(this);
@@ -70,6 +74,10 @@ public class GameScreen implements Screen {
 		this.background = new Background(game.getTextureManager());
 		this.shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setColor(Color.GOLD);
+
+		tankBar = new TankBar(tank);
+		assassinBar = new AssassinBar(assassin);
+		bossBar = new BossBar(boss1);
 	}
 
 	@Override
@@ -86,11 +94,31 @@ public class GameScreen implements Screen {
 
 		camera.update();
 
+		// TODO: Abstract these
+		// TODO: Fix dispose
+		if (character == tank && tank.isDispose()) {
+			switchCharacter();
+		}
+
+		if (character == assassin && assassin.isDispose()) {
+			switchCharacter();
+		}
+
 		/* Render */
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		background.render(batch);
 		entityManager.renderAll(batch);
+
+		if (character == tank) {
+			tankBar.render(batch);
+		} else if (character == assassin) {
+			assassinBar.render(batch);
+		}
+
+		if (!boss1.isDispose()) {
+			bossBar.render(batch);
+		}
 		batch.end();
 
 		/* Debug */
@@ -125,22 +153,29 @@ public class GameScreen implements Screen {
 		shapeRenderer.dispose();
 	}
 
-	public void switchCharacter(HashSet<CharacterInput> inputs) {
-		if (character.useSwitchCharacter()) {
+	public void switchCharacter() {
+		if (character != null && character.useSwitchCharacter()) {
 			character.setVisible(false);
 			float x = character.getPosition().x;
 			boolean flipX = character.getFlipX().get();
 
-			Character next = character.equals(tank) ? assassin : tank;
-			for (CharacterInput input : inputs) {
-				next.input(input);
+			if (character == tank && !assassin.isDispose()) {
+				character = assassin;
+			} else if (character == assassin && !tank.isDispose()) {
+				character = tank;
+			} else {
+				character = null;
+				return;
 			}
-			next.setVisible(true);
-			next.getPosition().x = x;
-			next.getPosition().y = MAP_HEIGHT;
-			next.getFlipX().set(flipX);
 
-			character = next;
+			for (CharacterInput input : playerController.getInputs()) {
+				character.input(input);
+			}
+			character.setVisible(true);
+			character.getPosition().x = x;
+			character.getPosition().y = MAP_HEIGHT;
+			character.getFlipX().set(flipX);
+
 			playerController.update();
 			Gdx.app.log("GameScreen.java", "Switched Characters");
 		}

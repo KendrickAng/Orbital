@@ -1,5 +1,6 @@
 package com.mygdx.game.entity.animation;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.entity.EntityData;
@@ -15,6 +16,7 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 	// E.g P = AssassinParts. Animation contains a map of all enum parts of AssassinParts to corrs. AnimationPart instance
 	private EntityData entityData;
 	private Animation<P> animation;
+	private Color color;
 
 	// Map of states to animation
 	private HashMap<S, Animation<P>> animations;
@@ -49,7 +51,7 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 	}
 
 	public void render(SpriteBatch batch) {
-		animation.render(batch, entityData.getPosition(), entityData.getFlipX().get());
+		animation.render(batch, entityData);
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {

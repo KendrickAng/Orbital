@@ -94,7 +94,6 @@ public class Animation<P extends Enum> {
 
 	public void begin() {
 		frame = 0;
-		timer.clear();
 		updateFrame();
 	}
 
@@ -105,6 +104,7 @@ public class Animation<P extends Enum> {
 		}
 
 		if (frame < frames - 1) {
+			timer.clear();
 			timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
@@ -113,6 +113,7 @@ public class Animation<P extends Enum> {
 				}
 			}, duration / frames);
 		} else if (loop) {
+			timer.clear();
 			timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
@@ -121,6 +122,7 @@ public class Animation<P extends Enum> {
 				}
 			}, duration / frames);
 		} else if (animationEnd != null) {
+			timer.clear();
 			timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
@@ -130,14 +132,15 @@ public class Animation<P extends Enum> {
 		}
 	}
 
-	public void render(SpriteBatch batch, Vector2 position, boolean flipX) {
+	public void render(SpriteBatch batch, EntityData entityData) {
 		for (AnimationPart part : animations.values()) {
 			Sprite sprite = part.getSprite(frame);
 
 			// Ignore undefined sprites
 			if (sprite != null) {
-				sprite.setPosition(position.x, position.y);
-				sprite.setFlip(flipX, false);
+				sprite.setPosition(entityData.getPosition().x, entityData.getPosition().y);
+				sprite.setFlip(entityData.getFlipX().get(), false);
+				sprite.setColor(entityData.getColor());
 				sprite.draw(batch);
 			}
 		}
@@ -157,14 +160,6 @@ public class Animation<P extends Enum> {
 	public Animation<P> loop() {
 		this.loop = true;
 		return this;
-	}
-
-	public void setPosition() {
-
-	}
-
-	public void setFlipX() {
-
 	}
 
 	/* Getters */
