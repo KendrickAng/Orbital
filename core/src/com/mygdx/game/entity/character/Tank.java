@@ -1,13 +1,12 @@
 package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Gdx;
-import com.mygdx.game.GameScreen;
+import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
-import com.mygdx.game.entity.boss1.Boss1;
 import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.part.TankParts;
@@ -294,10 +293,10 @@ public class Tank extends Character<TankStates, TankParts> {
 	public boolean hitTest(Hitbox hitbox) {
 		return !isDispose() &&
 				(getHitbox(BODY).hitTest(hitbox) ||
-				getHitbox(LEFT_LEG).hitTest(hitbox) ||
-				getHitbox(RIGHT_LEG).hitTest(hitbox) ||
-				getHitbox(LEFT_ARM).hitTest(hitbox) ||
-				getHitbox(RIGHT_ARM).hitTest(hitbox));
+						getHitbox(LEFT_LEG).hitTest(hitbox) ||
+						getHitbox(RIGHT_LEG).hitTest(hitbox) ||
+						getHitbox(LEFT_ARM).hitTest(hitbox) ||
+						getHitbox(RIGHT_ARM).hitTest(hitbox));
 	}
 
 	// TODO: Abstract these out

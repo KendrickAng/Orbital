@@ -6,13 +6,12 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.screens.MainMenuScreen;
 import com.mygdx.game.shape.Point;
 import com.mygdx.game.texture.TextureManager;
-import com.mygdx.game.ui.ColorTexture;
 import com.mygdx.game.ui.ColorTextures;
 
 public class MyGdxGame extends Game {
@@ -32,8 +31,6 @@ public class MyGdxGame extends Game {
 	private Viewport viewport;
 	private TextureManager textureManager;
 	private InputMultiplexer inputMultiplexer;
-
-	// TODO: AssetManager for faster loading
 
 	@Override
 	public void create() {
@@ -72,11 +69,31 @@ public class MyGdxGame extends Game {
 	}
 
 	/* GETTERS */
-	public ColorTextures getColorTextures() { return this.colorTextures; }
-	public SpriteBatch getSpriteBatch() { return batch; }
-	public BitmapFont getFont() { return font; }
-	public OrthographicCamera getCamera() { return camera; }
-	public Viewport getViewport() { return viewport; }
-	public InputMultiplexer getInputMultiplexer() { return this.inputMultiplexer; }
-	public TextureManager getTextureManager() { return this.textureManager; }
+	public ColorTextures getColorTextures() {
+		return this.colorTextures;
+	}
+
+	public SpriteBatch getSpriteBatch() {
+		return batch;
+	}
+
+	public BitmapFont getFont() {
+		return font;
+	}
+
+	public OrthographicCamera getCamera() {
+		return camera;
+	}
+
+	public Viewport getViewport() {
+		return viewport;
+	}
+
+	public InputMultiplexer getInputMultiplexer() {
+		return this.inputMultiplexer;
+	}
+
+	public TextureManager getTextureManager() {
+		return this.textureManager;
+	}
 }

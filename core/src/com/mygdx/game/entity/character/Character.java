@@ -1,6 +1,6 @@
 package com.mygdx.game.entity.character;
 
-import com.mygdx.game.GameScreen;
+import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.debuff.DebuffDefinition;

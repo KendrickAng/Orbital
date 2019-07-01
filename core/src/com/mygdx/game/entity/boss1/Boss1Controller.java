@@ -2,7 +2,7 @@ package com.mygdx.game.entity.boss1;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.mygdx.game.GameScreen;
+import com.mygdx.game.screens.GameScreen;
 
 import static com.mygdx.game.entity.boss1.Boss1Input.EARTHQUAKE_KEYDOWN;
 import static com.mygdx.game.entity.boss1.Boss1Input.LEFT_KEYDOWN;

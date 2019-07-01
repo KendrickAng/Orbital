@@ -1,7 +1,6 @@
 package com.mygdx.game.entity.boss1;
 
-import com.badlogic.gdx.Gdx;
-import com.mygdx.game.GameScreen;
+import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.ability.Abilities;
@@ -207,10 +206,10 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	public boolean damageTest(Hitbox hitbox, float damage) {
 		if (!isDispose() &&
 				(getHitbox(BODY).hitTest(hitbox) ||
-				getHitbox(LEFT_LEG).hitTest(hitbox) ||
-				getHitbox(RIGHT_LEG).hitTest(hitbox) ||
-				getHitbox(LEFT_ARM).hitTest(hitbox) ||
-				getHitbox(RIGHT_ARM).hitTest(hitbox))) {
+						getHitbox(LEFT_LEG).hitTest(hitbox) ||
+						getHitbox(RIGHT_LEG).hitTest(hitbox) ||
+						getHitbox(LEFT_ARM).hitTest(hitbox) ||
+						getHitbox(RIGHT_ARM).hitTest(hitbox))) {
 			inflictDamage(damage);
 			return true;
 		}

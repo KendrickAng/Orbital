@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.entity.EntityData;
 import com.mygdx.game.entity.Hitbox;
 
 import java.util.HashMap;
 import java.util.TreeMap;
-import java.util.logging.FileHandler;
 
 /**
  * Contains all the animations for a certain state e.g Standing.
@@ -51,6 +49,7 @@ public class Animation<P extends Enum> {
 	}
 
 	// Load Animation assets
+	// TODO: AssetManager for faster loading
 	public void load(EntityData entityData) {
 		if (!loaded) {
 			loaded = true;

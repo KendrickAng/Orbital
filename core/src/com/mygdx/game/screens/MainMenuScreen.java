@@ -1,19 +1,21 @@
-package com.mygdx.game;
+package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Background;
+import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.ui.Button;
 import com.mygdx.game.ui.Text;
 
-import static com.mygdx.game.MyGdxGame.*;
-import static com.mygdx.game.ui.ColorTextures.ColorEntry.DEEP_PURPLE_500;
+import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
+import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.ui.ColorTextures.ColorEntry;
+import static com.mygdx.game.ui.ColorTextures.ColorEntry.DEEP_PURPLE_500;
 import static com.mygdx.game.ui.ContentAlignment.CENTER;
 
 public class MainMenuScreen implements Screen {
@@ -49,37 +51,37 @@ public class MainMenuScreen implements Screen {
 		this.game = game;
 		this.background = new Background(game.getTextureManager());
 		this.title = new Text(TITLE, TITLE_FONTSIZE, game)
-						.setX(GAME_WIDTH / 2f)
-						.setY(GAME_HEIGHT - TOP_PADDING)
-						.setAlignment(CENTER);
+				.setX(GAME_WIDTH / 2f)
+				.setY(GAME_HEIGHT - TOP_PADDING)
+				.setAlignment(CENTER);
 		this.playButton = new Button(PLAY_BUTTON_TITLE, PLAY_BUTTON_TEXTSIZE, game)
-						.setHoverColor(PLAY_BUTTON_HOVER_COLOR)
-						.setX(PLAY_BUTTON_COORDS.x)
-						.setY(PLAY_BUTTON_COORDS.y)
-						.setAlignment(CENTER)
-						.setMinWidth(PLAY_BUTTON_WIDTH)
-						.setMinHeight(PLAY_BUTTON_HEIGHT)
-						.setPaddingX(PLAY_BUTTON_PADDING_X)
-						.setPaddingY(PLAY_BUTTON_PADDING_Y)
-						.setCallback(() -> {
-							game.setScreen(new GameScreen(game));
-							dispose();
-						});
+				.setHoverColor(PLAY_BUTTON_HOVER_COLOR)
+				.setX(PLAY_BUTTON_COORDS.x)
+				.setY(PLAY_BUTTON_COORDS.y)
+				.setAlignment(CENTER)
+				.setMinWidth(PLAY_BUTTON_WIDTH)
+				.setMinHeight(PLAY_BUTTON_HEIGHT)
+				.setPaddingX(PLAY_BUTTON_PADDING_X)
+				.setPaddingY(PLAY_BUTTON_PADDING_Y)
+				.setCallback(() -> {
+					game.setScreen(new GameScreen(game));
+					dispose();
+				});
 		this.settingsButton = new Button(SETTINGS_BUTTON_TITLE, SETTINGS_BUTTON_TEXTSIZE, game)
-						.setHoverColor(SETTINGS_BUTTON_HOVER_COLOR)
-						.setX(SETTINGS_BUTTON_COORDS.x)
-						.setY(SETTINGS_BUTTON_COORDS.y)
-						.setAlignment(CENTER)
-						.setMinWidth(SETTINGS_BUTTON_WIDTH)
-						.setMinHeight(SETTINGS_BUTTON_HEIGHT)
-						.setPaddingX(SETTINGS_BUTTON_PADDING_X)
-						.setPaddingY(SETTINGS_BUTTON_PADDING_Y)
-						.setCallback(() -> {
-							game.getInputMultiplexer().removeProcessor(playButton);
-							game.getInputMultiplexer().removeProcessor(settingsButton);
-							game.setScreen(new SettingsScreen(game));
-							dispose();
-						});
+				.setHoverColor(SETTINGS_BUTTON_HOVER_COLOR)
+				.setX(SETTINGS_BUTTON_COORDS.x)
+				.setY(SETTINGS_BUTTON_COORDS.y)
+				.setAlignment(CENTER)
+				.setMinWidth(SETTINGS_BUTTON_WIDTH)
+				.setMinHeight(SETTINGS_BUTTON_HEIGHT)
+				.setPaddingX(SETTINGS_BUTTON_PADDING_X)
+				.setPaddingY(SETTINGS_BUTTON_PADDING_Y)
+				.setCallback(() -> {
+					game.getInputMultiplexer().removeProcessor(playButton);
+					game.getInputMultiplexer().removeProcessor(settingsButton);
+					game.setScreen(new SettingsScreen(game));
+					dispose();
+				});
 		// Add input processors
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 		multiplexer.addProcessor(playButton);

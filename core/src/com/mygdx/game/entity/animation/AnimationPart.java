@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.mygdx.game.entity.EntityData;
 import com.mygdx.game.entity.Hitbox;
 
-import java.util.Collection;
 import java.util.HashMap;
 
 /**

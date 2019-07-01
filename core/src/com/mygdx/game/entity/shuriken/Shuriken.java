@@ -1,12 +1,9 @@
 package com.mygdx.game.entity.shuriken;
 
-import com.badlogic.gdx.Gdx;
-import com.mygdx.game.GameScreen;
+import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.Entity;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
-import com.mygdx.game.entity.boss1.Boss1;
-import com.mygdx.game.entity.part.Boss1Parts;
 import com.mygdx.game.entity.part.ShurikenParts;
 import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
@@ -14,8 +11,8 @@ import com.mygdx.game.entity.state.States;
 import java.util.HashMap;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.entity.shuriken.ShurikenStates.FLYING;
 import static com.mygdx.game.entity.part.ShurikenParts.BODY;
+import static com.mygdx.game.entity.shuriken.ShurikenStates.FLYING;
 
 public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	private static final float SHURIKEN_DAMAGE = 10;

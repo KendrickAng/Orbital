@@ -2,7 +2,7 @@ package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.mygdx.game.GameScreen;
+import com.mygdx.game.screens.GameScreen;
 
 import java.util.HashSet;
 
