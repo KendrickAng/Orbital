@@ -1,6 +1,12 @@
 android {
     buildToolsVersion "28.0.3"
     compileSdkVersion 27
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -13,9 +19,11 @@ android {
         }
 
     }
+
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
+
     defaultConfig {
         applicationId "com.mygdx.game"
         minSdkVersion 14
@@ -23,6 +31,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    
     buildTypes {
         release {
             minifyEnabled false
