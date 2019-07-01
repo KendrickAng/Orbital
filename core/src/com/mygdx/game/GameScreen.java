@@ -8,22 +8,24 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.entity.CollisionManager;
-import com.mygdx.game.entity.boss1.Boss1AI;
-import com.mygdx.game.entity.character.Assassin;
+import com.mygdx.game.entity.EntityManager;
 import com.mygdx.game.entity.boss1.Boss1;
+import com.mygdx.game.entity.boss1.Boss1AI;
 import com.mygdx.game.entity.boss1.Boss1Controller;
+import com.mygdx.game.entity.character.Assassin;
 import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.character.CharacterController;
-import com.mygdx.game.entity.EntityManager;
+import com.mygdx.game.entity.character.CharacterInput;
 import com.mygdx.game.entity.character.Tank;
-import com.mygdx.game.texture.TextureManager;
+import com.mygdx.game.entity.healthbar.AssassinBar;
+import com.mygdx.game.entity.healthbar.BossBar;
+import com.mygdx.game.entity.healthbar.TankBar;
 
+import static com.mygdx.game.MyGdxGame.BOSS1_AI;
 import static com.mygdx.game.MyGdxGame.DEBUG;
+import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 
 public class GameScreen implements Screen {
-	private static final boolean ACTIVATE_AI = true; // switch to activate boss ACTIVATE_AI.
-
 	// Game reference.
 	private MyGdxGame game;
 
@@ -40,6 +42,10 @@ public class GameScreen implements Screen {
 	private Assassin assassin;
 	private Boss1 boss1;
 
+	private TankBar tankBar;
+	private AssassinBar assassinBar;
+	private BossBar bossBar;
+
 	public GameScreen(MyGdxGame game) {
 		// init rectangle to (0, 0)
 		this.game = game;
@@ -55,7 +61,9 @@ public class GameScreen implements Screen {
 		this.character = tank;
 
 		/* Input */
-		if (ACTIVATE_AI) new Boss1AI(this);
+		if (BOSS1_AI) {
+			new Boss1AI(this);
+		}
 		this.playerController = new CharacterController(this);
 		Boss1Controller bossController = new Boss1Controller(this);
 
@@ -67,6 +75,10 @@ public class GameScreen implements Screen {
 		this.background = new Background(game.getTextureManager());
 		this.shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setColor(Color.GOLD);
+
+		tankBar = new TankBar(tank);
+		assassinBar = new AssassinBar(assassin);
+		bossBar = new BossBar(boss1);
 	}
 
 	@Override
@@ -83,11 +95,31 @@ public class GameScreen implements Screen {
 
 		camera.update();
 
+		// TODO: Abstract these
+		// TODO: Fix dispose
+		if (character == tank && tank.isDispose()) {
+			switchCharacter();
+		}
+
+		if (character == assassin && assassin.isDispose()) {
+			switchCharacter();
+		}
+
 		/* Render */
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		background.render(batch);
 		entityManager.renderAll(batch);
+
+		if (character == tank && !tank.isDispose()) {
+			tankBar.render(batch);
+		} else if (character == assassin && !assassin.isDispose()) {
+			assassinBar.render(batch);
+		}
+
+		if (!boss1.isDispose()) {
+			bossBar.render(batch);
+		}
 		batch.end();
 
 		/* Debug */
@@ -123,18 +155,30 @@ public class GameScreen implements Screen {
 	}
 
 	public void switchCharacter() {
-		Gdx.app.log("GameScreen.java", "Switched Characters");
-		Character prev = character;
-		Character next = prev.equals(tank) ? assassin : tank;
-		prev.setVisible(false);
-		next.setPosition(prev.getPosition());
-		next.setVelocity(prev.getVelocity());
-		next.setSpriteDirection(prev.getSpriteDirection());
-		next.setInputDirection(prev.getInputDirection());
-		next.setVisible(true);
+		if (character != null && character.useSwitchCharacter()) {
+			character.setVisible(false);
+			float x = character.getPosition().x;
+			boolean flipX = character.getFlipX().get();
 
-		character = next;
-		playerController.update();
+			if (character == tank && !assassin.isDispose()) {
+				character = assassin;
+			} else if (character == assassin && !tank.isDispose()) {
+				character = tank;
+			} else {
+				return;
+			}
+
+			for (CharacterInput input : playerController.getInputs()) {
+				character.input(input);
+			}
+			character.setVisible(true);
+			character.getPosition().x = x;
+			character.getPosition().y = MAP_HEIGHT;
+			character.getFlipX().set(flipX);
+
+			playerController.update();
+			Gdx.app.log("GameScreen.java", "Switched Characters");
+		}
 	}
 
 	/* Getters */
@@ -148,9 +192,5 @@ public class GameScreen implements Screen {
 
 	public EntityManager getEntityManager() {
 		return entityManager;
-	}
-
-	public TextureManager getTextureManager() {
-		return game.getTextureManager();
 	}
 }

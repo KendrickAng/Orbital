@@ -1,17 +1,15 @@
 package com.mygdx.game.entity.state;
 
-import com.badlogic.gdx.utils.Timer;
-
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
-public class States<S extends Enum> {
-	private Timer timer;
-	// a StateListener is added when Entity's addStateListener is added.
+public class States<I extends Enum, S extends Enum> {
+	private State<I, S> state;
+	private HashMap<S, State<I, S>> states;
 	private HashSet<StateListener<S>> listeners;
 
 	public States() {
-		this.timer = new Timer();
+		this.states = new HashMap<>();
 		this.listeners = new HashSet<>();
 	}
 
@@ -19,37 +17,47 @@ public class States<S extends Enum> {
 		listeners.add(stateListener);
 	}
 
-	// only add the state to all listeners if they are ALL compatible.
-	public boolean addState(S state) {
+	public States<I, S> add(State<I, S> state) {
+		if (this.state == null) {
+			this.state = state;
+			for (StateListener<S> listener : listeners) {
+				listener.stateChange(state.getName());
+			}
+		}
+
+		states.put(state.getName(), state);
+		return this;
+	}
+
+	public boolean input(I input) {
+		S name = this.state.getEdge(input);
+		if (name == null) {
+			return false;
+		}
+
+		State<I, S> toState = states.get(name);
+		if (toState == null) {
+			return false;
+		}
+
 		for (StateListener<S> listener : listeners) {
-			if (!listener.stateAddValid(state)) {
+			if (!listener.stateValid(toState.getName())) {
 				return false;
 			}
 		}
 
+		this.state.end();
+		this.state = toState;
+		this.state.begin();
+
 		for (StateListener<S> listener : listeners) {
-			listener.stateAdd(state);
+			listener.stateChange(toState.getName());
 		}
 
 		return true;
 	}
 
-	// remove the state from ALL listeners
-	public void removeState(S state) {
-		for (StateListener<S> listener : listeners) {
-			listener.stateRemove(state);
-		}
-	}
-
-	// scheduleState() -> addState() -> stateAddValid forAll listeners -> stateAdd() forAll listeners -> removeState() -> stateRemove()
-	public void scheduleState(S state, float duration) {
-		if (addState(state)) {
-			timer.scheduleTask(new Timer.Task() {
-				@Override
-				public void run() {
-					removeState(state);
-				}
-			}, duration);
-		}
+	public void update() {
+		this.state.update();
 	}
 }

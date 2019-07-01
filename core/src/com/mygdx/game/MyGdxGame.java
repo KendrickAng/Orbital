@@ -20,7 +20,9 @@ public class MyGdxGame extends Game {
 	public static final int GAME_WIDTH = 600;
 	public static final int GAME_HEIGHT = 380;
 	public static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
-	public static final boolean DEBUG = true;
+
+	public static final boolean DEBUG = false; // flag to view hitboxes
+	public static final boolean BOSS1_AI = true; // flag to activate Boss1 AI.
 
 	private ColorTextures colorTextures;
 

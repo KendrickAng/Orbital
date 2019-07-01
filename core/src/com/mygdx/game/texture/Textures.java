@@ -54,10 +54,10 @@ public class Textures {
 
 	static {
 		/*
-		library.add(TANK);
-		library.add(ASSASSIN);
-		library.add(SHURIKEN);
-		library.add(BOSS1);
+		library.map(TANK);
+		library.map(ASSASSIN);
+		library.map(SHURIKEN);
+		library.map(BOSS1);
 		*/
 		library.add(ENVIRONMENT);
 	}

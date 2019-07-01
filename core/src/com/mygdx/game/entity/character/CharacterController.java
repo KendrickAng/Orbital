@@ -3,25 +3,22 @@ package com.mygdx.game.entity.character;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.GameScreen;
-import com.mygdx.game.entity.Direction;
 
 import java.util.HashSet;
 
-import static com.mygdx.game.entity.Direction.LEFT;
-import static com.mygdx.game.entity.Direction.RIGHT;
-import static com.mygdx.game.entity.Direction.UP;
-import static com.mygdx.game.entity.Direction.UP_LEFT;
-import static com.mygdx.game.entity.Direction.UP_RIGHT;
+import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYDOWN;
+import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYDOWN;
+import static com.mygdx.game.entity.character.CharacterInput.UP_KEYDOWN;
 
 public class CharacterController implements InputProcessor {
 	private GameScreen game;
 	private Character character;
-	private HashSet<Direction> inputDirections;
+	private HashSet<CharacterInput> inputs;
 
 	public CharacterController(GameScreen game) {
 		this.game = game;
 		this.character = game.getCharacter();
-		inputDirections = new HashSet<>();
+		this.inputs = new HashSet<>();
 	}
 
 	public void update() {
@@ -32,25 +29,25 @@ public class CharacterController implements InputProcessor {
 	public boolean keyDown(int keycode) {
 		switch (keycode) {
 			case Input.Keys.LEFT:
-				inputDirections.add(Direction.LEFT);
-				character.setInputDirection(resolveInputDirection());
+				character.useLeft(true);
+				inputs.add(LEFT_KEYDOWN);
 				break;
 			case Input.Keys.RIGHT:
-				inputDirections.add(Direction.RIGHT);
-				character.setInputDirection(resolveInputDirection());
+				character.useRight(true);
+				inputs.add(RIGHT_KEYDOWN);
 				break;
 			case Input.Keys.UP:
-				inputDirections.add(UP);
-				character.setInputDirection(resolveInputDirection());
+				character.useUp(true);
+				inputs.add(UP_KEYDOWN);
 				break;
 			case Input.Keys.Q:
-				character.usePrimary();
+				character.usePrimary(true);
 				break;
 			case Input.Keys.W:
-				character.useSecondary();
+				character.useSecondary(true);
 				break;
 			case Input.Keys.E:
-				character.useTertiary();
+				character.useTertiary(true);
 				break;
 			case Input.Keys.R: // switch characters
 				game.switchCharacter();
@@ -65,16 +62,25 @@ public class CharacterController implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 			case Input.Keys.LEFT:
-				inputDirections.remove(Direction.LEFT);
-				character.setInputDirection(resolveInputDirection());
+				character.useLeft(false);
+				inputs.remove(LEFT_KEYDOWN);
 				break;
 			case Input.Keys.RIGHT:
-				inputDirections.remove(Direction.RIGHT);
-				character.setInputDirection(resolveInputDirection());
+				character.useRight(false);
+				inputs.remove(RIGHT_KEYDOWN);
 				break;
 			case Input.Keys.UP:
-				inputDirections.remove(UP);
-				character.setInputDirection(resolveInputDirection());
+				character.useUp(false);
+				inputs.remove(UP_KEYDOWN);
+				break;
+			case Input.Keys.Q:
+				character.usePrimary(false);
+				break;
+			case Input.Keys.W:
+				character.useSecondary(false);
+				break;
+			case Input.Keys.E:
+				character.useTertiary(false);
 				break;
 			default:
 				return false;
@@ -112,37 +118,7 @@ public class CharacterController implements InputProcessor {
 		return true;
 	}
 
-	private Direction resolveInputDirection() {
-		if (!inputDirections.contains(Direction.RIGHT)
-				&& !inputDirections.contains(Direction.LEFT)
-				&& inputDirections.contains(UP)) {
-			return UP;
-		}
-
-		if (inputDirections.contains(RIGHT)
-				&& !inputDirections.contains(LEFT)
-				&& !inputDirections.contains(UP)) {
-			return RIGHT;
-		}
-
-		if (!inputDirections.contains(Direction.RIGHT)
-				&& inputDirections.contains(Direction.LEFT)
-				&& !inputDirections.contains(UP)) {
-			return LEFT;
-		}
-
-		if (!inputDirections.contains(Direction.RIGHT)
-				&& inputDirections.contains(Direction.LEFT)
-				&& inputDirections.contains(UP)) {
-			return UP_LEFT;
-		}
-
-		if (inputDirections.contains(Direction.RIGHT)
-				&& !inputDirections.contains(Direction.LEFT)
-				&& inputDirections.contains(UP)) {
-			return UP_RIGHT;
-		}
-
-		return Direction.NONE;
+	public HashSet<CharacterInput> getInputs() {
+		return inputs;
 	}
 }

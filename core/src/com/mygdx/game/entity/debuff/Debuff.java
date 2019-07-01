@@ -1,46 +1,25 @@
 package com.mygdx.game.entity.debuff;
 
 public class Debuff {
-	private DebuffBegin begin;
-	// called when you inflict a debuff AND when the debuff ends.
-	private DebuffCallback apply;
-	private DebuffEnd end;
+	private DebuffType type;
+	private float modifier;
+	private float duration;
 
-	public Debuff() {
-		begin = () -> {
-		};
-		end = () -> {
-		};
-		apply = modifier -> {
-		};
+	public Debuff(DebuffType type, float modifier, float duration) {
+		this.type = type;
+		this.modifier = modifier;
+		this.duration = duration;
 	}
 
-	/* Calls */
-	public void begin() {
-		begin.call();
+	public DebuffType getType() {
+		return type;
 	}
 
-	public void apply(float modifier) {
-		apply.call(modifier);
+	public float getDuration() {
+		return duration;
 	}
 
-	public void end() {
-		end.call();
-	}
-
-	/* Setters */
-	public Debuff setBegin(DebuffBegin begin) {
-		this.begin = begin;
-		return this;
-	}
-
-	public Debuff setApply(DebuffCallback apply) {
-		this.apply = apply;
-		return this;
-	}
-
-	public Debuff setEnd(DebuffEnd end) {
-		this.end = end;
-		return this;
+	public float getModifier() {
+		return modifier;
 	}
 }
