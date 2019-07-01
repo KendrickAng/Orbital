@@ -158,18 +158,20 @@ public class GameScreen implements Screen {
 
 	public void switchCharacter() {
 		if (character != null && character.useSwitchCharacter()) {
-			character.setVisible(false);
-			float x = character.getPosition().x;
-			boolean flipX = character.getFlipX().get();
-
+			Character next;
 			if (character == tank && !assassin.isDispose()) {
-				character = assassin;
+				next = assassin;
 			} else if (character == assassin && !tank.isDispose()) {
-				character = tank;
+				next = tank;
 			} else {
 				return;
 			}
 
+			character.setVisible(false);
+			float x = character.getPosition().x;
+			boolean flipX = character.getFlipX().get();
+
+			character = next;
 			for (CharacterInput input : playerController.getInputs()) {
 				character.input(input);
 			}
