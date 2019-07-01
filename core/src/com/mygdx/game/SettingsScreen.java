@@ -16,7 +16,6 @@ import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.ui.ColorTextures.ColorEntry.DEEP_PURPLE_500;
 import static com.mygdx.game.ui.ContentAlignment.CENTER;
 
-// TODO: Why does the exit button take so damn long to load? MEMORY HOGGING ???
 public class SettingsScreen implements Screen {
     private static final String PLACEHOLDER_TEXT = "Q - PRIMARY SKILL\nW - SECONDARY SKILL\nE - TERTIARY SKILL\nR - SWITCH CHARACTER (ASSASSIN/TANK)";
     private static final int PLACEHOLDER_FONTSIZE = 20;
@@ -51,8 +50,8 @@ public class SettingsScreen implements Screen {
                         .setPaddingX(EXIT_BUTTON_PADDING_X)
                         .setPaddingY(EXIT_BUTTON_PADDING_Y)
                         .setCallback(() -> {
-                            game.setScreen(new MainMenuScreen(game));
                             game.getInputMultiplexer().removeProcessor(exitButton);
+                            game.setScreen(new MainMenuScreen(game));
                             dispose();
                         });
         this.game.getInputMultiplexer().addProcessor(exitButton);
@@ -75,10 +74,6 @@ public class SettingsScreen implements Screen {
         this.placeholder.render();
         this.exitButton.render();
         batch.end();
-
-        // Add input processors
-        InputMultiplexer multiplexer = game.getInputMultiplexer();
-        multiplexer.addProcessor(exitButton);
     }
 
     @Override
