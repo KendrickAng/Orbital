@@ -39,19 +39,19 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 		// Ignore same animation
 		if (animation != null && this.animation != animation) {
 			this.animation = animation;
+			this.animation.setEntityData(entityData);
 			this.animation.begin();
 		}
 	}
 
-	// Maps a state to a group.
+	// Maps a state to an animation.
 	public Animations<S, P> map(S state, Animation<P> animation) {
-		animation.load(entityData);
 		animations.put(state, animation);
 		return this;
 	}
 
 	public void render(SpriteBatch batch) {
-		animation.render(batch, entityData);
+		animation.render(batch);
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {

@@ -49,7 +49,7 @@ public class MainMenuScreen implements Screen {
 
 	public MainMenuScreen(MyGdxGame game) {
 		this.game = game;
-		this.background = new Background(game.getTextureManager());
+		this.background = new Background(game.getAssets());
 		this.title = new Text(TITLE, TITLE_FONTSIZE, game)
 				.setX(GAME_WIDTH / 2f)
 				.setY(GAME_HEIGHT - TOP_PADDING)

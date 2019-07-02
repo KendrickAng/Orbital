@@ -2,7 +2,7 @@ package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.screens.GameScreen;
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
@@ -13,8 +13,7 @@ import com.mygdx.game.entity.part.AssassinParts;
 import com.mygdx.game.entity.shuriken.Shuriken;
 import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
-
-import java.util.HashMap;
+import com.mygdx.game.screens.GameScreen;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
@@ -319,29 +318,22 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 	}
 
 	@Override
-	protected void defineAnimations(Animations<AssassinStates, AssassinParts> animations) {
-		HashMap<AssassinParts, String> filenames = new HashMap<>();
-		filenames.put(BODY, "Body");
-		filenames.put(LEFT_ARM, "LeftArm");
-		filenames.put(LEFT_LEG, "LeftLeg");
-		filenames.put(RIGHT_ARM, "RightArm");
-		filenames.put(RIGHT_LEG, "RightLeg");
+	protected void defineAnimations(Animations<AssassinStates, AssassinParts> animations, Assets assets) {
+		Animation<AssassinParts> standing = assets.getAssassinAnimation(Assets.AssassinAnimationName.STANDING)
+				.setDuration(STANDING_ANIMATION_DURATION)
+				.setLoop();
 
-		Animation<AssassinParts> standing =
-				new Animation<>(STANDING_ANIMATION_DURATION, 2, "Assassin/Standing", filenames)
-						.loop();
+		Animation<AssassinParts> walking = assets.getAssassinAnimation(Assets.AssassinAnimationName.WALKING)
+				.setDuration(WALKING_ANIMATION_DURATION)
+				.setLoop();
 
-		Animation<AssassinParts> walking =
-				new Animation<>(WALKING_ANIMATION_DURATION, 8, "Assassin/Walking", filenames)
-						.loop();
+		Animation<AssassinParts> primary = assets.getAssassinAnimation(Assets.AssassinAnimationName.DASH)
+				.setDuration(PRIMARY_ANIMATION_DURATION)
+				.defineEnd(() -> input(PRIMARY_KEYUP));
 
-		Animation<AssassinParts> primary =
-				new Animation<>(PRIMARY_ANIMATION_DURATION, 1, "Assassin/Primary", filenames)
-						.defineEnd(() -> input(PRIMARY_KEYUP));
-
-		Animation<AssassinParts> secondary =
-				new Animation<>(SECONDARY_ANIMATION_DURATION, 2, "Assassin/Secondary", filenames)
-						.defineEnd(() -> input(SECONDARY_KEYUP));
+		Animation<AssassinParts> secondary = assets.getAssassinAnimation(Assets.AssassinAnimationName.SHURIKEN_THROW)
+				.setDuration(SECONDARY_ANIMATION_DURATION)
+				.defineEnd(() -> input(SECONDARY_KEYUP));
 
 		animations.map(STANDING, standing)
 				.map(STANDING_LEFT_RIGHT, standing)

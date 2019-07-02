@@ -1,11 +1,12 @@
 package com.mygdx.game.entity.healthbar;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.LivingEntity;
 
+import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_TANK;
+
 public class TankBar extends CharacterBar {
-	public TankBar(LivingEntity entity) {
-		super(entity, new Texture(Gdx.files.internal("HealthBar/TankBar.png")));
+	public TankBar(Assets assets, LivingEntity entity) {
+		super(assets, entity, assets.getTexture(HEALTH_BAR_TANK));
 	}
 }

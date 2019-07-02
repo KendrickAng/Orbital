@@ -1,7 +1,7 @@
 package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Gdx;
-import com.mygdx.game.screens.GameScreen;
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
@@ -12,8 +12,7 @@ import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.part.TankParts;
 import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
-
-import java.util.HashMap;
+import com.mygdx.game.screens.GameScreen;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYDOWN;
@@ -45,7 +44,6 @@ import static com.mygdx.game.entity.part.TankParts.LEFT_ARM;
 import static com.mygdx.game.entity.part.TankParts.LEFT_LEG;
 import static com.mygdx.game.entity.part.TankParts.RIGHT_ARM;
 import static com.mygdx.game.entity.part.TankParts.RIGHT_LEG;
-import static com.mygdx.game.entity.part.TankParts.SHIELD;
 import static com.mygdx.game.entity.part.TankParts.WEAPON;
 
 /**
@@ -187,33 +185,24 @@ public class Tank extends Character<TankStates, TankParts> {
 	}
 
 	@Override
-	protected void defineAnimations(Animations<TankStates, TankParts> animations) {
-		HashMap<TankParts, String> filenames = new HashMap<>();
-		filenames.put(SHIELD, "Shield");
-		filenames.put(LEFT_ARM, "LeftArm");
-		filenames.put(LEFT_LEG, "LeftLeg");
-		filenames.put(BODY, "Body");
-		filenames.put(RIGHT_LEG, "RightLeg");
-		filenames.put(WEAPON, "Weapon");
-		filenames.put(RIGHT_ARM, "RightArm");
+	protected void defineAnimations(Animations<TankStates, TankParts> animations, Assets assets) {
+		Animation<TankParts> standing = assets.getTankAnimation(Assets.TankAnimationName.STANDING)
+				.setDuration(STANDING_ANIMATION_DURATION)
+				.setLoop();
 
-		Animation<TankParts> standing =
-				new Animation<>(STANDING_ANIMATION_DURATION, 2, "Tank/Standing", filenames)
-						.loop();
+		Animation<TankParts> walking = assets.getTankAnimation(Assets.TankAnimationName.WALKING)
+				.setDuration(WALKING_ANIMATION_DURATION)
+				.setLoop();
 
-		Animation<TankParts> walking =
-				new Animation<>(WALKING_ANIMATION_DURATION, 2, "Tank/Walking", filenames)
-						.loop();
+		Animation<TankParts> primary = assets.getTankAnimation(Assets.TankAnimationName.BLOCK)
+				.setDuration(PRIMARY_ANIMATION_DURATION)
+				.defineFrameTask(0, () -> inflictDebuff(primaryArmorDebuff));
 
-		Animation<TankParts> primary =
-				new Animation<>(PRIMARY_ANIMATION_DURATION, 1, "Tank/Primary", filenames)
-						.defineFrameTask(0, () -> inflictDebuff(primaryArmorDebuff));
-
-		Animation<TankParts> secondary =
-				new Animation<>(SECONDARY_ANIMATION_DURATION, 1, "Tank/Secondary", filenames)
-						.defineFrameTask(0, () -> getGame().getBoss1()
-								.damageTest(getHitbox(WEAPON), SECONDARY_DAMAGE))
-						.defineEnd(() -> input(SECONDARY_KEYUP));
+		Animation<TankParts> secondary = assets.getTankAnimation(Assets.TankAnimationName.IMPALE)
+				.setDuration(SECONDARY_ANIMATION_DURATION)
+				.defineFrameTask(0, () -> getGame().getBoss1()
+						.damageTest(getHitbox(WEAPON), SECONDARY_DAMAGE))
+				.defineEnd(() -> input(SECONDARY_KEYUP));
 
 		animations.map(STANDING, standing)
 				.map(STANDING_LEFT_RIGHT, standing)

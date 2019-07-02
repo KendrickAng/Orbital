@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.MutableBoolean;
 import com.mygdx.game.entity.animation.Animations;
@@ -38,7 +39,7 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		// adds animations, a statelistener, to State's HashSet
 		addStateListener(animations);
 
-		defineAnimations(animations);
+		defineAnimations(animations, game.getAssets());
 		defineStates(states);
 
 		game.getEntityManager().add(this);
@@ -46,7 +47,7 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 
 	protected abstract void defineStates(States<I, S> states);
 
-	protected abstract void defineAnimations(Animations<S, P> animations);
+	protected abstract void defineAnimations(Animations<S, P> animations, Assets assets);
 
 	public void render(SpriteBatch batch) {
 		states.update();

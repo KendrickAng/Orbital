@@ -1,9 +1,11 @@
 package com.mygdx.game.entity.healthbar;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.LivingEntity;
+
+import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BACKGROUND;
 
 public abstract class HealthBar {
 	private static final int BORDER = 2;
@@ -15,10 +17,10 @@ public abstract class HealthBar {
 	private float y;
 	private float width;
 
-	public HealthBar(LivingEntity entity, Texture texture) {
+	public HealthBar(Assets assets, LivingEntity entity, Texture texture) {
 		this.entity = entity;
 		this.texture = texture;
-		this.background = new Texture(Gdx.files.internal("HealthBar/Background.png"));
+		this.background = assets.getTexture(HEALTH_BAR_BACKGROUND);
 	}
 
 	public void setX(float x) {

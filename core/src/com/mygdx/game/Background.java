@@ -2,24 +2,22 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.texture.TextureManager;
+import com.mygdx.game.assets.Assets;
 
+import static com.mygdx.game.assets.Assets.TextureName.BACKGROUND;
+import static com.mygdx.game.assets.Assets.TextureName.FLOOR;
 import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
-import static com.mygdx.game.texture.Textures.ENVIRONMENT_BACKGROUND;
-import static com.mygdx.game.texture.Textures.ENVIRONMENT_FLOOR;
 
 public class Background {
 	private Texture background;
 	private Texture floor;
 
-	public Background(TextureManager textureManager) {
-		background = textureManager.get(ENVIRONMENT_BACKGROUND);
-		// TODO: This should be in TextureManager (i.e. shouldn't be mutable)
+	public Background(Assets assets) {
+		floor = assets.getTexture(FLOOR);
+		background = assets.getTexture(BACKGROUND);
 		background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-
-		floor = textureManager.get(ENVIRONMENT_FLOOR);
 	}
 
 	public void render(SpriteBatch batch) {

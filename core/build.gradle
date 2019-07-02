@@ -6,8 +6,10 @@ sourceCompatibility = '1.8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-/*
-eclipse.project {
-    name = appName + "-core"
+task animationsBuilder(dependsOn: classes, type: JavaExec) {
+    main = "com.mygdx.game.AnimationsBuilder"
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = new File("../android/assets")
+    ignoreExitValue = true
 }
-*/

@@ -1,9 +1,5 @@
 buildscript {
     repositories {
-//        mavenLocal()
-//        mavenCentral()
-//        maven { url "https://plugins.gradle.org/m2/" }
-//        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
         google()
     }
@@ -14,23 +10,24 @@ buildscript {
 }
 
 allprojects {
-//    apply plugin: "eclipse"
     apply plugin: "idea"
 
     version = 'beta-0.3'
     ext {
-        // No name yet.
-        appName = "my-gdx-game"
+        appName = "Untitled"
         gdxVersion = '1.9.9'
     }
 
     repositories {
-        mavenLocal()
-        mavenCentral()
         jcenter()
         google()
+
+        /*
+        mavenLocal()
+        mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        */
     }
 }
 
@@ -41,6 +38,7 @@ project(":desktop") {
         implementation project(":core")
         implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
         // Gdx-FreeTypeFont
         api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
@@ -59,6 +57,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+
         // Gdx-FreeTypeFont
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
@@ -88,13 +87,8 @@ project(":core") {
 
     dependencies {
         implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+
         // Gdx-FreeTypeFont
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     }
 }
-
-/*
-tasks.eclipse.doLast {
-    delete ".project"
-}
-*/

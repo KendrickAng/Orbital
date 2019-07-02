@@ -1,6 +1,5 @@
 package com.mygdx.game.entity;
 
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Hitbox {
@@ -10,35 +9,20 @@ public class Hitbox {
 	private int height;
 	private int offsetX;
 	private int offsetY;
-	private int pixmapWidth;
-	private int pixmapHeight;
+	private int textureWidth;
+	private int textureHeight;
 
-	public Hitbox(EntityData entityData, Pixmap pixmap) {
+	public Hitbox(int minX, int maxX, int minY, int maxY, int textureWidth, int textureHeight) {
+		this.offsetX = minX;
+		this.offsetY = textureHeight - maxY;
+		this.width = maxX - minX;
+		this.height = maxY - minY;
+		this.textureWidth = textureWidth;
+		this.textureHeight = textureHeight;
+	}
+
+	public void setEntityData(EntityData entityData) {
 		this.entityData = entityData;
-		this.pixmapWidth = pixmap.getWidth();
-		this.pixmapHeight = pixmap.getHeight();
-
-		int minX = Integer.MAX_VALUE;
-		int maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE;
-		int maxY = Integer.MIN_VALUE;
-		// loop through all pixels in pixmap and start minmaxX/minmaxY
-		for (int y = 0; y < pixmapHeight; y++) {
-			for (int x = 0; x < pixmapWidth; x++) {
-				// check for transparent pixel.
-				if ((pixmap.getPixel(x, y) & 0x000000ff) == 0x000000ff) {
-					minX = Math.min(x, minX);
-					maxX = Math.max(x, maxX);
-					minY = Math.min(y, minY);
-					maxY = Math.max(y, maxY);
-				}
-			}
-		}
-
-		offsetX = minX;
-		offsetY = pixmapHeight - maxY;
-		width = maxX - minX;
-		height = maxY - minY;
 	}
 
 	// AABB collision
@@ -55,7 +39,7 @@ public class Hitbox {
 
 	public float getX() {
 		if (entityData.getFlipX().get()) {
-			return entityData.getPosition().x + pixmapWidth - offsetX - width;
+			return entityData.getPosition().x + textureWidth - offsetX - width;
 		} else {
 			return entityData.getPosition().x + offsetX;
 		}

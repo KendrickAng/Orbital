@@ -1,5 +1,6 @@
 package com.mygdx.game.entity.shuriken;
 
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.Entity;
 import com.mygdx.game.entity.animation.Animation;
@@ -49,12 +50,9 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	}
 
 	@Override
-	protected void defineAnimations(Animations<ShurikenStates, ShurikenParts> animations) {
-		HashMap<ShurikenParts, String> filenames = new HashMap<>();
-		filenames.put(BODY, "Body");
-
-		Animation<ShurikenParts> flying =
-				new Animation<>(0, 1, "Assassin/Shuriken", filenames);
+	protected void defineAnimations(Animations<ShurikenStates, ShurikenParts> animations, Assets assets) {
+		Animation<ShurikenParts> flying = assets.getShurikenAnimation(Assets.ShurikenAnimationName.FLYING)
+				.setLoop();
 
 		animations.map(FLYING, flying);
 	}

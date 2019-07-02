@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.Background;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.entity.EntityManager;
@@ -74,13 +75,13 @@ public class GameScreen implements Screen {
 		inputMultiplexer.addProcessor(playerController);
 		inputMultiplexer.addProcessor(bossController);
 
-		this.background = new Background(game.getTextureManager());
+		this.background = new Background(game.getAssets());
 		this.shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setColor(Color.GOLD);
 
-		tankBar = new TankBar(tank);
-		assassinBar = new AssassinBar(assassin);
-		bossBar = new BossBar(boss1);
+		tankBar = new TankBar(game.getAssets(), tank);
+		assassinBar = new AssassinBar(game.getAssets(), assassin);
+		bossBar = new BossBar(game.getAssets(), boss1);
 	}
 
 	@Override
@@ -192,6 +193,10 @@ public class GameScreen implements Screen {
 
 	public Boss1 getBoss1() {
 		return boss1;
+	}
+
+	public Assets getAssets() {
+		return game.getAssets();
 	}
 
 	public EntityManager getEntityManager() {
