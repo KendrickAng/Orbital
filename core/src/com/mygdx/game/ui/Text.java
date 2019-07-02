@@ -33,7 +33,7 @@ public class Text extends RectangleUI {
 	}
 
 	private Text generateBitmapFont(int size) {
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/minecraft.ttf"));
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/Minecraft.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = size;
 		this.bitmapFont = generator.generateFont(parameter);
