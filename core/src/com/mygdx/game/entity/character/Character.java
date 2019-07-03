@@ -6,13 +6,15 @@ import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.debuff.DebuffDefinition;
 import com.mygdx.game.entity.debuff.Debuffs;
 
+import java.util.Collection;
+
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
 
 /**
  * Character is a LivingEntity with 3 abilities: Secondary, Secondary, Tertiary.
  */
-public abstract class Character<S extends Enum, P extends Enum> extends LivingEntity<CharacterInput, S, P> {
+public abstract class Character<I extends Enum, S extends Enum, P extends Enum> extends LivingEntity<I, S, P> {
 	private float slow;
 
 	public Character(GameScreen game) {
@@ -64,4 +66,6 @@ public abstract class Character<S extends Enum, P extends Enum> extends LivingEn
 	protected abstract void useTertiary(boolean keydown);
 
 	public abstract boolean useSwitchCharacter();
+
+	public abstract void setInput(Collection<CharacterControllerInput> inputs);
 }

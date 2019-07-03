@@ -68,7 +68,10 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	}
 
 	public boolean input(I input) {
-		return states.input(input);
+		if (!isDispose()) {
+			return states.input(input);
+		}
+		return false;
 	}
 
 	public void setVisible(boolean visible) {

@@ -15,8 +15,23 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
+import java.util.Collection;
+
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.entity.character.AssassinInput.BLOCK_KEYDOWN;
+import static com.mygdx.game.entity.character.AssassinInput.BLOCK_KEYUP;
+import static com.mygdx.game.entity.character.AssassinInput.FORTRESS_KEYDOWN;
+import static com.mygdx.game.entity.character.AssassinInput.FORTRESS_KEYUP;
+import static com.mygdx.game.entity.character.AssassinInput.IMPALE_KEYDOWN;
+import static com.mygdx.game.entity.character.AssassinInput.IMPALE_KEYUP;
+import static com.mygdx.game.entity.character.AssassinInput.LEFT_KEYDOWN;
+import static com.mygdx.game.entity.character.AssassinInput.LEFT_KEYUP;
+import static com.mygdx.game.entity.character.AssassinInput.RIGHT_KEYDOWN;
+import static com.mygdx.game.entity.character.AssassinInput.RIGHT_KEYUP;
+import static com.mygdx.game.entity.character.AssassinInput.SWITCH_CHARACTER;
+import static com.mygdx.game.entity.character.AssassinInput.UP_KEYDOWN;
+import static com.mygdx.game.entity.character.AssassinInput.UP_KEYUP;
 import static com.mygdx.game.entity.character.AssassinStates.PRIMARY;
 import static com.mygdx.game.entity.character.AssassinStates.PRIMARY_LEFT;
 import static com.mygdx.game.entity.character.AssassinStates.PRIMARY_LEFT_RIGHT;
@@ -42,19 +57,6 @@ import static com.mygdx.game.entity.character.AssassinStates.WALKING_LEFT;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_RIGHT;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_UP_LEFT;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_UP_RIGHT;
-import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.PRIMARY_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.PRIMARY_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.SECONDARY_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.SECONDARY_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.SWITCH_CHARACTER;
-import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.UP_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.UP_KEYUP;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
 import static com.mygdx.game.entity.part.AssassinParts.BODY;
 import static com.mygdx.game.entity.part.AssassinParts.LEFT_ARM;
@@ -63,7 +65,7 @@ import static com.mygdx.game.entity.part.AssassinParts.RIGHT_ARM;
 import static com.mygdx.game.entity.part.AssassinParts.RIGHT_LEG;
 
 
-public class Assassin extends Character<AssassinStates, AssassinParts> {
+public class Assassin extends Character<AssassinInput, AssassinStates, AssassinParts> {
 	private static final float MOVESPEED = 2f;
 	// Movespeed is multiplied by this constant in air
 	private static final float AIR_MOVESPEED = 0.1f;
@@ -106,27 +108,27 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 	}
 
 	@Override
-	protected void defineStates(States<CharacterInput, AssassinStates> states) {
-		states.add(new State<CharacterInput, AssassinStates>(STANDING)
+	protected void defineStates(States<AssassinInput, AssassinStates> states) {
+		states.add(new State<AssassinInput, AssassinStates>(STANDING)
 				.defineUpdate(this::updatePhysics)
 				.addEdge(LEFT_KEYDOWN, WALKING_LEFT)
 				.addEdge(RIGHT_KEYDOWN, WALKING_RIGHT)
 				.addEdge(UP_KEYDOWN, STANDING_UP)
-				.addEdge(SECONDARY_KEYDOWN, SECONDARY)
-				.addEdge(TERTIARY_KEYDOWN, TERTIARY)
+				.addEdge(IMPALE_KEYDOWN, SECONDARY)
+				.addEdge(FORTRESS_KEYDOWN, TERTIARY)
 				.addEdge(SWITCH_CHARACTER, STANDING))
 
-				.add(new State<CharacterInput, AssassinStates>(STANDING_LEFT_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(STANDING_LEFT_RIGHT)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(LEFT_KEYUP, WALKING_RIGHT)
 						.addEdge(RIGHT_KEYUP, WALKING_LEFT)
 						.addEdge(UP_KEYDOWN, STANDING_UP_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_LEFT_RIGHT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, PRIMARY_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYDOWN, SECONDARY_LEFT_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
 
-				.add(new State<CharacterInput, AssassinStates>(WALKING_LEFT)
+				.add(new State<AssassinInput, AssassinStates>(WALKING_LEFT)
 						.defineBegin(() -> getFlipX().set(true))
 						.defineUpdate(() -> {
 							addVelocityX(-MOVESPEED * (1 - getSlow()));
@@ -135,11 +137,11 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 						.addEdge(LEFT_KEYUP, STANDING)
 						.addEdge(RIGHT_KEYDOWN, STANDING_LEFT_RIGHT)
 						.addEdge(UP_KEYDOWN, WALKING_UP_LEFT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_LEFT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT)
+						.addEdge(BLOCK_KEYDOWN, PRIMARY_LEFT)
+						.addEdge(IMPALE_KEYDOWN, SECONDARY_LEFT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
-				.add(new State<CharacterInput, AssassinStates>(WALKING_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(WALKING_RIGHT)
 						.defineBegin(() -> getFlipX().set(false))
 						.defineUpdate(() -> {
 							addVelocityX(MOVESPEED * (1 - getSlow()));
@@ -148,31 +150,31 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 						.addEdge(RIGHT_KEYUP, STANDING)
 						.addEdge(LEFT_KEYDOWN, STANDING_LEFT_RIGHT)
 						.addEdge(UP_KEYDOWN, WALKING_UP_RIGHT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_RIGHT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, PRIMARY_RIGHT)
+						.addEdge(IMPALE_KEYDOWN, SECONDARY_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
-				.add(new State<CharacterInput, AssassinStates>(STANDING_UP)
+				.add(new State<AssassinInput, AssassinStates>(STANDING_UP)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(UP_KEYUP, STANDING)
 						.addEdge(LEFT_KEYDOWN, WALKING_UP_LEFT)
 						.addEdge(RIGHT_KEYDOWN, WALKING_UP_RIGHT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_UP)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_UP)
-						.addEdge(TERTIARY_KEYDOWN, TERTIARY)
+						.addEdge(BLOCK_KEYDOWN, PRIMARY_UP)
+						.addEdge(IMPALE_KEYDOWN, SECONDARY_UP)
+						.addEdge(FORTRESS_KEYDOWN, TERTIARY)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
-				.add(new State<CharacterInput, AssassinStates>(STANDING_UP_LEFT_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(STANDING_UP_LEFT_RIGHT)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(UP_KEYUP, STANDING_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, WALKING_UP_RIGHT)
 						.addEdge(RIGHT_KEYUP, WALKING_UP_LEFT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_UP_LEFT_RIGHT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_UP_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, PRIMARY_UP_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYDOWN, SECONDARY_UP_LEFT_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
 
-				.add(new State<CharacterInput, AssassinStates>(WALKING_UP_LEFT)
+				.add(new State<AssassinInput, AssassinStates>(WALKING_UP_LEFT)
 						.defineBegin(() -> getFlipX().set(true))
 						.defineUpdate(() -> {
 							addVelocityX(-MOVESPEED * (1 - getSlow()));
@@ -181,11 +183,11 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 						.addEdge(UP_KEYUP, WALKING_LEFT)
 						.addEdge(LEFT_KEYUP, STANDING_UP)
 						.addEdge(RIGHT_KEYDOWN, STANDING_UP_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_UP_LEFT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_UP_LEFT)
+						.addEdge(BLOCK_KEYDOWN, PRIMARY_UP_LEFT)
+						.addEdge(IMPALE_KEYDOWN, SECONDARY_UP_LEFT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
-				.add(new State<CharacterInput, AssassinStates>(WALKING_UP_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(WALKING_UP_RIGHT)
 						.defineBegin(() -> getFlipX().set(false))
 						.defineUpdate(() -> {
 							addVelocityX(MOVESPEED * (1 - getSlow()));
@@ -194,127 +196,127 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 						.addEdge(UP_KEYUP, WALKING_RIGHT)
 						.addEdge(RIGHT_KEYUP, STANDING_UP)
 						.addEdge(LEFT_KEYDOWN, STANDING_UP_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_UP_RIGHT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_UP_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, PRIMARY_UP_RIGHT)
+						.addEdge(IMPALE_KEYDOWN, SECONDARY_UP_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
 				/* Dodge */
-				.add(new State<CharacterInput, AssassinStates>(PRIMARY)
+				.add(new State<AssassinInput, AssassinStates>(PRIMARY)
 						.defineUpdate(this::updatePosition)
 						.addEdge(LEFT_KEYDOWN, PRIMARY_LEFT)
 						.addEdge(RIGHT_KEYDOWN, PRIMARY_RIGHT)
 						.addEdge(UP_KEYDOWN, PRIMARY_UP)
-						.addEdge(PRIMARY_KEYUP, STANDING))
+						.addEdge(BLOCK_KEYUP, STANDING))
 
-				.add(new State<CharacterInput, AssassinStates>(PRIMARY_LEFT)
+				.add(new State<AssassinInput, AssassinStates>(PRIMARY_LEFT)
 						.defineUpdate(this::updatePosition)
 						.addEdge(LEFT_KEYUP, PRIMARY)
 						.addEdge(RIGHT_KEYDOWN, PRIMARY_LEFT_RIGHT)
 						.addEdge(UP_KEYDOWN, PRIMARY_UP_LEFT)
-						.addEdge(PRIMARY_KEYUP, WALKING_LEFT))
+						.addEdge(BLOCK_KEYUP, WALKING_LEFT))
 
-				.add(new State<CharacterInput, AssassinStates>(PRIMARY_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(PRIMARY_RIGHT)
 						.defineUpdate(this::updatePosition)
 						.addEdge(RIGHT_KEYUP, PRIMARY)
 						.addEdge(LEFT_KEYDOWN, PRIMARY_LEFT_RIGHT)
 						.addEdge(UP_KEYDOWN, PRIMARY_UP_RIGHT)
-						.addEdge(PRIMARY_KEYUP, WALKING_RIGHT))
+						.addEdge(BLOCK_KEYUP, WALKING_RIGHT))
 
-				.add(new State<CharacterInput, AssassinStates>(PRIMARY_LEFT_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(PRIMARY_LEFT_RIGHT)
 						.defineUpdate(this::updatePosition)
 						.addEdge(LEFT_KEYUP, PRIMARY_RIGHT)
 						.addEdge(RIGHT_KEYUP, PRIMARY_LEFT)
 						.addEdge(UP_KEYDOWN, PRIMARY_UP_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYUP, STANDING_LEFT_RIGHT))
+						.addEdge(BLOCK_KEYUP, STANDING_LEFT_RIGHT))
 
-				.add(new State<CharacterInput, AssassinStates>(PRIMARY_UP)
+				.add(new State<AssassinInput, AssassinStates>(PRIMARY_UP)
 						.defineUpdate(this::updatePosition)
 						.addEdge(UP_KEYUP, PRIMARY)
 						.addEdge(LEFT_KEYDOWN, PRIMARY_UP_LEFT)
 						.addEdge(RIGHT_KEYDOWN, PRIMARY_UP_RIGHT)
-						.addEdge(PRIMARY_KEYUP, STANDING_UP))
+						.addEdge(BLOCK_KEYUP, STANDING_UP))
 
-				.add(new State<CharacterInput, AssassinStates>(PRIMARY_UP_LEFT)
+				.add(new State<AssassinInput, AssassinStates>(PRIMARY_UP_LEFT)
 						.defineUpdate(this::updatePosition)
 						.addEdge(UP_KEYUP, PRIMARY_LEFT)
 						.addEdge(LEFT_KEYUP, PRIMARY_UP)
 						.addEdge(RIGHT_KEYDOWN, PRIMARY_UP_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYUP, WALKING_UP_LEFT))
+						.addEdge(BLOCK_KEYUP, WALKING_UP_LEFT))
 
-				.add(new State<CharacterInput, AssassinStates>(PRIMARY_UP_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(PRIMARY_UP_RIGHT)
 						.defineUpdate(this::updatePosition)
 						.addEdge(UP_KEYUP, PRIMARY_RIGHT)
 						.addEdge(RIGHT_KEYUP, PRIMARY_UP)
 						.addEdge(LEFT_KEYDOWN, PRIMARY_UP_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYUP, WALKING_UP_RIGHT))
+						.addEdge(BLOCK_KEYUP, WALKING_UP_RIGHT))
 
-				.add(new State<CharacterInput, AssassinStates>(PRIMARY_UP_LEFT_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(PRIMARY_UP_LEFT_RIGHT)
 						.defineUpdate(this::updatePosition)
 						.addEdge(UP_KEYUP, PRIMARY_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, PRIMARY_UP_RIGHT)
 						.addEdge(RIGHT_KEYUP, PRIMARY_UP_LEFT)
-						.addEdge(PRIMARY_KEYUP, STANDING_UP_LEFT_RIGHT))
+						.addEdge(BLOCK_KEYUP, STANDING_UP_LEFT_RIGHT))
 
 				/* Stars */
-				.add(new State<CharacterInput, AssassinStates>(SECONDARY)
+				.add(new State<AssassinInput, AssassinStates>(SECONDARY)
 						.defineUpdate(this::updatePhysics)
-						.addEdge(SECONDARY_KEYUP, STANDING)
+						.addEdge(IMPALE_KEYUP, STANDING)
 						.addEdge(LEFT_KEYDOWN, SECONDARY_LEFT)
 						.addEdge(RIGHT_KEYDOWN, SECONDARY_RIGHT)
 						.addEdge(UP_KEYDOWN, SECONDARY_UP))
 
-				.add(new State<CharacterInput, AssassinStates>(SECONDARY_LEFT)
+				.add(new State<AssassinInput, AssassinStates>(SECONDARY_LEFT)
 						.defineUpdate(this::updatePhysics)
-						.addEdge(SECONDARY_KEYUP, WALKING_LEFT)
+						.addEdge(IMPALE_KEYUP, WALKING_LEFT)
 						.addEdge(LEFT_KEYUP, SECONDARY)
 						.addEdge(RIGHT_KEYDOWN, SECONDARY_LEFT_RIGHT)
 						.addEdge(UP_KEYDOWN, SECONDARY_UP_LEFT))
 
-				.add(new State<CharacterInput, AssassinStates>(SECONDARY_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(SECONDARY_RIGHT)
 						.defineUpdate(this::updatePhysics)
-						.addEdge(SECONDARY_KEYUP, WALKING_RIGHT)
+						.addEdge(IMPALE_KEYUP, WALKING_RIGHT)
 						.addEdge(RIGHT_KEYUP, SECONDARY)
 						.addEdge(LEFT_KEYDOWN, SECONDARY_LEFT_RIGHT)
 						.addEdge(UP_KEYDOWN, SECONDARY_UP_RIGHT))
 
-				.add(new State<CharacterInput, AssassinStates>(SECONDARY_LEFT_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(SECONDARY_LEFT_RIGHT)
 						.defineUpdate(this::updatePhysics)
-						.addEdge(SECONDARY_KEYUP, STANDING_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYUP, STANDING_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, SECONDARY_RIGHT)
 						.addEdge(RIGHT_KEYUP, SECONDARY_LEFT)
 						.addEdge(UP_KEYDOWN, SECONDARY_UP_LEFT_RIGHT))
 
-				.add(new State<CharacterInput, AssassinStates>(SECONDARY_UP)
+				.add(new State<AssassinInput, AssassinStates>(SECONDARY_UP)
 						.defineUpdate(this::updatePhysics)
-						.addEdge(SECONDARY_KEYUP, STANDING_UP)
+						.addEdge(IMPALE_KEYUP, STANDING_UP)
 						.addEdge(UP_KEYUP, SECONDARY)
 						.addEdge(LEFT_KEYDOWN, SECONDARY_UP_LEFT)
 						.addEdge(RIGHT_KEYDOWN, SECONDARY_UP_RIGHT))
 
-				.add(new State<CharacterInput, AssassinStates>(SECONDARY_UP_LEFT)
+				.add(new State<AssassinInput, AssassinStates>(SECONDARY_UP_LEFT)
 						.defineUpdate(this::updatePhysics)
-						.addEdge(SECONDARY_KEYUP, WALKING_UP_LEFT)
+						.addEdge(IMPALE_KEYUP, WALKING_UP_LEFT)
 						.addEdge(UP_KEYUP, SECONDARY_LEFT)
 						.addEdge(LEFT_KEYUP, SECONDARY_UP)
 						.addEdge(RIGHT_KEYDOWN, SECONDARY_UP_LEFT_RIGHT))
 
-				.add(new State<CharacterInput, AssassinStates>(SECONDARY_UP_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(SECONDARY_UP_RIGHT)
 						.defineUpdate(this::updatePhysics)
-						.addEdge(SECONDARY_KEYUP, WALKING_UP_RIGHT)
+						.addEdge(IMPALE_KEYUP, WALKING_UP_RIGHT)
 						.addEdge(UP_KEYUP, SECONDARY_RIGHT)
 						.addEdge(RIGHT_KEYUP, SECONDARY_UP)
 						.addEdge(LEFT_KEYDOWN, SECONDARY_UP_LEFT_RIGHT))
 
-				.add(new State<CharacterInput, AssassinStates>(SECONDARY_UP_LEFT_RIGHT)
+				.add(new State<AssassinInput, AssassinStates>(SECONDARY_UP_LEFT_RIGHT)
 						.defineUpdate(this::updatePhysics)
-						.addEdge(SECONDARY_KEYUP, STANDING_UP_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYUP, STANDING_UP_LEFT_RIGHT)
 						.addEdge(UP_KEYUP, SECONDARY_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, SECONDARY_UP_RIGHT)
 						.addEdge(RIGHT_KEYUP, SECONDARY_UP_LEFT))
 
 				/* Cleanse */
-				.add(new State<CharacterInput, AssassinStates>(TERTIARY)
-						.addEdge(TERTIARY_KEYUP, STANDING));
+				.add(new State<AssassinInput, AssassinStates>(TERTIARY)
+						.addEdge(FORTRESS_KEYUP, STANDING));
 	}
 
 	@Override
@@ -329,11 +331,11 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 
 		Animation<AssassinParts> primary = assets.getAssassinAnimation(Assets.AssassinAnimationName.DASH)
 				.setDuration(PRIMARY_ANIMATION_DURATION)
-				.defineEnd(() -> input(PRIMARY_KEYUP));
+				.defineEnd(() -> input(BLOCK_KEYUP));
 
 		Animation<AssassinParts> secondary = assets.getAssassinAnimation(Assets.AssassinAnimationName.SHURIKEN_THROW)
 				.setDuration(SECONDARY_ANIMATION_DURATION)
-				.defineEnd(() -> input(SECONDARY_KEYUP));
+				.defineEnd(() -> input(IMPALE_KEYUP));
 
 		animations.map(STANDING, standing)
 				.map(STANDING_LEFT_RIGHT, standing)
@@ -534,23 +536,23 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 	@Override
 	protected void usePrimary(boolean keydown) {
 		if (keydown) {
-			input(PRIMARY_KEYDOWN);
+			input(BLOCK_KEYDOWN);
 		}
 	}
 
 	@Override
 	protected void useSecondary(boolean keydown) {
 		if (keydown) {
-			input(SECONDARY_KEYDOWN);
+			input(IMPALE_KEYDOWN);
 		}
 	}
 
 	@Override
 	protected void useTertiary(boolean keydown) {
 		if (keydown) {
-			input(TERTIARY_KEYDOWN);
+			input(FORTRESS_KEYDOWN);
 		} else {
-			input(TERTIARY_KEYUP);
+			input(FORTRESS_KEYUP);
 		}
 	}
 
@@ -564,5 +566,22 @@ public class Assassin extends Character<AssassinStates, AssassinParts> {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void setInput(Collection<CharacterControllerInput> inputs) {
+		for (CharacterControllerInput input : inputs) {
+			switch (input) {
+				case LEFT:
+					input(LEFT_KEYDOWN);
+					break;
+				case RIGHT:
+					input(RIGHT_KEYDOWN);
+					break;
+				case UP:
+					input(UP_KEYDOWN);
+					break;
+			}
+		}
 	}
 }

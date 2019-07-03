@@ -32,6 +32,11 @@ import static com.mygdx.game.assets.Assets.BOSS1_STANDING_PATH;
 import static com.mygdx.game.assets.Assets.SHURIKEN_FLYING_PATH;
 import static com.mygdx.game.assets.Assets.SHURIKEN_PARTS;
 import static com.mygdx.game.assets.Assets.TANK_BLOCK_PATH;
+import static com.mygdx.game.assets.Assets.TANK_FORTRESS_BLOCK_PATH;
+import static com.mygdx.game.assets.Assets.TANK_FORTRESS_IMAPLE_PATH;
+import static com.mygdx.game.assets.Assets.TANK_FORTRESS_PATH;
+import static com.mygdx.game.assets.Assets.TANK_FORTRESS_STANDING_PATH;
+import static com.mygdx.game.assets.Assets.TANK_FORTRESS_WALKING_PATH;
 import static com.mygdx.game.assets.Assets.TANK_IMPALE_PATH;
 import static com.mygdx.game.assets.Assets.TANK_PARTS;
 import static com.mygdx.game.assets.Assets.TANK_STANDING_PATH;
@@ -44,6 +49,11 @@ public class AnimationsBuilder {
 		builder.buildDirectory(TANK_WALKING_PATH, TANK_PARTS.keySet());
 		builder.buildDirectory(TANK_BLOCK_PATH, TANK_PARTS.keySet());
 		builder.buildDirectory(TANK_IMPALE_PATH, TANK_PARTS.keySet());
+		builder.buildDirectory(TANK_FORTRESS_PATH, TANK_PARTS.keySet());
+		builder.buildDirectory(TANK_FORTRESS_WALKING_PATH, TANK_PARTS.keySet());
+		builder.buildDirectory(TANK_FORTRESS_STANDING_PATH, TANK_PARTS.keySet());
+		builder.buildDirectory(TANK_FORTRESS_BLOCK_PATH, TANK_PARTS.keySet());
+		builder.buildDirectory(TANK_FORTRESS_IMAPLE_PATH, TANK_PARTS.keySet());
 
 		builder.buildDirectory(ASSASSIN_STANDING_PATH, ASSASSIN_PARTS.keySet());
 		builder.buildDirectory(ASSASSIN_WALKING_PATH, ASSASSIN_PARTS.keySet());

@@ -70,6 +70,9 @@ public class Debuffs {
 		// Debuff ended, recalculate overall modifier before applying.
 		definition.apply(overallModifier(debuffs));
 
+		// Individual debuff end
+		debuff.end();
+
 		// This is the last debuff of this type, call end
 		if (debuffs.isEmpty()) {
 			definition.end();

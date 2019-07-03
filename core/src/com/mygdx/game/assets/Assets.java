@@ -33,6 +33,11 @@ public class Assets {
 	public static final String TANK_WALKING_PATH = "Entity/Tank/Walking";
 	public static final String TANK_BLOCK_PATH = "Entity/Tank/Block";
 	public static final String TANK_IMPALE_PATH = "Entity/Tank/Impale";
+	public static final String TANK_FORTRESS_PATH = "Entity/Tank/Fortress";
+	public static final String TANK_FORTRESS_STANDING_PATH = "Entity/Tank/Fortress Standing";
+	public static final String TANK_FORTRESS_WALKING_PATH = "Entity/Tank/Fortress Walking";
+	public static final String TANK_FORTRESS_BLOCK_PATH = "Entity/Tank/Fortress Block";
+	public static final String TANK_FORTRESS_IMAPLE_PATH = "Entity/Tank/Fortress Impale";
 
 	public static final HashMap<String, AssassinParts> ASSASSIN_PARTS;
 	public static final String ASSASSIN_STANDING_PATH = "Entity/Assassin/Standing";
@@ -93,7 +98,8 @@ public class Assets {
 	}
 
 	public enum TankAnimationName {
-		STANDING, WALKING, BLOCK, IMPALE, FORTRESS
+		STANDING, WALKING, BLOCK, IMPALE,
+		FORTRESS, FORTRESS_STANDING, FORTRESS_WALKING, FORTRESS_BLOCK, FORTRESS_IMPALE
 	}
 
 	public enum AssassinAnimationName {
@@ -137,6 +143,11 @@ public class Assets {
 		defineTankAnimation(TankAnimationName.WALKING, TANK_WALKING_PATH);
 		defineTankAnimation(TankAnimationName.BLOCK, TANK_BLOCK_PATH);
 		defineTankAnimation(TankAnimationName.IMPALE, TANK_IMPALE_PATH);
+		defineTankAnimation(TankAnimationName.FORTRESS, TANK_FORTRESS_PATH);
+		defineTankAnimation(TankAnimationName.FORTRESS_STANDING, TANK_FORTRESS_STANDING_PATH);
+		defineTankAnimation(TankAnimationName.FORTRESS_WALKING, TANK_FORTRESS_WALKING_PATH);
+		defineTankAnimation(TankAnimationName.FORTRESS_BLOCK, TANK_FORTRESS_BLOCK_PATH);
+		defineTankAnimation(TankAnimationName.FORTRESS_IMPALE, TANK_FORTRESS_IMAPLE_PATH);
 
 		defineAssassinAnimation(AssassinAnimationName.STANDING, ASSASSIN_STANDING_PATH);
 		defineAssassinAnimation(AssassinAnimationName.WALKING, ASSASSIN_WALKING_PATH);

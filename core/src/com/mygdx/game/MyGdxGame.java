@@ -27,7 +27,7 @@ public class MyGdxGame extends Game {
 	public static final int GAME_HEIGHT = 380;
 	public static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
 
-	public static final boolean DEBUG = true; // flag to view hitboxes
+	public static final boolean DEBUG = false; // flag to view hitboxes
 	public static final boolean BOSS1_AI = true; // flag to activate Boss1 AI.
 
 	private ColorTextures colorTextures;
@@ -62,6 +62,11 @@ public class MyGdxGame extends Game {
 		assets.loadTankAnimation(Assets.TankAnimationName.WALKING);
 		assets.loadTankAnimation(Assets.TankAnimationName.BLOCK);
 		assets.loadTankAnimation(Assets.TankAnimationName.IMPALE);
+		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS);
+		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS_STANDING);
+		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS_WALKING);
+		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS_BLOCK);
+		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS_IMPALE);
 
 		assets.loadAssassinAnimation(Assets.AssassinAnimationName.STANDING);
 		assets.loadAssassinAnimation(Assets.AssassinAnimationName.WALKING);

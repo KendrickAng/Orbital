@@ -14,29 +14,46 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
+import java.util.Collection;
+
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.PRIMARY_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.PRIMARY_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.SECONDARY_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.SECONDARY_KEYUP;
-import static com.mygdx.game.entity.character.CharacterInput.SWITCH_CHARACTER;
-import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.TERTIARY_KEYUP;
-import static com.mygdx.game.entity.character.TankStates.PRIMARY;
-import static com.mygdx.game.entity.character.TankStates.PRIMARY_LEFT;
-import static com.mygdx.game.entity.character.TankStates.PRIMARY_LEFT_RIGHT;
-import static com.mygdx.game.entity.character.TankStates.PRIMARY_RIGHT;
-import static com.mygdx.game.entity.character.TankStates.SECONDARY;
-import static com.mygdx.game.entity.character.TankStates.SECONDARY_LEFT;
-import static com.mygdx.game.entity.character.TankStates.SECONDARY_LEFT_RIGHT;
-import static com.mygdx.game.entity.character.TankStates.SECONDARY_RIGHT;
+import static com.mygdx.game.entity.character.TankInput.BLOCK_KEYDOWN;
+import static com.mygdx.game.entity.character.TankInput.BLOCK_KEYUP;
+import static com.mygdx.game.entity.character.TankInput.FORTRESS_KEYDOWN;
+import static com.mygdx.game.entity.character.TankInput.FORTRESS_KEYUP;
+import static com.mygdx.game.entity.character.TankInput.IMPALE_KEYDOWN;
+import static com.mygdx.game.entity.character.TankInput.IMPALE_KEYUP;
+import static com.mygdx.game.entity.character.TankInput.LEFT_KEYDOWN;
+import static com.mygdx.game.entity.character.TankInput.LEFT_KEYUP;
+import static com.mygdx.game.entity.character.TankInput.RIGHT_KEYDOWN;
+import static com.mygdx.game.entity.character.TankInput.RIGHT_KEYUP;
+import static com.mygdx.game.entity.character.TankInput.SWITCH_CHARACTER;
+import static com.mygdx.game.entity.character.TankStates.BLOCK;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_LEFT;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_BLOCK;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_BLOCK_LEFT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_BLOCK_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_BLOCK_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_IMPALE;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_IMPALE_LEFT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_IMPALE_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_IMPALE_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_LEFT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_STANDING;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_STANDING_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_WALKING_LEFT;
+import static com.mygdx.game.entity.character.TankStates.FORTRESS_WALKING_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.IMPALE;
+import static com.mygdx.game.entity.character.TankStates.IMPALE_LEFT;
+import static com.mygdx.game.entity.character.TankStates.IMPALE_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.IMPALE_RIGHT;
 import static com.mygdx.game.entity.character.TankStates.STANDING;
 import static com.mygdx.game.entity.character.TankStates.STANDING_LEFT_RIGHT;
-import static com.mygdx.game.entity.character.TankStates.TERTIARY;
 import static com.mygdx.game.entity.character.TankStates.WALKING_LEFT;
 import static com.mygdx.game.entity.character.TankStates.WALKING_RIGHT;
 import static com.mygdx.game.entity.part.TankParts.BODY;
@@ -49,37 +66,37 @@ import static com.mygdx.game.entity.part.TankParts.WEAPON;
 /**
  * Represents the Tank playable character.
  */
-public class Tank extends Character<TankStates, TankParts> {
+public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float MOVESPEED = 2f;
-
 	private static final float HEALTH = 100;
 
-	private static final float SECONDARY_DAMAGE = 10;
-
-	// Skill debuff duration in seconds.
-	private static final float TERTIARY_DEBUFF_DURATION = 5f;
-
 	// Skill debuff modifiers from 0f - 1f (0% - 100%)
-	private static final float PRIMARY_SLOW_MODIFIER = 0.5f;
-	private static final float TERTIARY_SLOW_MODIFIER = 0.5f;
+	private static final float BLOCK_SLOW_MODIFIER = 0.5f;
+	private static final float FORTRESS_SLOW_MODIFIER = 0.5f;
 
 	// Skill cooldown in seconds.
-	private static final float PRIMARY_COOLDOWN = 0f;
-	private static final float SECONDARY_COOLDOWN = 1f;
-	private static final float TERTIARY_COOLDOWN = TERTIARY_DEBUFF_DURATION + 2f;
+	private static final float BLOCK_COOLDOWN = 0f;
+	private static final float IMPALE_COOLDOWN = 1f;
+	private static final float FORTRESS_DURATION = 10f;
+	private static final float FORTRESS_COOLDOWN = FORTRESS_DURATION + 2f;
 
 	// Skill animation duration in seconds.
 	private static final float STANDING_ANIMATION_DURATION = 1f;
 	private static final float WALKING_ANIMATION_DURATION = 1f;
-	private static final float PRIMARY_ANIMATION_DURATION = 0.5f;
-	private static final float SECONDARY_ANIMATION_DURATION = 0.5f;
-	private static final float TERTIARY_ANIMATION_DURATION = 0.5f;
+	private static final float BLOCK_ANIMATION_DURATION = 0.5f;
+	private static final float IMPALE_ANIMATION_DURATION = 0.5f;
 
-	private final Debuff primaryArmorDebuff;
+	private static final float FORTRESS_ANIMATION_DURATION = 1f;
+	private static final float FORTRESS_STANDING_ANIMATION_DURATION = 2f;
+	private static final float FORTRESS_WALKING_ANIMATION_DURATION = 2f;
+
+	private static final float IMPALE_DAMAGE = 10;
+
+	private final Debuff blockArmorDebuff;
 
 	public Tank(GameScreen game) {
 		super(game);
-		primaryArmorDebuff = new Debuff(DebuffType.DAMAGE_REDUCTION, 1f, 0);
+		blockArmorDebuff = new Debuff(DebuffType.DAMAGE_REDUCTION, 1f, 0);
 	}
 
 	@Override
@@ -89,99 +106,196 @@ public class Tank extends Character<TankStates, TankParts> {
 
 	/* Animations */
 	@Override
-	protected void defineStates(States<CharacterInput, TankStates> states) {
-		states.add(new State<CharacterInput, TankStates>(STANDING)
+	protected void defineStates(States<TankInput, TankStates> states) {
+		states.add(new State<TankInput, TankStates>(STANDING)
 				.addEdge(LEFT_KEYDOWN, WALKING_LEFT)
 				.addEdge(RIGHT_KEYDOWN, WALKING_RIGHT)
-				.addEdge(PRIMARY_KEYDOWN, PRIMARY)
-				.addEdge(SECONDARY_KEYDOWN, SECONDARY)
-				.addEdge(TERTIARY_KEYDOWN, TERTIARY)
+				.addEdge(BLOCK_KEYDOWN, BLOCK)
+				.addEdge(IMPALE_KEYDOWN, IMPALE)
+				.addEdge(FORTRESS_KEYDOWN, FORTRESS)
 				.addEdge(SWITCH_CHARACTER, STANDING))
 
-				.add(new State<CharacterInput, TankStates>(STANDING_LEFT_RIGHT)
+				.add(new State<TankInput, TankStates>(STANDING_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, WALKING_RIGHT)
 						.addEdge(RIGHT_KEYUP, WALKING_LEFT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_LEFT_RIGHT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, BLOCK_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYDOWN, IMPALE_LEFT_RIGHT)
+						.addEdge(FORTRESS_KEYDOWN, FORTRESS_LEFT_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
-				.add(new State<CharacterInput, TankStates>(WALKING_LEFT)
+				.add(new State<TankInput, TankStates>(WALKING_LEFT)
 						.defineBegin(() -> getFlipX().set(true))
-						.defineUpdate(() -> {
-							getPosition().x -= MOVESPEED * (1 - getSlow());
-							checkWithinMap();
-						})
+						.defineUpdate(this::walkLeft)
 						.addEdge(LEFT_KEYUP, STANDING)
 						.addEdge(RIGHT_KEYDOWN, STANDING_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_LEFT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_LEFT)
+						.addEdge(BLOCK_KEYDOWN, BLOCK_LEFT)
+						.addEdge(IMPALE_KEYDOWN, IMPALE_LEFT)
+						.addEdge(FORTRESS_KEYDOWN, FORTRESS_LEFT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
-				.add(new State<CharacterInput, TankStates>(WALKING_RIGHT)
+				.add(new State<TankInput, TankStates>(WALKING_RIGHT)
 						.defineBegin(() -> getFlipX().set(false))
-						.defineUpdate(() -> {
-							getPosition().x += MOVESPEED * (1 - getSlow());
-							checkWithinMap();
-						})
+						.defineUpdate(this::walkRight)
 						.addEdge(RIGHT_KEYUP, STANDING)
 						.addEdge(LEFT_KEYDOWN, STANDING_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYDOWN, PRIMARY_RIGHT)
-						.addEdge(SECONDARY_KEYDOWN, SECONDARY_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, BLOCK_RIGHT)
+						.addEdge(IMPALE_KEYDOWN, IMPALE_RIGHT)
+						.addEdge(FORTRESS_KEYDOWN, FORTRESS_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
 
 				/* Block */
-				.add(new State<CharacterInput, TankStates>(PRIMARY)
-						.addEdge(LEFT_KEYDOWN, PRIMARY_LEFT)
-						.addEdge(RIGHT_KEYDOWN, PRIMARY_RIGHT)
-						.addEdge(PRIMARY_KEYUP, STANDING))
+				.add(new State<TankInput, TankStates>(BLOCK)
+						.addEdge(LEFT_KEYDOWN, BLOCK_LEFT)
+						.addEdge(RIGHT_KEYDOWN, BLOCK_RIGHT)
+						.addEdge(BLOCK_KEYUP, STANDING))
 
-				.add(new State<CharacterInput, TankStates>(PRIMARY_LEFT)
-						.defineUpdate(() -> {
-							getPosition().x -= MOVESPEED * (1 - getSlow());
-							checkWithinMap();
-						})
-						.addEdge(LEFT_KEYUP, PRIMARY)
-						.addEdge(RIGHT_KEYDOWN, PRIMARY_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYUP, WALKING_LEFT))
+				.add(new State<TankInput, TankStates>(BLOCK_LEFT)
+						.defineUpdate(this::walkLeft)
+						.addEdge(LEFT_KEYUP, BLOCK)
+						.addEdge(RIGHT_KEYDOWN, BLOCK_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYUP, WALKING_LEFT))
 
-				.add(new State<CharacterInput, TankStates>(PRIMARY_RIGHT)
-						.defineUpdate(() -> {
-							getPosition().x += MOVESPEED * (1 - getSlow());
-							checkWithinMap();
-						})
-						.addEdge(RIGHT_KEYUP, PRIMARY)
-						.addEdge(LEFT_KEYDOWN, PRIMARY_LEFT_RIGHT)
-						.addEdge(PRIMARY_KEYUP, WALKING_RIGHT))
+				.add(new State<TankInput, TankStates>(BLOCK_RIGHT)
+						.defineUpdate(this::walkRight)
+						.addEdge(RIGHT_KEYUP, BLOCK)
+						.addEdge(LEFT_KEYDOWN, BLOCK_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYUP, WALKING_RIGHT))
 
-				.add(new State<CharacterInput, TankStates>(PRIMARY_LEFT_RIGHT)
-						.addEdge(LEFT_KEYUP, PRIMARY_RIGHT)
-						.addEdge(RIGHT_KEYUP, PRIMARY_LEFT)
-						.addEdge(PRIMARY_KEYUP, STANDING_LEFT_RIGHT))
+				.add(new State<TankInput, TankStates>(BLOCK_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, BLOCK_RIGHT)
+						.addEdge(RIGHT_KEYUP, BLOCK_LEFT)
+						.addEdge(BLOCK_KEYUP, STANDING_LEFT_RIGHT))
 
 				/* Slash */
-				.add(new State<CharacterInput, TankStates>(SECONDARY)
-						.addEdge(LEFT_KEYDOWN, SECONDARY_LEFT)
-						.addEdge(RIGHT_KEYDOWN, SECONDARY_RIGHT)
-						.addEdge(SECONDARY_KEYUP, STANDING))
+				.add(new State<TankInput, TankStates>(IMPALE)
+						.addEdge(LEFT_KEYDOWN, IMPALE_LEFT)
+						.addEdge(RIGHT_KEYDOWN, IMPALE_RIGHT)
+						.addEdge(IMPALE_KEYUP, STANDING))
 
-				.add(new State<CharacterInput, TankStates>(SECONDARY_LEFT)
-						.addEdge(LEFT_KEYUP, SECONDARY)
-						.addEdge(RIGHT_KEYDOWN, SECONDARY_LEFT_RIGHT)
-						.addEdge(SECONDARY_KEYUP, WALKING_LEFT))
+				.add(new State<TankInput, TankStates>(IMPALE_LEFT)
+						.addEdge(LEFT_KEYUP, IMPALE)
+						.addEdge(RIGHT_KEYDOWN, IMPALE_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYUP, WALKING_LEFT))
 
-				.add(new State<CharacterInput, TankStates>(SECONDARY_RIGHT)
-						.addEdge(RIGHT_KEYUP, SECONDARY)
-						.addEdge(LEFT_KEYDOWN, SECONDARY_LEFT_RIGHT)
-						.addEdge(SECONDARY_KEYUP, WALKING_RIGHT))
+				.add(new State<TankInput, TankStates>(IMPALE_RIGHT)
+						.addEdge(RIGHT_KEYUP, IMPALE)
+						.addEdge(LEFT_KEYDOWN, IMPALE_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYUP, WALKING_RIGHT))
 
-				.add(new State<CharacterInput, TankStates>(SECONDARY_LEFT_RIGHT)
-						.addEdge(LEFT_KEYUP, SECONDARY_RIGHT)
-						.addEdge(RIGHT_KEYUP, SECONDARY_LEFT)
-						.addEdge(SECONDARY_KEYUP, STANDING_LEFT_RIGHT))
+				.add(new State<TankInput, TankStates>(IMPALE_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, IMPALE_RIGHT)
+						.addEdge(RIGHT_KEYUP, IMPALE_LEFT)
+						.addEdge(IMPALE_KEYUP, STANDING_LEFT_RIGHT))
+
+				/* Fortress Animation */
+				.add(new State<TankInput, TankStates>(FORTRESS)
+						.addEdge(FORTRESS_KEYUP, FORTRESS_STANDING)
+						.addEdge(LEFT_KEYDOWN, FORTRESS_LEFT)
+						.addEdge(RIGHT_KEYDOWN, FORTRESS_RIGHT))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_LEFT_RIGHT)
+						.addEdge(FORTRESS_KEYUP, FORTRESS_STANDING_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, FORTRESS_RIGHT)
+						.addEdge(RIGHT_KEYUP, FORTRESS_LEFT))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_LEFT)
+						.addEdge(FORTRESS_KEYUP, FORTRESS_WALKING_LEFT)
+						.addEdge(LEFT_KEYUP, FORTRESS)
+						.addEdge(RIGHT_KEYDOWN, FORTRESS_LEFT_RIGHT))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_RIGHT)
+						.addEdge(FORTRESS_KEYUP, FORTRESS_WALKING_RIGHT)
+						.addEdge(RIGHT_KEYUP, FORTRESS)
+						.addEdge(LEFT_KEYDOWN, FORTRESS_LEFT_RIGHT))
 
 				/* Fortress */
-				.add(new State<CharacterInput, TankStates>(TERTIARY)
-						.addEdge(TERTIARY_KEYUP, STANDING));
+				.add(new State<TankInput, TankStates>(FORTRESS_STANDING)
+						.addEdge(LEFT_KEYDOWN, FORTRESS_WALKING_LEFT)
+						.addEdge(RIGHT_KEYDOWN, FORTRESS_WALKING_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK)
+						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE)
+						.addEdge(FORTRESS_KEYUP, STANDING)
+						.addEdge(SWITCH_CHARACTER, STANDING))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_WALKING_LEFT)
+						.defineBegin(() -> getFlipX().set(true))
+						.defineUpdate(this::walkLeft)
+						.addEdge(LEFT_KEYUP, FORTRESS_STANDING)
+						.addEdge(RIGHT_KEYDOWN, FORTRESS_STANDING_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_LEFT)
+						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_LEFT)
+						.addEdge(FORTRESS_KEYUP, WALKING_LEFT)
+						.addEdge(SWITCH_CHARACTER, STANDING))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_WALKING_RIGHT)
+						.defineBegin(() -> getFlipX().set(false))
+						.defineUpdate(this::walkRight)
+						.addEdge(RIGHT_KEYUP, FORTRESS_STANDING)
+						.addEdge(LEFT_KEYDOWN, FORTRESS_STANDING_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_RIGHT)
+						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_RIGHT)
+						.addEdge(FORTRESS_KEYUP, WALKING_RIGHT)
+						.addEdge(SWITCH_CHARACTER, STANDING))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_STANDING_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, FORTRESS_WALKING_RIGHT)
+						.addEdge(RIGHT_KEYUP, FORTRESS_WALKING_LEFT)
+						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_LEFT_RIGHT)
+						.addEdge(FORTRESS_KEYUP, STANDING_LEFT_RIGHT)
+						.addEdge(SWITCH_CHARACTER, STANDING))
+
+				/* Fortress Block */
+				.add(new State<TankInput, TankStates>(FORTRESS_BLOCK)
+						.addEdge(LEFT_KEYDOWN, FORTRESS_BLOCK_LEFT)
+						.addEdge(RIGHT_KEYDOWN, FORTRESS_BLOCK_RIGHT)
+						.addEdge(BLOCK_KEYUP, FORTRESS_STANDING)
+						.addEdge(FORTRESS_KEYUP, BLOCK))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_BLOCK_LEFT)
+						.defineUpdate(this::walkLeft)
+						.addEdge(LEFT_KEYUP, FORTRESS_BLOCK)
+						.addEdge(RIGHT_KEYDOWN, FORTRESS_BLOCK_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYUP, FORTRESS_WALKING_LEFT)
+						.addEdge(FORTRESS_KEYUP, BLOCK_LEFT))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_BLOCK_RIGHT)
+						.defineUpdate(this::walkRight)
+						.addEdge(RIGHT_KEYUP, FORTRESS_BLOCK)
+						.addEdge(LEFT_KEYDOWN, FORTRESS_BLOCK_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYUP, FORTRESS_WALKING_RIGHT)
+						.addEdge(FORTRESS_KEYUP, BLOCK_RIGHT))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_BLOCK_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, FORTRESS_BLOCK_RIGHT)
+						.addEdge(RIGHT_KEYUP, FORTRESS_BLOCK_LEFT)
+						.addEdge(BLOCK_KEYUP, FORTRESS_STANDING_LEFT_RIGHT)
+						.addEdge(FORTRESS_KEYUP, BLOCK_LEFT_RIGHT))
+
+				/* Fortress Impale */
+				.add(new State<TankInput, TankStates>(FORTRESS_IMPALE)
+						.addEdge(LEFT_KEYDOWN, FORTRESS_IMPALE_LEFT)
+						.addEdge(RIGHT_KEYDOWN, FORTRESS_IMPALE_RIGHT)
+						.addEdge(IMPALE_KEYUP, FORTRESS_STANDING)
+						.addEdge(FORTRESS_KEYUP, IMPALE))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_IMPALE_LEFT)
+						.addEdge(LEFT_KEYUP, FORTRESS_IMPALE)
+						.addEdge(RIGHT_KEYDOWN, FORTRESS_IMPALE_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYUP, FORTRESS_WALKING_LEFT)
+						.addEdge(FORTRESS_KEYUP, IMPALE_LEFT))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_IMPALE_RIGHT)
+						.addEdge(RIGHT_KEYUP, FORTRESS_IMPALE)
+						.addEdge(LEFT_KEYDOWN, FORTRESS_IMPALE_LEFT_RIGHT)
+						.addEdge(IMPALE_KEYUP, FORTRESS_WALKING_RIGHT)
+						.addEdge(FORTRESS_KEYUP, IMPALE_RIGHT))
+
+				.add(new State<TankInput, TankStates>(FORTRESS_IMPALE_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, FORTRESS_IMPALE_RIGHT)
+						.addEdge(RIGHT_KEYUP, FORTRESS_IMPALE_LEFT)
+						.addEdge(IMPALE_KEYUP, FORTRESS_STANDING_LEFT_RIGHT)
+						.addEdge(FORTRESS_KEYUP, IMPALE_LEFT_RIGHT));
 	}
 
 	@Override
@@ -194,76 +308,147 @@ public class Tank extends Character<TankStates, TankParts> {
 				.setDuration(WALKING_ANIMATION_DURATION)
 				.setLoop();
 
-		Animation<TankParts> primary = assets.getTankAnimation(Assets.TankAnimationName.BLOCK)
-				.setDuration(PRIMARY_ANIMATION_DURATION)
-				.defineFrameTask(0, () -> inflictDebuff(primaryArmorDebuff));
+		Animation<TankParts> block = assets.getTankAnimation(Assets.TankAnimationName.BLOCK)
+				.setDuration(BLOCK_ANIMATION_DURATION)
+				.defineFrameTask(0, () -> inflictDebuff(blockArmorDebuff));
 
-		Animation<TankParts> secondary = assets.getTankAnimation(Assets.TankAnimationName.IMPALE)
-				.setDuration(SECONDARY_ANIMATION_DURATION)
+		Animation<TankParts> impale = assets.getTankAnimation(Assets.TankAnimationName.IMPALE)
+				.setDuration(IMPALE_ANIMATION_DURATION)
 				.defineFrameTask(0, () -> getGame().getBoss1()
-						.damageTest(getHitbox(WEAPON), SECONDARY_DAMAGE))
-				.defineEnd(() -> input(SECONDARY_KEYUP));
+						.damageTest(getHitbox(WEAPON), IMPALE_DAMAGE))
+				.defineEnd(() -> input(IMPALE_KEYUP));
+
+		Animation<TankParts> fortress = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS)
+				.setDuration(FORTRESS_ANIMATION_DURATION)
+				.defineEnd(() -> input(FORTRESS_KEYUP));
+
+		Animation<TankParts> fortressStanding = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_STANDING)
+				.setDuration(FORTRESS_STANDING_ANIMATION_DURATION)
+				.setLoop();
+
+		Animation<TankParts> fortressWalking = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_WALKING)
+				.setDuration(FORTRESS_WALKING_ANIMATION_DURATION)
+				.setLoop();
+
+		Animation<TankParts> fortressBlock = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_BLOCK)
+				.setDuration(BLOCK_ANIMATION_DURATION)
+				.defineFrameTask(0, () -> inflictDebuff(blockArmorDebuff));
+
+		Animation<TankParts> fortressImpale = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_IMPALE)
+				.setDuration(IMPALE_ANIMATION_DURATION)
+				.defineFrameTask(0, () -> getGame().getBoss1()
+						.damageTest(getHitbox(WEAPON), IMPALE_DAMAGE))
+				.defineEnd(() -> input(IMPALE_KEYUP));
 
 		animations.map(STANDING, standing)
 				.map(STANDING_LEFT_RIGHT, standing)
 				.map(WALKING_LEFT, walking)
 				.map(WALKING_RIGHT, walking)
 
-				.map(PRIMARY, primary)
-				.map(PRIMARY_LEFT_RIGHT, primary)
-				.map(PRIMARY_LEFT, primary)
-				.map(PRIMARY_RIGHT, primary)
+				.map(BLOCK, block)
+				.map(BLOCK_LEFT_RIGHT, block)
+				.map(BLOCK_LEFT, block)
+				.map(BLOCK_RIGHT, block)
 
-				.map(SECONDARY, secondary)
-				.map(SECONDARY_LEFT, secondary)
-				.map(SECONDARY_RIGHT, secondary)
-				.map(SECONDARY_LEFT_RIGHT, secondary);
+				.map(IMPALE, impale)
+				.map(IMPALE_LEFT, impale)
+				.map(IMPALE_RIGHT, impale)
+				.map(IMPALE_LEFT_RIGHT, impale)
+
+				.map(FORTRESS, fortress)
+				.map(FORTRESS_LEFT, fortress)
+				.map(FORTRESS_RIGHT, fortress)
+				.map(FORTRESS_LEFT_RIGHT, fortress)
+
+				.map(FORTRESS_STANDING, fortressStanding)
+				.map(FORTRESS_STANDING_LEFT_RIGHT, fortressStanding)
+				.map(FORTRESS_WALKING_LEFT, fortressWalking)
+				.map(FORTRESS_WALKING_RIGHT, fortressWalking)
+
+				.map(FORTRESS_BLOCK, fortressBlock)
+				.map(FORTRESS_BLOCK_LEFT_RIGHT, fortressBlock)
+				.map(FORTRESS_BLOCK_LEFT, fortressBlock)
+				.map(FORTRESS_BLOCK_RIGHT, fortressBlock)
+
+				.map(FORTRESS_IMPALE, fortressImpale)
+				.map(FORTRESS_IMPALE_LEFT_RIGHT, fortressImpale)
+				.map(FORTRESS_IMPALE_LEFT, fortressImpale)
+				.map(FORTRESS_IMPALE_RIGHT, fortressImpale);
 	}
 
 	@Override
 	protected void defineAbilities(Abilities<TankStates> abilities) {
-		Debuff primarySlowDebuff = new Debuff(DebuffType.SLOW, PRIMARY_SLOW_MODIFIER, 0);
-		Debuff tertiaryDebuff = new Debuff(DebuffType.SLOW, TERTIARY_SLOW_MODIFIER, TERTIARY_DEBUFF_DURATION);
+		Debuff blockSlowDebuff = new Debuff(DebuffType.SLOW, BLOCK_SLOW_MODIFIER, 0);
+		Debuff fortressDebuff = new Debuff(DebuffType.SLOW, FORTRESS_SLOW_MODIFIER, FORTRESS_DURATION)
+				.defineDebuffEnd(() -> input(FORTRESS_KEYUP));
 
-		/* Block */
-		Ability<TankStates> primary = new Ability<>(PRIMARY_COOLDOWN);
-		primary.defineBegin((state) -> inflictDebuff(primarySlowDebuff))
+		Ability<TankStates> block = new Ability<>(BLOCK_COOLDOWN);
+		block.defineBegin((state) -> inflictDebuff(blockSlowDebuff))
 				.defineEnd(() -> {
-					cancelDebuff(primarySlowDebuff);
-					cancelDebuff(primaryArmorDebuff);
-					primary.reset();
+					cancelDebuff(blockSlowDebuff);
+					cancelDebuff(blockArmorDebuff);
+					block.reset();
 				});
 
-		/* Slash */
-		Ability<TankStates> secondary = new Ability<>(SECONDARY_COOLDOWN);
+		Ability<TankStates> impale = new Ability<>(IMPALE_COOLDOWN);
 
-		/* Fortress */
-		Ability<TankStates> tertiary = new Ability<TankStates>(TERTIARY_COOLDOWN)
-				.defineBegin((state) -> {
-					Gdx.app.log("Tank.java", "Tertiary");
-					inflictDebuff(tertiaryDebuff);
-				});
+		Ability<TankStates> fortress = new Ability<TankStates>(FORTRESS_COOLDOWN)
+				.defineBegin((state) -> inflictDebuff(fortressDebuff));
 
-		abilities.addBegin(PRIMARY, primary)
-				.addBegin(PRIMARY_LEFT, primary)
-				.addBegin(PRIMARY_RIGHT, primary)
-				.addBegin(PRIMARY_LEFT_RIGHT, primary)
-				.addEnd(STANDING, primary)
-				.addEnd(WALKING_LEFT, primary)
-				.addEnd(WALKING_RIGHT, primary)
-				.addEnd(STANDING_LEFT_RIGHT, primary)
+		abilities.addBegin(BLOCK, block)
+				.addBegin(BLOCK_LEFT, block)
+				.addBegin(BLOCK_RIGHT, block)
+				.addBegin(BLOCK_LEFT_RIGHT, block)
+				.addEnd(STANDING, block)
+				.addEnd(WALKING_LEFT, block)
+				.addEnd(WALKING_RIGHT, block)
+				.addEnd(STANDING_LEFT_RIGHT, block)
 
-				.addBegin(SECONDARY, secondary)
-				.addBegin(SECONDARY_LEFT, secondary)
-				.addBegin(SECONDARY_RIGHT, secondary)
-				.addBegin(SECONDARY_LEFT_RIGHT, secondary)
-				.addEnd(STANDING, secondary)
-				.addEnd(WALKING_LEFT, secondary)
-				.addEnd(WALKING_RIGHT, secondary)
-				.addEnd(STANDING_LEFT_RIGHT, secondary)
+				.addBegin(FORTRESS_BLOCK, block)
+				.addBegin(FORTRESS_BLOCK_LEFT, block)
+				.addBegin(FORTRESS_BLOCK_RIGHT, block)
+				.addBegin(FORTRESS_BLOCK_LEFT_RIGHT, block)
+				.addEnd(FORTRESS_STANDING, block)
+				.addEnd(FORTRESS_WALKING_LEFT, block)
+				.addEnd(FORTRESS_WALKING_RIGHT, block)
+				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, block)
 
-				.addBegin(TERTIARY, tertiary)
-				.addEnd(STANDING, tertiary);
+				.addBegin(IMPALE, impale)
+				.addBegin(IMPALE_LEFT, impale)
+				.addBegin(IMPALE_RIGHT, impale)
+				.addBegin(IMPALE_LEFT_RIGHT, impale)
+				.addEnd(STANDING, impale)
+				.addEnd(WALKING_LEFT, impale)
+				.addEnd(WALKING_RIGHT, impale)
+				.addEnd(STANDING_LEFT_RIGHT, impale)
+
+				.addBegin(FORTRESS_IMPALE, impale)
+				.addBegin(FORTRESS_IMPALE_LEFT, impale)
+				.addBegin(FORTRESS_IMPALE_RIGHT, impale)
+				.addBegin(FORTRESS_IMPALE_LEFT_RIGHT, impale)
+				.addEnd(FORTRESS_STANDING, impale)
+				.addEnd(FORTRESS_WALKING_LEFT, impale)
+				.addEnd(FORTRESS_WALKING_RIGHT, impale)
+				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, impale)
+
+				.addBegin(FORTRESS, fortress)
+				.addBegin(FORTRESS_LEFT, fortress)
+				.addBegin(FORTRESS_RIGHT, fortress)
+				.addBegin(FORTRESS_LEFT_RIGHT, fortress)
+				.addEnd(FORTRESS_STANDING, fortress)
+				.addEnd(FORTRESS_WALKING_LEFT, fortress)
+				.addEnd(FORTRESS_WALKING_RIGHT, fortress)
+				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, fortress);
+	}
+
+	private void walkLeft() {
+		getPosition().x -= MOVESPEED * (1 - getSlow());
+		checkWithinMap();
+	}
+
+	private void walkRight() {
+		getPosition().x += MOVESPEED * (1 - getSlow());
+		checkWithinMap();
 	}
 
 	private void checkWithinMap() {
@@ -315,30 +500,42 @@ public class Tank extends Character<TankStates, TankParts> {
 	@Override
 	protected void usePrimary(boolean keydown) {
 		if (keydown) {
-			input(PRIMARY_KEYDOWN);
+			input(BLOCK_KEYDOWN);
 		} else {
-			input(PRIMARY_KEYUP);
+			input(BLOCK_KEYUP);
 		}
 	}
 
 	@Override
 	protected void useSecondary(boolean keydown) {
 		if (keydown) {
-			input(SECONDARY_KEYDOWN);
+			input(IMPALE_KEYDOWN);
 		}
 	}
 
 	@Override
 	protected void useTertiary(boolean keydown) {
 		if (keydown) {
-			input(TERTIARY_KEYDOWN);
-		} else {
-			input(TERTIARY_KEYUP);
+			input(FORTRESS_KEYDOWN);
 		}
 	}
 
 	@Override
 	public boolean useSwitchCharacter() {
 		return input(SWITCH_CHARACTER);
+	}
+
+	@Override
+	public void setInput(Collection<CharacterControllerInput> inputs) {
+		for (CharacterControllerInput input : inputs) {
+			switch (input) {
+				case LEFT:
+					input(LEFT_KEYDOWN);
+					break;
+				case RIGHT:
+					input(RIGHT_KEYDOWN);
+					break;
+			}
+		}
 	}
 }

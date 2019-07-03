@@ -64,6 +64,8 @@ public class MainMenuScreen implements Screen {
 				.setPaddingX(PLAY_BUTTON_PADDING_X)
 				.setPaddingY(PLAY_BUTTON_PADDING_Y)
 				.setCallback(() -> {
+					game.getInputMultiplexer().removeProcessor(playButton);
+					game.getInputMultiplexer().removeProcessor(settingsButton);
 					game.setScreen(new GameScreen(game));
 					dispose();
 				});

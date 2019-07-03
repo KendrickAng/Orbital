@@ -4,16 +4,18 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.screens.GameScreen;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 
-import static com.mygdx.game.entity.character.CharacterInput.LEFT_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.RIGHT_KEYDOWN;
-import static com.mygdx.game.entity.character.CharacterInput.UP_KEYDOWN;
+import static com.mygdx.game.entity.character.CharacterControllerInput.LEFT;
+import static com.mygdx.game.entity.character.CharacterControllerInput.RIGHT;
+import static com.mygdx.game.entity.character.CharacterControllerInput.UP;
 
 public class CharacterController implements InputProcessor {
 	private GameScreen game;
 	private Character character;
-	private HashSet<CharacterInput> inputs;
+	private HashSet<CharacterControllerInput> inputs;
 
 	public CharacterController(GameScreen game) {
 		this.game = game;
@@ -30,15 +32,15 @@ public class CharacterController implements InputProcessor {
 		switch (keycode) {
 			case Input.Keys.LEFT:
 				character.useLeft(true);
-				inputs.add(LEFT_KEYDOWN);
+				inputs.add(LEFT);
 				break;
 			case Input.Keys.RIGHT:
 				character.useRight(true);
-				inputs.add(RIGHT_KEYDOWN);
+				inputs.add(RIGHT);
 				break;
 			case Input.Keys.UP:
 				character.useUp(true);
-				inputs.add(UP_KEYDOWN);
+				inputs.add(UP);
 				break;
 			case Input.Keys.Q:
 				character.usePrimary(true);
@@ -63,15 +65,15 @@ public class CharacterController implements InputProcessor {
 		switch (keycode) {
 			case Input.Keys.LEFT:
 				character.useLeft(false);
-				inputs.remove(LEFT_KEYDOWN);
+				inputs.remove(LEFT);
 				break;
 			case Input.Keys.RIGHT:
 				character.useRight(false);
-				inputs.remove(RIGHT_KEYDOWN);
+				inputs.remove(RIGHT);
 				break;
 			case Input.Keys.UP:
 				character.useUp(false);
-				inputs.remove(UP_KEYDOWN);
+				inputs.remove(UP);
 				break;
 			case Input.Keys.Q:
 				character.usePrimary(false);
@@ -118,7 +120,7 @@ public class CharacterController implements InputProcessor {
 		return true;
 	}
 
-	public HashSet<CharacterInput> getInputs() {
+	public Collection<CharacterControllerInput> getInputs() {
 		return inputs;
 	}
 }

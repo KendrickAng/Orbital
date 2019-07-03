@@ -18,7 +18,7 @@ import com.mygdx.game.entity.boss1.Boss1Controller;
 import com.mygdx.game.entity.character.Assassin;
 import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.character.CharacterController;
-import com.mygdx.game.entity.character.CharacterInput;
+import com.mygdx.game.entity.character.TankInput;
 import com.mygdx.game.entity.character.Tank;
 import com.mygdx.game.entity.healthbar.AssassinBar;
 import com.mygdx.game.entity.healthbar.BossBar;
@@ -158,7 +158,7 @@ public class GameScreen implements Screen {
 	}
 
 	public void switchCharacter() {
-		if (character != null && character.useSwitchCharacter()) {
+		if (character.useSwitchCharacter() || character.isDispose()) {
 			Character next;
 			if (character == tank && !assassin.isDispose()) {
 				next = assassin;
@@ -173,9 +173,7 @@ public class GameScreen implements Screen {
 			boolean flipX = character.getFlipX().get();
 
 			character = next;
-			for (CharacterInput input : playerController.getInputs()) {
-				character.input(input);
-			}
+			character.setInput(playerController.getInputs());
 			character.setVisible(true);
 			character.getPosition().x = x;
 			character.getPosition().y = MAP_HEIGHT;

@@ -17,7 +17,7 @@ import static com.mygdx.game.ui.ColorTextures.ColorEntry.DEEP_PURPLE_500;
 import static com.mygdx.game.ui.ContentAlignment.CENTER;
 
 public class SettingsScreen implements Screen {
-	private static final String PLACEHOLDER_TEXT = "Q - PRIMARY SKILL\nW - SECONDARY SKILL\nE - TERTIARY SKILL\nR - SWITCH CHARACTER (ASSASSIN/TANK)";
+	private static final String PLACEHOLDER_TEXT = "Q - BLOCK SKILL\nW - IMPALE SKILL\nE - FORTRESS SKILL\nR - SWITCH CHARACTER (ASSASSIN/TANK)";
 	private static final int PLACEHOLDER_FONTSIZE = 20;
 	private static final float TOP_PADDING = GAME_HEIGHT / 2f;
 
