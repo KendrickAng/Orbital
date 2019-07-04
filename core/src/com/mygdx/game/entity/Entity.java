@@ -27,7 +27,7 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	private boolean visible;
 	private boolean dispose;
 
-	public Entity(GameScreen game) {
+	public Entity(GameScreen game, int renderPriority) {
 		data = new EntityData();
 
 		this.game = game;
@@ -42,7 +42,7 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		defineAnimations(animations, game.getAssets());
 		defineStates(states);
 
-		game.getEntityManager().add(this);
+		game.getEntityManager().add(this, renderPriority);
 	}
 
 	protected abstract void defineStates(States<I, S> states);
@@ -67,8 +67,10 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		states.addListener(listener);
 	}
 
+	protected abstract boolean canInput();
+
 	public boolean input(I input) {
-		if (!isDispose()) {
+		if (!isDispose() && canInput()) {
 			return states.input(input);
 		}
 		return false;

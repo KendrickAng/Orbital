@@ -29,6 +29,8 @@ import static com.mygdx.game.assets.Assets.BOSS1_GROUND_SMASH_PATH;
 import static com.mygdx.game.assets.Assets.BOSS1_PARTS;
 import static com.mygdx.game.assets.Assets.BOSS1_ROLL_PATH;
 import static com.mygdx.game.assets.Assets.BOSS1_STANDING_PATH;
+import static com.mygdx.game.assets.Assets.ROCK_ERUPT_PATH;
+import static com.mygdx.game.assets.Assets.ROCK_PARTS;
 import static com.mygdx.game.assets.Assets.SHURIKEN_FLYING_PATH;
 import static com.mygdx.game.assets.Assets.SHURIKEN_PARTS;
 import static com.mygdx.game.assets.Assets.TANK_BLOCK_PATH;
@@ -66,6 +68,7 @@ public class AnimationsBuilder {
 		builder.buildDirectory(BOSS1_ROLL_PATH, BOSS1_PARTS.keySet());
 
 		builder.buildDirectory(SHURIKEN_FLYING_PATH, SHURIKEN_PARTS.keySet());
+		builder.buildDirectory(ROCK_ERUPT_PATH, ROCK_PARTS.keySet());
 	}
 
 	private void buildDirectory(String directory, Collection<String> parts) throws IOException {

@@ -5,22 +5,21 @@ import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.Entity;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
-import com.mygdx.game.entity.part.ShurikenParts;
 import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 
-import java.util.HashMap;
-
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.entity.part.ShurikenParts.BODY;
+import static com.mygdx.game.entity.EntityManager.SHURIKEN_RENDER_PRIORITY;
+import static com.mygdx.game.entity.shuriken.ShurikenParts.BODY;
 import static com.mygdx.game.entity.shuriken.ShurikenStates.FLYING;
 
 public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	private float damage;
+	private static final float FLYING_ANIMATION_DURATION = 0.05f;
 	private static final int FLYING_SPEED = 20;
 
 	public Shuriken(GameScreen game, float x, float y, boolean flipX, float damage) {
-		super(game);
+		super(game, SHURIKEN_RENDER_PRIORITY);
 		getPosition().x = x;
 		getPosition().y = y;
 		getFlipX().set(flipX);
@@ -43,7 +42,7 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 						dispose();
 					} else {
 						if (getGame().getBoss1()
-								.damageTest(getHitbox(BODY), damage)) {
+								.damageTest(null, getHitbox(BODY), damage)) {
 							dispose();
 						}
 					}
@@ -51,10 +50,14 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	}
 
 	@Override
-	protected void defineAnimations(Animations<ShurikenStates, ShurikenParts> animations, Assets assets) {
-		Animation<ShurikenParts> flying = assets.getShurikenAnimation(Assets.ShurikenAnimationName.FLYING)
-				.setLoop();
+	protected boolean canInput() {
+		return false;
+	}
 
-		animations.map(FLYING, flying);
+	@Override
+	protected void defineAnimations(Animations<ShurikenStates, ShurikenParts> animations, Assets assets) {
+		animations.map(FLYING, assets.getShurikenAnimation(Assets.ShurikenAnimationName.FLYING)
+				.setDuration(FLYING_ANIMATION_DURATION)
+				.setLoop());
 	}
 }

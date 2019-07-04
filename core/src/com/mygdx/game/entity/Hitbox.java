@@ -21,6 +21,16 @@ public class Hitbox {
 		this.textureHeight = textureHeight;
 	}
 
+	public Hitbox(Hitbox hitbox) {
+		this.entityData = hitbox.entityData;
+		this.width = hitbox.width;
+		this.height = hitbox.height;
+		this.offsetX = hitbox.offsetX;
+		this.offsetY = hitbox.offsetY;
+		this.textureWidth = hitbox.textureWidth;
+		this.textureHeight = hitbox.textureHeight;
+	}
+
 	public void setEntityData(EntityData entityData) {
 		this.entityData = entityData;
 	}
@@ -59,5 +69,13 @@ public class Hitbox {
 
 	public float getHeight() {
 		return height;
+	}
+
+	public int getTextureWidth() {
+		return textureWidth;
+	}
+
+	public int getTextureHeight() {
+		return textureHeight;
 	}
 }

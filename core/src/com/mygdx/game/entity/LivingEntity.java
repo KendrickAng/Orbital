@@ -1,14 +1,15 @@
 package com.mygdx.game.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffDefinition;
 import com.mygdx.game.entity.debuff.Debuffs;
+import com.mygdx.game.screens.GameScreen;
 
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
+import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REFLECT;
+import static com.mygdx.game.entity.debuff.DebuffType.STUN;
 
 /**
  * An Entity which has:
@@ -27,10 +28,12 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 
 	private Timer timer;
 	private float damageReduction;
+	private float damageReflect;
+	private boolean stunned;
 	private boolean damaged;
 
-	public LivingEntity(GameScreen game) {
-		super(game);
+	public LivingEntity(GameScreen game, int renderPriority) {
+		super(game, renderPriority);
 
 		this.health = health();
 		this.maxHealth = health();
@@ -45,11 +48,28 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		this.timer = new Timer();
 		debuffs.map(DAMAGE_REDUCTION, new DebuffDefinition()
 				.defineUpdate(modifier -> {
+					// Can't reduce damage more than 100%.
 					if (modifier > 1) {
 						modifier = 1;
 					}
 					this.damageReduction = modifier;
-				}));
+				}))
+
+				.map(DAMAGE_REFLECT, new DebuffDefinition()
+						.defineUpdate(modifier -> {
+							// Can't reflect more damage than recieved.
+							if (modifier > 1) {
+								modifier = 1;
+							}
+							this.damageReflect = modifier;
+						}))
+
+				.map(STUN, new DebuffDefinition()
+						.defineBegin(() -> {
+							inflictCrowdControl();
+							stunned = true;
+						})
+						.defineEnd(() -> stunned = false));
 	}
 
 	protected abstract float health();
@@ -60,6 +80,10 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	// called when an instance of LivingEntity is created.
 	protected abstract void defineDebuffs(Debuffs debuffs);
 
+	protected abstract void inflictCrowdControl();
+
+	protected abstract void damage();
+
 	public void inflictDebuff(Debuff debuff) {
 		debuffs.inflict(debuff);
 	}
@@ -68,13 +92,10 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		debuffs.cancel(debuff);
 	}
 
-	protected abstract void damage();
-
-	public void inflictDamage(float damage) {
+	public void inflictDamage(LivingEntity entity, float damage) {
 		if (!damaged) {
 			damaged = true;
 			damage();
-
 
 			if (damageReduction < 1) {
 				health -= damage * (1 - damageReduction);
@@ -92,6 +113,10 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 				}
 			}
 
+			if (entity != null && damageReflect > 0) {
+				entity.inflictTrueDamage(damage * damageReflect);
+			}
+
 			timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
@@ -101,6 +126,36 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		}
 	}
 
+	// Ignore damageReduction, damageReflect
+	public void inflictTrueDamage(float damage) {
+		health -= damage;
+		getColor().set(1, 0, 0, 1);
+		timer.scheduleTask(new Timer.Task() {
+			@Override
+			public void run() {
+				getColor().set(1, 1, 1, 1);
+			}
+		}, DAMAGE_BLINK_DURATION);
+
+		if (health <= 0) {
+			dispose();
+		}
+	}
+
+	public boolean isStunned() {
+		return stunned;
+	}
+
+	public boolean isCrowdControl() {
+		return stunned;
+	}
+
+	@Override
+	protected boolean canInput() {
+		return !stunned;
+	}
+
+	/* Getters */
 	public float getHealth() {
 		return health;
 	}

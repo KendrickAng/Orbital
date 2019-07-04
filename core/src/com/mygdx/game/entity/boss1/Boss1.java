@@ -1,7 +1,8 @@
 package com.mygdx.game.entity.boss1;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.assets.Assets;
-import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.ability.Abilities;
@@ -10,14 +11,15 @@ import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.debuff.Debuffs;
-import com.mygdx.game.entity.part.Boss1Parts;
+import com.mygdx.game.entity.rock.Rock;
 import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
-
-import java.util.HashMap;
+import com.mygdx.game.screens.GameScreen;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.entity.EntityManager.BOSS_RENDER_PRIORITY;
+import static com.mygdx.game.entity.boss1.Boss1Input.CROWD_CONTROL;
 import static com.mygdx.game.entity.boss1.Boss1Input.EARTHQUAKE_KEYDOWN;
 import static com.mygdx.game.entity.boss1.Boss1Input.EARTHQUAKE_KEYUP;
 import static com.mygdx.game.entity.boss1.Boss1Input.LEFT_KEYDOWN;
@@ -34,12 +36,12 @@ import static com.mygdx.game.entity.boss1.Boss1States.SLAM;
 import static com.mygdx.game.entity.boss1.Boss1States.STANDING;
 import static com.mygdx.game.entity.boss1.Boss1States.WALKING_LEFT;
 import static com.mygdx.game.entity.boss1.Boss1States.WALKING_RIGHT;
-import static com.mygdx.game.entity.part.Boss1Parts.BODY;
-import static com.mygdx.game.entity.part.Boss1Parts.LEFT_ARM;
-import static com.mygdx.game.entity.part.Boss1Parts.LEFT_LEG;
-import static com.mygdx.game.entity.part.Boss1Parts.RIGHT_ARM;
-import static com.mygdx.game.entity.part.Boss1Parts.RIGHT_LEG;
-import static com.mygdx.game.entity.part.Boss1Parts.SHOCKWAVE;
+import static com.mygdx.game.entity.boss1.Boss1Parts.BODY;
+import static com.mygdx.game.entity.boss1.Boss1Parts.LEFT_ARM;
+import static com.mygdx.game.entity.boss1.Boss1Parts.LEFT_LEG;
+import static com.mygdx.game.entity.boss1.Boss1Parts.RIGHT_ARM;
+import static com.mygdx.game.entity.boss1.Boss1Parts.RIGHT_LEG;
+import static com.mygdx.game.entity.boss1.Boss1Parts.SHOCKWAVE;
 
 /*
 Responsibilities: Defines abilities, maps Ability states to Ability instances, handles
@@ -48,27 +50,31 @@ sprite position, direction, motion.
 public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float HEALTH = 1000;
 	private static final float WALKING_SPEED = 1f;
-	private static final float ROLL_SPEED = 4f;
-	private static final float FRICTION = 0.6f;
 
-	private static final float SLAM_DAMAGE = 20;
-	private static final float EARTHQUAKE_DAMAGE = 20;
-	private static final float ROLL_DAMAGE = 10;
-
-	private static final float SLAM_COOLDOWN = 1f;
-	private static final float EARTHQUAKE_COOLDOWN = 1f;
-	private static final float ROLL_COOLDOWN = 1f;
-
+	// Ability animation duration
 	private static final float STANDING_ANIMATION_DURATION = 2f;
 	private static final float SLAM_ANIMATION_DURATION = 1f;
 	private static final float EARTHQUAKE_ANIMATION_DURATION = 1f;
 	private static final float ROLL_ANIMATION_DURATION = 1f;
 
+	// Ability cooldowns
+	private static final float SLAM_COOLDOWN = 1f;
+	private static final float EARTHQUAKE_COOLDOWN = 1f;
+	private static final float ROLL_COOLDOWN = 1f;
+
+	// Ability modifiers
+	private static final float SLAM_DAMAGE = 20;
+	private static final float EARTHQUAKE_DAMAGE = 20;
+	private static final int EARTHQUAKE_ROCK_COUNT = 4;
+	private static final float EARTHQUAKE_ROCK_DAMAGE = 20;
+	private static final float ROLL_SPEED = 4f;
+	private static final float ROLL_DAMAGE = 20;
+
 	private boolean rolling;
 
 	public Boss1(GameScreen game) {
-		super(game);
-		getPosition().x = GAME_WIDTH - 320;
+		super(game, BOSS_RENDER_PRIORITY);
+		getPosition().x = GAME_WIDTH - getHitbox(BODY).getTextureWidth();
 		getPosition().y = MAP_HEIGHT;
 	}
 
@@ -92,7 +98,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 							getPosition().x -= WALKING_SPEED;
 							checkWithinMap();
 						})
-						.addEdge(LEFT_KEYUP, STANDING))
+						.addEdge(LEFT_KEYUP, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<Boss1Input, Boss1States>(WALKING_RIGHT)
 						.defineBegin(() -> getFlipX().set(true))
@@ -100,13 +107,16 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 							getPosition().x += WALKING_SPEED;
 							checkWithinMap();
 						})
-						.addEdge(RIGHT_KEYUP, STANDING))
+						.addEdge(RIGHT_KEYUP, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<Boss1Input, Boss1States>(SLAM)
-						.addEdge(SLAM_KEYUP, STANDING))
+						.addEdge(SLAM_KEYUP, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<Boss1Input, Boss1States>(EARTHQUAKE)
-						.addEdge(EARTHQUAKE_KEYUP, STANDING))
+						.addEdge(EARTHQUAKE_KEYUP, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<Boss1Input, Boss1States>(ROLL)
 						.defineUpdate(() -> {
@@ -119,16 +129,22 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 								checkWithinMap();
 
 								Character character = getGame().getCharacter();
-								character.damageTest(getHitbox(BODY), ROLL_DAMAGE);
+								character.damageTest(this, getHitbox(BODY), ROLL_DAMAGE);
 							}
 						})
-						.addEdge(ROLL_KEYUP, STANDING));
+						.addEdge(ROLL_KEYUP, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING));
 	}
 
 	@Override
 	protected void defineAbilities(Abilities<Boss1States> abilities) {
 		Ability<Boss1States> slam = new Ability<>(SLAM_COOLDOWN);
-		Ability<Boss1States> earthquake = new Ability<>(EARTHQUAKE_COOLDOWN);
+		Ability<Boss1States> earthquake = new Ability<Boss1States>(EARTHQUAKE_COOLDOWN)
+				.defineEnd(() -> {
+					for (int i = 0; i < EARTHQUAKE_ROCK_COUNT; i++) {
+						new Rock(getGame(), EARTHQUAKE_ROCK_DAMAGE);
+					}
+				});
 		Ability<Boss1States> roll = new Ability<Boss1States>(ROLL_COOLDOWN)
 				.defineEnd(() -> rolling = false);
 
@@ -148,6 +164,11 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	}
 
 	@Override
+	protected void inflictCrowdControl() {
+		input(CROWD_CONTROL);
+	}
+
+	@Override
 	protected void damage() {
 
 	}
@@ -163,8 +184,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				.setDuration(SLAM_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> {
 					Character character = getGame().getCharacter();
-					character.damageTest(getHitbox(RIGHT_ARM), SLAM_DAMAGE);
-					character.damageTest(getHitbox(LEFT_ARM), SLAM_DAMAGE);
+					character.damageTest(this, getHitbox(RIGHT_ARM), SLAM_DAMAGE);
+					character.damageTest(this, getHitbox(LEFT_ARM), SLAM_DAMAGE);
 				})
 				.defineEnd(() -> input(SLAM_KEYUP));
 
@@ -172,7 +193,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				.setDuration(EARTHQUAKE_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> {
 					Character character = getGame().getCharacter();
-					character.damageTest(getHitbox(SHOCKWAVE), EARTHQUAKE_DAMAGE);
+					character.damageTest(this, getHitbox(SHOCKWAVE), EARTHQUAKE_DAMAGE);
 				})
 				.defineEnd(() -> input(EARTHQUAKE_KEYUP));
 
@@ -201,14 +222,31 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 		}
 	}
 
-	public boolean damageTest(Hitbox hitbox, float damage) {
-		if (!isDispose() &&
+	private boolean hitTest(LivingEntity entity, Hitbox hitbox) {
+		// Not a living entity
+		return (entity == null ||
+				// Damager is not disposed or cc'ed
+				(!entity.isDispose() && !entity.isCrowdControl())) &&
+				// Self is not disposed
+				!isDispose() &&
 				(getHitbox(BODY).hitTest(hitbox) ||
 						getHitbox(LEFT_LEG).hitTest(hitbox) ||
 						getHitbox(RIGHT_LEG).hitTest(hitbox) ||
 						getHitbox(LEFT_ARM).hitTest(hitbox) ||
-						getHitbox(RIGHT_ARM).hitTest(hitbox))) {
-			inflictDamage(damage);
+						getHitbox(RIGHT_ARM).hitTest(hitbox));
+	}
+
+	public boolean damageTest(LivingEntity entity, Hitbox hitbox, float damage) {
+		if (hitTest(entity, hitbox)) {
+			inflictDamage(entity, damage);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean trueDamageTest(LivingEntity entity, Hitbox hitbox, float damage) {
+		if (hitTest(entity, hitbox)) {
+			inflictTrueDamage(damage);
 			return true;
 		}
 		return false;

@@ -10,6 +10,7 @@ import com.mygdx.game.entity.EntityData;
 import com.mygdx.game.entity.Hitbox;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class AnimationFrame<P> {
 	private EntityData entityData;
@@ -19,6 +20,15 @@ public class AnimationFrame<P> {
 	public AnimationFrame(FileHandle handle) {
 		this.sprite = new Sprite(new Texture(handle));
 		this.hitboxes = new HashMap<>();
+	}
+
+	public AnimationFrame(AnimationFrame<P> animationFrame) {
+		this.entityData = animationFrame.entityData;
+		this.sprite = new Sprite(animationFrame.sprite);
+		this.hitboxes = new HashMap<>();
+		for (Map.Entry<P, Hitbox> entry : animationFrame.hitboxes.entrySet()) {
+			this.hitboxes.put(entry.getKey(), new Hitbox(entry.getValue()));
+		}
 	}
 
 	public void addHitbox(P part, int minX, int maxX, int minY, int maxY, int width, int height) {

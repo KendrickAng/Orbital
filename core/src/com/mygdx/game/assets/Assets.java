@@ -5,10 +5,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.entity.animation.Animation;
-import com.mygdx.game.entity.part.AssassinParts;
-import com.mygdx.game.entity.part.Boss1Parts;
-import com.mygdx.game.entity.part.ShurikenParts;
-import com.mygdx.game.entity.part.TankParts;
+import com.mygdx.game.entity.character.AssassinParts;
+import com.mygdx.game.entity.boss1.Boss1Parts;
+import com.mygdx.game.entity.rock.RockParts;
+import com.mygdx.game.entity.shuriken.ShurikenParts;
+import com.mygdx.game.entity.character.TankParts;
 
 import java.util.HashMap;
 
@@ -27,6 +28,7 @@ public class Assets {
 	private HashMap<AssassinAnimationName, AnimationAsset<AssassinParts>> assassinAnimations;
 	private HashMap<Boss1AnimationName, AnimationAsset<Boss1Parts>> boss1Animations;
 	private HashMap<ShurikenAnimationName, AnimationAsset<ShurikenParts>> shurikenAnimations;
+	private HashMap<RockAnimationName, AnimationAsset<RockParts>> rockAnimations;
 
 	public static final HashMap<String, TankParts> TANK_PARTS;
 	public static final String TANK_STANDING_PATH = "Entity/Tank/Standing";
@@ -53,6 +55,9 @@ public class Assets {
 
 	public static final HashMap<String, ShurikenParts> SHURIKEN_PARTS;
 	public static final String SHURIKEN_FLYING_PATH = "Entity/Shuriken";
+
+	public static final HashMap<String, RockParts> ROCK_PARTS;
+	public static final String ROCK_ERUPT_PATH = "Entity/Rock";
 
 	static {
 		TANK_PARTS = new HashMap<>();
@@ -81,6 +86,9 @@ public class Assets {
 
 		SHURIKEN_PARTS = new HashMap<>();
 		SHURIKEN_PARTS.put("Body", ShurikenParts.BODY);
+
+		ROCK_PARTS = new HashMap<>();
+		ROCK_PARTS.put("Body", RockParts.BODY);
 	}
 
 	public enum TextureName {
@@ -114,6 +122,10 @@ public class Assets {
 		FLYING
 	}
 
+	public enum RockAnimationName {
+		ERUPT
+	}
+
 	private class AnimationAsset<P extends Enum> {
 		private String path;
 		private Animation<P> animation;
@@ -130,6 +142,7 @@ public class Assets {
 		assassinAnimations = new HashMap<>();
 		boss1Animations = new HashMap<>();
 		shurikenAnimations = new HashMap<>();
+		rockAnimations = new HashMap<>();
 
 		defineTexture(BACKGROUND, "Background.png");
 		defineTexture(FLOOR, "Floor.png");
@@ -160,6 +173,7 @@ public class Assets {
 		defineBoss1Animation(Boss1AnimationName.ROLL, BOSS1_ROLL_PATH);
 
 		defineShurikenAnimation(ShurikenAnimationName.FLYING, SHURIKEN_FLYING_PATH);
+		defineRockAnimation(RockAnimationName.ERUPT, ROCK_ERUPT_PATH);
 	}
 
 	private void defineTexture(TextureName name, String path) {
@@ -180,6 +194,10 @@ public class Assets {
 
 	private void defineShurikenAnimation(ShurikenAnimationName name, String path) {
 		shurikenAnimations.put(name, new AnimationAsset<>(path));
+	}
+
+	private void defineRockAnimation(RockAnimationName name, String path) {
+		rockAnimations.put(name, new AnimationAsset<>(path));
 	}
 
 	public void loadTexture(TextureName name) {
@@ -210,6 +228,12 @@ public class Assets {
 		asset.animation = new Animation<>(handle, SHURIKEN_PARTS);
 	}
 
+	public void loadRockAnimation(RockAnimationName name) {
+		AnimationAsset<RockParts> asset = rockAnimations.get(name);
+		FileHandle handle = Gdx.files.internal(asset.path);
+		asset.animation = new Animation<>(handle, ROCK_PARTS);
+	}
+
 	public void load() {
 		assetManager.finishLoading();
 		for (TextureAsset asset : textures.values()) {
@@ -222,18 +246,22 @@ public class Assets {
 	}
 
 	public Animation<TankParts> getTankAnimation(TankAnimationName name) {
-		return tankAnimations.get(name).animation;
+		return new Animation<>(tankAnimations.get(name).animation);
 	}
 
 	public Animation<AssassinParts> getAssassinAnimation(AssassinAnimationName name) {
-		return assassinAnimations.get(name).animation;
+		return new Animation<>(assassinAnimations.get(name).animation);
 	}
 
 	public Animation<Boss1Parts> getBoss1Animation(Boss1AnimationName name) {
-		return boss1Animations.get(name).animation;
+		return new Animation<>(boss1Animations.get(name).animation);
 	}
 
 	public Animation<ShurikenParts> getShurikenAnimation(ShurikenAnimationName name) {
-		return shurikenAnimations.get(name).animation;
+		return new Animation<>(shurikenAnimations.get(name).animation);
+	}
+
+	public Animation<RockParts> getRockAnimation(RockAnimationName name) {
+		return new Animation<>(rockAnimations.get(name).animation);
 	}
 }

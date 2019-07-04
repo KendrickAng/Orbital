@@ -9,6 +9,7 @@ import com.mygdx.game.entity.debuff.Debuffs;
 import java.util.Collection;
 
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.entity.EntityManager.CHARACTER_RENDER_PRIORITY;
 import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
 
 /**
@@ -18,7 +19,7 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 	private float slow;
 
 	public Character(GameScreen game) {
-		super(game);
+		super(game, CHARACTER_RENDER_PRIORITY);
 		getPosition().y = MAP_HEIGHT;
 	}
 
@@ -42,9 +43,15 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 		return slow;
 	}
 
-	public boolean damageTest(Hitbox hitbox, float damage) {
-		if (hitTest(hitbox)) {
-			inflictDamage(damage);
+	public boolean damageTest(LivingEntity entity, Hitbox hitbox, float damage) {
+		// Not a LivingEntity
+		if ((entity == null ||
+				// Damager is not disposed or cc'ed
+				(!entity.isDispose() && !entity.isCrowdControl())) &&
+				// Self is not disposed
+				!isDispose() &&
+				hitTest(hitbox)) {
+			inflictDamage(entity, damage);
 			return true;
 		}
 		return false;

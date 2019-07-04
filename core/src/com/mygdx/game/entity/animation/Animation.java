@@ -11,6 +11,7 @@ import com.mygdx.game.entity.Hitbox;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Contains all the animations for a certain state e.g Standing.
@@ -33,7 +34,7 @@ public class Animation<P extends Enum> {
 	private AnimationEnd animationEnd;
 
 	public Animation(FileHandle handle, HashMap<String, P> parts) {
-		animationFrames = new HashMap<>();
+		this.animationFrames = new HashMap<>();
 		this.timer = new Timer();
 		this.tasks = new HashMap<>();
 
@@ -60,8 +61,25 @@ public class Animation<P extends Enum> {
 				animationFrame.addHitbox(part, minX, maxX, minY, maxY, width, height);
 			}
 
-			animationFrames.put(i, animationFrame);
+			this.animationFrames.put(i, animationFrame);
 		}
+	}
+
+	public Animation(Animation<P> animation) {
+		this.duration = animation.duration;
+		this.frame = animation.frame;
+		this.animationFrame = animation.animationFrame;
+		this.frames = animation.frames;
+		this.loop = animation.loop;
+
+		this.timer = new Timer();
+		this.animationFrames = new HashMap<>();
+		for (Map.Entry<Integer, AnimationFrame<P>> entry : animation.animationFrames.entrySet()) {
+			this.animationFrames.put(entry.getKey(), new AnimationFrame<>(entry.getValue()));
+		}
+		this.tasks = new HashMap<>(animation.tasks);
+
+		this.animationEnd = animation.animationEnd;
 	}
 
 	public Animation<P> defineFrameTask(int frame, AnimationFrameTask task) {

@@ -79,6 +79,7 @@ public class MyGdxGame extends Game {
 		assets.loadBoss1Animation(Assets.Boss1AnimationName.ROLL);
 
 		assets.loadShurikenAnimation(Assets.ShurikenAnimationName.FLYING);
+		assets.loadRockAnimation(Assets.RockAnimationName.ERUPT);
 		assets.load();
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
