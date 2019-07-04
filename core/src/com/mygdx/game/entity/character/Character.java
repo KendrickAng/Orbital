@@ -27,7 +27,7 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 	@Override
 	protected void defineDebuffs(Debuffs debuffs) {
 		debuffs.map(SLOW, new DebuffDefinition()
-				.defineApply(modifier -> {
+				.defineUpdate(modifier -> {
 					// Slow can't go above 100%.
 					if (modifier > 1) {
 						modifier = 1;

@@ -12,7 +12,7 @@ An effect on a LivingEntity over a duration of time.
 public class Debuffs {
 	// only used to schedule new tasks in inflict().
 	private Timer timer;
-	// Definitions of all debuffs for the LivingEntity. Same across all characters.
+	// Definitions of all debuffs for the LivingEntity.
 	private HashMap<DebuffType, DebuffDefinition> definitions;
 
 	// Debuffs that are inflicted on the LivingEntity
@@ -34,8 +34,10 @@ public class Debuffs {
 	public void inflict(Debuff debuff) {
 		// get the debuff from the map using the enum T.
 		DebuffDefinition definition = definitions.get(debuff.getType());
-		// allows for different sources of definitions (E.g by boss and self-inflicted)
 		HashSet<Debuff> debuffs = inflicted.get(debuff.getType());
+
+		// Individual debuff begin.
+		debuff.begin();
 
 		// Cancel debuff after debuff duration
 		// Debuffs with 0 duration will be infinitely long.
@@ -57,21 +59,21 @@ public class Debuffs {
 		debuffs.add(debuff);
 
 		// Debuff begin, calculate overall modifier
-		definition.apply(overallModifier(debuffs));
+		definition.update(updateModifier(debuffs));
 	}
 
 	public void cancel(Debuff debuff) {
 		DebuffDefinition definition = definitions.get(debuff.getType());
 		HashSet<Debuff> debuffs = inflicted.get(debuff.getType());
 
+		// Individual debuff end.
+		debuff.end();
+
 		// Debuff ended, untrack InflictedDebuff
 		debuffs.remove(debuff);
 
 		// Debuff ended, recalculate overall modifier before applying.
-		definition.apply(overallModifier(debuffs));
-
-		// Individual debuff end
-		debuff.end();
+		definition.update(updateModifier(debuffs));
 
 		// This is the last debuff of this type, call end
 		if (debuffs.isEmpty()) {
@@ -80,7 +82,7 @@ public class Debuffs {
 	}
 
 	// Calculate stacked modifiers
-	private float overallModifier(HashSet<Debuff> debuffs) {
+	private float updateModifier(HashSet<Debuff> debuffs) {
 		Iterator<Debuff> iterator = debuffs.iterator();
 		if (iterator.hasNext()) {
 			float modifier = iterator.next().getModifier();

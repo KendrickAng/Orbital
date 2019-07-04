@@ -2,6 +2,8 @@ package com.mygdx.game.entity.debuff;
 
 public class Debuff {
 	private DebuffType type;
+
+	private boolean inflicted;
 	private float modifier;
 	private float duration;
 
@@ -18,10 +20,19 @@ public class Debuff {
 		return this;
 	}
 
+	public void begin() {
+		inflicted = true;
+	}
+
 	public void end() {
+		inflicted = false;
 		if (debuffEnd != null) {
 			debuffEnd.call();
 		}
+	}
+
+	public boolean isInflicted() {
+		return inflicted;
 	}
 
 	public DebuffType getType() {

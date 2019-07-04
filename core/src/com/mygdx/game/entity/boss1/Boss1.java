@@ -147,6 +147,11 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 	}
 
+	@Override
+	protected void damage() {
+
+	}
+
 	/* Animations */
 	@Override
 	protected void defineAnimations(Animations<Boss1States, Boss1Parts> animations, Assets assets) {

@@ -18,7 +18,7 @@ import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
  */
 public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enum> extends Entity<I, S, P> {
 	private static final float DAMAGE_BLINK_DURATION = 0.25f;
-	private static final float DAMAGE_DEBUFF_DURATION = 1f;
+	private static final float DAMAGED_DURATION = 1f;
 
 	private float health;
 	private float maxHealth;
@@ -27,6 +27,7 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 
 	private Timer timer;
 	private float damageReduction;
+	private boolean damaged;
 
 	public LivingEntity(GameScreen game) {
 		super(game);
@@ -43,7 +44,7 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 
 		this.timer = new Timer();
 		debuffs.map(DAMAGE_REDUCTION, new DebuffDefinition()
-				.defineApply(modifier -> {
+				.defineUpdate(modifier -> {
 					if (modifier > 1) {
 						modifier = 1;
 					}
@@ -67,23 +68,36 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		debuffs.cancel(debuff);
 	}
 
-	public void inflictDamage(float damage) {
-		if (damageReduction < 1) {
-			health -= damage * (1 - damageReduction);
-			getColor().set(1, 0, 0, 1);
+	protected abstract void damage();
 
-			inflictDebuff(new Debuff(DAMAGE_REDUCTION, 1f, DAMAGE_DEBUFF_DURATION));
+	public void inflictDamage(float damage) {
+		if (!damaged) {
+			damaged = true;
+			damage();
+
+
+			if (damageReduction < 1) {
+				health -= damage * (1 - damageReduction);
+				getColor().set(1, 0, 0, 1);
+				timer.scheduleTask(new Timer.Task() {
+					@Override
+					public void run() {
+						getColor().set(1, 1, 1, 1);
+					}
+				}, DAMAGE_BLINK_DURATION);
+
+//				Gdx.app.log("LivingEntity.java", "HP: " + health);
+				if (health <= 0) {
+					dispose();
+				}
+			}
+
 			timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
-					getColor().set(1, 1, 1, 1);
+					damaged = false;
 				}
-			}, DAMAGE_BLINK_DURATION);
-
-			Gdx.app.log("LivingEntity.java", "HP: " + health);
-			if (health <= 0) {
-				dispose();
-			}
+			}, DAMAGED_DURATION);
 		}
 	}
 

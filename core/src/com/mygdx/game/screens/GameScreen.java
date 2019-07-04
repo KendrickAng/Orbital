@@ -180,7 +180,7 @@ public class GameScreen implements Screen {
 			character.getFlipX().set(flipX);
 
 			playerController.update();
-			Gdx.app.log("GameScreen.java", "Switched Characters");
+//			Gdx.app.log("GameScreen.java", "Switched Characters");
 		}
 	}
 

@@ -81,11 +81,14 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float SECONDARY_COOLDOWN = 1;
 	private static final float TERTIARY_COOLDOWN = 2;
 
+	private static final float SHURIKEN_DAMAGE = 10;
+	private static final float SHURIKEN_BONUS_DAMAGE = 10;
+
 	// Skill animation duration in seconds.
 	private static final float STANDING_ANIMATION_DURATION = 1f;
 	private static final float WALKING_ANIMATION_DURATION = 1f;
 	private static final float PRIMARY_ANIMATION_DURATION = 0.05f;
-	private static final float SECONDARY_ANIMATION_DURATION = 0.5f;
+	private static final float SECONDARY_ANIMATION_DURATION = 0.2f;
 	private static final float TERTIARY_ANIMATION_DURATION = 2f;
 
 	// Dodge speed
@@ -97,9 +100,13 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private Ability<AssassinStates> primary;
 	private boolean primaryGround;
 
+	private final Debuff dashDebuff;
+	private int stacks;
+
 	public Assassin(GameScreen game) {
 		super(game);
 		velocity = new Vector2();
+		dashDebuff = new Debuff(DAMAGE_REDUCTION, 1f, PRIMARY_ANIMATION_DURATION * 2);
 	}
 
 	@Override
@@ -126,7 +133,6 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(BLOCK_KEYDOWN, PRIMARY_LEFT_RIGHT)
 						.addEdge(IMPALE_KEYDOWN, SECONDARY_LEFT_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING))
-
 
 				.add(new State<AssassinInput, AssassinStates>(WALKING_LEFT)
 						.defineBegin(() -> getFlipX().set(true))
@@ -400,7 +406,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						default:
 							falling = false;
 					}
-					inflictDebuff(new Debuff(DAMAGE_REDUCTION, 1f, PRIMARY_ANIMATION_DURATION * 2));
+					inflictDebuff(dashDebuff);
 				})
 				.defineEnd(() -> {
 					if (primaryGround) {
@@ -413,7 +419,13 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 					Hitbox body = getHitbox(BODY);
 					float x = body.getX() + body.getWidth() / 2;
 					float y = body.getY() + body.getHeight() / 2;
-					new Shuriken(getGame(), x, y, getFlipX().get());
+					if (stacks >= 3) {
+						Gdx.app.log("Assassin.java", "3 Stacks!");
+						new Shuriken(getGame(), x, y, getFlipX().get(), SHURIKEN_DAMAGE + SHURIKEN_BONUS_DAMAGE);
+						stacks = 0;
+					} else {
+						new Shuriken(getGame(), x, y, getFlipX().get(), SHURIKEN_DAMAGE);
+					}
 				});
 
 		Ability<AssassinStates> tertiary = new Ability<AssassinStates>(TERTIARY_COOLDOWN)
@@ -503,6 +515,15 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						getHitbox(RIGHT_LEG).hitTest(hitbox) ||
 						getHitbox(LEFT_ARM).hitTest(hitbox) ||
 						getHitbox(RIGHT_ARM).hitTest(hitbox));
+	}
+
+
+	@Override
+	protected void damage() {
+		if (dashDebuff.isInflicted()) {
+			Gdx.app.log("Assassin.java", "Perfect Dash!");
+			stacks++;
+		}
 	}
 
 	// TODO: Abstract these out

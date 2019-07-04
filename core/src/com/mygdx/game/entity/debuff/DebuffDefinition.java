@@ -3,7 +3,7 @@ package com.mygdx.game.entity.debuff;
 public class DebuffDefinition {
 	private DebuffBegin begin;
 	// called when you inflict a debuff AND when the debuff ends.
-	private DebuffCallback apply;
+	private DebuffUpdate update;
 	private DebuffEnd end;
 
 	/* Calls */
@@ -13,9 +13,9 @@ public class DebuffDefinition {
 		}
 	}
 
-	public void apply(float modifier) {
-		if (apply != null) {
-			apply.call(modifier);
+	public void update(float modifier) {
+		if (update != null) {
+			update.call(modifier);
 		}
 	}
 
@@ -31,8 +31,8 @@ public class DebuffDefinition {
 		return this;
 	}
 
-	public DebuffDefinition defineApply(DebuffCallback apply) {
-		this.apply = apply;
+	public DebuffDefinition defineUpdate(DebuffUpdate update) {
+		this.update = update;
 		return this;
 	}
 

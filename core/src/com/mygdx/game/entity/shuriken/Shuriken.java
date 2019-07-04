@@ -16,14 +16,15 @@ import static com.mygdx.game.entity.part.ShurikenParts.BODY;
 import static com.mygdx.game.entity.shuriken.ShurikenStates.FLYING;
 
 public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
-	private static final float SHURIKEN_DAMAGE = 10;
+	private float damage;
 	private static final int FLYING_SPEED = 20;
 
-	public Shuriken(GameScreen game, float x, float y, boolean flipX) {
+	public Shuriken(GameScreen game, float x, float y, boolean flipX, float damage) {
 		super(game);
 		getPosition().x = x;
 		getPosition().y = y;
 		getFlipX().set(flipX);
+		this.damage = damage;
 	}
 
 	@Override
@@ -42,7 +43,7 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 						dispose();
 					} else {
 						if (getGame().getBoss1()
-								.damageTest(getHitbox(BODY), SHURIKEN_DAMAGE)) {
+								.damageTest(getHitbox(BODY), damage)) {
 							dispose();
 						}
 					}

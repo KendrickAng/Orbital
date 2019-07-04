@@ -35,7 +35,7 @@ public class EntityManager {
 			Entity e = iterator.next();
 			if (e.isDispose()) {
 				// TODO: Doesn't actually dispose class, only removes from EntityManager
-				Gdx.app.log("EntityManager.java", "Entity disposed");
+//				Gdx.app.log("EntityManager.java", "Entity disposed");
 				priorities.remove(e);
 				iterator.remove();
 				continue;

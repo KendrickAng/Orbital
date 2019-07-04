@@ -17,6 +17,7 @@ import com.mygdx.game.screens.GameScreen;
 import java.util.Collection;
 
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
+import static com.mygdx.game.entity.character.TankInput.BLOCK_INPUT;
 import static com.mygdx.game.entity.character.TankInput.BLOCK_KEYDOWN;
 import static com.mygdx.game.entity.character.TankInput.BLOCK_KEYUP;
 import static com.mygdx.game.entity.character.TankInput.FORTRESS_KEYDOWN;
@@ -32,6 +33,14 @@ import static com.mygdx.game.entity.character.TankStates.BLOCK;
 import static com.mygdx.game.entity.character.TankStates.BLOCK_LEFT;
 import static com.mygdx.game.entity.character.TankStates.BLOCK_LEFT_RIGHT;
 import static com.mygdx.game.entity.character.TankStates.BLOCK_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_STANDING;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_STANDING_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_UP;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_UP_LEFT;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_UP_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_UP_RIGHT;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_WALKING_LEFT;
+import static com.mygdx.game.entity.character.TankStates.BLOCK_WALKING_RIGHT;
 import static com.mygdx.game.entity.character.TankStates.FORTRESS;
 import static com.mygdx.game.entity.character.TankStates.FORTRESS_BLOCK;
 import static com.mygdx.game.entity.character.TankStates.FORTRESS_BLOCK_LEFT;
@@ -83,7 +92,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	// Skill animation duration in seconds.
 	private static final float STANDING_ANIMATION_DURATION = 1f;
 	private static final float WALKING_ANIMATION_DURATION = 1f;
-	private static final float BLOCK_ANIMATION_DURATION = 0.5f;
+	private static final float BLOCK_ANIMATION_DURATION = 0.25f;
 	private static final float IMPALE_ANIMATION_DURATION = 0.5f;
 
 	private static final float FORTRESS_ANIMATION_DURATION = 1f;
@@ -91,12 +100,19 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float FORTRESS_WALKING_ANIMATION_DURATION = 2f;
 
 	private static final float IMPALE_DAMAGE = 10;
+	private static final float IMPALE_BONUS_DAMAGE = 10;
 
-	private final Debuff blockArmorDebuff;
+
+	private Ability<TankStates> impaleAbility;
+	private Animation<TankParts> impaleAnimation;
+	private final Debuff blockDebuff;
+	private final Debuff blockPerfectDebuff;
 
 	public Tank(GameScreen game) {
 		super(game);
-		blockArmorDebuff = new Debuff(DebuffType.DAMAGE_REDUCTION, 1f, 0);
+
+		blockDebuff = new Debuff(DebuffType.DAMAGE_REDUCTION, 0.5f, 0);
+		blockPerfectDebuff = new Debuff(DebuffType.DAMAGE_REDUCTION, 1f, 0);
 	}
 
 	@Override
@@ -147,23 +163,75 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.add(new State<TankInput, TankStates>(BLOCK)
 						.addEdge(LEFT_KEYDOWN, BLOCK_LEFT)
 						.addEdge(RIGHT_KEYDOWN, BLOCK_RIGHT)
-						.addEdge(BLOCK_KEYUP, STANDING))
+						.addEdge(BLOCK_KEYUP, BLOCK_UP)
+						.addEdge(BLOCK_INPUT, BLOCK_STANDING))
 
 				.add(new State<TankInput, TankStates>(BLOCK_LEFT)
 						.defineUpdate(this::walkLeft)
 						.addEdge(LEFT_KEYUP, BLOCK)
 						.addEdge(RIGHT_KEYDOWN, BLOCK_LEFT_RIGHT)
-						.addEdge(BLOCK_KEYUP, WALKING_LEFT))
+						.addEdge(BLOCK_KEYUP, BLOCK_UP_LEFT)
+						.addEdge(BLOCK_INPUT, BLOCK_WALKING_LEFT))
 
 				.add(new State<TankInput, TankStates>(BLOCK_RIGHT)
 						.defineUpdate(this::walkRight)
 						.addEdge(RIGHT_KEYUP, BLOCK)
 						.addEdge(LEFT_KEYDOWN, BLOCK_LEFT_RIGHT)
-						.addEdge(BLOCK_KEYUP, WALKING_RIGHT))
+						.addEdge(BLOCK_KEYUP, BLOCK_UP_RIGHT)
+						.addEdge(BLOCK_INPUT, BLOCK_WALKING_RIGHT))
 
 				.add(new State<TankInput, TankStates>(BLOCK_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, BLOCK_RIGHT)
 						.addEdge(RIGHT_KEYUP, BLOCK_LEFT)
+						.addEdge(BLOCK_KEYUP, BLOCK_UP_LEFT_RIGHT)
+						.addEdge(BLOCK_INPUT, BLOCK_STANDING_LEFT_RIGHT))
+
+				.add(new State<TankInput, TankStates>(BLOCK_UP)
+						.addEdge(LEFT_KEYDOWN, BLOCK_UP_LEFT)
+						.addEdge(RIGHT_KEYDOWN, BLOCK_UP_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, BLOCK)
+						.addEdge(BLOCK_INPUT, STANDING))
+
+				.add(new State<TankInput, TankStates>(BLOCK_UP_LEFT)
+						.defineUpdate(this::walkLeft)
+						.addEdge(LEFT_KEYUP, BLOCK_UP)
+						.addEdge(RIGHT_KEYDOWN, BLOCK_UP_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, BLOCK_UP_LEFT)
+						.addEdge(BLOCK_INPUT, WALKING_LEFT))
+
+				.add(new State<TankInput, TankStates>(BLOCK_UP_RIGHT)
+						.defineUpdate(this::walkRight)
+						.addEdge(RIGHT_KEYUP, BLOCK_UP)
+						.addEdge(LEFT_KEYDOWN, BLOCK_UP_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYDOWN, BLOCK_RIGHT)
+						.addEdge(BLOCK_INPUT, WALKING_RIGHT))
+
+				.add(new State<TankInput, TankStates>(BLOCK_UP_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, BLOCK_UP_RIGHT)
+						.addEdge(RIGHT_KEYUP, BLOCK_UP_LEFT)
+						.addEdge(BLOCK_KEYDOWN, BLOCK_LEFT_RIGHT)
+						.addEdge(BLOCK_INPUT, STANDING_LEFT_RIGHT))
+
+				.add(new State<TankInput, TankStates>(BLOCK_STANDING)
+						.addEdge(LEFT_KEYDOWN, BLOCK_WALKING_LEFT)
+						.addEdge(RIGHT_KEYDOWN, BLOCK_WALKING_RIGHT)
+						.addEdge(BLOCK_KEYUP, STANDING))
+
+				.add(new State<TankInput, TankStates>(BLOCK_WALKING_LEFT)
+						.defineUpdate(this::walkLeft)
+						.addEdge(LEFT_KEYUP, BLOCK_STANDING)
+						.addEdge(RIGHT_KEYDOWN, BLOCK_STANDING_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYUP, WALKING_LEFT))
+
+				.add(new State<TankInput, TankStates>(BLOCK_WALKING_RIGHT)
+						.defineUpdate(this::walkRight)
+						.addEdge(RIGHT_KEYUP, BLOCK_STANDING)
+						.addEdge(LEFT_KEYDOWN, BLOCK_STANDING_LEFT_RIGHT)
+						.addEdge(BLOCK_KEYUP, WALKING_RIGHT))
+
+				.add(new State<TankInput, TankStates>(BLOCK_STANDING_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, BLOCK_WALKING_RIGHT)
+						.addEdge(RIGHT_KEYUP, BLOCK_WALKING_LEFT)
 						.addEdge(BLOCK_KEYUP, STANDING_LEFT_RIGHT))
 
 				/* Slash */
@@ -310,9 +378,13 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 		Animation<TankParts> block = assets.getTankAnimation(Assets.TankAnimationName.BLOCK)
 				.setDuration(BLOCK_ANIMATION_DURATION)
-				.defineFrameTask(0, () -> inflictDebuff(blockArmorDebuff));
+				.defineEnd(() -> {
+					cancelDebuff(blockPerfectDebuff);
+					inflictDebuff(blockDebuff);
+					input(BLOCK_INPUT);
+				});
 
-		Animation<TankParts> impale = assets.getTankAnimation(Assets.TankAnimationName.IMPALE)
+		impaleAnimation = assets.getTankAnimation(Assets.TankAnimationName.IMPALE)
 				.setDuration(IMPALE_ANIMATION_DURATION)
 				.defineFrameTask(0, () -> getGame().getBoss1()
 						.damageTest(getHitbox(WEAPON), IMPALE_DAMAGE))
@@ -332,7 +404,11 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 		Animation<TankParts> fortressBlock = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_BLOCK)
 				.setDuration(BLOCK_ANIMATION_DURATION)
-				.defineFrameTask(0, () -> inflictDebuff(blockArmorDebuff));
+				.defineEnd(() -> {
+					cancelDebuff(blockPerfectDebuff);
+					inflictDebuff(blockDebuff);
+					input(BLOCK_INPUT);
+				});
 
 		Animation<TankParts> fortressImpale = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_IMPALE)
 				.setDuration(IMPALE_ANIMATION_DURATION)
@@ -350,10 +426,10 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.map(BLOCK_LEFT, block)
 				.map(BLOCK_RIGHT, block)
 
-				.map(IMPALE, impale)
-				.map(IMPALE_LEFT, impale)
-				.map(IMPALE_RIGHT, impale)
-				.map(IMPALE_LEFT_RIGHT, impale)
+				.map(IMPALE, impaleAnimation)
+				.map(IMPALE_LEFT, impaleAnimation)
+				.map(IMPALE_RIGHT, impaleAnimation)
+				.map(IMPALE_LEFT_RIGHT, impaleAnimation)
 
 				.map(FORTRESS, fortress)
 				.map(FORTRESS_LEFT, fortress)
@@ -383,17 +459,24 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.defineDebuffEnd(() -> input(FORTRESS_KEYUP));
 
 		Ability<TankStates> block = new Ability<>(BLOCK_COOLDOWN);
-		block.defineBegin((state) -> inflictDebuff(blockSlowDebuff))
+		block.defineBegin((state) -> {
+					inflictDebuff(blockSlowDebuff);
+					inflictDebuff(blockPerfectDebuff);
+				})
 				.defineEnd(() -> {
 					cancelDebuff(blockSlowDebuff);
-					cancelDebuff(blockArmorDebuff);
+					cancelDebuff(blockPerfectDebuff);
+					cancelDebuff(blockDebuff);
 					block.reset();
 				});
 
-		Ability<TankStates> impale = new Ability<>(IMPALE_COOLDOWN);
+		impaleAbility = new Ability<>(IMPALE_COOLDOWN);
 
 		Ability<TankStates> fortress = new Ability<TankStates>(FORTRESS_COOLDOWN)
-				.defineBegin((state) -> inflictDebuff(fortressDebuff));
+				.defineBegin((state) -> {
+					inflictDebuff(fortressDebuff);
+					inflictDebuff(new Debuff(DebuffType.DAMAGE_REDUCTION, 0.5f, FORTRESS_DURATION));
+				});
 
 		abilities.addBegin(BLOCK, block)
 				.addBegin(BLOCK_LEFT, block)
@@ -413,23 +496,23 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.addEnd(FORTRESS_WALKING_RIGHT, block)
 				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, block)
 
-				.addBegin(IMPALE, impale)
-				.addBegin(IMPALE_LEFT, impale)
-				.addBegin(IMPALE_RIGHT, impale)
-				.addBegin(IMPALE_LEFT_RIGHT, impale)
-				.addEnd(STANDING, impale)
-				.addEnd(WALKING_LEFT, impale)
-				.addEnd(WALKING_RIGHT, impale)
-				.addEnd(STANDING_LEFT_RIGHT, impale)
+				.addBegin(IMPALE, impaleAbility)
+				.addBegin(IMPALE_LEFT, impaleAbility)
+				.addBegin(IMPALE_RIGHT, impaleAbility)
+				.addBegin(IMPALE_LEFT_RIGHT, impaleAbility)
+				.addEnd(STANDING, impaleAbility)
+				.addEnd(WALKING_LEFT, impaleAbility)
+				.addEnd(WALKING_RIGHT, impaleAbility)
+				.addEnd(STANDING_LEFT_RIGHT, impaleAbility)
 
-				.addBegin(FORTRESS_IMPALE, impale)
-				.addBegin(FORTRESS_IMPALE_LEFT, impale)
-				.addBegin(FORTRESS_IMPALE_RIGHT, impale)
-				.addBegin(FORTRESS_IMPALE_LEFT_RIGHT, impale)
-				.addEnd(FORTRESS_STANDING, impale)
-				.addEnd(FORTRESS_WALKING_LEFT, impale)
-				.addEnd(FORTRESS_WALKING_RIGHT, impale)
-				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, impale)
+				.addBegin(FORTRESS_IMPALE, impaleAbility)
+				.addBegin(FORTRESS_IMPALE_LEFT, impaleAbility)
+				.addBegin(FORTRESS_IMPALE_RIGHT, impaleAbility)
+				.addBegin(FORTRESS_IMPALE_LEFT_RIGHT, impaleAbility)
+				.addEnd(FORTRESS_STANDING, impaleAbility)
+				.addEnd(FORTRESS_WALKING_LEFT, impaleAbility)
+				.addEnd(FORTRESS_WALKING_RIGHT, impaleAbility)
+				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, impaleAbility)
 
 				.addBegin(FORTRESS, fortress)
 				.addBegin(FORTRESS_LEFT, fortress)
@@ -471,6 +554,22 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						getHitbox(RIGHT_LEG).hitTest(hitbox) ||
 						getHitbox(LEFT_ARM).hitTest(hitbox) ||
 						getHitbox(RIGHT_ARM).hitTest(hitbox));
+	}
+
+
+	@Override
+	protected void damage() {
+		if (blockPerfectDebuff.isInflicted()) {
+			Gdx.app.log("Tank.java", "Perfect Block!");
+			impaleAbility.reset();
+			impaleAnimation.defineFrameTask(0, () -> {
+				if (getGame().getBoss1()
+						.damageTest(getHitbox(WEAPON), IMPALE_DAMAGE + IMPALE_BONUS_DAMAGE)) {
+					impaleAnimation.defineFrameTask(0, () -> getGame().getBoss1()
+							.damageTest(getHitbox(WEAPON), IMPALE_DAMAGE));
+				}
+			});
+		}
 	}
 
 	// TODO: Abstract these out

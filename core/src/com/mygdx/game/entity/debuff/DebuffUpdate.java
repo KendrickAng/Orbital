@@ -1,5 +1,5 @@
 package com.mygdx.game.entity.debuff;
 
-public interface DebuffCallback {
+public interface DebuffUpdate {
 	void call(float modifier);
 }
