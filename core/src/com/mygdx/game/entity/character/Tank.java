@@ -84,7 +84,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float FORTRESS_SLOW_MODIFIER = 0.5f;
 
 	// Skill cooldown in seconds.
-	private static final float BLOCK_COOLDOWN = 0f;
+	private static final float BLOCK_COOLDOWN = 0.2f;
 	private static final float IMPALE_COOLDOWN = 1f;
 	private static final float FORTRESS_DURATION = 10f;
 	private static final float FORTRESS_COOLDOWN = FORTRESS_DURATION + 2f;
@@ -99,8 +99,8 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float FORTRESS_STANDING_ANIMATION_DURATION = 2f;
 	private static final float FORTRESS_WALKING_ANIMATION_DURATION = 2f;
 
-	private static final float IMPALE_DAMAGE = 10;
-	private static final float IMPALE_BONUS_DAMAGE = 10;
+	private static final float IMPALE_DAMAGE = 20;
+	private static final float IMPALE_BONUS_DAMAGE = 20;
 
 
 	private Ability<TankStates> impaleAbility;
@@ -467,7 +467,6 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 					cancelDebuff(blockSlowDebuff);
 					cancelDebuff(blockPerfectDebuff);
 					cancelDebuff(blockDebuff);
-					block.reset();
 				});
 
 		impaleAbility = new Ability<>(IMPALE_COOLDOWN);

@@ -77,18 +77,18 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float HEALTH = 50;
 
 	// Skill cooldown in seconds.
-	private static final float PRIMARY_COOLDOWN = 0;
-	private static final float SECONDARY_COOLDOWN = 1;
-	private static final float TERTIARY_COOLDOWN = 2;
+	private static final float PRIMARY_COOLDOWN = 1f;
+	private static final float SECONDARY_COOLDOWN = 1f;
+	private static final float TERTIARY_COOLDOWN = 2f;
 
 	private static final float SHURIKEN_DAMAGE = 10;
 	private static final float SHURIKEN_BONUS_DAMAGE = 10;
 
 	// Skill animation duration in seconds.
 	private static final float STANDING_ANIMATION_DURATION = 1f;
-	private static final float WALKING_ANIMATION_DURATION = 1f;
+	private static final float WALKING_ANIMATION_DURATION = 0.5f;
 	private static final float PRIMARY_ANIMATION_DURATION = 0.05f;
-	private static final float SECONDARY_ANIMATION_DURATION = 0.2f;
+	private static final float SECONDARY_ANIMATION_DURATION = 0.3f;
 	private static final float TERTIARY_ANIMATION_DURATION = 2f;
 
 	// Dodge speed
@@ -98,7 +98,6 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private Vector2 velocity;
 	private boolean falling;
 	private Ability<AssassinStates> primary;
-	private boolean primaryGround;
 
 	private final Debuff dashDebuff;
 	private int stacks;
@@ -373,15 +372,12 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	protected void defineAbilities(Abilities<AssassinStates> abilities) {
 		primary = new Ability<AssassinStates>(PRIMARY_COOLDOWN)
 				.defineBegin((state) -> {
-					primaryGround = false;
 					switch (state) {
 						case PRIMARY_LEFT:
 							velocity.x = -DODGE_SPEED;
-							primaryGround = true;
 							break;
 						case PRIMARY_RIGHT:
 							velocity.x = DODGE_SPEED;
-							primaryGround = true;
 							break;
 						case PRIMARY_UP_LEFT:
 							velocity.x = -DODGE_DIAGONAL_SPEED;
@@ -407,11 +403,6 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 							falling = false;
 					}
 					inflictDebuff(dashDebuff);
-				})
-				.defineEnd(() -> {
-					if (primaryGround) {
-						primary.reset();
-					}
 				});
 
 		Ability<AssassinStates> secondary = new Ability<AssassinStates>(SECONDARY_COOLDOWN)
@@ -481,7 +472,6 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 				falling = false;
 				velocity.y = 0;
 				getPosition().y = MAP_HEIGHT;
-				primary.reset();
 			}
 		} else {
 			velocity.x *= FRICTION;
