@@ -1,22 +1,20 @@
 package com.mygdx.game.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.TreeMap;
 
 /**
  * ADT to store all entities and render them.
  */
 public class EntityManager {
-	public static final int CHARACTER_RENDER_PRIORITY = 4;
-	public static final int BOSS_RENDER_PRIORITY = 3;
-	public static final int SHURIKEN_RENDER_PRIORITY = 2;
-	public static final int ROCK_RENDER_PRIORITY = 1;
+	public static final int ROCK_RENDER_PRIORITY = 4;
+	public static final int SHURIKEN_RENDER_PRIORITY = 3;
+	public static final int CHARACTER_RENDER_PRIORITY = 2;
+	public static final int BOSS_RENDER_PRIORITY = 1;
 
 	private TreeMap<Integer, HashSet<Entity>> entitiesPriorityMap;
 

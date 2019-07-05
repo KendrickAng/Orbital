@@ -5,7 +5,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.screens.GameScreen;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 
 import static com.mygdx.game.entity.character.CharacterControllerInput.LEFT;

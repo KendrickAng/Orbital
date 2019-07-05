@@ -1,7 +1,5 @@
 package com.mygdx.game.entity.boss1;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
@@ -10,6 +8,8 @@ import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.character.Character;
+import com.mygdx.game.entity.debuff.Debuff;
+import com.mygdx.game.entity.debuff.DebuffType;
 import com.mygdx.game.entity.debuff.Debuffs;
 import com.mygdx.game.entity.rock.Rock;
 import com.mygdx.game.entity.state.State;
@@ -30,18 +30,18 @@ import static com.mygdx.game.entity.boss1.Boss1Input.ROLL_KEYDOWN;
 import static com.mygdx.game.entity.boss1.Boss1Input.ROLL_KEYUP;
 import static com.mygdx.game.entity.boss1.Boss1Input.SLAM_KEYDOWN;
 import static com.mygdx.game.entity.boss1.Boss1Input.SLAM_KEYUP;
-import static com.mygdx.game.entity.boss1.Boss1States.EARTHQUAKE;
-import static com.mygdx.game.entity.boss1.Boss1States.ROLL;
-import static com.mygdx.game.entity.boss1.Boss1States.SLAM;
-import static com.mygdx.game.entity.boss1.Boss1States.STANDING;
-import static com.mygdx.game.entity.boss1.Boss1States.WALKING_LEFT;
-import static com.mygdx.game.entity.boss1.Boss1States.WALKING_RIGHT;
 import static com.mygdx.game.entity.boss1.Boss1Parts.BODY;
 import static com.mygdx.game.entity.boss1.Boss1Parts.LEFT_ARM;
 import static com.mygdx.game.entity.boss1.Boss1Parts.LEFT_LEG;
 import static com.mygdx.game.entity.boss1.Boss1Parts.RIGHT_ARM;
 import static com.mygdx.game.entity.boss1.Boss1Parts.RIGHT_LEG;
 import static com.mygdx.game.entity.boss1.Boss1Parts.SHOCKWAVE;
+import static com.mygdx.game.entity.boss1.Boss1States.EARTHQUAKE;
+import static com.mygdx.game.entity.boss1.Boss1States.ROLL;
+import static com.mygdx.game.entity.boss1.Boss1States.SLAM;
+import static com.mygdx.game.entity.boss1.Boss1States.STANDING;
+import static com.mygdx.game.entity.boss1.Boss1States.WALKING_LEFT;
+import static com.mygdx.game.entity.boss1.Boss1States.WALKING_RIGHT;
 
 /*
 Responsibilities: Defines abilities, maps Ability states to Ability instances, handles
@@ -49,6 +49,7 @@ sprite position, direction, motion.
  */
 public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float HEALTH = 1000;
+	private static final float DAMAGED_DURATION = 0f;
 	private static final float WALKING_SPEED = 1f;
 
 	// Ability animation duration
@@ -81,6 +82,11 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	@Override
 	protected float health() {
 		return HEALTH;
+	}
+
+	@Override
+	protected float damagedDuration() {
+		return DAMAGED_DURATION;
 	}
 
 	@Override
@@ -139,12 +145,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	@Override
 	protected void defineAbilities(Abilities<Boss1States> abilities) {
 		Ability<Boss1States> slam = new Ability<>(SLAM_COOLDOWN);
-		Ability<Boss1States> earthquake = new Ability<Boss1States>(EARTHQUAKE_COOLDOWN)
-				.defineEnd(() -> {
-					for (int i = 0; i < EARTHQUAKE_ROCK_COUNT; i++) {
-						new Rock(getGame(), EARTHQUAKE_ROCK_DAMAGE);
-					}
-				});
+		Ability<Boss1States> earthquake = new Ability<>(EARTHQUAKE_COOLDOWN);
 		Ability<Boss1States> roll = new Ability<Boss1States>(ROLL_COOLDOWN)
 				.defineEnd(() -> rolling = false);
 
@@ -164,8 +165,23 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	}
 
 	@Override
-	protected void inflictCrowdControl() {
+	protected void beginCrowdControl() {
 		input(CROWD_CONTROL);
+	}
+
+	@Override
+	public void endCrowdControl() {
+
+	}
+
+	@Override
+	public float getMiddleX() {
+		return getPosition().x + getHitbox(BODY).getOffsetX() + getHitbox(BODY).getWidth() / 2;
+	}
+
+	@Override
+	protected float getTopY() {
+		return getPosition().y + getHitbox(BODY).getOffsetY() + getHitbox(BODY).getHeight();
 	}
 
 	@Override
@@ -184,8 +200,10 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				.setDuration(SLAM_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> {
 					Character character = getGame().getCharacter();
-					character.damageTest(this, getHitbox(RIGHT_ARM), SLAM_DAMAGE);
-					character.damageTest(this, getHitbox(LEFT_ARM), SLAM_DAMAGE);
+					if (character.damageTest(this, getHitbox(RIGHT_ARM), SLAM_DAMAGE) ||
+							character.damageTest(this, getHitbox(LEFT_ARM), SLAM_DAMAGE)) {
+						character.inflictDebuff(new Debuff(DebuffType.STUN, 0, 2f));
+					}
 				})
 				.defineEnd(() -> input(SLAM_KEYUP));
 
@@ -194,6 +212,9 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				.defineFrameTask(1, () -> {
 					Character character = getGame().getCharacter();
 					character.damageTest(this, getHitbox(SHOCKWAVE), EARTHQUAKE_DAMAGE);
+					for (int i = 0; i < EARTHQUAKE_ROCK_COUNT; i++) {
+						new Rock(getGame(), EARTHQUAKE_ROCK_DAMAGE);
+					}
 				})
 				.defineEnd(() -> input(EARTHQUAKE_KEYUP));
 
@@ -208,6 +229,11 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				.map(SLAM, slam)
 				.map(EARTHQUAKE, earthquake)
 				.map(ROLL, roll);
+	}
+
+	@Override
+	protected boolean canInput(Boss1Input input) {
+		return !isStunned();
 	}
 
 	private void checkWithinMap() {
@@ -238,8 +264,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 	public boolean damageTest(LivingEntity entity, Hitbox hitbox, float damage) {
 		if (hitTest(entity, hitbox)) {
-			inflictDamage(entity, damage);
-			return true;
+			return inflictDamage(entity, damage);
 		}
 		return false;
 	}

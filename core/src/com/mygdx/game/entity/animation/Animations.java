@@ -38,6 +38,9 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 		// Ignore null animations
 		// Ignore same animation
 		if (animation != null && this.animation != animation) {
+			if (this.animation != null) {
+				this.animation.end();
+			}
 			this.animation = animation;
 			this.animation.setEntityData(entityData);
 			this.animation.begin();

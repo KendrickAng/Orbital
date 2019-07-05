@@ -102,7 +102,7 @@ public class Animation<P extends Enum> {
 		return this;
 	}
 
-	public void setEntityData(EntityData entityData) {
+	void setEntityData(EntityData entityData) {
 		for (AnimationFrame<P> frame : animationFrames.values()) {
 			frame.setEntityData(entityData);
 		}
@@ -111,6 +111,10 @@ public class Animation<P extends Enum> {
 	public void begin() {
 		frame = 0;
 		updateFrame();
+	}
+
+	void end() {
+		timer.clear();
 	}
 
 	private void updateFrame() {

@@ -4,12 +4,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.assets.Assets;
-import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.MutableBoolean;
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.state.StateListener;
 import com.mygdx.game.entity.state.States;
+import com.mygdx.game.screens.GameScreen;
 
 /**
  * Represents all renderable, interactive objects such as throwing stars/falling rocks.
@@ -20,6 +20,7 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 
 	private GameScreen game;
 	private EntityData data;
+	private RenderTask renderTask;
 
 	private States<I, S> states;
 	private Animations<S, P> animations;
@@ -52,6 +53,10 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	public void render(SpriteBatch batch) {
 		states.update();
 		animations.render(batch);
+
+		if (renderTask != null) {
+			renderTask.render(batch);
+		}
 	}
 
 	public void renderDebug(ShapeRenderer shapeRenderer) {
@@ -63,14 +68,18 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	}
 
 	/* Setters */
+	public void setRenderTask(RenderTask renderTask) {
+		this.renderTask = renderTask;
+	}
+
 	protected void addStateListener(StateListener<S> listener) {
 		states.addListener(listener);
 	}
 
-	protected abstract boolean canInput();
+	protected abstract boolean canInput(I input);
 
 	public boolean input(I input) {
-		if (!isDispose() && canInput()) {
+		if (!isDispose() && canInput(input)) {
 			return states.input(input);
 		}
 		return false;

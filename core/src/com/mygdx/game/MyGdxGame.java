@@ -20,6 +20,7 @@ import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_TANK;
+import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
 
 public class MyGdxGame extends Game {
 	// define game variables
@@ -53,6 +54,7 @@ public class MyGdxGame extends Game {
 		assets = new Assets();
 		assets.loadTexture(BACKGROUND);
 		assets.loadTexture(FLOOR);
+		assets.loadTexture(STUNNED);
 		assets.loadTexture(HEALTH_BAR_ASSASSIN);
 		assets.loadTexture(HEALTH_BAR_BACKGROUND);
 		assets.loadTexture(HEALTH_BAR_BOSS);

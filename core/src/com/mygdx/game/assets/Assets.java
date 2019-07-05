@@ -5,11 +5,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.entity.animation.Animation;
-import com.mygdx.game.entity.character.AssassinParts;
 import com.mygdx.game.entity.boss1.Boss1Parts;
+import com.mygdx.game.entity.character.AssassinParts;
+import com.mygdx.game.entity.character.TankParts;
 import com.mygdx.game.entity.rock.RockParts;
 import com.mygdx.game.entity.shuriken.ShurikenParts;
-import com.mygdx.game.entity.character.TankParts;
 
 import java.util.HashMap;
 
@@ -19,6 +19,7 @@ import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_TANK;
+import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
 
 public class Assets {
 	private AssetManager assetManager;
@@ -92,7 +93,7 @@ public class Assets {
 	}
 
 	public enum TextureName {
-		BACKGROUND, FLOOR,
+		BACKGROUND, FLOOR, STUNNED,
 		HEALTH_BAR_BACKGROUND, HEALTH_BAR_ASSASSIN, HEALTH_BAR_BOSS, HEALTH_BAR_TANK
 	}
 
@@ -146,6 +147,7 @@ public class Assets {
 
 		defineTexture(BACKGROUND, "Background.png");
 		defineTexture(FLOOR, "Floor.png");
+		defineTexture(STUNNED, "Stunned.png");
 
 		defineTexture(HEALTH_BAR_BACKGROUND, "HealthBar/Background.png");
 		defineTexture(HEALTH_BAR_ASSASSIN, "HealthBar/AssassinBar.png");

@@ -16,11 +16,16 @@ import static com.mygdx.game.entity.rock.RockStates.ERUPT;
 
 public class Rock extends Entity<Enum, RockStates, RockParts> {
 	private static final float ERUPT_ANIMATION_DURATION = 1.5f;
+	private static final float DISTANCE = 200;
 	private float damage;
 
 	public Rock(GameScreen game, float damage) {
 		super(game, ROCK_RENDER_PRIORITY);
-		getPosition().x = MathUtils.random(0, GAME_WIDTH - getHitbox(BODY).getWidth());
+		// Try to spawn near to the character.
+		float characterX = game.getCharacter().getMiddleX();
+		float minX = Math.max(0, characterX - DISTANCE);
+		float maxX = Math.min(GAME_WIDTH - getHitbox(BODY).getWidth(), characterX + DISTANCE);
+		getPosition().x = MathUtils.random(minX, maxX);
 		getPosition().y = MAP_HEIGHT;
 		this.damage = damage;
 	}
@@ -40,7 +45,7 @@ public class Rock extends Entity<Enum, RockStates, RockParts> {
 	}
 
 	@Override
-	protected boolean canInput() {
+	protected boolean canInput(Enum input) {
 		return false;
 	}
 }

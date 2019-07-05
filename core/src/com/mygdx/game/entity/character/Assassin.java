@@ -1,7 +1,9 @@
 package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.ability.Abilities;
@@ -15,24 +17,36 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
-import java.util.Collection;
-
+import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
 import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.entity.character.AssassinInput.CLEANSE_KEYDOWN;
+import static com.mygdx.game.entity.character.AssassinInput.CLEANSE_KEYUP;
 import static com.mygdx.game.entity.character.AssassinInput.CROWD_CONTROL;
 import static com.mygdx.game.entity.character.AssassinInput.DASH_KEYDOWN;
 import static com.mygdx.game.entity.character.AssassinInput.DASH_KEYUP;
-import static com.mygdx.game.entity.character.AssassinInput.CLEANSE_KEYDOWN;
-import static com.mygdx.game.entity.character.AssassinInput.CLEANSE_KEYUP;
-import static com.mygdx.game.entity.character.AssassinInput.SHURIKEN_THROW_KEYDOWN;
-import static com.mygdx.game.entity.character.AssassinInput.SHURIKEN_THROW_KEYUP;
 import static com.mygdx.game.entity.character.AssassinInput.LEFT_KEYDOWN;
 import static com.mygdx.game.entity.character.AssassinInput.LEFT_KEYUP;
 import static com.mygdx.game.entity.character.AssassinInput.RIGHT_KEYDOWN;
 import static com.mygdx.game.entity.character.AssassinInput.RIGHT_KEYUP;
+import static com.mygdx.game.entity.character.AssassinInput.SHURIKEN_THROW_KEYDOWN;
+import static com.mygdx.game.entity.character.AssassinInput.SHURIKEN_THROW_KEYUP;
 import static com.mygdx.game.entity.character.AssassinInput.SWITCH_CHARACTER;
 import static com.mygdx.game.entity.character.AssassinInput.UP_KEYDOWN;
 import static com.mygdx.game.entity.character.AssassinInput.UP_KEYUP;
+import static com.mygdx.game.entity.character.AssassinParts.BODY;
+import static com.mygdx.game.entity.character.AssassinParts.LEFT_ARM;
+import static com.mygdx.game.entity.character.AssassinParts.LEFT_LEG;
+import static com.mygdx.game.entity.character.AssassinParts.RIGHT_ARM;
+import static com.mygdx.game.entity.character.AssassinParts.RIGHT_LEG;
+import static com.mygdx.game.entity.character.AssassinStates.CLEANSE;
+import static com.mygdx.game.entity.character.AssassinStates.CLEANSE_LEFT;
+import static com.mygdx.game.entity.character.AssassinStates.CLEANSE_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.AssassinStates.CLEANSE_RIGHT;
+import static com.mygdx.game.entity.character.AssassinStates.CLEANSE_UP;
+import static com.mygdx.game.entity.character.AssassinStates.CLEANSE_UP_LEFT;
+import static com.mygdx.game.entity.character.AssassinStates.CLEANSE_UP_LEFT_RIGHT;
+import static com.mygdx.game.entity.character.AssassinStates.CLEANSE_UP_RIGHT;
 import static com.mygdx.game.entity.character.AssassinStates.DASH;
 import static com.mygdx.game.entity.character.AssassinStates.DASH_LEFT;
 import static com.mygdx.game.entity.character.AssassinStates.DASH_LEFT_RIGHT;
@@ -53,17 +67,11 @@ import static com.mygdx.game.entity.character.AssassinStates.STANDING;
 import static com.mygdx.game.entity.character.AssassinStates.STANDING_LEFT_RIGHT;
 import static com.mygdx.game.entity.character.AssassinStates.STANDING_UP;
 import static com.mygdx.game.entity.character.AssassinStates.STANDING_UP_LEFT_RIGHT;
-import static com.mygdx.game.entity.character.AssassinStates.CLEANSE;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_LEFT;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_RIGHT;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_UP_LEFT;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_UP_RIGHT;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
-import static com.mygdx.game.entity.character.AssassinParts.BODY;
-import static com.mygdx.game.entity.character.AssassinParts.LEFT_ARM;
-import static com.mygdx.game.entity.character.AssassinParts.LEFT_LEG;
-import static com.mygdx.game.entity.character.AssassinParts.RIGHT_ARM;
-import static com.mygdx.game.entity.character.AssassinParts.RIGHT_LEG;
 
 
 public class Assassin extends Character<AssassinInput, AssassinStates, AssassinParts> {
@@ -75,41 +83,53 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float FRICTION = 0.6f;
 	private static final float AIR_FRICTION = 0.95f;
 
-	private static final float HEALTH = 50;
+	private static final float HEALTH = 50f;
+
+	// Skill modifiers
+	private static final float DASH_SPEED = 15f;
+	private static final float DASH_DIAGONAL_SPEED = 10f;
+	private static final float DASH_TRUE_DAMAGE = 40f;
+
+	private static final float SHURIKEN_DAMAGE = 10f;
+	private static final float SHURIKEN_BONUS_DAMAGE = SHURIKEN_DAMAGE + 10f;
+
+	private static final float LIGHT_REALM_DURATION = 10f;
+	private static final float LIGHT_REALM_DASH_SPEED = 20f;
+	private static final float LIGHT_REALM_DASH_DIAGONAL_SPEED = 15f;
+
+	private static final float LIGHT_REALM_SHURIKEN_DISTANCE =
+			(float) Math.sqrt(Math.pow(GAME_WIDTH, 2) + Math.pow(GAME_HEIGHT, 2));
+	private static final float LIGHT_REALM_SHURIKEN_MIN_INTERVAL = 0.5f;
+	private static final float LIGHT_REALM_SHURIKEN_MAX_INTERVAL = 1f;
 
 	// Skill cooldown in seconds.
-	private static final float PRIMARY_COOLDOWN = 1f;
-	private static final float SECONDARY_COOLDOWN = 1f;
-	private static final float TERTIARY_COOLDOWN = 2f;
+	private static final float DASH_COOLDOWN = 1f;
+	private static final float SHURIKEN_THROW_COOLDOWN = 1f;
+	private static final float CLEANSE_COOLDOWN = LIGHT_REALM_DURATION + 20f;
 
 	// Skill animation duration in seconds.
 	private static final float STANDING_ANIMATION_DURATION = 1f;
 	private static final float WALKING_ANIMATION_DURATION = 0.5f;
-	private static final float PRIMARY_ANIMATION_DURATION = 0.05f;
-	private static final float SECONDARY_ANIMATION_DURATION = 0.3f;
-	private static final float TERTIARY_ANIMATION_DURATION = 2f;
+	private static final float DASH_ANIMATION_DURATION = 0.05f;
+	private static final float SHURIKEN_THROW_ANIMATION_DURATION = 0.3f;
+	private static final float CLEANSE_ANIMATION_DURATION = 0.3f;
 
-	// Skill modifiers
-	private static final float DASH_SPEED = 20;
-	private static final float DASH_DIAGONAL_SPEED = 15;
-	private static final float DASH_TRUE_DAMAGE = 200;
-
-	private static final float SHURIKEN_DAMAGE = 10;
-	private static final float SHURIKEN_BONUS_DAMAGE = SHURIKEN_DAMAGE + 10;
-
-
-
-	private Vector2 velocity;
+	private int stacks;
 	private boolean falling;
-	private Ability<AssassinStates> primary;
+	private boolean dashTrueDamage;
+	private boolean lightRealm;
+
+	private Timer timer;
+	private Vector2 velocity;
+	private Ability<AssassinStates> dash;
 
 	private final Debuff dashDebuff;
-	private int stacks;
 
 	public Assassin(GameScreen game) {
 		super(game);
+		timer = new Timer();
 		velocity = new Vector2();
-		dashDebuff = new Debuff(DAMAGE_REDUCTION, 1f, PRIMARY_ANIMATION_DURATION * 2);
+		dashDebuff = new Debuff(DAMAGE_REDUCTION, 1f, DASH_ANIMATION_DURATION * 2);
 	}
 
 	@Override
@@ -135,7 +155,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(UP_KEYDOWN, STANDING_UP_LEFT_RIGHT)
 						.addEdge(DASH_KEYDOWN, DASH_LEFT_RIGHT)
 						.addEdge(SHURIKEN_THROW_KEYDOWN, SHURIKEN_THROW_LEFT_RIGHT)
-						.addEdge(SWITCH_CHARACTER, STANDING))
+						.addEdge(CLEANSE_KEYDOWN, CLEANSE_LEFT_RIGHT)
+						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(WALKING_LEFT)
 						.defineBegin(() -> getFlipX().set(true))
@@ -148,7 +170,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(UP_KEYDOWN, WALKING_UP_LEFT)
 						.addEdge(DASH_KEYDOWN, DASH_LEFT)
 						.addEdge(SHURIKEN_THROW_KEYDOWN, SHURIKEN_THROW_LEFT)
-						.addEdge(SWITCH_CHARACTER, STANDING))
+						.addEdge(CLEANSE_KEYDOWN, CLEANSE_LEFT)
+						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(WALKING_RIGHT)
 						.defineBegin(() -> getFlipX().set(false))
@@ -161,7 +185,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(UP_KEYDOWN, WALKING_UP_RIGHT)
 						.addEdge(DASH_KEYDOWN, DASH_RIGHT)
 						.addEdge(SHURIKEN_THROW_KEYDOWN, SHURIKEN_THROW_RIGHT)
-						.addEdge(SWITCH_CHARACTER, STANDING))
+						.addEdge(CLEANSE_KEYDOWN, CLEANSE_RIGHT)
+						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(STANDING_UP)
 						.defineUpdate(this::updatePhysics)
@@ -170,8 +196,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(RIGHT_KEYDOWN, WALKING_UP_RIGHT)
 						.addEdge(DASH_KEYDOWN, DASH_UP)
 						.addEdge(SHURIKEN_THROW_KEYDOWN, SHURIKEN_THROW_UP)
-						.addEdge(CLEANSE_KEYDOWN, CLEANSE)
-						.addEdge(SWITCH_CHARACTER, STANDING))
+						.addEdge(CLEANSE_KEYDOWN, CLEANSE_UP)
+						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(STANDING_UP_LEFT_RIGHT)
 						.defineUpdate(this::updatePhysics)
@@ -180,7 +207,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(RIGHT_KEYUP, WALKING_UP_LEFT)
 						.addEdge(DASH_KEYDOWN, DASH_UP_LEFT_RIGHT)
 						.addEdge(SHURIKEN_THROW_KEYDOWN, SHURIKEN_THROW_UP_LEFT_RIGHT)
-						.addEdge(SWITCH_CHARACTER, STANDING))
+						.addEdge(CLEANSE_KEYDOWN, CLEANSE_UP_LEFT_RIGHT)
+						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 
 				.add(new State<AssassinInput, AssassinStates>(WALKING_UP_LEFT)
@@ -194,7 +223,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(RIGHT_KEYDOWN, STANDING_UP_LEFT_RIGHT)
 						.addEdge(DASH_KEYDOWN, DASH_UP_LEFT)
 						.addEdge(SHURIKEN_THROW_KEYDOWN, SHURIKEN_THROW_UP_LEFT)
-						.addEdge(SWITCH_CHARACTER, STANDING))
+						.addEdge(CLEANSE_KEYDOWN, CLEANSE_UP_LEFT)
+						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(WALKING_UP_RIGHT)
 						.defineBegin(() -> getFlipX().set(false))
@@ -207,7 +238,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(LEFT_KEYDOWN, STANDING_UP_LEFT_RIGHT)
 						.addEdge(DASH_KEYDOWN, DASH_UP_RIGHT)
 						.addEdge(SHURIKEN_THROW_KEYDOWN, SHURIKEN_THROW_UP_RIGHT)
-						.addEdge(SWITCH_CHARACTER, STANDING))
+						.addEdge(CLEANSE_KEYDOWN, CLEANSE_UP_RIGHT)
+						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				/* Dash */
 				.add(new State<AssassinInput, AssassinStates>(DASH)
@@ -215,56 +248,64 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(LEFT_KEYDOWN, DASH_LEFT)
 						.addEdge(RIGHT_KEYDOWN, DASH_RIGHT)
 						.addEdge(UP_KEYDOWN, DASH_UP)
-						.addEdge(DASH_KEYUP, STANDING))
+						.addEdge(DASH_KEYUP, STANDING)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(DASH_LEFT)
 						.defineUpdate(this::dash)
 						.addEdge(LEFT_KEYUP, DASH)
 						.addEdge(RIGHT_KEYDOWN, DASH_LEFT_RIGHT)
 						.addEdge(UP_KEYDOWN, DASH_UP_LEFT)
-						.addEdge(DASH_KEYUP, WALKING_LEFT))
+						.addEdge(DASH_KEYUP, WALKING_LEFT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(DASH_RIGHT)
 						.defineUpdate(this::dash)
 						.addEdge(RIGHT_KEYUP, DASH)
 						.addEdge(LEFT_KEYDOWN, DASH_LEFT_RIGHT)
 						.addEdge(UP_KEYDOWN, DASH_UP_RIGHT)
-						.addEdge(DASH_KEYUP, WALKING_RIGHT))
+						.addEdge(DASH_KEYUP, WALKING_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(DASH_LEFT_RIGHT)
 						.defineUpdate(this::dash)
 						.addEdge(LEFT_KEYUP, DASH_RIGHT)
 						.addEdge(RIGHT_KEYUP, DASH_LEFT)
 						.addEdge(UP_KEYDOWN, DASH_UP_LEFT_RIGHT)
-						.addEdge(DASH_KEYUP, STANDING_LEFT_RIGHT))
+						.addEdge(DASH_KEYUP, STANDING_LEFT_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(DASH_UP)
 						.defineUpdate(this::dash)
 						.addEdge(UP_KEYUP, DASH)
 						.addEdge(LEFT_KEYDOWN, DASH_UP_LEFT)
 						.addEdge(RIGHT_KEYDOWN, DASH_UP_RIGHT)
-						.addEdge(DASH_KEYUP, STANDING_UP))
+						.addEdge(DASH_KEYUP, STANDING_UP)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(DASH_UP_LEFT)
 						.defineUpdate(this::dash)
 						.addEdge(UP_KEYUP, DASH_LEFT)
 						.addEdge(LEFT_KEYUP, DASH_UP)
 						.addEdge(RIGHT_KEYDOWN, DASH_UP_LEFT_RIGHT)
-						.addEdge(DASH_KEYUP, WALKING_UP_LEFT))
+						.addEdge(DASH_KEYUP, WALKING_UP_LEFT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(DASH_UP_RIGHT)
 						.defineUpdate(this::dash)
 						.addEdge(UP_KEYUP, DASH_RIGHT)
 						.addEdge(RIGHT_KEYUP, DASH_UP)
 						.addEdge(LEFT_KEYDOWN, DASH_UP_LEFT_RIGHT)
-						.addEdge(DASH_KEYUP, WALKING_UP_RIGHT))
+						.addEdge(DASH_KEYUP, WALKING_UP_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(DASH_UP_LEFT_RIGHT)
 						.defineUpdate(this::dash)
 						.addEdge(UP_KEYUP, DASH_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, DASH_UP_RIGHT)
 						.addEdge(RIGHT_KEYUP, DASH_UP_LEFT)
-						.addEdge(DASH_KEYUP, STANDING_UP_LEFT_RIGHT))
+						.addEdge(DASH_KEYUP, STANDING_UP_LEFT_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				/* Shuriken Throw */
 				.add(new State<AssassinInput, AssassinStates>(SHURIKEN_THROW)
@@ -272,60 +313,129 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 						.addEdge(SHURIKEN_THROW_KEYUP, STANDING)
 						.addEdge(LEFT_KEYDOWN, SHURIKEN_THROW_LEFT)
 						.addEdge(RIGHT_KEYDOWN, SHURIKEN_THROW_RIGHT)
-						.addEdge(UP_KEYDOWN, SHURIKEN_THROW_UP))
+						.addEdge(UP_KEYDOWN, SHURIKEN_THROW_UP)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(SHURIKEN_THROW_LEFT)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(SHURIKEN_THROW_KEYUP, WALKING_LEFT)
 						.addEdge(LEFT_KEYUP, SHURIKEN_THROW)
 						.addEdge(RIGHT_KEYDOWN, SHURIKEN_THROW_LEFT_RIGHT)
-						.addEdge(UP_KEYDOWN, SHURIKEN_THROW_UP_LEFT))
+						.addEdge(UP_KEYDOWN, SHURIKEN_THROW_UP_LEFT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(SHURIKEN_THROW_RIGHT)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(SHURIKEN_THROW_KEYUP, WALKING_RIGHT)
 						.addEdge(RIGHT_KEYUP, SHURIKEN_THROW)
 						.addEdge(LEFT_KEYDOWN, SHURIKEN_THROW_LEFT_RIGHT)
-						.addEdge(UP_KEYDOWN, SHURIKEN_THROW_UP_RIGHT))
+						.addEdge(UP_KEYDOWN, SHURIKEN_THROW_UP_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(SHURIKEN_THROW_LEFT_RIGHT)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(SHURIKEN_THROW_KEYUP, STANDING_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, SHURIKEN_THROW_RIGHT)
 						.addEdge(RIGHT_KEYUP, SHURIKEN_THROW_LEFT)
-						.addEdge(UP_KEYDOWN, SHURIKEN_THROW_UP_LEFT_RIGHT))
+						.addEdge(UP_KEYDOWN, SHURIKEN_THROW_UP_LEFT_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(SHURIKEN_THROW_UP)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(SHURIKEN_THROW_KEYUP, STANDING_UP)
 						.addEdge(UP_KEYUP, SHURIKEN_THROW)
 						.addEdge(LEFT_KEYDOWN, SHURIKEN_THROW_UP_LEFT)
-						.addEdge(RIGHT_KEYDOWN, SHURIKEN_THROW_UP_RIGHT))
+						.addEdge(RIGHT_KEYDOWN, SHURIKEN_THROW_UP_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(SHURIKEN_THROW_UP_LEFT)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(SHURIKEN_THROW_KEYUP, WALKING_UP_LEFT)
 						.addEdge(UP_KEYUP, SHURIKEN_THROW_LEFT)
 						.addEdge(LEFT_KEYUP, SHURIKEN_THROW_UP)
-						.addEdge(RIGHT_KEYDOWN, SHURIKEN_THROW_UP_LEFT_RIGHT))
+						.addEdge(RIGHT_KEYDOWN, SHURIKEN_THROW_UP_LEFT_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(SHURIKEN_THROW_UP_RIGHT)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(SHURIKEN_THROW_KEYUP, WALKING_UP_RIGHT)
 						.addEdge(UP_KEYUP, SHURIKEN_THROW_RIGHT)
 						.addEdge(RIGHT_KEYUP, SHURIKEN_THROW_UP)
-						.addEdge(LEFT_KEYDOWN, SHURIKEN_THROW_UP_LEFT_RIGHT))
+						.addEdge(LEFT_KEYDOWN, SHURIKEN_THROW_UP_LEFT_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				.add(new State<AssassinInput, AssassinStates>(SHURIKEN_THROW_UP_LEFT_RIGHT)
 						.defineUpdate(this::updatePhysics)
 						.addEdge(SHURIKEN_THROW_KEYUP, STANDING_UP_LEFT_RIGHT)
 						.addEdge(UP_KEYUP, SHURIKEN_THROW_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, SHURIKEN_THROW_UP_RIGHT)
-						.addEdge(RIGHT_KEYUP, SHURIKEN_THROW_UP_LEFT))
+						.addEdge(RIGHT_KEYUP, SHURIKEN_THROW_UP_LEFT)
+						.addEdge(CROWD_CONTROL, STANDING))
 
 				/* Cleanse */
 				.add(new State<AssassinInput, AssassinStates>(CLEANSE)
-						.addEdge(CLEANSE_KEYUP, STANDING));
+						.defineUpdate(this::updatePhysics)
+						.addEdge(CLEANSE_KEYUP, STANDING)
+						.addEdge(LEFT_KEYDOWN, CLEANSE_LEFT)
+						.addEdge(RIGHT_KEYDOWN, CLEANSE_RIGHT)
+						.addEdge(UP_KEYDOWN, CLEANSE_UP)
+						.addEdge(CROWD_CONTROL, STANDING))
+
+				.add(new State<AssassinInput, AssassinStates>(CLEANSE_LEFT)
+						.defineUpdate(this::updatePhysics)
+						.addEdge(CLEANSE_KEYUP, WALKING_LEFT)
+						.addEdge(LEFT_KEYUP, CLEANSE)
+						.addEdge(RIGHT_KEYDOWN, CLEANSE_LEFT_RIGHT)
+						.addEdge(UP_KEYDOWN, CLEANSE_UP_LEFT)
+						.addEdge(CROWD_CONTROL, STANDING))
+
+				.add(new State<AssassinInput, AssassinStates>(CLEANSE_RIGHT)
+						.defineUpdate(this::updatePhysics)
+						.addEdge(CLEANSE_KEYUP, WALKING_RIGHT)
+						.addEdge(RIGHT_KEYUP, CLEANSE)
+						.addEdge(LEFT_KEYDOWN, CLEANSE_LEFT_RIGHT)
+						.addEdge(UP_KEYDOWN, CLEANSE_UP_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
+
+				.add(new State<AssassinInput, AssassinStates>(CLEANSE_LEFT_RIGHT)
+						.defineUpdate(this::updatePhysics)
+						.addEdge(CLEANSE_KEYUP, STANDING_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, CLEANSE_RIGHT)
+						.addEdge(RIGHT_KEYUP, CLEANSE_LEFT)
+						.addEdge(UP_KEYDOWN, CLEANSE_UP_LEFT_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
+
+				.add(new State<AssassinInput, AssassinStates>(CLEANSE_UP)
+						.defineUpdate(this::updatePhysics)
+						.addEdge(CLEANSE_KEYUP, STANDING_UP)
+						.addEdge(LEFT_KEYDOWN, CLEANSE_UP_LEFT)
+						.addEdge(RIGHT_KEYDOWN, CLEANSE_UP_RIGHT)
+						.addEdge(UP_KEYUP, CLEANSE)
+						.addEdge(CROWD_CONTROL, STANDING))
+
+				.add(new State<AssassinInput, AssassinStates>(CLEANSE_UP_LEFT)
+						.defineUpdate(this::updatePhysics)
+						.addEdge(CLEANSE_KEYUP, WALKING_UP_LEFT)
+						.addEdge(LEFT_KEYUP, CLEANSE_UP)
+						.addEdge(RIGHT_KEYDOWN, CLEANSE_UP_LEFT_RIGHT)
+						.addEdge(UP_KEYUP, CLEANSE_LEFT)
+						.addEdge(CROWD_CONTROL, STANDING))
+
+				.add(new State<AssassinInput, AssassinStates>(CLEANSE_UP_RIGHT)
+						.defineUpdate(this::updatePhysics)
+						.addEdge(CLEANSE_KEYUP, WALKING_UP_RIGHT)
+						.addEdge(RIGHT_KEYUP, CLEANSE_UP)
+						.addEdge(LEFT_KEYDOWN, CLEANSE_UP_LEFT_RIGHT)
+						.addEdge(UP_KEYUP, CLEANSE_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING))
+
+				.add(new State<AssassinInput, AssassinStates>(CLEANSE_UP_LEFT_RIGHT)
+						.defineUpdate(this::updatePhysics)
+						.addEdge(CLEANSE_KEYUP, STANDING_UP_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, CLEANSE_UP_RIGHT)
+						.addEdge(RIGHT_KEYUP, CLEANSE_UP_LEFT)
+						.addEdge(UP_KEYUP, CLEANSE_LEFT_RIGHT)
+						.addEdge(CROWD_CONTROL, STANDING));
 	}
 
 	@Override
@@ -338,13 +448,17 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 				.setDuration(WALKING_ANIMATION_DURATION)
 				.setLoop();
 
-		Animation<AssassinParts> primary = assets.getAssassinAnimation(Assets.AssassinAnimationName.DASH)
-				.setDuration(PRIMARY_ANIMATION_DURATION)
+		Animation<AssassinParts> dash = assets.getAssassinAnimation(Assets.AssassinAnimationName.DASH)
+				.setDuration(DASH_ANIMATION_DURATION)
 				.defineEnd(() -> input(DASH_KEYUP));
 
-		Animation<AssassinParts> secondary = assets.getAssassinAnimation(Assets.AssassinAnimationName.SHURIKEN_THROW)
-				.setDuration(SECONDARY_ANIMATION_DURATION)
+		Animation<AssassinParts> shurikenThrow = assets.getAssassinAnimation(Assets.AssassinAnimationName.SHURIKEN_THROW)
+				.setDuration(SHURIKEN_THROW_ANIMATION_DURATION)
 				.defineEnd(() -> input(SHURIKEN_THROW_KEYUP));
+
+		Animation<AssassinParts> cleanse = assets.getAssassinAnimation(Assets.AssassinAnimationName.SHURIKEN_THROW)
+				.setDuration(CLEANSE_ANIMATION_DURATION)
+				.defineEnd(() -> input(CLEANSE_KEYUP));
 
 		animations.map(STANDING, standing)
 				.map(STANDING_LEFT_RIGHT, standing)
@@ -355,39 +469,50 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 				.map(WALKING_UP_LEFT, walking)
 				.map(WALKING_UP_RIGHT, walking)
 
-				.map(DASH_LEFT, primary)
-				.map(DASH_RIGHT, primary)
-				.map(DASH_UP, primary)
-				.map(DASH_UP_LEFT, primary)
-				.map(DASH_UP_RIGHT, primary)
-				.map(DASH_UP_LEFT_RIGHT, primary)
+				.map(DASH_LEFT, dash)
+				.map(DASH_RIGHT, dash)
+				.map(DASH_UP, dash)
+				.map(DASH_UP_LEFT, dash)
+				.map(DASH_UP_RIGHT, dash)
+				.map(DASH_UP_LEFT_RIGHT, dash)
 
-				.map(SHURIKEN_THROW, secondary)
-				.map(SHURIKEN_THROW_LEFT, secondary)
-				.map(SHURIKEN_THROW_RIGHT, secondary)
-				.map(SHURIKEN_THROW_LEFT_RIGHT, secondary)
-				.map(SHURIKEN_THROW_UP, secondary)
-				.map(SHURIKEN_THROW_UP_LEFT, secondary)
-				.map(SHURIKEN_THROW_UP_RIGHT, secondary)
-				.map(SHURIKEN_THROW_UP_LEFT_RIGHT, secondary);
+				.map(SHURIKEN_THROW, shurikenThrow)
+				.map(SHURIKEN_THROW_LEFT, shurikenThrow)
+				.map(SHURIKEN_THROW_RIGHT, shurikenThrow)
+				.map(SHURIKEN_THROW_LEFT_RIGHT, shurikenThrow)
+				.map(SHURIKEN_THROW_UP, shurikenThrow)
+				.map(SHURIKEN_THROW_UP_LEFT, shurikenThrow)
+				.map(SHURIKEN_THROW_UP_RIGHT, shurikenThrow)
+				.map(SHURIKEN_THROW_UP_LEFT_RIGHT, shurikenThrow)
+
+				.map(CLEANSE, cleanse)
+				.map(CLEANSE_LEFT_RIGHT, cleanse)
+				.map(CLEANSE_LEFT, cleanse)
+				.map(CLEANSE_RIGHT, cleanse)
+				.map(CLEANSE_UP, cleanse)
+				.map(CLEANSE_UP_LEFT_RIGHT, cleanse)
+				.map(CLEANSE_UP_LEFT, cleanse)
+				.map(CLEANSE_UP_RIGHT, cleanse);
 	}
 
 	@Override
 	protected void defineAbilities(Abilities<AssassinStates> abilities) {
-		primary = new Ability<AssassinStates>(PRIMARY_COOLDOWN)
+		dash = new Ability<AssassinStates>(DASH_COOLDOWN)
 				.defineBegin((state) -> {
+					float dashSpeed = lightRealm ? LIGHT_REALM_DASH_SPEED : DASH_SPEED;
+					float dashDiagonalSpeed = lightRealm ? LIGHT_REALM_DASH_DIAGONAL_SPEED : DASH_DIAGONAL_SPEED;
 					switch (state) {
 						case DASH_LEFT:
-							velocity.x = -DASH_SPEED;
+							velocity.x = -dashSpeed;
 							break;
 						case DASH_RIGHT:
-							velocity.x = DASH_SPEED;
+							velocity.x = dashSpeed;
 							break;
 						case DASH_UP_LEFT:
-							velocity.x = -DASH_DIAGONAL_SPEED;
+							velocity.x = -dashDiagonalSpeed;
 							break;
 						case DASH_UP_RIGHT:
-							velocity.x = DASH_DIAGONAL_SPEED;
+							velocity.x = dashDiagonalSpeed;
 							break;
 					}
 
@@ -395,69 +520,99 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 					switch (state) {
 						case DASH_UP:
 						case DASH_UP_LEFT_RIGHT:
-							velocity.y = DASH_SPEED;
+							velocity.y = dashSpeed;
 							break;
 						case DASH_UP_LEFT:
-							velocity.y = DASH_DIAGONAL_SPEED;
+							velocity.y = dashDiagonalSpeed;
 							break;
 						case DASH_UP_RIGHT:
-							velocity.y = DASH_DIAGONAL_SPEED;
+							velocity.y = dashDiagonalSpeed;
 							break;
 						default:
 							falling = false;
 					}
+					dashTrueDamage = true;
 					inflictDebuff(dashDebuff);
 				});
 
-		Ability<AssassinStates> secondary = new Ability<AssassinStates>(SECONDARY_COOLDOWN)
+		Ability<AssassinStates> shurikenThrow = new Ability<AssassinStates>(SHURIKEN_THROW_COOLDOWN)
 				.defineBegin((state) -> {
 					Hitbox body = getHitbox(BODY);
 					float x = body.getX() + body.getWidth() / 2;
 					float y = body.getY() + body.getHeight() / 2;
+					float degree = getFlipX().get() ? 270 : 90;
+
 					if (stacks >= 3) {
 						Gdx.app.log("Assassin.java", "3 Stacks!");
-						new Shuriken(getGame(), x, y, getFlipX().get(), SHURIKEN_BONUS_DAMAGE);
+						new Shuriken(getGame(), x, y, degree, SHURIKEN_BONUS_DAMAGE);
 						stacks = 0;
 					} else {
-						new Shuriken(getGame(), x, y, getFlipX().get(), SHURIKEN_DAMAGE);
+						new Shuriken(getGame(), x, y, degree, SHURIKEN_DAMAGE);
 					}
 				});
 
-		Ability<AssassinStates> tertiary = new Ability<AssassinStates>(TERTIARY_COOLDOWN)
-				.defineBegin((state) -> Gdx.app.log("Assassin.java", "Tertiary"));
+		Ability<AssassinStates> cleanse = new Ability<AssassinStates>(CLEANSE_COOLDOWN)
+				.defineBegin((state) -> {
+					if (isCrowdControl()) {
+						clearCrowdControl();
+					}
 
-		abilities.addBegin(DASH_LEFT, primary)
-				.addBegin(DASH_RIGHT, primary)
-				.addBegin(DASH_UP, primary)
-				.addBegin(DASH_UP_LEFT, primary)
-				.addBegin(DASH_UP_RIGHT, primary)
-				.addBegin(DASH_UP_LEFT_RIGHT, primary)
-				.addEnd(WALKING_LEFT, primary)
-				.addEnd(WALKING_RIGHT, primary)
-				.addEnd(STANDING_UP, primary)
-				.addEnd(WALKING_UP_LEFT, primary)
-				.addEnd(WALKING_UP_RIGHT, primary)
-				.addEnd(STANDING_UP_LEFT_RIGHT, primary)
+					lightRealm = true;
+					timer.scheduleTask(new Timer.Task() {
+						@Override
+						public void run() {
+							lightRealm = false;
+						}
+					}, LIGHT_REALM_DURATION);
+					lightRealmShuriken();
+				});
 
-				.addBegin(SHURIKEN_THROW, secondary)
-				.addBegin(SHURIKEN_THROW_LEFT, secondary)
-				.addBegin(SHURIKEN_THROW_RIGHT, secondary)
-				.addBegin(SHURIKEN_THROW_LEFT_RIGHT, secondary)
-				.addBegin(SHURIKEN_THROW_UP, secondary)
-				.addBegin(SHURIKEN_THROW_UP_LEFT, secondary)
-				.addBegin(SHURIKEN_THROW_UP_RIGHT, secondary)
-				.addBegin(SHURIKEN_THROW_UP_LEFT_RIGHT, secondary)
-				.addEnd(STANDING, secondary)
-				.addEnd(WALKING_LEFT, secondary)
-				.addEnd(WALKING_RIGHT, secondary)
-				.addEnd(STANDING_LEFT_RIGHT, secondary)
-				.addEnd(STANDING_UP, secondary)
-				.addEnd(WALKING_UP_LEFT, secondary)
-				.addEnd(WALKING_UP_RIGHT, secondary)
-				.addEnd(STANDING_UP_LEFT_RIGHT, secondary)
+		abilities.addBegin(DASH_LEFT, dash)
+				.addBegin(DASH_RIGHT, dash)
+				.addBegin(DASH_UP, dash)
+				.addBegin(DASH_UP_LEFT, dash)
+				.addBegin(DASH_UP_RIGHT, dash)
+				.addBegin(DASH_UP_LEFT_RIGHT, dash)
+				.addEnd(WALKING_LEFT, dash)
+				.addEnd(WALKING_RIGHT, dash)
+				.addEnd(STANDING_UP, dash)
+				.addEnd(WALKING_UP_LEFT, dash)
+				.addEnd(WALKING_UP_RIGHT, dash)
+				.addEnd(STANDING_UP_LEFT_RIGHT, dash)
 
-				.addBegin(CLEANSE, tertiary)
-				.addEnd(STANDING, tertiary);
+				.addBegin(SHURIKEN_THROW, shurikenThrow)
+				.addBegin(SHURIKEN_THROW_LEFT, shurikenThrow)
+				.addBegin(SHURIKEN_THROW_RIGHT, shurikenThrow)
+				.addBegin(SHURIKEN_THROW_LEFT_RIGHT, shurikenThrow)
+				.addBegin(SHURIKEN_THROW_UP, shurikenThrow)
+				.addBegin(SHURIKEN_THROW_UP_LEFT, shurikenThrow)
+				.addBegin(SHURIKEN_THROW_UP_RIGHT, shurikenThrow)
+				.addBegin(SHURIKEN_THROW_UP_LEFT_RIGHT, shurikenThrow)
+				.addEnd(STANDING, shurikenThrow)
+				.addEnd(WALKING_LEFT, shurikenThrow)
+				.addEnd(WALKING_RIGHT, shurikenThrow)
+				.addEnd(STANDING_LEFT_RIGHT, shurikenThrow)
+				.addEnd(STANDING_UP, shurikenThrow)
+				.addEnd(WALKING_UP_LEFT, shurikenThrow)
+				.addEnd(WALKING_UP_RIGHT, shurikenThrow)
+				.addEnd(STANDING_UP_LEFT_RIGHT, shurikenThrow)
+
+				.addBegin(CLEANSE, cleanse)
+				.addBegin(CLEANSE_LEFT, cleanse)
+				.addBegin(CLEANSE_RIGHT, cleanse)
+				.addBegin(CLEANSE_LEFT_RIGHT, cleanse)
+				.addBegin(CLEANSE_UP, cleanse)
+				.addBegin(CLEANSE_UP_LEFT, cleanse)
+				.addBegin(CLEANSE_UP_RIGHT, cleanse)
+				.addBegin(CLEANSE_UP_LEFT_RIGHT, cleanse)
+				.addEnd(STANDING, cleanse)
+				.addEnd(WALKING_LEFT, cleanse)
+				.addEnd(WALKING_RIGHT, cleanse)
+				.addEnd(STANDING_LEFT_RIGHT, cleanse)
+				.addEnd(STANDING_UP, cleanse)
+				.addEnd(WALKING_UP_LEFT, cleanse)
+				.addEnd(WALKING_UP_RIGHT, cleanse)
+				.addEnd(STANDING_UP_LEFT_RIGHT, cleanse);
 	}
 
 	private void addVelocityX(float movespeed) {
@@ -504,20 +659,46 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private void dash() {
 		updatePosition();
 		Boss1 boss1 = getGame().getBoss1();
-		if (boss1.isStunned()) {
+		if (boss1.isStunned() && dashTrueDamage) {
+			dashTrueDamage = false;
 			boss1.trueDamageTest(this, getHitbox(BODY), DASH_TRUE_DAMAGE);
 		}
+	}
+
+	private void lightRealmShuriken() {
+		timer.scheduleTask(new Timer.Task() {
+			@Override
+			public void run() {
+				int degrees = MathUtils.random(0, 360);
+				float rad = (float) (degrees * Math.PI / 180);
+				float x = (float) Math.sin(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + GAME_WIDTH / 2f;
+				float y = (float) Math.cos(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + GAME_HEIGHT / 2f;
+				new Shuriken(getGame(), x, y, degrees - 180, SHURIKEN_DAMAGE);
+				if (lightRealm && !isDispose()) {
+					lightRealmShuriken();
+				}
+			}
+		}, MathUtils.random(LIGHT_REALM_SHURIKEN_MIN_INTERVAL, LIGHT_REALM_SHURIKEN_MAX_INTERVAL));
 	}
 
 	@Override
 	public boolean hitTest(Hitbox hitbox) {
 		return getHitbox(BODY).hitTest(hitbox) ||
-						getHitbox(LEFT_LEG).hitTest(hitbox) ||
-						getHitbox(RIGHT_LEG).hitTest(hitbox) ||
-						getHitbox(LEFT_ARM).hitTest(hitbox) ||
-						getHitbox(RIGHT_ARM).hitTest(hitbox);
+				getHitbox(LEFT_LEG).hitTest(hitbox) ||
+				getHitbox(RIGHT_LEG).hitTest(hitbox) ||
+				getHitbox(LEFT_ARM).hitTest(hitbox) ||
+				getHitbox(RIGHT_ARM).hitTest(hitbox);
 	}
 
+	@Override
+	public float getMiddleX() {
+		return getPosition().x + getHitbox(BODY).getOffsetX() + getHitbox(BODY).getWidth() / 2;
+	}
+
+	@Override
+	protected float getTopY() {
+		return getPosition().y + getHitbox(BODY).getOffsetY() + getHitbox(BODY).getHeight();
+	}
 
 	@Override
 	protected void damage() {
@@ -528,8 +709,30 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	}
 
 	@Override
-	protected void inflictCrowdControl() {
+	protected void beginCrowdControl() {
 		input(CROWD_CONTROL);
+	}
+
+	@Override
+	public void endCrowdControl() {
+		for (CharacterControllerInput input : getGame().getPlayerController().getInputs()) {
+			switch (input) {
+				case LEFT:
+					input(LEFT_KEYDOWN);
+					break;
+				case RIGHT:
+					input(RIGHT_KEYDOWN);
+					break;
+				case UP:
+					input(UP_KEYDOWN);
+					break;
+			}
+		}
+	}
+
+	@Override
+	protected boolean canInput(AssassinInput input) {
+		return !isStunned() || input == CLEANSE_KEYDOWN;
 	}
 
 	// TODO: Abstract these out
@@ -578,8 +781,6 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	protected void useTertiary(boolean keydown) {
 		if (keydown) {
 			input(CLEANSE_KEYDOWN);
-		} else {
-			input(CLEANSE_KEYUP);
 		}
 	}
 
@@ -589,26 +790,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 			velocity.x = 0;
 			velocity.y = 0;
 			falling = false;
-			primary.reset();
+			dash.reset();
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public void setInput(Collection<CharacterControllerInput> inputs) {
-		for (CharacterControllerInput input : inputs) {
-			switch (input) {
-				case LEFT:
-					input(LEFT_KEYDOWN);
-					break;
-				case RIGHT:
-					input(RIGHT_KEYDOWN);
-					break;
-				case UP:
-					input(UP_KEYDOWN);
-					break;
-			}
-		}
 	}
 }

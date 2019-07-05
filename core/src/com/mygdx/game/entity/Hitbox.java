@@ -63,6 +63,10 @@ public class Hitbox {
 		return offsetX;
 	}
 
+	public int getOffsetY() {
+		return offsetY;
+	}
+
 	public float getWidth() {
 		return width;
 	}

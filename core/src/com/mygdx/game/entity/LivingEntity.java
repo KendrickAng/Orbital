@@ -1,5 +1,6 @@
 package com.mygdx.game.entity;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.debuff.Debuff;
@@ -7,6 +8,7 @@ import com.mygdx.game.entity.debuff.DebuffDefinition;
 import com.mygdx.game.entity.debuff.Debuffs;
 import com.mygdx.game.screens.GameScreen;
 
+import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REFLECT;
 import static com.mygdx.game.entity.debuff.DebuffType.STUN;
@@ -19,11 +21,11 @@ import static com.mygdx.game.entity.debuff.DebuffType.STUN;
  */
 public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enum> extends Entity<I, S, P> {
 	private static final float DAMAGE_BLINK_DURATION = 0.25f;
-	private static final float DAMAGED_DURATION = 1f;
 
 	private float health;
 	private float maxHealth;
 
+	private Sprite debuff;
 	private Debuffs debuffs;
 
 	private Timer timer;
@@ -66,13 +68,24 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 
 				.map(STUN, new DebuffDefinition()
 						.defineBegin(() -> {
-							inflictCrowdControl();
+							beginCrowdControl();
 							stunned = true;
+							debuff = new Sprite(game.getAssets().getTexture(STUNNED));
+							setRenderTask((batch) -> {
+								debuff.setPosition(getMiddleX() - debuff.getWidth() / 2, getTopY());
+								debuff.draw(batch);
+							});
 						})
-						.defineEnd(() -> stunned = false));
+						.defineEnd(() -> {
+							stunned = false;
+							endCrowdControl();
+							setRenderTask(null);
+						}));
 	}
 
 	protected abstract float health();
+
+	protected abstract float damagedDuration();
 
 	// creates new instances of Ability for primary, secondary and tertiary and maps the corrs CharacterState enum to Ability.
 	protected abstract void defineAbilities(Abilities<S> abilities);
@@ -80,7 +93,15 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	// called when an instance of LivingEntity is created.
 	protected abstract void defineDebuffs(Debuffs debuffs);
 
-	protected abstract void inflictCrowdControl();
+	// Called when crowd control is first inflicted on the entity.
+	protected abstract void beginCrowdControl();
+
+	// Called when entity has no more crowd control.
+	public abstract void endCrowdControl();
+
+	public abstract float getMiddleX();
+
+	protected abstract float getTopY();
 
 	protected abstract void damage();
 
@@ -92,10 +113,22 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		debuffs.cancel(debuff);
 	}
 
-	public void inflictDamage(LivingEntity entity, float damage) {
+	public boolean inflictDamage(LivingEntity entity, float damage) {
 		if (!damaged) {
 			damaged = true;
+			timer.scheduleTask(new Timer.Task() {
+				@Override
+				public void run() {
+					damaged = false;
+				}
+			}, damagedDuration());
+
+			// Abstract method to check if entity is damaged
 			damage();
+
+			if (entity != null && damageReflect > 0) {
+				entity.inflictTrueDamage(damage * damageReflect);
+			}
 
 			if (damageReduction < 1) {
 				health -= damage * (1 - damageReduction);
@@ -111,19 +144,14 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 				if (health <= 0) {
 					dispose();
 				}
-			}
 
-			if (entity != null && damageReflect > 0) {
-				entity.inflictTrueDamage(damage * damageReflect);
+				return true;
+			} else {
+				// 100% damage reduction.
+				return false;
 			}
-
-			timer.scheduleTask(new Timer.Task() {
-				@Override
-				public void run() {
-					damaged = false;
-				}
-			}, DAMAGED_DURATION);
 		}
+		return false;
 	}
 
 	// Ignore damageReduction, damageReflect
@@ -150,9 +178,8 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		return stunned;
 	}
 
-	@Override
-	protected boolean canInput() {
-		return !stunned;
+	protected void clearCrowdControl() {
+		debuffs.cancel(STUN);
 	}
 
 	/* Getters */

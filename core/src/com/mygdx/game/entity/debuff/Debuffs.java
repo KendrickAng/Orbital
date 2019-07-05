@@ -62,6 +62,13 @@ public class Debuffs {
 		definition.update(updateModifier(debuffs));
 	}
 
+	public void cancel(DebuffType type) {
+		HashSet<Debuff> debuffs = inflicted.get(type);
+		for (Debuff debuff : debuffs) {
+			cancel(debuff);
+		}
+	}
+
 	public void cancel(Debuff debuff) {
 		DebuffDefinition definition = definitions.get(debuff.getType());
 		HashSet<Debuff> debuffs = inflicted.get(debuff.getType());

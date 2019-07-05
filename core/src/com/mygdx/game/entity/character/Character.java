@@ -1,12 +1,10 @@
 package com.mygdx.game.entity.character;
 
-import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.debuff.DebuffDefinition;
 import com.mygdx.game.entity.debuff.Debuffs;
-
-import java.util.Collection;
+import com.mygdx.game.screens.GameScreen;
 
 import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.EntityManager.CHARACTER_RENDER_PRIORITY;
@@ -16,6 +14,7 @@ import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
  * Character is a LivingEntity with 3 abilities: Secondary, Secondary, Tertiary.
  */
 public abstract class Character<I extends Enum, S extends Enum, P extends Enum> extends LivingEntity<I, S, P> {
+	private static final float DAMAGED_DURATION = 1f;
 	private float slow;
 
 	public Character(GameScreen game) {
@@ -39,6 +38,11 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 				.defineEnd(() -> this.slow = 0));
 	}
 
+	@Override
+	protected float damagedDuration() {
+		return DAMAGED_DURATION;
+	}
+
 	public float getSlow() {
 		return slow;
 	}
@@ -51,8 +55,7 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 				// Self is not disposed
 				!isDispose() &&
 				hitTest(hitbox)) {
-			inflictDamage(entity, damage);
-			return true;
+			return inflictDamage(entity, damage);
 		}
 		return false;
 	}
@@ -73,6 +76,4 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 	protected abstract void useTertiary(boolean keydown);
 
 	public abstract boolean useSwitchCharacter();
-
-	public abstract void setInput(Collection<CharacterControllerInput> inputs);
 }

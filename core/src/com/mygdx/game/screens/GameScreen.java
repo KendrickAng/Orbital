@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.game.assets.Assets;
 import com.mygdx.game.Background;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.EntityManager;
 import com.mygdx.game.entity.boss1.Boss1;
 import com.mygdx.game.entity.boss1.Boss1AI;
@@ -18,7 +18,6 @@ import com.mygdx.game.entity.boss1.Boss1Controller;
 import com.mygdx.game.entity.character.Assassin;
 import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.character.CharacterController;
-import com.mygdx.game.entity.character.TankInput;
 import com.mygdx.game.entity.character.Tank;
 import com.mygdx.game.entity.healthbar.AssassinBar;
 import com.mygdx.game.entity.healthbar.BossBar;
@@ -55,30 +54,29 @@ public class GameScreen implements Screen {
 		this.entityManager = new EntityManager();
 
 		/* Entities */
-		// Order of render in entityManager depends on order of Entity() creation.
-		this.boss1 = new Boss1(this);
-
 		this.tank = new Tank(this);
 		this.assassin = new Assassin(this);
-		assassin.setVisible(false);
+		this.assassin.setVisible(false);
 		this.character = tank;
+		this.boss1 = new Boss1(this);
 
 		/* Input */
-		if (BOSS1_AI) {
-			new Boss1AI(this);
-		}
 		this.playerController = new CharacterController(this);
-		Boss1Controller bossController = new Boss1Controller(this);
 
 		// An input multiplexer sends input to both controllers at once.
 		InputMultiplexer inputMultiplexer = game.getInputMultiplexer();
 		inputMultiplexer.addProcessor(playerController);
-		inputMultiplexer.addProcessor(bossController);
+		if (BOSS1_AI) {
+			new Boss1AI(this);
+		} else {
+			inputMultiplexer.addProcessor(new Boss1Controller(this));
+		}
 
 		this.background = new Background(game.getAssets());
 		this.shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setColor(Color.GOLD);
 
+		/* Health Bars */
 		tankBar = new TankBar(game.getAssets(), tank);
 		assassinBar = new AssassinBar(game.getAssets(), assassin);
 		bossBar = new BossBar(game.getAssets(), boss1);
@@ -157,6 +155,10 @@ public class GameScreen implements Screen {
 		shapeRenderer.dispose();
 	}
 
+	public CharacterController getPlayerController() {
+		return playerController;
+	}
+
 	public void switchCharacter() {
 		if (character.useSwitchCharacter() || character.isDispose()) {
 			Character next;
@@ -173,7 +175,7 @@ public class GameScreen implements Screen {
 			boolean flipX = character.getFlipX().get();
 
 			character = next;
-			character.setInput(playerController.getInputs());
+			character.endCrowdControl();
 			character.setVisible(true);
 			character.getPosition().x = x;
 			character.getPosition().y = MAP_HEIGHT;
