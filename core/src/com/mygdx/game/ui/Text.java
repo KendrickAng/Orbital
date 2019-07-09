@@ -6,17 +6,17 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.UntitledGame;
 import com.mygdx.game.shape.Rectangle;
 
 import static com.mygdx.game.ui.ContentAlignment.CENTER;
 
 public class Text extends RectangleUI {
-	private MyGdxGame game;
+	private UntitledGame game;
 	private String text;
 	private BitmapFont bitmapFont;
 
-	public Text(String text, int size, MyGdxGame game) {
+	public Text(String text, int size, UntitledGame game) {
 		this.generateBitmapFont(size);
 		this.generateText(text);
 		this.game = game;

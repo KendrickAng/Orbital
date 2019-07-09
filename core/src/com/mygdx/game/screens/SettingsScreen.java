@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.UntitledGame;
 import com.mygdx.game.ui.Button;
 import com.mygdx.game.ui.ColorTextures;
 import com.mygdx.game.ui.Text;
 
-import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
-import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.GAME_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_WIDTH;
 import static com.mygdx.game.ui.ColorTextures.ColorEntry.DEEP_PURPLE_500;
 import static com.mygdx.game.ui.ContentAlignment.CENTER;
 
@@ -30,11 +30,11 @@ public class SettingsScreen implements Screen {
 	private static final int EXIT_BUTTON_PADDING_Y = 5;
 	private static final Vector2 EXIT_BUTTON_COORDS = new Vector2(GAME_WIDTH / 2f, EXIT_BUTTON_HEIGHT);
 
-	private MyGdxGame game;
+	private UntitledGame game;
 	private Text placeholder;
 	private Button exitButton;
 
-	public SettingsScreen(MyGdxGame game) {
+	public SettingsScreen(UntitledGame game) {
 		this.game = game;
 		this.placeholder = new Text(PLACEHOLDER_TEXT, PLACEHOLDER_FONTSIZE, game)
 				.setX(GAME_WIDTH / 2f)

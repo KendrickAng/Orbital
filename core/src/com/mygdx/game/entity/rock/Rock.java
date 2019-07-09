@@ -8,8 +8,8 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
-import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.EntityManager.ROCK_RENDER_PRIORITY;
 import static com.mygdx.game.entity.rock.RockParts.BODY;
 import static com.mygdx.game.entity.rock.RockStates.ERUPT;

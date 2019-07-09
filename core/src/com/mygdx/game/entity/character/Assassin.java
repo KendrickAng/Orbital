@@ -8,6 +8,7 @@ import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
+import com.mygdx.game.entity.ability.CooldownState;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.boss1.Boss1;
@@ -17,9 +18,9 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
-import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
-import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.character.AssassinInput.CLEANSE_KEYDOWN;
 import static com.mygdx.game.entity.character.AssassinInput.CLEANSE_KEYUP;
 import static com.mygdx.game.entity.character.AssassinInput.CROWD_CONTROL;
@@ -72,6 +73,8 @@ import static com.mygdx.game.entity.character.AssassinStates.WALKING_RIGHT;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_UP_LEFT;
 import static com.mygdx.game.entity.character.AssassinStates.WALKING_UP_RIGHT;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
+import static com.mygdx.game.entity.debuff.DebuffType.STUN;
+import static com.mygdx.game.entity.debuff.DebuffType.WEAK;
 
 
 public class Assassin extends Character<AssassinInput, AssassinStates, AssassinParts> {
@@ -92,6 +95,9 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 
 	private static final float SHURIKEN_DAMAGE = 10f;
 	private static final float SHURIKEN_BONUS_DAMAGE = SHURIKEN_DAMAGE + 10f;
+
+	private static final float PERFECT_CLEANSE_DURATION = 0.1f;
+	private static final float WEAK_SPOT_DURATION = 4f;
 
 	private static final float LIGHT_REALM_DURATION = 10f;
 	private static final float LIGHT_REALM_DASH_SPEED = 20f;
@@ -117,12 +123,17 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private int stacks;
 	private boolean falling;
 	private boolean dashTrueDamage;
+	private boolean perfectCleanse;
 	private boolean lightRealm;
 
 	private Timer timer;
 	private Vector2 velocity;
-	private Ability<AssassinStates> dash;
 
+	private Ability<AssassinStates> dashAbility;
+	private Ability<AssassinStates> shurikenAbility;
+	private Ability<AssassinStates> cleanseAbility;
+
+	private Debuff shurikenDebuff;
 	private final Debuff dashDebuff;
 
 	public Assassin(GameScreen game) {
@@ -497,7 +508,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 
 	@Override
 	protected void defineAbilities(Abilities<AssassinStates> abilities) {
-		dash = new Ability<AssassinStates>(DASH_COOLDOWN)
+		dashAbility = new Ability<AssassinStates>(DASH_COOLDOWN)
 				.defineBegin((state) -> {
 					float dashSpeed = lightRealm ? LIGHT_REALM_DASH_SPEED : DASH_SPEED;
 					float dashDiagonalSpeed = lightRealm ? LIGHT_REALM_DASH_DIAGONAL_SPEED : DASH_DIAGONAL_SPEED;
@@ -535,7 +546,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 					inflictDebuff(dashDebuff);
 				});
 
-		Ability<AssassinStates> shurikenThrow = new Ability<AssassinStates>(SHURIKEN_THROW_COOLDOWN)
+		shurikenAbility = new Ability<AssassinStates>(SHURIKEN_THROW_COOLDOWN)
 				.defineBegin((state) -> {
 					Hitbox body = getHitbox(BODY);
 					float x = body.getX() + body.getWidth() / 2;
@@ -544,17 +555,23 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 
 					if (stacks >= 3) {
 						Gdx.app.log("Assassin.java", "3 Stacks!");
-						new Shuriken(getGame(), x, y, degree, SHURIKEN_BONUS_DAMAGE);
+						new Shuriken(getGame(), x, y, degree, SHURIKEN_BONUS_DAMAGE, shurikenDebuff);
 						stacks = 0;
 					} else {
-						new Shuriken(getGame(), x, y, degree, SHURIKEN_DAMAGE);
+						new Shuriken(getGame(), x, y, degree, SHURIKEN_DAMAGE, shurikenDebuff);
 					}
+					shurikenDebuff = null;
 				});
 
-		Ability<AssassinStates> cleanse = new Ability<AssassinStates>(CLEANSE_COOLDOWN)
+		cleanseAbility = new Ability<AssassinStates>(CLEANSE_COOLDOWN)
 				.defineBegin((state) -> {
 					if (isCrowdControl()) {
 						clearCrowdControl();
+					}
+
+					if (perfectCleanse) {
+						Gdx.app.log("Assassin.java", "Perfect Cleanse!");
+						shurikenDebuff = new Debuff(WEAK, 0, WEAK_SPOT_DURATION);
 					}
 
 					lightRealm = true;
@@ -567,52 +584,52 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 					lightRealmShuriken();
 				});
 
-		abilities.addBegin(DASH_LEFT, dash)
-				.addBegin(DASH_RIGHT, dash)
-				.addBegin(DASH_UP, dash)
-				.addBegin(DASH_UP_LEFT, dash)
-				.addBegin(DASH_UP_RIGHT, dash)
-				.addBegin(DASH_UP_LEFT_RIGHT, dash)
-				.addEnd(WALKING_LEFT, dash)
-				.addEnd(WALKING_RIGHT, dash)
-				.addEnd(STANDING_UP, dash)
-				.addEnd(WALKING_UP_LEFT, dash)
-				.addEnd(WALKING_UP_RIGHT, dash)
-				.addEnd(STANDING_UP_LEFT_RIGHT, dash)
+		abilities.addBegin(DASH_LEFT, dashAbility)
+				.addBegin(DASH_RIGHT, dashAbility)
+				.addBegin(DASH_UP, dashAbility)
+				.addBegin(DASH_UP_LEFT, dashAbility)
+				.addBegin(DASH_UP_RIGHT, dashAbility)
+				.addBegin(DASH_UP_LEFT_RIGHT, dashAbility)
+				.addEnd(WALKING_LEFT, dashAbility)
+				.addEnd(WALKING_RIGHT, dashAbility)
+				.addEnd(STANDING_UP, dashAbility)
+				.addEnd(WALKING_UP_LEFT, dashAbility)
+				.addEnd(WALKING_UP_RIGHT, dashAbility)
+				.addEnd(STANDING_UP_LEFT_RIGHT, dashAbility)
 
-				.addBegin(SHURIKEN_THROW, shurikenThrow)
-				.addBegin(SHURIKEN_THROW_LEFT, shurikenThrow)
-				.addBegin(SHURIKEN_THROW_RIGHT, shurikenThrow)
-				.addBegin(SHURIKEN_THROW_LEFT_RIGHT, shurikenThrow)
-				.addBegin(SHURIKEN_THROW_UP, shurikenThrow)
-				.addBegin(SHURIKEN_THROW_UP_LEFT, shurikenThrow)
-				.addBegin(SHURIKEN_THROW_UP_RIGHT, shurikenThrow)
-				.addBegin(SHURIKEN_THROW_UP_LEFT_RIGHT, shurikenThrow)
-				.addEnd(STANDING, shurikenThrow)
-				.addEnd(WALKING_LEFT, shurikenThrow)
-				.addEnd(WALKING_RIGHT, shurikenThrow)
-				.addEnd(STANDING_LEFT_RIGHT, shurikenThrow)
-				.addEnd(STANDING_UP, shurikenThrow)
-				.addEnd(WALKING_UP_LEFT, shurikenThrow)
-				.addEnd(WALKING_UP_RIGHT, shurikenThrow)
-				.addEnd(STANDING_UP_LEFT_RIGHT, shurikenThrow)
+				.addBegin(SHURIKEN_THROW, shurikenAbility)
+				.addBegin(SHURIKEN_THROW_LEFT, shurikenAbility)
+				.addBegin(SHURIKEN_THROW_RIGHT, shurikenAbility)
+				.addBegin(SHURIKEN_THROW_LEFT_RIGHT, shurikenAbility)
+				.addBegin(SHURIKEN_THROW_UP, shurikenAbility)
+				.addBegin(SHURIKEN_THROW_UP_LEFT, shurikenAbility)
+				.addBegin(SHURIKEN_THROW_UP_RIGHT, shurikenAbility)
+				.addBegin(SHURIKEN_THROW_UP_LEFT_RIGHT, shurikenAbility)
+				.addEnd(STANDING, shurikenAbility)
+				.addEnd(WALKING_LEFT, shurikenAbility)
+				.addEnd(WALKING_RIGHT, shurikenAbility)
+				.addEnd(STANDING_LEFT_RIGHT, shurikenAbility)
+				.addEnd(STANDING_UP, shurikenAbility)
+				.addEnd(WALKING_UP_LEFT, shurikenAbility)
+				.addEnd(WALKING_UP_RIGHT, shurikenAbility)
+				.addEnd(STANDING_UP_LEFT_RIGHT, shurikenAbility)
 
-				.addBegin(CLEANSE, cleanse)
-				.addBegin(CLEANSE_LEFT, cleanse)
-				.addBegin(CLEANSE_RIGHT, cleanse)
-				.addBegin(CLEANSE_LEFT_RIGHT, cleanse)
-				.addBegin(CLEANSE_UP, cleanse)
-				.addBegin(CLEANSE_UP_LEFT, cleanse)
-				.addBegin(CLEANSE_UP_RIGHT, cleanse)
-				.addBegin(CLEANSE_UP_LEFT_RIGHT, cleanse)
-				.addEnd(STANDING, cleanse)
-				.addEnd(WALKING_LEFT, cleanse)
-				.addEnd(WALKING_RIGHT, cleanse)
-				.addEnd(STANDING_LEFT_RIGHT, cleanse)
-				.addEnd(STANDING_UP, cleanse)
-				.addEnd(WALKING_UP_LEFT, cleanse)
-				.addEnd(WALKING_UP_RIGHT, cleanse)
-				.addEnd(STANDING_UP_LEFT_RIGHT, cleanse);
+				.addBegin(CLEANSE, cleanseAbility)
+				.addBegin(CLEANSE_LEFT, cleanseAbility)
+				.addBegin(CLEANSE_RIGHT, cleanseAbility)
+				.addBegin(CLEANSE_LEFT_RIGHT, cleanseAbility)
+				.addBegin(CLEANSE_UP, cleanseAbility)
+				.addBegin(CLEANSE_UP_LEFT, cleanseAbility)
+				.addBegin(CLEANSE_UP_RIGHT, cleanseAbility)
+				.addBegin(CLEANSE_UP_LEFT_RIGHT, cleanseAbility)
+				.addEnd(STANDING, cleanseAbility)
+				.addEnd(WALKING_LEFT, cleanseAbility)
+				.addEnd(WALKING_RIGHT, cleanseAbility)
+				.addEnd(STANDING_LEFT_RIGHT, cleanseAbility)
+				.addEnd(STANDING_UP, cleanseAbility)
+				.addEnd(WALKING_UP_LEFT, cleanseAbility)
+				.addEnd(WALKING_UP_RIGHT, cleanseAbility)
+				.addEnd(STANDING_UP_LEFT_RIGHT, cleanseAbility);
 	}
 
 	private void addVelocityX(float movespeed) {
@@ -673,7 +690,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 				float rad = (float) (degrees * Math.PI / 180);
 				float x = (float) Math.sin(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + GAME_WIDTH / 2f;
 				float y = (float) Math.cos(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + GAME_HEIGHT / 2f;
-				new Shuriken(getGame(), x, y, degrees - 180, SHURIKEN_DAMAGE);
+				new Shuriken(getGame(), x, y, degrees - 180, SHURIKEN_DAMAGE, null);
 				if (lightRealm && !isDispose()) {
 					lightRealmShuriken();
 				}
@@ -705,6 +722,19 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 		if (dashDebuff.isInflicted()) {
 			Gdx.app.log("Assassin.java", "Perfect Dash!");
 			stacks++;
+		}
+	}
+
+	@Override
+	protected void debuff(Debuff debuff) {
+		if (debuff.getType() == STUN) {
+			perfectCleanse = true;
+			timer.scheduleTask(new Timer.Task() {
+				@Override
+				public void run() {
+					perfectCleanse = false;
+				}
+			}, PERFECT_CLEANSE_DURATION);
 		}
 	}
 
@@ -790,9 +820,21 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 			velocity.x = 0;
 			velocity.y = 0;
 			falling = false;
-			dash.reset();
+			dashAbility.reset();
 			return true;
 		}
 		return false;
+	}
+
+	public CooldownState getDashState() {
+		return dashAbility.getCooldownState();
+	}
+
+	public CooldownState getShurikenState() {
+		return shurikenAbility.getCooldownState();
+	}
+
+	public CooldownState getCleanseState() {
+		return cleanseAbility.getCooldownState();
 	}
 }

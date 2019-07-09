@@ -6,7 +6,7 @@ import com.mygdx.game.entity.debuff.DebuffDefinition;
 import com.mygdx.game.entity.debuff.Debuffs;
 import com.mygdx.game.screens.GameScreen;
 
-import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.UntitledGame.MAP_HEIGHT;
 import static com.mygdx.game.entity.EntityManager.CHARACTER_RENDER_PRIORITY;
 import static com.mygdx.game.entity.debuff.DebuffType.SLOW;
 

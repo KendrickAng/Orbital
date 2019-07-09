@@ -15,14 +15,27 @@ import com.mygdx.game.shape.Point;
 import com.mygdx.game.ui.ColorTextures;
 
 import static com.mygdx.game.assets.Assets.TextureName.BACKGROUND;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_0;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_1;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_2;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_3;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_4;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_5;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_BLOCK;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_CLEANSE;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_DASH;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_FORTRESS;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_IMPALE;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.Assets.TextureName.FLOOR;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_TANK;
 import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
+import static com.mygdx.game.assets.Assets.TextureName.WEAK_SPOT;
 
-public class MyGdxGame extends Game {
+public class UntitledGame extends Game {
 	// define game variables
 	public static final int GAME_WIDTH = 600;
 	public static final int GAME_HEIGHT = 380;
@@ -55,10 +68,25 @@ public class MyGdxGame extends Game {
 		assets.loadTexture(BACKGROUND);
 		assets.loadTexture(FLOOR);
 		assets.loadTexture(STUNNED);
+		assets.loadTexture(WEAK_SPOT);
+
 		assets.loadTexture(HEALTH_BAR_ASSASSIN);
 		assets.loadTexture(HEALTH_BAR_BACKGROUND);
 		assets.loadTexture(HEALTH_BAR_BOSS);
 		assets.loadTexture(HEALTH_BAR_TANK);
+
+		assets.loadTexture(COOLDOWN_0);
+		assets.loadTexture(COOLDOWN_1);
+		assets.loadTexture(COOLDOWN_2);
+		assets.loadTexture(COOLDOWN_3);
+		assets.loadTexture(COOLDOWN_4);
+		assets.loadTexture(COOLDOWN_5);
+		assets.loadTexture(COOLDOWN_BLOCK);
+		assets.loadTexture(COOLDOWN_IMPALE);
+		assets.loadTexture(COOLDOWN_FORTRESS);
+		assets.loadTexture(COOLDOWN_DASH);
+		assets.loadTexture(COOLDOWN_SHURIKEN_THROW);
+		assets.loadTexture(COOLDOWN_CLEANSE);
 
 		assets.loadTankAnimation(Assets.TankAnimationName.STANDING);
 		assets.loadTankAnimation(Assets.TankAnimationName.WALKING);

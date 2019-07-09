@@ -2,7 +2,7 @@ package com.mygdx.game.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.UntitledGame;
 import com.mygdx.game.shape.Point;
 
 import static com.mygdx.game.ui.ColorTextures.ColorEntry;
@@ -14,7 +14,7 @@ import static com.mygdx.game.ui.ContentAlignment.TOP_LEFT;
 import static com.mygdx.game.ui.ContentAlignment.TOP_RIGHT;
 
 public class Button extends RectangleUI implements InputProcessor, MultipleUI {
-	private MyGdxGame game;
+	private UntitledGame game;
 	private Text buttonText;
 	private ButtonCallback buttonCallback;
 
@@ -26,7 +26,7 @@ public class Button extends RectangleUI implements InputProcessor, MultipleUI {
 
 	private ColorTexture colorTexture;
 
-	public Button(String text, int fontSize, MyGdxGame game) {
+	public Button(String text, int fontSize, UntitledGame game) {
 		this.buttonText = new Text(text, fontSize, game).setAlignment(ContentAlignment.CENTER);
 		this.buttonCallback = () -> {
 			Gdx.app.log("Button.java", "No callback declared for this button");

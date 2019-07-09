@@ -1,7 +1,7 @@
 package com.mygdx.game.ui;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.UntitledGame;
 import com.mygdx.game.shape.Rectangle;
 
 import java.util.Locale;
@@ -10,11 +10,11 @@ import java.util.Locale;
  * Represents a rectangle filled with a texture, to be drawn only.
  */
 public class ColorTexture {
-	private MyGdxGame game;
+	private UntitledGame game;
 	private Rectangle rectangle;
 	private Texture texture;
 
-	public ColorTexture(MyGdxGame game) {
+	public ColorTexture(UntitledGame game) {
 		this.game = game;
 	}
 

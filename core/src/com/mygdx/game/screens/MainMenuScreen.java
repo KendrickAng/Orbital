@@ -8,12 +8,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Background;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.UntitledGame;
 import com.mygdx.game.ui.Button;
 import com.mygdx.game.ui.Text;
 
-import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
-import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.GAME_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_WIDTH;
 import static com.mygdx.game.ui.ColorTextures.ColorEntry;
 import static com.mygdx.game.ui.ColorTextures.ColorEntry.DEEP_PURPLE_500;
 import static com.mygdx.game.ui.ContentAlignment.CENTER;
@@ -41,13 +41,13 @@ public class MainMenuScreen implements Screen {
 	private static final int SETTINGS_BUTTON_PADDING_Y = 5;
 	private static final Vector2 SETTINGS_BUTTON_COORDS = new Vector2(GAME_WIDTH / 2f, GAME_HEIGHT / 2f - PLAY_BUTTON_HEIGHT);
 
-	private MyGdxGame game;
+	private UntitledGame game;
 	private Background background;
 	private Text title;
 	private Button playButton;
 	private Button settingsButton;
 
-	public MainMenuScreen(MyGdxGame game) {
+	public MainMenuScreen(UntitledGame game) {
 		this.game = game;
 		this.background = new Background(game.getAssets());
 		this.title = new Text(TITLE, TITLE_FONTSIZE, game)

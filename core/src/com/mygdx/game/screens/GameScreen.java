@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.Background;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.EntityManager;
 import com.mygdx.game.entity.boss1.Boss1;
@@ -19,17 +19,31 @@ import com.mygdx.game.entity.character.Assassin;
 import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.character.CharacterController;
 import com.mygdx.game.entity.character.Tank;
-import com.mygdx.game.entity.healthbar.AssassinBar;
-import com.mygdx.game.entity.healthbar.BossBar;
-import com.mygdx.game.entity.healthbar.TankBar;
+import com.mygdx.game.ui.Cooldowns;
+import com.mygdx.game.ui.HealthBar;
 
-import static com.mygdx.game.MyGdxGame.BOSS1_AI;
-import static com.mygdx.game.MyGdxGame.DEBUG;
-import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.UntitledGame.BOSS1_AI;
+import static com.mygdx.game.UntitledGame.DEBUG;
+import static com.mygdx.game.UntitledGame.GAME_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.MAP_HEIGHT;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_BLOCK;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_CLEANSE;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_DASH;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_FORTRESS;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_IMPALE;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_SHURIKEN_THROW;
+import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_ASSASSIN;
+import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BACKGROUND;
+import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BOSS;
+import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_TANK;
 
 public class GameScreen implements Screen {
-	// Game reference.
-	private MyGdxGame game;
+	private static final float INFO_PADDING = 20f;
+	private static final float COOLDOWNS_Y = GAME_HEIGHT - 50;
+
+	private UntitledGame game;
+	private Assets assets;
 
 	// For debugging.
 	private ShapeRenderer shapeRenderer;
@@ -44,13 +58,17 @@ public class GameScreen implements Screen {
 	private Assassin assassin;
 	private Boss1 boss1;
 
-	private TankBar tankBar;
-	private AssassinBar assassinBar;
-	private BossBar bossBar;
+	private HealthBar tankBar;
+	private HealthBar assassinBar;
+	private HealthBar bossBar;
 
-	public GameScreen(MyGdxGame game) {
+	private Cooldowns tankCooldowns;
+	private Cooldowns assassinCooldowns;
+
+	public GameScreen(UntitledGame game) {
 		// init rectangle to (0, 0)
 		this.game = game;
+		this.assets = game.getAssets();
 		this.entityManager = new EntityManager();
 
 		/* Entities */
@@ -77,9 +95,34 @@ public class GameScreen implements Screen {
 		shapeRenderer.setColor(Color.GOLD);
 
 		/* Health Bars */
-		tankBar = new TankBar(game.getAssets(), tank);
-		assassinBar = new AssassinBar(game.getAssets(), assassin);
-		bossBar = new BossBar(game.getAssets(), boss1);
+		tankBar = new HealthBar(tank, assets.getTexture(HEALTH_BAR_TANK), assets.getTexture(HEALTH_BAR_BACKGROUND))
+				.setX(INFO_PADDING)
+				.setY(GAME_HEIGHT - INFO_PADDING)
+				.setWidth((float) GAME_WIDTH / 2);
+
+		assassinBar = new HealthBar(assassin, assets.getTexture(HEALTH_BAR_ASSASSIN), assets.getTexture(HEALTH_BAR_BACKGROUND))
+				.setX(INFO_PADDING)
+				.setY(GAME_HEIGHT - INFO_PADDING)
+				.setWidth((float) GAME_WIDTH / 2);
+
+		bossBar = new HealthBar(boss1, assets.getTexture(HEALTH_BAR_BOSS), assets.getTexture(HEALTH_BAR_BACKGROUND))
+				.setX(INFO_PADDING)
+				.setY(INFO_PADDING)
+				.setWidth(GAME_WIDTH - INFO_PADDING * 2);
+
+		tankCooldowns = new Cooldowns(game.getAssets())
+				.setX(INFO_PADDING)
+				.setY(COOLDOWNS_Y)
+				.add(tank.getBlockState(), game.getAssets().getTexture(COOLDOWN_BLOCK))
+				.add(tank.getImpaleState(), game.getAssets().getTexture(COOLDOWN_IMPALE))
+				.add(tank.getFortressState(), game.getAssets().getTexture(COOLDOWN_FORTRESS));
+
+		assassinCooldowns = new Cooldowns(game.getAssets())
+				.setX(INFO_PADDING)
+				.setY(COOLDOWNS_Y)
+				.add(assassin.getDashState(), game.getAssets().getTexture(COOLDOWN_DASH))
+				.add(assassin.getShurikenState(), game.getAssets().getTexture(COOLDOWN_SHURIKEN_THROW))
+				.add(assassin.getCleanseState(), game.getAssets().getTexture(COOLDOWN_CLEANSE));
 	}
 
 	@Override
@@ -114,13 +157,16 @@ public class GameScreen implements Screen {
 
 		if (character == tank && !tank.isDispose()) {
 			tankBar.render(batch);
+			tankCooldowns.render(batch);
 		} else if (character == assassin && !assassin.isDispose()) {
 			assassinBar.render(batch);
+			assassinCooldowns.render(batch);
 		}
 
 		if (!boss1.isDispose()) {
 			bossBar.render(batch);
 		}
+
 		batch.end();
 
 		/* Debug */
@@ -167,6 +213,7 @@ public class GameScreen implements Screen {
 			} else if (character == assassin && !tank.isDispose()) {
 				next = tank;
 			} else {
+				character.endCrowdControl();
 				return;
 			}
 
@@ -187,6 +234,14 @@ public class GameScreen implements Screen {
 	}
 
 	/* Getters */
+	public Tank getTank() {
+		return tank;
+	}
+
+	public Assassin getAssassin() {
+		return assassin;
+	}
+
 	public Character getCharacter() {
 		return character;
 	}
@@ -196,7 +251,7 @@ public class GameScreen implements Screen {
 	}
 
 	public Assets getAssets() {
-		return game.getAssets();
+		return assets;
 	}
 
 	public EntityManager getEntityManager() {

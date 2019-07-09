@@ -14,12 +14,25 @@ import com.mygdx.game.entity.shuriken.ShurikenParts;
 import java.util.HashMap;
 
 import static com.mygdx.game.assets.Assets.TextureName.BACKGROUND;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_0;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_1;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_2;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_3;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_4;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_5;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_BLOCK;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_CLEANSE;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_DASH;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_FORTRESS;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_IMPALE;
+import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.Assets.TextureName.FLOOR;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_TANK;
 import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
+import static com.mygdx.game.assets.Assets.TextureName.WEAK_SPOT;
 
 public class Assets {
 	private AssetManager assetManager;
@@ -93,8 +106,11 @@ public class Assets {
 	}
 
 	public enum TextureName {
-		BACKGROUND, FLOOR, STUNNED,
-		HEALTH_BAR_BACKGROUND, HEALTH_BAR_ASSASSIN, HEALTH_BAR_BOSS, HEALTH_BAR_TANK
+		BACKGROUND, FLOOR, STUNNED, WEAK_SPOT,
+		HEALTH_BAR_BACKGROUND, HEALTH_BAR_ASSASSIN, HEALTH_BAR_BOSS, HEALTH_BAR_TANK,
+		COOLDOWN_0, COOLDOWN_1, COOLDOWN_2, COOLDOWN_3, COOLDOWN_4, COOLDOWN_5,
+		COOLDOWN_BLOCK, COOLDOWN_IMPALE, COOLDOWN_FORTRESS,
+		COOLDOWN_DASH, COOLDOWN_SHURIKEN_THROW, COOLDOWN_CLEANSE
 	}
 
 	private class TextureAsset {
@@ -148,11 +164,26 @@ public class Assets {
 		defineTexture(BACKGROUND, "Background.png");
 		defineTexture(FLOOR, "Floor.png");
 		defineTexture(STUNNED, "Stunned.png");
+		defineTexture(WEAK_SPOT, "Weak Spot.png");
 
 		defineTexture(HEALTH_BAR_BACKGROUND, "HealthBar/Background.png");
 		defineTexture(HEALTH_BAR_ASSASSIN, "HealthBar/AssassinBar.png");
 		defineTexture(HEALTH_BAR_BOSS, "HealthBar/BossBar.png");
 		defineTexture(HEALTH_BAR_TANK, "HealthBar/TankBar.png");
+
+		defineTexture(COOLDOWN_0, "Cooldowns/0.png");
+		defineTexture(COOLDOWN_1, "Cooldowns/1.png");
+		defineTexture(COOLDOWN_2, "Cooldowns/2.png");
+		defineTexture(COOLDOWN_3, "Cooldowns/3.png");
+		defineTexture(COOLDOWN_4, "Cooldowns/4.png");
+		defineTexture(COOLDOWN_5, "Cooldowns/5.png");
+
+		defineTexture(COOLDOWN_BLOCK, "Cooldowns/Block Ability.png");
+		defineTexture(COOLDOWN_IMPALE, "Cooldowns/Impale Ability.png");
+		defineTexture(COOLDOWN_FORTRESS, "Cooldowns/Fortress Ability.png");
+		defineTexture(COOLDOWN_DASH, "Cooldowns/Dash Ability.png");
+		defineTexture(COOLDOWN_SHURIKEN_THROW, "Cooldowns/Shuriken Ability.png");
+		defineTexture(COOLDOWN_CLEANSE, "Cooldowns/Cleanse Ability.png");
 
 		defineTankAnimation(TankAnimationName.STANDING, TANK_STANDING_PATH);
 		defineTankAnimation(TankAnimationName.WALKING, TANK_WALKING_PATH);

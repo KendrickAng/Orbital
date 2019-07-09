@@ -3,8 +3,10 @@ package com.mygdx.game.entity.ability;
 import com.badlogic.gdx.utils.Timer;
 
 public class Ability<S> {
+
 	// Ability will be off cooldown after this time
 	private float cooldown;
+	private CooldownState cooldownState;
 
 	private boolean using;
 	private boolean ready;
@@ -19,6 +21,8 @@ public class Ability<S> {
 
 	public Ability(float cooldown) {
 		this.cooldown = cooldown;
+		this.cooldownState = new CooldownState(cooldown);
+
 		this.ready = true;
 		this.timer = new Timer();
 	}
@@ -28,6 +32,7 @@ public class Ability<S> {
 		// Ensure that abilityBegin is called only once.
 		if (!using) {
 			using = true;
+			cooldownState.reset();
 
 			if (abilityBegin != null) {
 				abilityBegin.begin(state);
@@ -49,6 +54,7 @@ public class Ability<S> {
 						ready = true;
 					}
 				}, cooldown);
+				cooldownState.run();
 			}
 
 			if (abilityEnd != null) {
@@ -77,5 +83,9 @@ public class Ability<S> {
 	/* Getters */
 	public boolean isReady() {
 		return ready;
+	}
+
+	public CooldownState getCooldownState() {
+		return cooldownState;
 	}
 }

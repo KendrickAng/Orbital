@@ -2,8 +2,8 @@ package com.mygdx.game.ui;
 
 import com.mygdx.game.shape.Rectangle;
 
-import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
-import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.GAME_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_WIDTH;
 import static com.mygdx.game.ui.ContentAlignment.BOTTOM_LEFT;
 
 /*

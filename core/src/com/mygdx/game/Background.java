@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.assets.Assets;
 
-import static com.mygdx.game.MyGdxGame.GAME_HEIGHT;
-import static com.mygdx.game.MyGdxGame.GAME_WIDTH;
-import static com.mygdx.game.MyGdxGame.MAP_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_HEIGHT;
+import static com.mygdx.game.UntitledGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.MAP_HEIGHT;
 import static com.mygdx.game.assets.Assets.TextureName.BACKGROUND;
 import static com.mygdx.game.assets.Assets.TextureName.FLOOR;
 

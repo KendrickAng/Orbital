@@ -4,11 +4,14 @@ import com.mygdx.game.entity.state.StateListener;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 /**
  * Abilities manager.
  */
 public class Abilities<S extends Enum> implements StateListener<S> {
+	private LinkedList<Ability<S>> abilities;
+
 	// Abilities to use in state.
 	private HashMap<S, Ability<S>> abilitiesUse;
 
@@ -16,6 +19,7 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 	private HashMap<S, HashSet<Ability<S>>> abilitiesCancel;
 
 	public Abilities() {
+		abilities = new LinkedList<>();
 		abilitiesUse = new HashMap<>();
 		abilitiesCancel = new HashMap<>();
 	}
@@ -23,6 +27,9 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 	// Map a state to an ability to use. (1 to 1)
 	public Abilities<S> addBegin(S state, Ability<S> ability) {
 		abilitiesUse.put(state, ability);
+		if (!abilities.contains(ability)) {
+			abilities.add(ability);
+		}
 		return this;
 	}
 
@@ -59,5 +66,9 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 				ability.end();
 			}
 		}
+	}
+
+	public Ability[] getAbilities() {
+		return abilities.toArray(new Ability[0]);
 	}
 }

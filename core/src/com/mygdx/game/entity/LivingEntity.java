@@ -3,15 +3,20 @@ package com.mygdx.game.entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.entity.ability.Abilities;
+import com.mygdx.game.entity.ability.Ability;
 import com.mygdx.game.entity.debuff.Debuff;
 import com.mygdx.game.entity.debuff.DebuffDefinition;
 import com.mygdx.game.entity.debuff.Debuffs;
 import com.mygdx.game.screens.GameScreen;
 
+import java.util.HashSet;
+
 import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
+import static com.mygdx.game.assets.Assets.TextureName.WEAK_SPOT;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REFLECT;
 import static com.mygdx.game.entity.debuff.DebuffType.STUN;
+import static com.mygdx.game.entity.debuff.DebuffType.WEAK;
 
 /**
  * An Entity which has:
@@ -25,13 +30,20 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	private float health;
 	private float maxHealth;
 
-	private Sprite debuff;
+	private Abilities<S> abilities;
+
 	private Debuffs debuffs;
+	private HashSet<Sprite> inflictedDebuffs;
 
 	private Timer timer;
 	private float damageReduction;
 	private float damageReflect;
+
 	private boolean stunned;
+	private Sprite stunnedSprite;
+	private boolean weak;
+	private Sprite weakSprite;
+
 	private boolean damaged;
 
 	public LivingEntity(GameScreen game, int renderPriority) {
@@ -40,12 +52,27 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		this.health = health();
 		this.maxHealth = health();
 
-		Abilities<S> abilities = new Abilities<>();
+		this.abilities = new Abilities<>();
+		this.inflictedDebuffs = new HashSet<>();
 		this.debuffs = new Debuffs();
+
+		this.stunnedSprite = new Sprite(game.getAssets().getTexture(STUNNED));
+		this.weakSprite = new Sprite(game.getAssets().getTexture(WEAK_SPOT));
 
 		addStateListener(abilities);
 		defineAbilities(abilities);
 		defineDebuffs(debuffs);
+
+		setRenderTask((batch) -> {
+			float spriteWidth = 20;
+			float width = inflictedDebuffs.size() * spriteWidth;
+			float x = getMiddleX() - width / 2;
+			for (Sprite sprite : inflictedDebuffs) {
+				sprite.setPosition(x, getTopY());
+				sprite.draw(batch);
+				x += spriteWidth;
+			}
+		});
 
 		this.timer = new Timer();
 		debuffs.map(DAMAGE_REDUCTION, new DebuffDefinition()
@@ -70,16 +97,22 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 						.defineBegin(() -> {
 							beginCrowdControl();
 							stunned = true;
-							debuff = new Sprite(game.getAssets().getTexture(STUNNED));
-							setRenderTask((batch) -> {
-								debuff.setPosition(getMiddleX() - debuff.getWidth() / 2, getTopY());
-								debuff.draw(batch);
-							});
+							inflictedDebuffs.add(stunnedSprite);
 						})
 						.defineEnd(() -> {
 							stunned = false;
+							inflictedDebuffs.remove(stunnedSprite);
 							endCrowdControl();
-							setRenderTask(null);
+						}))
+
+				.map(WEAK, new DebuffDefinition()
+						.defineBegin(() -> {
+							weak = true;
+							inflictedDebuffs.add(weakSprite);
+						})
+						.defineEnd(() -> {
+							weak = false;
+							inflictedDebuffs.remove(weakSprite);
 						}));
 	}
 
@@ -103,14 +136,23 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 
 	protected abstract float getTopY();
 
+	// Abstract method that is called when entity is damaged
 	protected abstract void damage();
 
+	// Abstract method that is called when entity is debuffed
+	protected abstract void debuff(Debuff debuff);
+
 	public void inflictDebuff(Debuff debuff) {
+		debuff(debuff);
 		debuffs.inflict(debuff);
 	}
 
 	public void cancelDebuff(Debuff debuff) {
 		debuffs.cancel(debuff);
+	}
+
+	public void heal(float health) {
+		this.health += health;
 	}
 
 	public boolean inflictDamage(LivingEntity entity, float damage) {
@@ -123,7 +165,6 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 				}
 			}, damagedDuration());
 
-			// Abstract method to check if entity is damaged
 			damage();
 
 			if (entity != null && damageReflect > 0) {
@@ -174,6 +215,10 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		return stunned;
 	}
 
+	public boolean isWeak() {
+		return weak;
+	}
+
 	public boolean isCrowdControl() {
 		return stunned;
 	}
@@ -189,5 +234,9 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 
 	public float getMaxHealth() {
 		return maxHealth;
+	}
+
+	public Ability[] getAbilities() {
+		return abilities.getAbilities();
 	}
 }
