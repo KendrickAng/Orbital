@@ -78,11 +78,17 @@ public abstract class UntitledScreen implements Screen {
 	void setScreen(ScreenName screen) {
 		game.getInputMultiplexer().clear();
 		switch (screen) {
+			case NAME:
+				game.setScreen(new NameScreen(game));
+				break;
 			case MAIN_MENU:
 				game.setScreen(new MainMenuScreen(game));
 				break;
 			case CONTROLS:
 				game.setScreen(new ControlsScreen(game));
+				break;
+			case HIGHSCORES:
+				game.setScreen(new HighscoresScreen(game));
 				break;
 			case GAME:
 				game.setScreen(new GameScreen(game));

@@ -15,7 +15,7 @@ import com.mygdx.game.assets.Boss1AnimationName;
 import com.mygdx.game.assets.RockAnimationName;
 import com.mygdx.game.assets.ShurikenAnimationName;
 import com.mygdx.game.assets.TankAnimationName;
-import com.mygdx.game.screens.MainMenuScreen;
+import com.mygdx.game.screens.NameScreen;
 
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_24;
@@ -63,6 +63,9 @@ public class UntitledGame extends Game {
 	private OrthographicCamera camera;
 	private Viewport viewport;
 	private InputMultiplexer inputMultiplexer;
+
+	// Dynamic Variables
+	private String name;
 
 	@Override
 	public void create() {
@@ -133,7 +136,7 @@ public class UntitledGame extends Game {
 		assets.load();
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		setScreen(new MainMenuScreen(this));
+		setScreen(new NameScreen(this));
 	}
 
 	@Override
@@ -145,6 +148,11 @@ public class UntitledGame extends Game {
 	public void dispose() {
 		batch.dispose();
 		renderer.dispose();
+	}
+
+	/* SETTERS */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/* GETTERS */
@@ -170,5 +178,9 @@ public class UntitledGame extends Game {
 
 	public Assets getAssets() {
 		return this.assets;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

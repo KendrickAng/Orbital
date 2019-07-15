@@ -19,6 +19,7 @@ import static com.mygdx.game.assets.FontName.MINECRAFT_32;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.screens.ScreenName.CONTROLS;
 import static com.mygdx.game.screens.ScreenName.GAME;
+import static com.mygdx.game.screens.ScreenName.HIGHSCORES;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 import static com.mygdx.game.ui.UIAlign.TOP_MIDDLE;
 
@@ -91,8 +92,7 @@ public class MainMenuScreen extends UntitledScreen {
 				.setY(HIGHSCORES_BUTTON_Y)
 				.setText(HIGHSCORES_BUTTON_TEXT);
 
-		this.highscoresButton = new ButtonUI(MIDDLE, viewport, () -> {
-		})
+		this.highscoresButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(HIGHSCORES))
 				.setX(HIGHSCORES_BUTTON_X)
 				.setY(HIGHSCORES_BUTTON_Y)
 				.setW(BUTTON_WIDTH)
