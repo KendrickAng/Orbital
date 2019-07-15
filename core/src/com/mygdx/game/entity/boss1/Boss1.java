@@ -1,6 +1,7 @@
 package com.mygdx.game.entity.boss1;
 
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.Boss1AnimationName;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.LivingEntity;
 import com.mygdx.game.entity.ability.Abilities;
@@ -16,8 +17,8 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
-import static com.mygdx.game.UntitledGame.GAME_WIDTH;
-import static com.mygdx.game.UntitledGame.MAP_HEIGHT;
+import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.entity.EntityManager.BOSS_RENDER_PRIORITY;
 import static com.mygdx.game.entity.boss1.Boss1Input.CROWD_CONTROL;
 import static com.mygdx.game.entity.boss1.Boss1Input.EARTHQUAKE_KEYDOWN;
@@ -75,8 +76,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 	public Boss1(GameScreen game) {
 		super(game, BOSS_RENDER_PRIORITY);
-		getPosition().x = GAME_WIDTH - getHitbox(BODY).getTextureWidth();
-		getPosition().y = MAP_HEIGHT;
+		getPosition().x = WINDOW_WIDTH - getHitbox(BODY).getTextureWidth();
+		getPosition().y = FLOOR_HEIGHT;
 	}
 
 	@Override
@@ -197,11 +198,11 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	/* Animations */
 	@Override
 	protected void defineAnimations(Animations<Boss1States, Boss1Parts> animations, Assets assets) {
-		Animation<Boss1Parts> standing = assets.getBoss1Animation(Assets.Boss1AnimationName.STANDING)
+		Animation<Boss1Parts> standing = assets.getBoss1Animation(Boss1AnimationName.STANDING)
 				.setDuration(STANDING_ANIMATION_DURATION)
 				.setLoop();
 
-		Animation<Boss1Parts> slam = assets.getBoss1Animation(Assets.Boss1AnimationName.GROUND_SMASH)
+		Animation<Boss1Parts> slam = assets.getBoss1Animation(Boss1AnimationName.GROUND_SMASH)
 				.setDuration(SLAM_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> {
 					Character character = getGame().getCharacter();
@@ -212,7 +213,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				})
 				.defineEnd(() -> input(SLAM_KEYUP));
 
-		Animation<Boss1Parts> earthquake = assets.getBoss1Animation(Assets.Boss1AnimationName.EARTHQUAKE)
+		Animation<Boss1Parts> earthquake = assets.getBoss1Animation(Boss1AnimationName.EARTHQUAKE)
 				.setDuration(EARTHQUAKE_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> {
 					Character character = getGame().getCharacter();
@@ -223,7 +224,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				})
 				.defineEnd(() -> input(EARTHQUAKE_KEYUP));
 
-		Animation<Boss1Parts> roll = assets.getBoss1Animation(Assets.Boss1AnimationName.ROLL)
+		Animation<Boss1Parts> roll = assets.getBoss1Animation(Boss1AnimationName.ROLL)
 				.setDuration(ROLL_ANIMATION_DURATION)
 				.defineFrameTask(3, () -> rolling = true)
 				.defineEnd(() -> input(ROLL_KEYUP));
@@ -248,8 +249,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 			getPosition().x = -x;
 		}
 
-		if (getPosition().x > GAME_WIDTH - x - width) {
-			getPosition().x = GAME_WIDTH - x - width;
+		if (getPosition().x > WINDOW_WIDTH - x - width) {
+			getPosition().x = WINDOW_WIDTH - x - width;
 		}
 	}
 

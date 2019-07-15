@@ -11,8 +11,8 @@ import com.mygdx.game.screens.GameScreen;
 
 import java.util.HashSet;
 
-import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
-import static com.mygdx.game.assets.Assets.TextureName.WEAK_SPOT;
+import static com.mygdx.game.assets.TextureName.STUNNED;
+import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REDUCTION;
 import static com.mygdx.game.entity.debuff.DebuffType.DAMAGE_REFLECT;
 import static com.mygdx.game.entity.debuff.DebuffType.STUN;

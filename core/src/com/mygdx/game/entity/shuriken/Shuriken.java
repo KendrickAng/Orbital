@@ -1,6 +1,7 @@
 package com.mygdx.game.entity.shuriken;
 
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.ShurikenAnimationName;
 import com.mygdx.game.entity.Entity;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.boss1.Boss1;
@@ -9,8 +10,8 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
-import static com.mygdx.game.UntitledGame.GAME_HEIGHT;
-import static com.mygdx.game.UntitledGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
+import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.entity.EntityManager.SHURIKEN_RENDER_PRIORITY;
 import static com.mygdx.game.entity.shuriken.ShurikenParts.BODY;
 import static com.mygdx.game.entity.shuriken.ShurikenStates.FLYING;
@@ -38,8 +39,8 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 				.defineUpdate(() -> {
 					getPosition().x += Math.sin(theta) * FLYING_SPEED;
 					getPosition().y += Math.cos(theta) * FLYING_SPEED;
-					float x = getPosition().x - GAME_WIDTH / 2f;
-					float y = getPosition().y - GAME_HEIGHT / 2f;
+					float x = getPosition().x - WINDOW_WIDTH / 2f;
+					float y = getPosition().y - WINDOW_HEIGHT / 2f;
 
 					if (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) > 1000) {
 						dispose();
@@ -58,7 +59,7 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 
 	@Override
 	protected void defineAnimations(Animations<ShurikenStates, ShurikenParts> animations, Assets assets) {
-		animations.map(FLYING, assets.getShurikenAnimation(Assets.ShurikenAnimationName.FLYING)
+		animations.map(FLYING, assets.getShurikenAnimation(ShurikenAnimationName.FLYING)
 				.setDuration(FLYING_ANIMATION_DURATION)
 				.setLoop());
 	}

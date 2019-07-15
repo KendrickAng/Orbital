@@ -2,14 +2,15 @@ package com.mygdx.game.entity.rock;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.RockAnimationName;
 import com.mygdx.game.entity.Entity;
 import com.mygdx.game.entity.animation.Animations;
 import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
-import static com.mygdx.game.UntitledGame.GAME_WIDTH;
-import static com.mygdx.game.UntitledGame.MAP_HEIGHT;
+import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.entity.EntityManager.ROCK_RENDER_PRIORITY;
 import static com.mygdx.game.entity.rock.RockParts.BODY;
 import static com.mygdx.game.entity.rock.RockStates.ERUPT;
@@ -24,9 +25,9 @@ public class Rock extends Entity<Enum, RockStates, RockParts> {
 		// Try to spawn near to the character.
 		float characterX = game.getCharacter().getMiddleX();
 		float minX = Math.max(0, characterX - DISTANCE);
-		float maxX = Math.min(GAME_WIDTH - getHitbox(BODY).getWidth(), characterX + DISTANCE);
+		float maxX = Math.min(WINDOW_WIDTH - getHitbox(BODY).getWidth(), characterX + DISTANCE);
 		getPosition().x = MathUtils.random(minX, maxX);
-		getPosition().y = MAP_HEIGHT;
+		getPosition().y = FLOOR_HEIGHT;
 		this.damage = damage;
 	}
 
@@ -37,7 +38,7 @@ public class Rock extends Entity<Enum, RockStates, RockParts> {
 
 	@Override
 	protected void defineAnimations(Animations<RockStates, RockParts> animations, Assets assets) {
-		animations.map(ERUPT, assets.getRockAnimation(Assets.RockAnimationName.ERUPT)
+		animations.map(ERUPT, assets.getRockAnimation(RockAnimationName.ERUPT)
 				.setDuration(ERUPT_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> getGame().getCharacter()
 						.damageTest(null, getHitbox(BODY), damage))

@@ -4,44 +4,45 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.entity.LivingEntity;
 
-public class HealthBar {
+public class HealthBar extends UI {
 	private static final int BORDER = 2;
 	private LivingEntity entity;
 	private Texture foreground;
 	private Texture background;
 
-	private float x;
-	private float y;
-	private float width;
-
-	public HealthBar(LivingEntity entity, Texture texture, Texture background) {
+	public HealthBar(UIAlign align, LivingEntity entity, Texture texture, Texture background) {
+		super(align);
 		this.entity = entity;
 		this.foreground = texture;
 		this.background = background;
+		setH(background.getHeight());
 	}
 
+	@Override
 	public HealthBar setX(float x) {
-		this.x = x;
+		super.setX(x);
 		return this;
 	}
 
+	@Override
 	public HealthBar setY(float y) {
-		this.y = y;
+		super.setY(y);
 		return this;
 	}
 
-	public HealthBar setWidth(float width) {
-		this.width = width;
+	@Override
+	public HealthBar setW(float w) {
+		super.setW(w);
 		return this;
 	}
 
 	public void render(SpriteBatch batch) {
-		float width = entity.getHealth() / entity.getMaxHealth() * this.width;
+		float width = entity.getHealth() / entity.getMaxHealth() * getW();
 		if (width < 0) {
 			width = 0;
 		}
 
-		batch.draw(background, x, y - BORDER, this.width, background.getHeight());
-		batch.draw(foreground, x, y, width, foreground.getHeight());
+		batch.draw(background, getX(), getY(), getW(), getH());
+		batch.draw(foreground, getX(), getY() + BORDER, width, foreground.getHeight());
 	}
 }

@@ -3,72 +3,87 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.assets.AssassinAnimationName;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.Boss1AnimationName;
+import com.mygdx.game.assets.RockAnimationName;
+import com.mygdx.game.assets.ShurikenAnimationName;
+import com.mygdx.game.assets.TankAnimationName;
 import com.mygdx.game.screens.MainMenuScreen;
-import com.mygdx.game.shape.Point;
-import com.mygdx.game.ui.ColorTextures;
 
-import static com.mygdx.game.assets.Assets.TextureName.BACKGROUND;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_0;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_1;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_2;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_3;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_4;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_5;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_BLOCK;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_CLEANSE;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_DASH;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_FORTRESS;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_IMPALE;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_SHURIKEN_THROW;
-import static com.mygdx.game.assets.Assets.TextureName.FLOOR;
-import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_ASSASSIN;
-import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BACKGROUND;
-import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BOSS;
-import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_TANK;
-import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
-import static com.mygdx.game.assets.Assets.TextureName.WEAK_SPOT;
+import static com.mygdx.game.assets.FontName.MINECRAFT_16;
+import static com.mygdx.game.assets.FontName.MINECRAFT_24;
+import static com.mygdx.game.assets.FontName.MINECRAFT_32;
+import static com.mygdx.game.assets.FontName.MINECRAFT_8;
+import static com.mygdx.game.assets.TextureName.BACKGROUND;
+import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_0;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_1;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_2;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_3;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_4;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_5;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_BLOCK;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_CLEANSE;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
+import static com.mygdx.game.assets.TextureName.FLOOR;
+import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
+import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BACKGROUND;
+import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
+import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
+import static com.mygdx.game.assets.TextureName.STUNNED;
+import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
 
 public class UntitledGame extends Game {
-	// define game variables
-	public static final int GAME_WIDTH = 600;
-	public static final int GAME_HEIGHT = 380;
-	public static final int MAP_HEIGHT = GAME_HEIGHT / 9; // accounts for ground
+	// Window Size
+	public static final int WINDOW_WIDTH = 640;
+	public static final int WINDOW_HEIGHT = 360;
 
+	// Menu Buttons
+	public static final float BUTTON_WIDTH = WINDOW_WIDTH;
+	public static final float BUTTON_HEIGHT = 40;
+
+	// Game Variables
 	public static final boolean DEBUG = false; // flag to view hitboxes
 	public static final boolean BOSS1_AI = true; // flag to activate Boss1 AI.
-
-	private ColorTextures colorTextures;
+	public static final float FLOOR_HEIGHT = 60;
 
 	private Assets assets;
 	private SpriteBatch batch;
-	private BitmapFont font;
+	private ShapeRenderer renderer;
 	private OrthographicCamera camera;
 	private Viewport viewport;
 	private InputMultiplexer inputMultiplexer;
 
 	@Override
 	public void create() {
-		colorTextures = new ColorTextures();
 		batch = new SpriteBatch();
-		font = new BitmapFont();
+		renderer = new ShapeRenderer();
+		renderer.setColor(Color.GOLD);
+
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, GAME_WIDTH, GAME_HEIGHT);
-		viewport = new FitViewport(GAME_WIDTH, GAME_HEIGHT, camera);
+		camera.setToOrtho(false, WINDOW_WIDTH, WINDOW_HEIGHT);
+		viewport = new FitViewport(WINDOW_WIDTH, WINDOW_HEIGHT, camera);
 		inputMultiplexer = new InputMultiplexer();
 		Gdx.input.setInputProcessor(inputMultiplexer); // set processor for input.
 
 		assets = new Assets();
+
+		// TODO: (Optimization) Move to Screens
 		assets.loadTexture(BACKGROUND);
 		assets.loadTexture(FLOOR);
 		assets.loadTexture(STUNNED);
 		assets.loadTexture(WEAK_SPOT);
+		assets.loadTexture(BUTTON_HOVER);
 
 		assets.loadTexture(HEALTH_BAR_ASSASSIN);
 		assets.loadTexture(HEALTH_BAR_BACKGROUND);
@@ -88,28 +103,33 @@ public class UntitledGame extends Game {
 		assets.loadTexture(COOLDOWN_SHURIKEN_THROW);
 		assets.loadTexture(COOLDOWN_CLEANSE);
 
-		assets.loadTankAnimation(Assets.TankAnimationName.STANDING);
-		assets.loadTankAnimation(Assets.TankAnimationName.WALKING);
-		assets.loadTankAnimation(Assets.TankAnimationName.BLOCK);
-		assets.loadTankAnimation(Assets.TankAnimationName.IMPALE);
-		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS);
-		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS_STANDING);
-		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS_WALKING);
-		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS_BLOCK);
-		assets.loadTankAnimation(Assets.TankAnimationName.FORTRESS_IMPALE);
+		assets.loadFont(MINECRAFT_8);
+		assets.loadFont(MINECRAFT_16);
+		assets.loadFont(MINECRAFT_24);
+		assets.loadFont(MINECRAFT_32);
 
-		assets.loadAssassinAnimation(Assets.AssassinAnimationName.STANDING);
-		assets.loadAssassinAnimation(Assets.AssassinAnimationName.WALKING);
-		assets.loadAssassinAnimation(Assets.AssassinAnimationName.DASH);
-		assets.loadAssassinAnimation(Assets.AssassinAnimationName.SHURIKEN_THROW);
+		assets.loadTankAnimation(TankAnimationName.STANDING);
+		assets.loadTankAnimation(TankAnimationName.WALKING);
+		assets.loadTankAnimation(TankAnimationName.BLOCK);
+		assets.loadTankAnimation(TankAnimationName.IMPALE);
+		assets.loadTankAnimation(TankAnimationName.FORTRESS);
+		assets.loadTankAnimation(TankAnimationName.FORTRESS_STANDING);
+		assets.loadTankAnimation(TankAnimationName.FORTRESS_WALKING);
+		assets.loadTankAnimation(TankAnimationName.FORTRESS_BLOCK);
+		assets.loadTankAnimation(TankAnimationName.FORTRESS_IMPALE);
 
-		assets.loadBoss1Animation(Assets.Boss1AnimationName.STANDING);
-		assets.loadBoss1Animation(Assets.Boss1AnimationName.GROUND_SMASH);
-		assets.loadBoss1Animation(Assets.Boss1AnimationName.EARTHQUAKE);
-		assets.loadBoss1Animation(Assets.Boss1AnimationName.ROLL);
+		assets.loadAssassinAnimation(AssassinAnimationName.STANDING);
+		assets.loadAssassinAnimation(AssassinAnimationName.WALKING);
+		assets.loadAssassinAnimation(AssassinAnimationName.DASH);
+		assets.loadAssassinAnimation(AssassinAnimationName.SHURIKEN_THROW);
 
-		assets.loadShurikenAnimation(Assets.ShurikenAnimationName.FLYING);
-		assets.loadRockAnimation(Assets.RockAnimationName.ERUPT);
+		assets.loadBoss1Animation(Boss1AnimationName.STANDING);
+		assets.loadBoss1Animation(Boss1AnimationName.GROUND_SMASH);
+		assets.loadBoss1Animation(Boss1AnimationName.EARTHQUAKE);
+		assets.loadBoss1Animation(Boss1AnimationName.ROLL);
+
+		assets.loadShurikenAnimation(ShurikenAnimationName.FLYING);
+		assets.loadRockAnimation(RockAnimationName.ERUPT);
 		assets.load();
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -124,27 +144,16 @@ public class UntitledGame extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		font.dispose();
-		colorTextures.dispose();
-	}
-
-	public Point unproject(float x, float y) {
-		Vector2 vector2 = new Vector2(x, y);
-		viewport.unproject(vector2);
-		return new Point(vector2.x, vector2.y);
+		renderer.dispose();
 	}
 
 	/* GETTERS */
-	public ColorTextures getColorTextures() {
-		return this.colorTextures;
-	}
-
 	public SpriteBatch getSpriteBatch() {
 		return batch;
 	}
 
-	public BitmapFont getFont() {
-		return font;
+	public ShapeRenderer getShapeRenderer() {
+		return renderer;
 	}
 
 	public OrthographicCamera getCamera() {

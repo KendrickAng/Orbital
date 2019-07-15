@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
+import com.mygdx.game.assets.AssassinAnimationName;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.ability.Abilities;
@@ -18,9 +19,9 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
-import static com.mygdx.game.UntitledGame.GAME_HEIGHT;
-import static com.mygdx.game.UntitledGame.GAME_WIDTH;
-import static com.mygdx.game.UntitledGame.MAP_HEIGHT;
+import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
+import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.entity.character.AssassinInput.CLEANSE_KEYDOWN;
 import static com.mygdx.game.entity.character.AssassinInput.CLEANSE_KEYUP;
 import static com.mygdx.game.entity.character.AssassinInput.CROWD_CONTROL;
@@ -104,7 +105,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float LIGHT_REALM_DASH_DIAGONAL_SPEED = 15f;
 
 	private static final float LIGHT_REALM_SHURIKEN_DISTANCE =
-			(float) Math.sqrt(Math.pow(GAME_WIDTH, 2) + Math.pow(GAME_HEIGHT, 2));
+			(float) Math.sqrt(Math.pow(WINDOW_WIDTH, 2) + Math.pow(WINDOW_HEIGHT, 2));
 	private static final float LIGHT_REALM_SHURIKEN_MIN_INTERVAL = 0.5f;
 	private static final float LIGHT_REALM_SHURIKEN_MAX_INTERVAL = 1f;
 
@@ -451,23 +452,23 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 
 	@Override
 	protected void defineAnimations(Animations<AssassinStates, AssassinParts> animations, Assets assets) {
-		Animation<AssassinParts> standing = assets.getAssassinAnimation(Assets.AssassinAnimationName.STANDING)
+		Animation<AssassinParts> standing = assets.getAssassinAnimation(AssassinAnimationName.STANDING)
 				.setDuration(STANDING_ANIMATION_DURATION)
 				.setLoop();
 
-		Animation<AssassinParts> walking = assets.getAssassinAnimation(Assets.AssassinAnimationName.WALKING)
+		Animation<AssassinParts> walking = assets.getAssassinAnimation(AssassinAnimationName.WALKING)
 				.setDuration(WALKING_ANIMATION_DURATION)
 				.setLoop();
 
-		Animation<AssassinParts> dash = assets.getAssassinAnimation(Assets.AssassinAnimationName.DASH)
+		Animation<AssassinParts> dash = assets.getAssassinAnimation(AssassinAnimationName.DASH)
 				.setDuration(DASH_ANIMATION_DURATION)
 				.defineEnd(() -> input(DASH_KEYUP));
 
-		Animation<AssassinParts> shurikenThrow = assets.getAssassinAnimation(Assets.AssassinAnimationName.SHURIKEN_THROW)
+		Animation<AssassinParts> shurikenThrow = assets.getAssassinAnimation(AssassinAnimationName.SHURIKEN_THROW)
 				.setDuration(SHURIKEN_THROW_ANIMATION_DURATION)
 				.defineEnd(() -> input(SHURIKEN_THROW_KEYUP));
 
-		Animation<AssassinParts> cleanse = assets.getAssassinAnimation(Assets.AssassinAnimationName.SHURIKEN_THROW)
+		Animation<AssassinParts> cleanse = assets.getAssassinAnimation(AssassinAnimationName.SHURIKEN_THROW)
 				.setDuration(CLEANSE_ANIMATION_DURATION)
 				.defineEnd(() -> input(CLEANSE_KEYUP));
 
@@ -644,10 +645,10 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 		if (falling) {
 			velocity.y += GRAVITY;
 			velocity.x *= AIR_FRICTION;
-			if (getPosition().y < MAP_HEIGHT) {
+			if (getPosition().y < FLOOR_HEIGHT) {
 				falling = false;
 				velocity.y = 0;
-				getPosition().y = MAP_HEIGHT;
+				getPosition().y = FLOOR_HEIGHT;
 			}
 		} else {
 			velocity.x *= FRICTION;
@@ -668,8 +669,8 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 			getPosition().x = -x;
 		}
 
-		if (getPosition().x > GAME_WIDTH - x - width) {
-			getPosition().x = GAME_WIDTH - x - width;
+		if (getPosition().x > WINDOW_WIDTH - x - width) {
+			getPosition().x = WINDOW_WIDTH - x - width;
 		}
 	}
 
@@ -688,8 +689,8 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 			public void run() {
 				int degrees = MathUtils.random(0, 360);
 				float rad = (float) (degrees * Math.PI / 180);
-				float x = (float) Math.sin(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + GAME_WIDTH / 2f;
-				float y = (float) Math.cos(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + GAME_HEIGHT / 2f;
+				float x = (float) Math.sin(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + WINDOW_WIDTH / 2f;
+				float y = (float) Math.cos(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + WINDOW_HEIGHT / 2f;
 				new Shuriken(getGame(), x, y, degrees - 180, SHURIKEN_DAMAGE, null);
 				if (lightRealm && !isDispose()) {
 					lightRealmShuriken();

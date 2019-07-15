@@ -2,6 +2,7 @@ package com.mygdx.game.entity.character;
 
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.TankAnimationName;
 import com.mygdx.game.entity.Hitbox;
 import com.mygdx.game.entity.ability.Abilities;
 import com.mygdx.game.entity.ability.Ability;
@@ -15,7 +16,7 @@ import com.mygdx.game.entity.state.State;
 import com.mygdx.game.entity.state.States;
 import com.mygdx.game.screens.GameScreen;
 
-import static com.mygdx.game.UntitledGame.GAME_WIDTH;
+import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.entity.character.TankInput.BLOCK_INPUT;
 import static com.mygdx.game.entity.character.TankInput.BLOCK_KEYDOWN;
 import static com.mygdx.game.entity.character.TankInput.BLOCK_KEYUP;
@@ -415,15 +416,15 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 	@Override
 	protected void defineAnimations(Animations<TankStates, TankParts> animations, Assets assets) {
-		Animation<TankParts> standing = assets.getTankAnimation(Assets.TankAnimationName.STANDING)
+		Animation<TankParts> standing = assets.getTankAnimation(TankAnimationName.STANDING)
 				.setDuration(STANDING_ANIMATION_DURATION)
 				.setLoop();
 
-		Animation<TankParts> walking = assets.getTankAnimation(Assets.TankAnimationName.WALKING)
+		Animation<TankParts> walking = assets.getTankAnimation(TankAnimationName.WALKING)
 				.setDuration(WALKING_ANIMATION_DURATION)
 				.setLoop();
 
-		blockAnimation = assets.getTankAnimation(Assets.TankAnimationName.BLOCK)
+		blockAnimation = assets.getTankAnimation(TankAnimationName.BLOCK)
 				.setDuration(BLOCK_ANIMATION_DURATION)
 				.defineEnd(() -> {
 					cancelDebuff(blockPerfectDebuff);
@@ -431,26 +432,26 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 					input(BLOCK_INPUT);
 				});
 
-		impaleAnimation = assets.getTankAnimation(Assets.TankAnimationName.IMPALE)
+		impaleAnimation = assets.getTankAnimation(TankAnimationName.IMPALE)
 				.setDuration(IMPALE_ANIMATION_DURATION)
 				.defineEnd(() -> input(IMPALE_KEYUP));
 		initImpaleHitTest();
 
-		Animation<TankParts> fortress = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS)
+		Animation<TankParts> fortress = assets.getTankAnimation(TankAnimationName.FORTRESS)
 				.setDuration(FORTRESS_ANIMATION_DURATION)
 				.defineFrameTask(3, () -> inflictDebuff(fortressPerfectDebuff))
 				.defineFrameTask(7, () -> cancelDebuff(fortressPerfectDebuff))
 				.defineEnd(() -> input(FORTRESS_INPUT));
 
-		Animation<TankParts> fortressStanding = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_STANDING)
+		Animation<TankParts> fortressStanding = assets.getTankAnimation(TankAnimationName.FORTRESS_STANDING)
 				.setDuration(FORTRESS_STANDING_ANIMATION_DURATION)
 				.setLoop();
 
-		Animation<TankParts> fortressWalking = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_WALKING)
+		Animation<TankParts> fortressWalking = assets.getTankAnimation(TankAnimationName.FORTRESS_WALKING)
 				.setDuration(FORTRESS_WALKING_ANIMATION_DURATION)
 				.setLoop();
 
-		fortressBlockAnimation = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_BLOCK)
+		fortressBlockAnimation = assets.getTankAnimation(TankAnimationName.FORTRESS_BLOCK)
 				.setDuration(BLOCK_ANIMATION_DURATION)
 				.defineEnd(() -> {
 					cancelDebuff(blockPerfectDebuff);
@@ -458,7 +459,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 					input(BLOCK_INPUT);
 				});
 
-		Animation<TankParts> fortressImpale = assets.getTankAnimation(Assets.TankAnimationName.FORTRESS_IMPALE)
+		Animation<TankParts> fortressImpale = assets.getTankAnimation(TankAnimationName.FORTRESS_IMPALE)
 				.setDuration(IMPALE_ANIMATION_DURATION)
 				.defineFrameTask(0, () -> getGame().getBoss1()
 						.damageTest(this, getHitbox(WEAPON), IMPALE_DAMAGE))
@@ -585,8 +586,8 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 			getPosition().x = -x;
 		}
 
-		if (getPosition().x > GAME_WIDTH - x - width) {
-			getPosition().x = GAME_WIDTH - x - width;
+		if (getPosition().x > WINDOW_WIDTH - x - width) {
+			getPosition().x = WINDOW_WIDTH - x - width;
 		}
 	}
 

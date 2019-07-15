@@ -7,14 +7,14 @@ import com.mygdx.game.entity.ability.CooldownState;
 
 import java.util.ArrayList;
 
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_0;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_1;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_2;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_3;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_4;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_5;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_0;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_1;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_2;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_3;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_4;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_5;
 
-public class Cooldowns {
+public class Cooldowns extends UI {
 	private ArrayList<Ability> abilities;
 
 	private Texture cooldown0;
@@ -24,10 +24,8 @@ public class Cooldowns {
 	private Texture cooldown4;
 	private Texture cooldown5;
 
-	private float x;
-	private float y;
-
-	public Cooldowns(Assets assets) {
+	public Cooldowns(UIAlign align, Assets assets) {
+		super(align);
 		abilities = new ArrayList<>();
 
 		cooldown0 = assets.getTexture(COOLDOWN_0);
@@ -36,6 +34,8 @@ public class Cooldowns {
 		cooldown3 = assets.getTexture(COOLDOWN_3);
 		cooldown4 = assets.getTexture(COOLDOWN_4);
 		cooldown5 = assets.getTexture(COOLDOWN_5);
+
+		setH(cooldown0.getHeight());
 	}
 
 	private class Ability {
@@ -48,13 +48,15 @@ public class Cooldowns {
 		}
 	}
 
+	@Override
 	public Cooldowns setX(float x) {
-		this.x = x;
+		super.setX(x);
 		return this;
 	}
 
+	@Override
 	public Cooldowns setY(float y) {
-		this.y = y;
+		super.setY(y);
 		return this;
 	}
 
@@ -89,9 +91,9 @@ public class Cooldowns {
 					break;
 			}
 
-			batch.draw(texture, x + i * 30, y);
+			batch.draw(texture, getX() + i * 30, getY());
 			if (cooldown != null) {
-				batch.draw(cooldown, x + i * 30, y);
+				batch.draw(cooldown, getX() + i * 30, getY());
 			}
 		}
 	}

@@ -2,8 +2,14 @@ package com.mygdx.game.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.mygdx.game.entity.animation.Animation;
 import com.mygdx.game.entity.boss1.Boss1Parts;
 import com.mygdx.game.entity.character.AssassinParts;
@@ -13,31 +19,37 @@ import com.mygdx.game.entity.shuriken.ShurikenParts;
 
 import java.util.HashMap;
 
-import static com.mygdx.game.assets.Assets.TextureName.BACKGROUND;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_0;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_1;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_2;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_3;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_4;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_5;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_BLOCK;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_CLEANSE;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_DASH;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_FORTRESS;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_IMPALE;
-import static com.mygdx.game.assets.Assets.TextureName.COOLDOWN_SHURIKEN_THROW;
-import static com.mygdx.game.assets.Assets.TextureName.FLOOR;
-import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_ASSASSIN;
-import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BACKGROUND;
-import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_BOSS;
-import static com.mygdx.game.assets.Assets.TextureName.HEALTH_BAR_TANK;
-import static com.mygdx.game.assets.Assets.TextureName.STUNNED;
-import static com.mygdx.game.assets.Assets.TextureName.WEAK_SPOT;
+import static com.mygdx.game.assets.FontName.MINECRAFT_16;
+import static com.mygdx.game.assets.FontName.MINECRAFT_24;
+import static com.mygdx.game.assets.FontName.MINECRAFT_32;
+import static com.mygdx.game.assets.FontName.MINECRAFT_8;
+import static com.mygdx.game.assets.TextureName.BACKGROUND;
+import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_0;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_1;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_2;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_3;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_4;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_5;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_BLOCK;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_CLEANSE;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
+import static com.mygdx.game.assets.TextureName.FLOOR;
+import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
+import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BACKGROUND;
+import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
+import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
+import static com.mygdx.game.assets.TextureName.STUNNED;
+import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
 
 public class Assets {
 	private AssetManager assetManager;
 
 	private HashMap<TextureName, TextureAsset> textures;
+	private HashMap<FontName, FontAsset> fonts;
 	private HashMap<TankAnimationName, AnimationAsset<TankParts>> tankAnimations;
 	private HashMap<AssassinAnimationName, AnimationAsset<AssassinParts>> assassinAnimations;
 	private HashMap<Boss1AnimationName, AnimationAsset<Boss1Parts>> boss1Animations;
@@ -105,14 +117,6 @@ public class Assets {
 		ROCK_PARTS.put("Body", RockParts.BODY);
 	}
 
-	public enum TextureName {
-		BACKGROUND, FLOOR, STUNNED, WEAK_SPOT,
-		HEALTH_BAR_BACKGROUND, HEALTH_BAR_ASSASSIN, HEALTH_BAR_BOSS, HEALTH_BAR_TANK,
-		COOLDOWN_0, COOLDOWN_1, COOLDOWN_2, COOLDOWN_3, COOLDOWN_4, COOLDOWN_5,
-		COOLDOWN_BLOCK, COOLDOWN_IMPALE, COOLDOWN_FORTRESS,
-		COOLDOWN_DASH, COOLDOWN_SHURIKEN_THROW, COOLDOWN_CLEANSE
-	}
-
 	private class TextureAsset {
 		private String path;
 		private Texture texture;
@@ -122,25 +126,17 @@ public class Assets {
 		}
 	}
 
-	public enum TankAnimationName {
-		STANDING, WALKING, BLOCK, IMPALE,
-		FORTRESS, FORTRESS_STANDING, FORTRESS_WALKING, FORTRESS_BLOCK, FORTRESS_IMPALE
-	}
+	private class FontAsset {
+		private String path;
+		private String id;
+		private int size;
+		private BitmapFont font;
 
-	public enum AssassinAnimationName {
-		STANDING, WALKING, DASH, SHURIKEN_THROW, CLEANSE
-	}
-
-	public enum Boss1AnimationName {
-		STANDING, WALKING, GROUND_SMASH, EARTHQUAKE, ROLL
-	}
-
-	public enum ShurikenAnimationName {
-		FLYING
-	}
-
-	public enum RockAnimationName {
-		ERUPT
+		private FontAsset(String path, int size) {
+			this.path = path;
+			this.size = size;
+			this.id = size + path;
+		}
 	}
 
 	private class AnimationAsset<P extends Enum> {
@@ -154,7 +150,15 @@ public class Assets {
 
 	public Assets() {
 		assetManager = new AssetManager();
+
+		// No idea what this does
+		// https://stackoverflow.com/questions/46619234/libgdx-asset-manager-load-true-type-font
+		FileHandleResolver resolver = new InternalFileHandleResolver();
+		assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+		assetManager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+
 		textures = new HashMap<>();
+		fonts = new HashMap<>();
 		tankAnimations = new HashMap<>();
 		assassinAnimations = new HashMap<>();
 		boss1Animations = new HashMap<>();
@@ -165,6 +169,7 @@ public class Assets {
 		defineTexture(FLOOR, "Floor.png");
 		defineTexture(STUNNED, "Stunned.png");
 		defineTexture(WEAK_SPOT, "Weak Spot.png");
+		defineTexture(BUTTON_HOVER, "Button Hover.png");
 
 		defineTexture(HEALTH_BAR_BACKGROUND, "HealthBar/Background.png");
 		defineTexture(HEALTH_BAR_ASSASSIN, "HealthBar/AssassinBar.png");
@@ -184,6 +189,11 @@ public class Assets {
 		defineTexture(COOLDOWN_DASH, "Cooldowns/Dash Ability.png");
 		defineTexture(COOLDOWN_SHURIKEN_THROW, "Cooldowns/Shuriken Ability.png");
 		defineTexture(COOLDOWN_CLEANSE, "Cooldowns/Cleanse Ability.png");
+
+		defineFont(MINECRAFT_8, "Fonts/Minecraft.ttf", 8);
+		defineFont(MINECRAFT_16, "Fonts/Minecraft.ttf", 16);
+		defineFont(MINECRAFT_24, "Fonts/Minecraft.ttf", 24);
+		defineFont(MINECRAFT_32, "Fonts/Minecraft.ttf", 32);
 
 		defineTankAnimation(TankAnimationName.STANDING, TANK_STANDING_PATH);
 		defineTankAnimation(TankAnimationName.WALKING, TANK_WALKING_PATH);
@@ -213,6 +223,10 @@ public class Assets {
 		textures.put(name, new TextureAsset(path));
 	}
 
+	private void defineFont(FontName name, String path, int size) {
+		fonts.put(name, new FontAsset(path, size));
+	}
+
 	private void defineTankAnimation(TankAnimationName name, String path) {
 		tankAnimations.put(name, new AnimationAsset<>(path));
 	}
@@ -235,6 +249,14 @@ public class Assets {
 
 	public void loadTexture(TextureName name) {
 		assetManager.load(textures.get(name).path, Texture.class);
+	}
+
+	public void loadFont(FontName name) {
+		FontAsset asset = fonts.get(name);
+		FreetypeFontLoader.FreeTypeFontLoaderParameter parameter = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+		parameter.fontFileName = asset.path;
+		parameter.fontParameters.size = asset.size;
+		assetManager.load(asset.id, BitmapFont.class, parameter);
 	}
 
 	public void loadTankAnimation(TankAnimationName name) {
@@ -268,14 +290,26 @@ public class Assets {
 	}
 
 	public void load() {
+		// Force load all
 		assetManager.finishLoading();
+
+		// Copy textures from assetManager back
 		for (TextureAsset asset : textures.values()) {
 			asset.texture = assetManager.get(asset.path, Texture.class);
+		}
+
+		// Copy fonts from assetManager back
+		for (FontAsset asset : fonts.values()) {
+			asset.font = assetManager.get(asset.id, BitmapFont.class);
 		}
 	}
 
 	public Texture getTexture(TextureName name) {
 		return textures.get(name).texture;
+	}
+
+	public BitmapFont getFont(FontName name) {
+		return fonts.get(name).font;
 	}
 
 	public Animation<TankParts> getTankAnimation(TankAnimationName name) {
