@@ -1,18 +1,19 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Background;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
-import com.mygdx.game.net.GetRequest;
+import com.mygdx.game.highscores.Highscore;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
+import com.mygdx.game.ui.TextureUI;
 
 import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
 import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
@@ -21,23 +22,33 @@ import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_EVEN;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
+import static com.mygdx.game.ui.UIAlign.LEFT;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 
 public class HighscoresScreen extends UntitledScreen {
-	private static final int HIGHSCORES = 10;
-	private static final float HIGHSCORES_NAME_X = WINDOW_WIDTH / 2f - 50f;
-	private static final float HIGHSCORES_SCORE_X = WINDOW_WIDTH / 2f + 50f;
-	private static final float HIGHSCORES_Y = WINDOW_HEIGHT - 50f;
-	private static final float HIGHSCORES_H = 16f;
+	private static final int HIGHSCORES_LIMIT = 10;
 
-	private static final String LOADING_TEXT = "LOADING...";
+	private static final float HIGHSCORES_ID_W = 30f;
+
+	private static final String HIGHSCORES_NAME_TEXT = "NAME";
+	private static final float HIGHSCORES_NAME_W = 70f;
+
+	private static final String HIGHSCORES_SCORE_TEXT = "SCORE";
+	private static final float HIGHSCORES_SCORE_W = 100f;
+
+	private static final float HIGHSCORES_W = HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_SCORE_W;
+	private static final float HIGHSCORES_H = 16f;
+	private static final float HIGHSCORES_X = (WINDOW_WIDTH - HIGHSCORES_W) / 2f;
+	private static final float HIGHSCORES_Y = WINDOW_HEIGHT - 50f;
+
+	private static final String LOADING_TEXT = "RETRIEVING HIGHSCORES...";
 	private static final float LOADING_X = WINDOW_WIDTH / 2f;
 	private static final float LOADING_Y = WINDOW_HEIGHT - 100f;
-
-	private static final String WEB_API_KEY = "AIzaSyCqpJqKdS-fbgIKlyZ5uMqsg-1JCk8zMBQ";
-	private static final String NEW_USER_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser";
-	private static final String HIGHSCORES_URL = "https://firestore.googleapis.com/v1/projects/apollo1orbital3/databases/(default)/documents/highscores";
 
 	private static final String BACK_BUTTON_TEXT = "BACK";
 	private static final float BACK_BUTTON_X = WINDOW_WIDTH / 2f;
@@ -48,20 +59,40 @@ public class HighscoresScreen extends UntitledScreen {
 	private ButtonUI backButton;
 	private TextUI loadingText;
 
-	private Array<Highscore> highscores;
+	private boolean loading;
+	private Array<HighscoreUI> highscoresUI;
 
-	private class Highscore {
+	private class HighscoreUI {
+		TextUI idText;
 		TextUI nameText;
 		TextUI scoreText;
+		TextureUI background;
 
-		Highscore(Assets A, int i) {
-			nameText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
-					.setX(HIGHSCORES_NAME_X)
-					.setY(HIGHSCORES_Y - HIGHSCORES_H * i);
+		HighscoreUI(float x, float y, BitmapFont font, Texture background) {
+			this.idText = new TextUI(MIDDLE, font)
+					.setX(x + HIGHSCORES_ID_W / 2f)
+					.setY(y);
 
-			scoreText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
-					.setX(HIGHSCORES_SCORE_X)
-					.setY(HIGHSCORES_Y - HIGHSCORES_H * i);
+			this.nameText = new TextUI(MIDDLE, font)
+					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W / 2f)
+					.setY(y);
+
+			this.scoreText = new TextUI(MIDDLE, font)
+					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_SCORE_W / 2f)
+					.setY(y);
+
+			this.background = new TextureUI(LEFT, background)
+					.setX(x)
+					.setY(y)
+					.setW(HIGHSCORES_W)
+					.setH(HIGHSCORES_H);
+		}
+
+		void render(SpriteBatch batch) {
+			this.background.render(batch);
+			this.idText.render(batch);
+			this.nameText.render(batch);
+			this.scoreText.render(batch);
 		}
 	}
 
@@ -71,6 +102,7 @@ public class HighscoresScreen extends UntitledScreen {
 		Viewport viewport = game.getViewport();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
+		this.loading = true;
 		this.background = new Background(A);
 
 		this.backText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
@@ -83,6 +115,7 @@ public class HighscoresScreen extends UntitledScreen {
 				.setY(BACK_BUTTON_Y)
 				.setW(BUTTON_WIDTH)
 				.setH(BUTTON_HEIGHT)
+				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 
 		this.loadingText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
@@ -94,29 +127,42 @@ public class HighscoresScreen extends UntitledScreen {
 		multiplexer.addProcessor(backButton);
 
 		// Highscores table
-		this.highscores = new Array<>();
+		this.highscoresUI = new Array<>();
 
-		new GetRequest(HIGHSCORES_URL)
-				.setSuccessCallback(response -> {
-//					Gdx.app.log("Response", response);
+		for (int i = 0; i < HIGHSCORES_LIMIT + 1; i++) {
+			Texture texture;
+			if (i == 0) {
+				texture = A.getTexture(HIGHSCORES_TITLE);
+			} else if (i % 2 == 0) {
+				texture = A.getTexture(HIGHSCORES_EVEN);
+			} else {
+				texture = A.getTexture(HIGHSCORES_ODD);
+			}
 
-					JsonReader jsonReader = new JsonReader();
-					JsonValue json = jsonReader.parse(response);
+			HighscoreUI highscoreUI = new HighscoreUI(HIGHSCORES_X, HIGHSCORES_Y - HIGHSCORES_H * i
+					, A.getFont(MINECRAFT_8), texture);
 
-					int i = 0;
-					for (JsonValue document : json.get("documents")) {
-						JsonValue fields = document.get("fields");
-						String name = fields.get("name").getString("stringValue");
-						int score = fields.get("score").getInt("integerValue");
-//						Gdx.app.log(name, String.valueOf(score));
+			if (i == 0) {
+				highscoreUI.nameText.setText(HIGHSCORES_NAME_TEXT);
+				highscoreUI.scoreText.setText(HIGHSCORES_SCORE_TEXT);
+			}
 
-						Highscore highscore = new Highscore(A, i++);
-						highscore.nameText.setText(name);
-						highscore.scoreText.setText(String.valueOf(score));
-						highscores.add(highscore);
-					}
-				})
-				.call();
+			highscoresUI.add(highscoreUI);
+		}
+
+		// Http request highscores
+		game.getHighscores().getHighscores(HIGHSCORES_LIMIT, highscores -> {
+			for (int i = 0; i < highscores.size; i++) {
+				Highscore highscore = highscores.get(i);
+				HighscoreUI ui = highscoresUI.get(i + 1);
+
+				ui.idText.setText(i + 1 + ".");
+				ui.nameText.setText(highscore.getName());
+				ui.scoreText.setText(String.valueOf(highscore.getScore()));
+			}
+
+			loading = false;
+		});
 	}
 
 	@Override
@@ -130,12 +176,11 @@ public class HighscoresScreen extends UntitledScreen {
 		this.backButton.render(batch);
 		this.backText.render(batch);
 
-		if (highscores.isEmpty()) {
+		if (loading) {
 			loadingText.render(batch);
 		} else {
-			for (Highscore h : highscores) {
-				h.nameText.render(batch);
-				h.scoreText.render(batch);
+			for (HighscoreUI h : new Array.ArrayIterator<>(highscoresUI)) {
+				h.render(batch);
 			}
 		}
 	}

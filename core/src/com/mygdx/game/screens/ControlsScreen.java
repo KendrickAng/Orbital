@@ -16,6 +16,7 @@ import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
 import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 
@@ -56,6 +57,7 @@ public class ControlsScreen extends UntitledScreen {
 				.setY(BACK_BUTTON_Y)
 				.setW(BUTTON_WIDTH)
 				.setH(BUTTON_HEIGHT)
+				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 
 		// Add input processors

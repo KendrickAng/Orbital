@@ -121,6 +121,11 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float SHURIKEN_THROW_ANIMATION_DURATION = 0.3f;
 	private static final float CLEANSE_ANIMATION_DURATION = 0.3f;
 
+	// Scores
+	private static final int STACKS_SCORE = 10;
+	private static final int PERFECT_DASH_SCORE = 50;
+	private static final int PERFECT_CLEANSE_SCORE = 250;
+
 	private int stacks;
 	private boolean falling;
 	private boolean dashTrueDamage;
@@ -556,6 +561,8 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 
 					if (stacks >= 3) {
 						Gdx.app.log("Assassin.java", "3 Stacks!");
+						getGame().addScore(STACKS_SCORE);
+
 						new Shuriken(getGame(), x, y, degree, SHURIKEN_BONUS_DAMAGE, shurikenDebuff);
 						stacks = 0;
 					} else {
@@ -572,6 +579,8 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 
 					if (perfectCleanse) {
 						Gdx.app.log("Assassin.java", "Perfect Cleanse!");
+						getGame().addScore(PERFECT_CLEANSE_SCORE);
+
 						shurikenDebuff = new Debuff(WEAK, 0, WEAK_SPOT_DURATION);
 					}
 
@@ -722,6 +731,8 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	protected void damage() {
 		if (dashDebuff.isInflicted()) {
 			Gdx.app.log("Assassin.java", "Perfect Dash!");
+			getGame().addScore(PERFECT_DASH_SCORE);
+
 			stacks++;
 		}
 	}

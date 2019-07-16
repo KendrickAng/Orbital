@@ -18,7 +18,26 @@ public class PostRequest extends HttpRequest {
 				.build();
 	}
 
-	public void setBody(String body) {
+	@Override
+	public PostRequest setHeader(String key, String value) {
+		super.setHeader(key, value);
+		return this;
+	}
+
+	@Override
+	public PostRequest setURLParameter(String key, String value) {
+		super.setURLParameter(key, value);
+		return this;
+	}
+
+	@Override
+	public PostRequest setSuccessCallback(HttpResponseCallback success) {
+		super.setSuccessCallback(success);
+		return this;
+	}
+
+	public PostRequest setBody(String body) {
 		this.body = body;
+		return this;
 	}
 }

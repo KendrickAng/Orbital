@@ -103,6 +103,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float FORTRESS_WALKING_ANIMATION_DURATION = 2f;
 
 	// Skill modifiers
+
 	private static final float IMPALE_DAMAGE = 10f;
 	private static final float IMPALE_BONUS_DAMAGE = IMPALE_DAMAGE + 10f;
 
@@ -114,6 +115,12 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 	private static final float SHIELD_BASH_DAMAGE = 20f;
 	private static final float SHIELD_BASH_STUN_DURATION = 2f;
+
+	// Scores
+	private static final int SHIELD_BASH_SCORE = 10;
+	private static final int PERFECT_BLOCK_SCORE = 50;
+	private static final int PERFECT_FORTRESS_SCORE = 250;
+	private static final int FORTRESS_HEAL_SCORE = 250;
 
 	private Ability<TankStates> blockAbility;
 	private Ability<TankStates> impaleAbility;
@@ -614,6 +621,8 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	protected void damage() {
 		if (blockPerfectDebuff.isInflicted()) {
 			Gdx.app.log("Tank.java", "Perfect Block!");
+			getGame().addScore(PERFECT_BLOCK_SCORE);
+
 			impaleAbility.reset();
 			impaleAnimation.defineFrameTask(0, () -> {
 				Boss1 boss1 = getGame().getBoss1();
@@ -626,9 +635,13 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 			});
 		} else if (fortressPerfectDebuff.isInflicted()) {
 			Gdx.app.log("Tank.java", "Perfect Fortress!");
+			getGame().addScore(PERFECT_FORTRESS_SCORE);
+
 			AnimationFrameTask shieldBashTask = () -> {
 				Boss1 boss1 = getGame().getBoss1();
 				if (boss1.damageTest(this, getHitbox(SHIELD), SHIELD_BASH_DAMAGE)) {
+					getGame().addScore(SHIELD_BASH_SCORE);
+
 					boss1.inflictDebuff(new Debuff(STUN, 0, SHIELD_BASH_STUN_DURATION));
 					initBlockHitTest();
 				}
@@ -689,6 +702,8 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 	private void setFortressHeal() {
 		fortressAbility.defineBegin((state) -> {
+			getGame().addScore(FORTRESS_HEAL_SCORE);
+
 			getGame().getTank().heal(FORTRESS_HEAL);
 			getGame().getAssassin().heal(FORTRESS_HEAL);
 			inflictDebuff(fortressDebuff);

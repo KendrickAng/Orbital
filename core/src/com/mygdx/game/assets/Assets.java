@@ -25,6 +25,8 @@ import static com.mygdx.game.assets.FontName.MINECRAFT_32;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BACKGROUND;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_0;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_1;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_2;
@@ -42,6 +44,9 @@ import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_EVEN;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
 import static com.mygdx.game.assets.TextureName.STUNNED;
 import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
 
@@ -169,7 +174,14 @@ public class Assets {
 		defineTexture(FLOOR, "Floor.png");
 		defineTexture(STUNNED, "Stunned.png");
 		defineTexture(WEAK_SPOT, "Weak Spot.png");
-		defineTexture(BUTTON_HOVER, "Button Hover.png");
+
+		defineTexture(BUTTON_NORMAL, "Button/Normal.png");
+		defineTexture(BUTTON_HOVER, "Button/Hover.png");
+		defineTexture(BUTTON_MENU_HOVER, "Button/Menu Hover.png");
+
+		defineTexture(HIGHSCORES_TITLE, "Highscores/Title.png");
+		defineTexture(HIGHSCORES_ODD, "Highscores/Odd.png");
+		defineTexture(HIGHSCORES_EVEN, "Highscores/Even.png");
 
 		defineTexture(HEALTH_BAR_BACKGROUND, "HealthBar/Background.png");
 		defineTexture(HEALTH_BAR_ASSASSIN, "HealthBar/AssassinBar.png");

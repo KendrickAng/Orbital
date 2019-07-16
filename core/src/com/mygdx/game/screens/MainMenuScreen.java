@@ -11,12 +11,12 @@ import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 
 import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
-import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
+import static com.mygdx.game.UntitledGame.BUTTON_MENU_WIDTH;
 import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
 import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_32;
-import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
 import static com.mygdx.game.screens.ScreenName.CONTROLS;
 import static com.mygdx.game.screens.ScreenName.GAME;
 import static com.mygdx.game.screens.ScreenName.HIGHSCORES;
@@ -71,9 +71,9 @@ public class MainMenuScreen extends UntitledScreen {
 		this.playButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(GAME))
 				.setX(PLAY_BUTTON_X)
 				.setY(PLAY_BUTTON_Y)
-				.setW(BUTTON_WIDTH)
+				.setW(BUTTON_MENU_WIDTH)
 				.setH(BUTTON_HEIGHT)
-				.setHoverTexture(A.getTexture(BUTTON_HOVER));
+				.setHoverTexture(A.getTexture(BUTTON_MENU_HOVER));
 
 		this.controlsText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
 				.setX(CONTROLS_BUTTON_X)
@@ -83,9 +83,9 @@ public class MainMenuScreen extends UntitledScreen {
 		this.controlsButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(CONTROLS))
 				.setX(CONTROLS_BUTTON_X)
 				.setY(CONTROLS_BUTTON_Y)
-				.setW(BUTTON_WIDTH)
+				.setW(BUTTON_MENU_WIDTH)
 				.setH(BUTTON_HEIGHT)
-				.setHoverTexture(A.getTexture(BUTTON_HOVER));
+				.setHoverTexture(A.getTexture(BUTTON_MENU_HOVER));
 
 		this.highscoresText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
 				.setX(HIGHSCORES_BUTTON_X)
@@ -95,9 +95,9 @@ public class MainMenuScreen extends UntitledScreen {
 		this.highscoresButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(HIGHSCORES))
 				.setX(HIGHSCORES_BUTTON_X)
 				.setY(HIGHSCORES_BUTTON_Y)
-				.setW(BUTTON_WIDTH)
+				.setW(BUTTON_MENU_WIDTH)
 				.setH(BUTTON_HEIGHT)
-				.setHoverTexture(A.getTexture(BUTTON_HOVER));
+				.setHoverTexture(A.getTexture(BUTTON_MENU_HOVER));
 
 		// Add input processors
 		multiplexer.addProcessor(playButton);

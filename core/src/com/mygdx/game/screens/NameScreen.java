@@ -19,6 +19,7 @@ import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
 import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 
@@ -93,6 +94,7 @@ public class NameScreen extends UntitledScreen {
 				.setY(CONTINUE_Y)
 				.setW(BUTTON_WIDTH)
 				.setH(BUTTON_HEIGHT)
+				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 
 		multiplexer.addProcessor(new NameProcessor(characterStack));

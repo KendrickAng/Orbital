@@ -49,7 +49,7 @@ Responsibilities: Defines abilities, maps Ability states to Ability instances, h
 sprite position, direction, motion.
  */
 public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
-	private static final float HEALTH = 1000;
+	private static final float HEALTH = 2000;
 	private static final float DAMAGED_DURATION = 0f;
 	private static final float WALKING_SPEED = 1f;
 
@@ -71,6 +71,10 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float EARTHQUAKE_ROCK_DAMAGE = 20;
 	private static final float ROLL_SPEED = 4f;
 	private static final float ROLL_DAMAGE = 20;
+
+	// Scores
+	private static final int DAMAGE_SCORE_MULTIPLIER = 1;
+	private static final int TRUE_DAMAGE_SCORE_MULTIPLIER = 4;
 
 	private boolean rolling;
 
@@ -270,6 +274,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 	public boolean damageTest(LivingEntity entity, Hitbox hitbox, float damage) {
 		if (hitTest(entity, hitbox)) {
+			getGame().addScore((int) (damage * DAMAGE_SCORE_MULTIPLIER));
+
 			return inflictDamage(entity, damage);
 		}
 		return false;
@@ -277,6 +283,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 	public boolean trueDamageTest(LivingEntity entity, Hitbox hitbox, float damage) {
 		if (hitTest(entity, hitbox)) {
+			getGame().addScore((int) (damage * TRUE_DAMAGE_SCORE_MULTIPLIER));
+
 			inflictTrueDamage(damage);
 			return true;
 		}

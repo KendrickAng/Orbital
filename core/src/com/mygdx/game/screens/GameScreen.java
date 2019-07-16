@@ -3,6 +3,7 @@ package com.mygdx.game.screens;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Background;
 import com.mygdx.game.Floor;
 import com.mygdx.game.UntitledGame;
@@ -15,15 +16,22 @@ import com.mygdx.game.entity.character.Assassin;
 import com.mygdx.game.entity.character.Character;
 import com.mygdx.game.entity.character.CharacterController;
 import com.mygdx.game.entity.character.Tank;
+import com.mygdx.game.highscores.Highscores;
+import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.Cooldowns;
 import com.mygdx.game.ui.HealthBar;
 import com.mygdx.game.ui.TextUI;
 
 import static com.mygdx.game.UntitledGame.BOSS1_AI;
+import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
+import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
 import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
 import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
 import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
+import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
+import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_BLOCK;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_CLEANSE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
@@ -34,7 +42,9 @@ import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
+import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.BOTTOM_LEFT;
+import static com.mygdx.game.ui.UIAlign.MIDDLE;
 import static com.mygdx.game.ui.UIAlign.TOP_LEFT;
 import static com.mygdx.game.ui.UIAlign.TOP_RIGHT;
 
@@ -64,13 +74,21 @@ public class GameScreen extends UntitledScreen {
 	private static final float SCORE_TEXT_X = WINDOW_WIDTH - 20f;
 	private static final float SCORE_TEXT_Y = WINDOW_HEIGHT - 20f;
 
+	private static final String CONTINUE_TEXT = "CONTINUE";
+	private static final float CONTINUE_TEXT_X = WINDOW_WIDTH / 2f;
+	private static final float CONTINUE_TEXT_Y = WINDOW_HEIGHT / 2f;
+
 	private Assets A;
+	private Highscores highscores;
 
 	private Background background;
 	private Floor floor;
 
 	private CharacterController playerController;
 	private EntityManager entityManager;
+
+	private int score;
+	private boolean gameOver;
 
 	/* Entities */
 	private Character character;
@@ -91,10 +109,17 @@ public class GameScreen extends UntitledScreen {
 
 	private TextUI scoreText;
 
+	private TextUI continueText;
+	private ButtonUI continueButton;
+
 	public GameScreen(UntitledGame game) {
 		super(game);
 
+		Viewport viewport = game.getViewport();
+		InputMultiplexer multiplexer = game.getInputMultiplexer();
+
 		this.A = game.getAssets();
+		this.highscores = game.getHighscores();
 		this.entityManager = new EntityManager();
 
 		/* Entities */
@@ -107,19 +132,17 @@ public class GameScreen extends UntitledScreen {
 		/* Input */
 		this.playerController = new CharacterController(this);
 
-		// An input multiplexer sends input to both controllers at once.
-		InputMultiplexer inputMultiplexer = game.getInputMultiplexer();
-		inputMultiplexer.addProcessor(playerController);
+		multiplexer.addProcessor(playerController);
 		if (BOSS1_AI) {
 			new Boss1AI(this);
 		} else {
-			inputMultiplexer.addProcessor(new Boss1Controller(this));
+			multiplexer.addProcessor(new Boss1Controller(this));
 		}
 
 		this.background = new Background(A);
 		this.floor = new Floor(A);
 
-		/* Health Bars */
+		/* UI */
 		tankText = new TextUI(TOP_LEFT, A.getFont(MINECRAFT_8))
 				.setX(CHARACTER_TEXT_X)
 				.setY(CHARACTER_TEXT_Y)
@@ -167,6 +190,25 @@ public class GameScreen extends UntitledScreen {
 		scoreText = new TextUI(TOP_RIGHT, A.getFont(MINECRAFT_8))
 				.setX(SCORE_TEXT_X)
 				.setY(SCORE_TEXT_Y);
+
+		continueText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
+				.setX(CONTINUE_TEXT_X)
+				.setY(CONTINUE_TEXT_Y)
+				.setText(CONTINUE_TEXT);
+
+		continueButton = new ButtonUI(MIDDLE, viewport, () -> {
+			if (gameOver) {
+				setScreen(MAIN_MENU);
+			}
+		})
+				.setX(CONTINUE_TEXT_X)
+				.setY(CONTINUE_TEXT_Y)
+				.setW(BUTTON_WIDTH)
+				.setH(BUTTON_HEIGHT)
+				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
+				.setHoverTexture(A.getTexture(BUTTON_HOVER));
+
+		multiplexer.addProcessor(continueButton);
 	}
 
 	@Override
@@ -180,7 +222,12 @@ public class GameScreen extends UntitledScreen {
 			switchCharacter();
 		}
 
-		int score = (int) (boss1.getMaxHealth() - boss1.getHealth());
+		if (!gameOver && boss1.isDispose()) {
+			gameOver = true;
+			score *= 2;
+			highscores.postHighscore(score);
+		}
+
 		scoreText.setText(SCORE_TEXT + score);
 	}
 
@@ -206,6 +253,11 @@ public class GameScreen extends UntitledScreen {
 		}
 
 		scoreText.render(batch);
+
+		if (gameOver) {
+			continueButton.render(batch);
+			continueText.render(batch);
+		}
 	}
 
 	@Override
@@ -218,12 +270,25 @@ public class GameScreen extends UntitledScreen {
 	}
 
 	public void switchCharacter() {
+		// All characters are dead
+		if (!gameOver && tank.isDispose() && assassin.isDispose()) {
+			gameOver = true;
+			highscores.postHighscore(score);
+			return;
+		}
+
 		if (character.useSwitchCharacter() || character.isDispose()) {
 			Character next;
+
+			// Assassin is alive
 			if (character == tank && !assassin.isDispose()) {
 				next = assassin;
+
+				// Tank is alive
 			} else if (character == assassin && !tank.isDispose()) {
 				next = tank;
+
+				// Other character is not alive
 			} else {
 				character.endCrowdControl();
 				return;
@@ -243,6 +308,10 @@ public class GameScreen extends UntitledScreen {
 			playerController.update();
 //			Gdx.app.log("GameScreen.java", "Switched Characters");
 		}
+	}
+
+	public void addScore(int score) {
+		this.score += score;
 	}
 
 	/* Getters */

@@ -15,6 +15,7 @@ import com.mygdx.game.assets.Boss1AnimationName;
 import com.mygdx.game.assets.RockAnimationName;
 import com.mygdx.game.assets.ShurikenAnimationName;
 import com.mygdx.game.assets.TankAnimationName;
+import com.mygdx.game.highscores.Highscores;
 import com.mygdx.game.screens.NameScreen;
 
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
@@ -23,6 +24,8 @@ import static com.mygdx.game.assets.FontName.MINECRAFT_32;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BACKGROUND;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
+import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_0;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_1;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_2;
@@ -40,6 +43,9 @@ import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_EVEN;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
+import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
 import static com.mygdx.game.assets.TextureName.STUNNED;
 import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
 
@@ -49,7 +55,8 @@ public class UntitledGame extends Game {
 	public static final int WINDOW_HEIGHT = 360;
 
 	// Menu Buttons
-	public static final float BUTTON_WIDTH = WINDOW_WIDTH;
+	public static final float BUTTON_WIDTH = 160;
+	public static final float BUTTON_MENU_WIDTH = WINDOW_WIDTH;
 	public static final float BUTTON_HEIGHT = 40;
 
 	// Game Variables
@@ -58,14 +65,12 @@ public class UntitledGame extends Game {
 	public static final float FLOOR_HEIGHT = 60;
 
 	private Assets assets;
+	private Highscores highscores;
+	private InputMultiplexer inputMultiplexer;
+	private OrthographicCamera camera;
 	private SpriteBatch batch;
 	private ShapeRenderer renderer;
-	private OrthographicCamera camera;
 	private Viewport viewport;
-	private InputMultiplexer inputMultiplexer;
-
-	// Dynamic Variables
-	private String name;
 
 	@Override
 	public void create() {
@@ -86,7 +91,14 @@ public class UntitledGame extends Game {
 		assets.loadTexture(FLOOR);
 		assets.loadTexture(STUNNED);
 		assets.loadTexture(WEAK_SPOT);
+
+		assets.loadTexture(BUTTON_NORMAL);
 		assets.loadTexture(BUTTON_HOVER);
+		assets.loadTexture(BUTTON_MENU_HOVER);
+
+		assets.loadTexture(HIGHSCORES_TITLE);
+		assets.loadTexture(HIGHSCORES_ODD);
+		assets.loadTexture(HIGHSCORES_EVEN);
 
 		assets.loadTexture(HEALTH_BAR_ASSASSIN);
 		assets.loadTexture(HEALTH_BAR_BACKGROUND);
@@ -152,10 +164,26 @@ public class UntitledGame extends Game {
 
 	/* SETTERS */
 	public void setName(String name) {
-		this.name = name;
+		highscores = new Highscores(name);
 	}
 
 	/* GETTERS */
+	public Assets getAssets() {
+		return this.assets;
+	}
+
+	public OrthographicCamera getCamera() {
+		return camera;
+	}
+
+	public Highscores getHighscores() {
+		return highscores;
+	}
+
+	public InputMultiplexer getInputMultiplexer() {
+		return this.inputMultiplexer;
+	}
+
 	public SpriteBatch getSpriteBatch() {
 		return batch;
 	}
@@ -164,23 +192,7 @@ public class UntitledGame extends Game {
 		return renderer;
 	}
 
-	public OrthographicCamera getCamera() {
-		return camera;
-	}
-
 	public Viewport getViewport() {
 		return viewport;
-	}
-
-	public InputMultiplexer getInputMultiplexer() {
-		return this.inputMultiplexer;
-	}
-
-	public Assets getAssets() {
-		return this.assets;
-	}
-
-	public String getName() {
-		return name;
 	}
 }
