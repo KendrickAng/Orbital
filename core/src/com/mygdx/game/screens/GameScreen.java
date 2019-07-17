@@ -274,6 +274,7 @@ public class GameScreen extends UntitledScreen {
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 
 		multiplexer.addProcessor(continueButton);
+		Gdx.input.setCursorCatched(true);
 
 		/* Music */
 		A.getMusic(MusicName.MAIN_MENU).stop();
@@ -360,6 +361,7 @@ public class GameScreen extends UntitledScreen {
 
 	private void gameOver() {
 		gameOver = true;
+		Gdx.input.setCursorCatched(false);
 		highscores.postHighscore(level, score, (int) time);
 	}
 
