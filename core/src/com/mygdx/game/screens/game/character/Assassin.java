@@ -580,6 +580,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 					shurikenDebuff = null;
 				});
 
+		// TODO: Cleansing when boss damages somehow crashed the game (Can't replicate)
 		cleanseAbility = new Ability<AssassinStates>(CLEANSE_COOLDOWN)
 				.defineBegin((state) -> {
 					if (isCrowdControl()) {
