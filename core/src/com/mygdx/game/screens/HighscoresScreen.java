@@ -7,18 +7,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.Background;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.highscores.Highscore;
+import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 import com.mygdx.game.ui.TextureUI;
 
 import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
 import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
-import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
-import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
+import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
+import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
@@ -38,20 +38,26 @@ public class HighscoresScreen extends UntitledScreen {
 	private static final String HIGHSCORES_NAME_TEXT = "NAME";
 	private static final float HIGHSCORES_NAME_W = 70f;
 
+	private static final String HIGHSCORES_LEVEL_TEXT = "LEVEL";
+	private static final float HIGHSCORES_LEVEL_W = 70f;
+
 	private static final String HIGHSCORES_SCORE_TEXT = "SCORE";
 	private static final float HIGHSCORES_SCORE_W = 100f;
 
-	private static final float HIGHSCORES_W = HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_SCORE_W;
+	private static final String HIGHSCORES_TIME_TEXT = "TIME";
+	private static final float HIGHSCORES_TIME_W = 100f;
+
+	private static final float HIGHSCORES_W = HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W + HIGHSCORES_SCORE_W + HIGHSCORES_TIME_W;
 	private static final float HIGHSCORES_H = 16f;
-	private static final float HIGHSCORES_X = (WINDOW_WIDTH - HIGHSCORES_W) / 2f;
-	private static final float HIGHSCORES_Y = WINDOW_HEIGHT - 50f;
+	private static final float HIGHSCORES_X = (CAMERA_WIDTH - HIGHSCORES_W) / 2f;
+	private static final float HIGHSCORES_Y = CAMERA_HEIGHT - 50f;
 
 	private static final String LOADING_TEXT = "RETRIEVING HIGHSCORES...";
-	private static final float LOADING_X = WINDOW_WIDTH / 2f;
-	private static final float LOADING_Y = WINDOW_HEIGHT - 100f;
+	private static final float LOADING_X = CAMERA_WIDTH / 2f;
+	private static final float LOADING_Y = CAMERA_HEIGHT - 100f;
 
 	private static final String BACK_BUTTON_TEXT = "BACK";
-	private static final float BACK_BUTTON_X = WINDOW_WIDTH / 2f;
+	private static final float BACK_BUTTON_X = CAMERA_WIDTH / 2f;
 	private static final float BACK_BUTTON_Y = 50;
 
 	private Background background;
@@ -65,7 +71,9 @@ public class HighscoresScreen extends UntitledScreen {
 	private class HighscoreUI {
 		TextUI idText;
 		TextUI nameText;
+		TextUI levelText;
 		TextUI scoreText;
+		TextUI timeText;
 		TextureUI background;
 
 		HighscoreUI(float x, float y, BitmapFont font, Texture background) {
@@ -77,8 +85,16 @@ public class HighscoresScreen extends UntitledScreen {
 					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W / 2f)
 					.setY(y);
 
+			this.levelText = new TextUI(MIDDLE, font)
+					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W / 2f)
+					.setY(y);
+
 			this.scoreText = new TextUI(MIDDLE, font)
-					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_SCORE_W / 2f)
+					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W + HIGHSCORES_SCORE_W / 2f)
+					.setY(y);
+
+			this.timeText = new TextUI(MIDDLE, font)
+					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W + HIGHSCORES_SCORE_W + HIGHSCORES_TIME_W / 2f)
 					.setY(y);
 
 			this.background = new TextureUI(LEFT, background)
@@ -92,7 +108,9 @@ public class HighscoresScreen extends UntitledScreen {
 			this.background.render(batch);
 			this.idText.render(batch);
 			this.nameText.render(batch);
+			this.levelText.render(batch);
 			this.scoreText.render(batch);
+			this.timeText.render(batch);
 		}
 	}
 
@@ -144,7 +162,9 @@ public class HighscoresScreen extends UntitledScreen {
 
 			if (i == 0) {
 				highscoreUI.nameText.setText(HIGHSCORES_NAME_TEXT);
+				highscoreUI.levelText.setText(HIGHSCORES_LEVEL_TEXT);
 				highscoreUI.scoreText.setText(HIGHSCORES_SCORE_TEXT);
+				highscoreUI.timeText.setText(HIGHSCORES_TIME_TEXT);
 			}
 
 			highscoresUI.add(highscoreUI);
@@ -158,7 +178,9 @@ public class HighscoresScreen extends UntitledScreen {
 
 				ui.idText.setText(i + 1 + ".");
 				ui.nameText.setText(highscore.getName());
+				ui.levelText.setText(String.valueOf(highscore.getLevel()));
 				ui.scoreText.setText(String.valueOf(highscore.getScore()));
+				ui.timeText.setText(UntitledGame.formatTime(highscore.getTime()));
 			}
 
 			loading = false;

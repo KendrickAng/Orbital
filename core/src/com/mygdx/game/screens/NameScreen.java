@@ -6,37 +6,36 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.Background;
-import com.mygdx.game.NameProcessor;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.screens.game.Background;
+import com.mygdx.game.screens.name.NameProcessor;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 
 import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
 import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
-import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
-import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
+import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
+import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
-import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 
 public class NameScreen extends UntitledScreen {
 	public static final int CHARACTERS = 3;
 
 	private static final String BACKGROUND_TEXT = "_";
-	private static final float INPUT_TEXT_Y = WINDOW_HEIGHT / 2f;
+	private static final float INPUT_TEXT_Y = CAMERA_HEIGHT / 2f;
 	private static final float BACKGROUND_TEXT_Y = INPUT_TEXT_Y - 10f;
 	private static final float CHARACTER_W = 30f;
 
 	private static final String YOUR_NAME_TEXT = "WHAT IS YOUR NAME?";
-	private static final float YOUR_NAME_X = WINDOW_WIDTH / 2f;
+	private static final float YOUR_NAME_X = CAMERA_WIDTH / 2f;
 	private static final float YOUR_NAME_Y = INPUT_TEXT_Y + 50f;
 
 	private static final String CONTINUE_TEXT = "CONTINUE";
-	private static final float CONTINUE_X = WINDOW_WIDTH / 2f;
+	private static final float CONTINUE_X = CAMERA_WIDTH / 2f;
 	private static final float CONTINUE_Y = 50f;
 
 	private Array<Character> characterStack;
@@ -49,7 +48,7 @@ public class NameScreen extends UntitledScreen {
 	private TextUI continueText;
 	private ButtonUI continueButton;
 
-	public NameScreen(UntitledGame game) {
+	public NameScreen(UntitledGame game, ScreenName next) {
 		super(game);
 		Assets A = game.getAssets();
 		Viewport viewport = game.getViewport();
@@ -67,7 +66,7 @@ public class NameScreen extends UntitledScreen {
 		this.inputTexts = new TextUI[CHARACTERS];
 
 		for (int i = 0; i < CHARACTERS; i++) {
-			float x = WINDOW_WIDTH / 2f + CHARACTER_W * (i - (CHARACTERS - 1) / 2f);
+			float x = CAMERA_WIDTH / 2f + CHARACTER_W * (i - (CHARACTERS - 1) / 2f);
 			backgroundTexts[i] = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
 					.setX(x)
 					.setY(BACKGROUND_TEXT_Y)
@@ -87,7 +86,7 @@ public class NameScreen extends UntitledScreen {
 		this.continueButton = new ButtonUI(MIDDLE, viewport, () -> {
 			if (characterStack.size == CHARACTERS) {
 				game.setName(characterStack.toString(""));
-				setScreen(MAIN_MENU);
+				setScreen(next);
 			}
 		})
 				.setX(CONTINUE_X)

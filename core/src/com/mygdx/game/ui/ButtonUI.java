@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class ButtonUI extends UI implements InputProcessor {
+	private boolean touchedDown;
 	private boolean hovering;
 
 	private Viewport viewport;
@@ -83,32 +84,47 @@ public class ButtonUI extends UI implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (hovering) {
-			callback.call();
+		updateHovering(screenX, screenY);
+
+		// Ensures that button was pressed down and released on it
+		if (button == 0 && hovering) {
+			touchedDown = true;
 		}
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		updateHovering(screenX, screenY);
+
+		// Left mouse click
+		if (button == 0 && hovering && touchedDown) {
+			callback.call();
+		}
+		touchedDown = false;
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		updateHovering(screenX, screenY);
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		Vector2 mouse = viewport.unproject(new Vector2(screenX, screenY));
-		hovering = getX() < mouse.x && mouse.x < getX() + getW() &&
-				getY() < mouse.y && mouse.y < getY() + getH();
+		updateHovering(screenX, screenY);
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
+	}
+
+	private void updateHovering(int screenX, int screenY) {
+		Vector2 mouse = viewport.unproject(new Vector2(screenX, screenY));
+		hovering = getX() < mouse.x && mouse.x < getX() + getW() &&
+				getY() < mouse.y && mouse.y < getY() + getH();
 	}
 }

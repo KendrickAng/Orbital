@@ -2,7 +2,7 @@ package com.mygdx.game.ui;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.entity.LivingEntity;
+import com.mygdx.game.screens.game.LivingEntity;
 
 public class HealthBar extends UI {
 	private static final int BORDER = 2;

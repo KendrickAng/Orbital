@@ -10,12 +10,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import com.mygdx.game.entity.animation.Animation;
-import com.mygdx.game.entity.boss1.Boss1Parts;
-import com.mygdx.game.entity.character.AssassinParts;
-import com.mygdx.game.entity.character.TankParts;
-import com.mygdx.game.entity.rock.RockParts;
-import com.mygdx.game.entity.shuriken.ShurikenParts;
+import com.mygdx.game.screens.game.animation.Animation;
+import com.mygdx.game.screens.game.boss1.Boss1Parts;
+import com.mygdx.game.screens.game.character.AssassinParts;
+import com.mygdx.game.screens.game.character.TankParts;
+import com.mygdx.game.screens.game.rock.RockParts;
+import com.mygdx.game.screens.game.shuriken.ShurikenParts;
 
 import java.util.HashMap;
 
@@ -41,12 +41,13 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.FLOOR;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
-import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_EVEN;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
+import static com.mygdx.game.assets.TextureName.INFO_BAR_BACKGROUND;
+import static com.mygdx.game.assets.TextureName.STACK_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.STUNNED;
 import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
 
@@ -183,10 +184,11 @@ public class Assets {
 		defineTexture(HIGHSCORES_ODD, "Highscores/Odd.png");
 		defineTexture(HIGHSCORES_EVEN, "Highscores/Even.png");
 
-		defineTexture(HEALTH_BAR_BACKGROUND, "HealthBar/Background.png");
-		defineTexture(HEALTH_BAR_ASSASSIN, "HealthBar/AssassinBar.png");
-		defineTexture(HEALTH_BAR_BOSS, "HealthBar/BossBar.png");
-		defineTexture(HEALTH_BAR_TANK, "HealthBar/TankBar.png");
+		defineTexture(INFO_BAR_BACKGROUND, "InfoBar/Background.png");
+		defineTexture(HEALTH_BAR_TANK, "InfoBar/TankHealthBar.png");
+		defineTexture(HEALTH_BAR_ASSASSIN, "InfoBar/AssassinHealthBar.png");
+		defineTexture(STACK_BAR_ASSASSIN, "InfoBar/AssassinStackBar.png");
+		defineTexture(HEALTH_BAR_BOSS, "InfoBar/BossHealthBar.png");
 
 		defineTexture(COOLDOWN_0, "Cooldowns/0.png");
 		defineTexture(COOLDOWN_1, "Cooldowns/1.png");

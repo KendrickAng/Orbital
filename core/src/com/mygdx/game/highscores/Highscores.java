@@ -33,7 +33,7 @@ public class Highscores {
 				.call();
 	}
 
-	public void postHighscore(int score) {
+	public void postHighscore(int level, int score, int time) {
 		createNewUser(token -> {
 			StringWriter jsonHighscoreWriter = new StringWriter();
 			Json jsonHighscore = new Json(JsonWriter.OutputType.json);
@@ -45,8 +45,16 @@ public class Highscores {
 			jsonHighscore.writeValue("stringValue", name);
 			jsonHighscore.writeObjectEnd();
 
+			jsonHighscore.writeObjectStart("level");
+			jsonHighscore.writeValue("integerValue", level);
+			jsonHighscore.writeObjectEnd();
+
 			jsonHighscore.writeObjectStart("score");
 			jsonHighscore.writeValue("integerValue", score);
+			jsonHighscore.writeObjectEnd();
+
+			jsonHighscore.writeObjectStart("time");
+			jsonHighscore.writeValue("integerValue", time);
 			jsonHighscore.writeObjectEnd();
 
 			jsonHighscore.writeObjectEnd();
@@ -103,10 +111,12 @@ public class Highscores {
 					for (JsonValue query : jsonHighscores) {
 						JsonValue fields = query.get("document").get("fields");
 						String name = fields.get("name").getString("stringValue");
+						int level = fields.get("level").getInt("integerValue");
 						int score = fields.get("score").getInt("integerValue");
+						int time = fields.get("time").getInt("integerValue");
 //						Gdx.app.log(name, String.valueOf(score));
 
-						highscores.add(new Highscore(name, score));
+						highscores.add(new Highscore(name, level, score, time));
 					}
 
 					callback.call(highscores);

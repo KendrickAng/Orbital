@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,7 +17,14 @@ import com.mygdx.game.assets.RockAnimationName;
 import com.mygdx.game.assets.ShurikenAnimationName;
 import com.mygdx.game.assets.TankAnimationName;
 import com.mygdx.game.highscores.Highscores;
+import com.mygdx.game.screens.GameScreen;
+import com.mygdx.game.screens.HighscoresScreen;
+import com.mygdx.game.screens.MainMenuScreen;
 import com.mygdx.game.screens.NameScreen;
+import com.mygdx.game.screens.ScreenName;
+import com.mygdx.game.screens.SettingsScreen;
+
+import java.util.Locale;
 
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_24;
@@ -40,23 +48,31 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.FLOOR;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
-import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_EVEN;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
+import static com.mygdx.game.assets.TextureName.INFO_BAR_BACKGROUND;
+import static com.mygdx.game.assets.TextureName.STACK_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.STUNNED;
 import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
+import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
+import static com.mygdx.game.screens.ScreenName.NAME_MENU;
+import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
+	// Camera Size
+	public static final int CAMERA_WIDTH = 640;
+	public static final int CAMERA_HEIGHT = 360;
+
 	// Window Size
-	public static final int WINDOW_WIDTH = 640;
-	public static final int WINDOW_HEIGHT = 360;
+	public static final int WINDOW_WIDTH = CAMERA_WIDTH * 2;
+	public static final int WINDOW_HEIGHT = CAMERA_HEIGHT * 2;
 
 	// Menu Buttons
 	public static final float BUTTON_WIDTH = 160;
-	public static final float BUTTON_MENU_WIDTH = WINDOW_WIDTH;
+	public static final float BUTTON_MENU_WIDTH = CAMERA_WIDTH;
 	public static final float BUTTON_HEIGHT = 40;
 
 	// Game Variables
@@ -64,10 +80,18 @@ public class UntitledGame extends Game {
 	public static final boolean BOSS1_AI = true; // flag to activate Boss1 AI.
 	public static final float FLOOR_HEIGHT = 60;
 
+	public static final String SETTINGS_NAME = "name";
+	public static final String SETTINGS_VSYNC = "vsync";
+	public static final boolean SETTINGS_VSYNC_DEFAULT = true;
+	public static final String SETTINGS_FULLSCREEN = "fullscreen";
+	public static final boolean SETTINGS_FULLSCREEN_DEFAULT = false;
+	private static final String PREFERENCES_SETTINGS = "settings";
+
 	private Assets assets;
 	private Highscores highscores;
 	private InputMultiplexer inputMultiplexer;
 	private OrthographicCamera camera;
+	private Preferences settings;
 	private SpriteBatch batch;
 	private ShapeRenderer renderer;
 	private Viewport viewport;
@@ -79,10 +103,11 @@ public class UntitledGame extends Game {
 		renderer.setColor(Color.GOLD);
 
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, WINDOW_WIDTH, WINDOW_HEIGHT);
-		viewport = new FitViewport(WINDOW_WIDTH, WINDOW_HEIGHT, camera);
+		camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
+		viewport = new FitViewport(CAMERA_WIDTH, CAMERA_HEIGHT, camera);
 		inputMultiplexer = new InputMultiplexer();
-		Gdx.input.setInputProcessor(inputMultiplexer); // set processor for input.
+
+		settings = Gdx.app.getPreferences(PREFERENCES_SETTINGS);
 
 		assets = new Assets();
 
@@ -100,10 +125,11 @@ public class UntitledGame extends Game {
 		assets.loadTexture(HIGHSCORES_ODD);
 		assets.loadTexture(HIGHSCORES_EVEN);
 
-		assets.loadTexture(HEALTH_BAR_ASSASSIN);
-		assets.loadTexture(HEALTH_BAR_BACKGROUND);
-		assets.loadTexture(HEALTH_BAR_BOSS);
+		assets.loadTexture(INFO_BAR_BACKGROUND);
 		assets.loadTexture(HEALTH_BAR_TANK);
+		assets.loadTexture(HEALTH_BAR_ASSASSIN);
+		assets.loadTexture(STACK_BAR_ASSASSIN);
+		assets.loadTexture(HEALTH_BAR_BOSS);
 
 		assets.loadTexture(COOLDOWN_0);
 		assets.loadTexture(COOLDOWN_1);
@@ -148,7 +174,28 @@ public class UntitledGame extends Game {
 		assets.load();
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		setScreen(new NameScreen(this));
+		Gdx.input.setInputProcessor(inputMultiplexer); // set processor for input.
+
+		/* Settings */
+		// Name
+		String name = settings.getString(SETTINGS_NAME, null);
+
+		// VSync
+		Gdx.graphics.setVSync(settings.getBoolean(SETTINGS_VSYNC, SETTINGS_VSYNC_DEFAULT));
+
+		// Fullscreen
+		if (settings.getBoolean(SETTINGS_FULLSCREEN, SETTINGS_FULLSCREEN_DEFAULT)) {
+			Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+		} else {
+			Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+		}
+
+		if (name == null) {
+			setScreen(NAME_MENU);
+		} else {
+			highscores = new Highscores(name);
+			setScreen(MAIN_MENU);
+		}
 	}
 
 	@Override
@@ -162,8 +209,48 @@ public class UntitledGame extends Game {
 		renderer.dispose();
 	}
 
+	public void setScreen(ScreenName screen) {
+		inputMultiplexer.clear();
+		switch (screen) {
+			case NAME_MENU:
+				setScreen(new NameScreen(this, MAIN_MENU));
+				break;
+			case NAME_SETTINGS:
+				setScreen(new NameScreen(this, SETTINGS));
+				break;
+			case MAIN_MENU:
+				setScreen(new MainMenuScreen(this));
+				break;
+			case SETTINGS:
+				setScreen(new SettingsScreen(this));
+				break;
+			case HIGHSCORES:
+				setScreen(new HighscoresScreen(this));
+				break;
+			case GAME:
+				setScreen(new GameScreen(this));
+				break;
+		}
+	}
+
+	public static String formatTime(int time) {
+		int s = time;
+		int m = s / 60;
+		int h = m / 24;
+
+		s %= 60;
+		m %= 60;
+		if (h > 99) {
+			return "OVER 9000!";
+		} else {
+			return String.format(Locale.US, "%02d:%02d:%02d", h, m, s);
+		}
+	}
+
 	/* SETTERS */
 	public void setName(String name) {
+		settings.putString(SETTINGS_NAME, name);
+		settings.flush();
 		highscores = new Highscores(name);
 	}
 
@@ -182,6 +269,10 @@ public class UntitledGame extends Game {
 
 	public InputMultiplexer getInputMultiplexer() {
 		return this.inputMultiplexer;
+	}
+
+	public Preferences getSettings() {
+		return settings;
 	}
 
 	public SpriteBatch getSpriteBatch() {

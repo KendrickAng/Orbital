@@ -1,33 +1,37 @@
 package com.mygdx.game.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.Background;
-import com.mygdx.game.Floor;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
-import com.mygdx.game.entity.EntityManager;
-import com.mygdx.game.entity.boss1.Boss1;
-import com.mygdx.game.entity.boss1.Boss1AI;
-import com.mygdx.game.entity.boss1.Boss1Controller;
-import com.mygdx.game.entity.character.Assassin;
-import com.mygdx.game.entity.character.Character;
-import com.mygdx.game.entity.character.CharacterController;
-import com.mygdx.game.entity.character.Tank;
 import com.mygdx.game.highscores.Highscores;
+import com.mygdx.game.screens.game.Background;
+import com.mygdx.game.screens.game.EntityManager;
+import com.mygdx.game.screens.game.FloatingTextManager;
+import com.mygdx.game.screens.game.Floor;
+import com.mygdx.game.screens.game.boss1.Boss1;
+import com.mygdx.game.screens.game.boss1.Boss1AI;
+import com.mygdx.game.screens.game.boss1.Boss1Controller;
+import com.mygdx.game.screens.game.character.Assassin;
+import com.mygdx.game.screens.game.character.Character;
+import com.mygdx.game.screens.game.character.CharacterController;
+import com.mygdx.game.screens.game.character.Tank;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.Cooldowns;
 import com.mygdx.game.ui.HealthBar;
+import com.mygdx.game.ui.StackBar;
 import com.mygdx.game.ui.TextUI;
 
 import static com.mygdx.game.UntitledGame.BOSS1_AI;
 import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
 import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
+import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
+import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
 import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
-import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
-import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
@@ -39,11 +43,13 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
-import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
+import static com.mygdx.game.assets.TextureName.INFO_BAR_BACKGROUND;
+import static com.mygdx.game.assets.TextureName.STACK_BAR_ASSASSIN;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.BOTTOM_LEFT;
+import static com.mygdx.game.ui.UIAlign.BOTTOM_RIGHT;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 import static com.mygdx.game.ui.UIAlign.TOP_LEFT;
 import static com.mygdx.game.ui.UIAlign.TOP_RIGHT;
@@ -53,30 +59,45 @@ public class GameScreen extends UntitledScreen {
 	private static final String ASSASSIN_TEXT = "ASSASSIN";
 
 	private static final float CHARACTER_TEXT_X = 20f;
-	private static final float CHARACTER_TEXT_Y = WINDOW_HEIGHT - 20f;
+	private static final float CHARACTER_TEXT_Y = CAMERA_HEIGHT - 20f;
 
-	private static final float CHARACTER_BAR_X = CHARACTER_TEXT_X;
-	private static final float CHARACTER_BAR_Y = CHARACTER_TEXT_Y - 10f;
-	private static final float CHARACTER_BAR_W = WINDOW_WIDTH / 2f;
+	private static final float CHARACTER_HEALTH_BAR_X = CHARACTER_TEXT_X;
+	private static final float CHARACTER_HEALTH_BAR_Y = CHARACTER_TEXT_Y - 10f;
+	private static final float CHARACTER_HEALTH_BAR_W = CAMERA_WIDTH / 2f;
 
-	private static final float COOLDOWNS_X = CHARACTER_BAR_X;
-	private static final float COOLDOWNS_Y = CHARACTER_BAR_Y - 16f;
+	private static final float TANK_COOLDOWNS_X = CHARACTER_HEALTH_BAR_X;
+	private static final float TANK_COOLDOWNS_Y = CHARACTER_HEALTH_BAR_Y - 16f;
+
+	private static final float ASSASSIN_STACK_BAR_X = CHARACTER_HEALTH_BAR_X;
+	private static final float ASSASSIN_STACK_BAR_Y = CHARACTER_HEALTH_BAR_Y - 10f;
+	private static final float ASSASSIN_STACK_BAR_W = CAMERA_WIDTH / 4f;
+
+	private static final float ASSASSIN_COOLDOWNS_X = CHARACTER_HEALTH_BAR_X;
+	private static final float ASSASSIN_COOLDOWNS_Y = ASSASSIN_STACK_BAR_Y - 16f;
 
 	private static final float BOSS_BAR_X = 20f;
 	private static final float BOSS_BAR_Y = 20f;
-	private static final float BOSS_BAR_W = WINDOW_WIDTH - 40f;
+	private static final float BOSS_BAR_W = CAMERA_WIDTH - 40f;
 
 	private static final String BOSS_TEXT = "BOSS - GOLEM";
 	private static final float BOSS_TEXT_X = 20f;
 	private static final float BOSS_TEXT_Y = 32f;
 
+	private static final String FPS_TEXT = "FPS: ";
+	private static final float FPS_TEXT_X = CAMERA_WIDTH - 5f;
+	private static final float FPS_TEXT_Y = 5f;
+
 	private static final String SCORE_TEXT = "SCORE: ";
-	private static final float SCORE_TEXT_X = WINDOW_WIDTH - 20f;
-	private static final float SCORE_TEXT_Y = WINDOW_HEIGHT - 20f;
+	private static final float SCORE_TEXT_X = CAMERA_WIDTH - 20f;
+	private static final float SCORE_TEXT_Y = CAMERA_HEIGHT - 20f;
+
+	private static final String TIME_TEXT = "TIME: ";
+	private static final float TIME_TEXT_X = CAMERA_WIDTH - 20f;
+	private static final float TIME_TEXT_Y = SCORE_TEXT_Y - 14f;
 
 	private static final String CONTINUE_TEXT = "CONTINUE";
-	private static final float CONTINUE_TEXT_X = WINDOW_WIDTH / 2f;
-	private static final float CONTINUE_TEXT_Y = WINDOW_HEIGHT / 2f;
+	private static final float CONTINUE_TEXT_X = CAMERA_WIDTH / 2f;
+	private static final float CONTINUE_TEXT_Y = CAMERA_HEIGHT / 2f;
 
 	private Assets A;
 	private Highscores highscores;
@@ -86,8 +107,11 @@ public class GameScreen extends UntitledScreen {
 
 	private CharacterController playerController;
 	private EntityManager entityManager;
+	private FloatingTextManager floatingTextManager;
 
 	private int score;
+	private int level;
+	private float time;
 	private boolean gameOver;
 
 	/* Entities */
@@ -98,16 +122,20 @@ public class GameScreen extends UntitledScreen {
 
 	/* UI */
 	private TextUI tankText;
-	private TextUI assassinText;
-	private HealthBar tankBar;
-	private HealthBar assassinBar;
+	private HealthBar tankHealthBar;
 	private Cooldowns tankCooldowns;
+
+	private TextUI assassinText;
+	private HealthBar assassinHealthBar;
+	private StackBar assassinStackBar;
 	private Cooldowns assassinCooldowns;
 
 	private TextUI bossText;
-	private HealthBar bossBar;
+	private HealthBar bossHealthBar;
 
+	private TextUI fpsText;
 	private TextUI scoreText;
+	private TextUI timeText;
 
 	private TextUI continueText;
 	private ButtonUI continueButton;
@@ -121,6 +149,7 @@ public class GameScreen extends UntitledScreen {
 		this.A = game.getAssets();
 		this.highscores = game.getHighscores();
 		this.entityManager = new EntityManager();
+		this.floatingTextManager = new FloatingTextManager(A);
 
 		/* Entities */
 		this.tank = new Tank(this);
@@ -143,53 +172,70 @@ public class GameScreen extends UntitledScreen {
 		this.floor = new Floor(A);
 
 		/* UI */
+		// Tank
 		tankText = new TextUI(TOP_LEFT, A.getFont(MINECRAFT_8))
 				.setX(CHARACTER_TEXT_X)
 				.setY(CHARACTER_TEXT_Y)
 				.setText(TANK_TEXT);
 
+		tankHealthBar = new HealthBar(TOP_LEFT, tank, A.getTexture(HEALTH_BAR_TANK), A.getTexture(INFO_BAR_BACKGROUND))
+				.setX(CHARACTER_HEALTH_BAR_X)
+				.setY(CHARACTER_HEALTH_BAR_Y)
+				.setW(CHARACTER_HEALTH_BAR_W);
+
+		tankCooldowns = new Cooldowns(TOP_LEFT, A)
+				.setX(TANK_COOLDOWNS_X)
+				.setY(TANK_COOLDOWNS_Y)
+				.add(tank.getBlockState(), A.getTexture(COOLDOWN_BLOCK))
+				.add(tank.getImpaleState(), A.getTexture(COOLDOWN_IMPALE))
+				.add(tank.getFortressState(), A.getTexture(COOLDOWN_FORTRESS));
+
+		// Assassin
 		assassinText = new TextUI(TOP_LEFT, A.getFont(MINECRAFT_8))
 				.setX(CHARACTER_TEXT_X)
 				.setY(CHARACTER_TEXT_Y)
 				.setText(ASSASSIN_TEXT);
 
-		tankBar = new HealthBar(TOP_LEFT, tank, A.getTexture(HEALTH_BAR_TANK), A.getTexture(HEALTH_BAR_BACKGROUND))
-				.setX(CHARACTER_BAR_X)
-				.setY(CHARACTER_BAR_Y)
-				.setW(CHARACTER_BAR_W);
+		assassinHealthBar = new HealthBar(TOP_LEFT, assassin, A.getTexture(HEALTH_BAR_ASSASSIN), A.getTexture(INFO_BAR_BACKGROUND))
+				.setX(CHARACTER_HEALTH_BAR_X)
+				.setY(CHARACTER_HEALTH_BAR_Y)
+				.setW(CHARACTER_HEALTH_BAR_W);
 
-		assassinBar = new HealthBar(TOP_LEFT, assassin, A.getTexture(HEALTH_BAR_ASSASSIN), A.getTexture(HEALTH_BAR_BACKGROUND))
-				.setX(CHARACTER_BAR_X)
-				.setY(CHARACTER_BAR_Y)
-				.setW(CHARACTER_BAR_W);
-
-		tankCooldowns = new Cooldowns(TOP_LEFT, A)
-				.setX(COOLDOWNS_X)
-				.setY(COOLDOWNS_Y)
-				.add(tank.getBlockState(), A.getTexture(COOLDOWN_BLOCK))
-				.add(tank.getImpaleState(), A.getTexture(COOLDOWN_IMPALE))
-				.add(tank.getFortressState(), A.getTexture(COOLDOWN_FORTRESS));
+		assassinStackBar = new StackBar(TOP_LEFT, assassin, A.getTexture(STACK_BAR_ASSASSIN), A.getTexture(INFO_BAR_BACKGROUND))
+				.setX(ASSASSIN_STACK_BAR_X)
+				.setY(ASSASSIN_STACK_BAR_Y)
+				.setW(ASSASSIN_STACK_BAR_W);
 
 		assassinCooldowns = new Cooldowns(TOP_LEFT, A)
-				.setX(COOLDOWNS_X)
-				.setY(COOLDOWNS_Y)
+				.setX(ASSASSIN_COOLDOWNS_X)
+				.setY(ASSASSIN_COOLDOWNS_Y)
 				.add(assassin.getDashState(), A.getTexture(COOLDOWN_DASH))
 				.add(assassin.getShurikenState(), A.getTexture(COOLDOWN_SHURIKEN_THROW))
 				.add(assassin.getCleanseState(), A.getTexture(COOLDOWN_CLEANSE));
 
+		// Boss
 		bossText = new TextUI(BOTTOM_LEFT, A.getFont(MINECRAFT_8))
 				.setX(BOSS_TEXT_X)
 				.setY(BOSS_TEXT_Y)
 				.setText(BOSS_TEXT);
 
-		bossBar = new HealthBar(BOTTOM_LEFT, boss1, A.getTexture(HEALTH_BAR_BOSS), A.getTexture(HEALTH_BAR_BACKGROUND))
+		bossHealthBar = new HealthBar(BOTTOM_LEFT, boss1, A.getTexture(HEALTH_BAR_BOSS), A.getTexture(INFO_BAR_BACKGROUND))
 				.setX(BOSS_BAR_X)
 				.setY(BOSS_BAR_Y)
 				.setW(BOSS_BAR_W);
 
+		fpsText = new TextUI(BOTTOM_RIGHT, A.getFont(MINECRAFT_8))
+				.setX(FPS_TEXT_X)
+				.setY(FPS_TEXT_Y)
+				.setColor(Color.GRAY);
+
 		scoreText = new TextUI(TOP_RIGHT, A.getFont(MINECRAFT_8))
 				.setX(SCORE_TEXT_X)
 				.setY(SCORE_TEXT_Y);
+
+		timeText = new TextUI(TOP_RIGHT, A.getFont(MINECRAFT_8))
+				.setX(TIME_TEXT_X)
+				.setY(TIME_TEXT_Y);
 
 		continueText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
 				.setX(CONTINUE_TEXT_X)
@@ -213,46 +259,61 @@ public class GameScreen extends UntitledScreen {
 
 	@Override
 	public void update() {
-		// TODO: Abstract these
-		if (character == tank && tank.isDispose()) {
-			switchCharacter();
+		if (!gameOver) {
+			time += Gdx.graphics.getRawDeltaTime();
+
+			// All characters are dead
+			if (tank.isDispose() && assassin.isDispose()) {
+				gameOver();
+
+				// Assassin is alive
+			} else if (character == tank && tank.isDispose()) {
+				switchCharacter();
+
+				// Tank is alive
+			} else if (character == assassin && assassin.isDispose()) {
+				switchCharacter();
+
+				// Boss is dead
+			} else if (boss1.isDispose()) {
+				level++;
+				gameOver();
+			}
 		}
 
-		if (character == assassin && assassin.isDispose()) {
-			switchCharacter();
-		}
-
-		if (!gameOver && boss1.isDispose()) {
-			gameOver = true;
-			score *= 2;
-			highscores.postHighscore(score);
-		}
-
+		fpsText.setText(FPS_TEXT + Gdx.graphics.getFramesPerSecond());
 		scoreText.setText(SCORE_TEXT + score);
+		timeText.setText(TIME_TEXT + UntitledGame.formatTime((int) time));
 	}
 
 	@Override
 	public void render(SpriteBatch batch) {
 		background.render(batch);
 		floor.render(batch);
-		entityManager.renderAll(batch);
+		entityManager.render(batch);
+		floatingTextManager.render(batch);
 
+		// UI
 		if (character == tank && !tank.isDispose()) {
 			tankText.render(batch);
-			tankBar.render(batch);
+			tankHealthBar.render(batch);
 			tankCooldowns.render(batch);
+
 		} else if (character == assassin && !assassin.isDispose()) {
 			assassinText.render(batch);
-			assassinBar.render(batch);
+			assassinHealthBar.render(batch);
+			assassinStackBar.render(batch);
 			assassinCooldowns.render(batch);
 		}
 
 		if (!boss1.isDispose()) {
 			bossText.render(batch);
-			bossBar.render(batch);
+			bossHealthBar.render(batch);
 		}
 
+		fpsText.render(batch);
 		scoreText.render(batch);
+		timeText.render(batch);
 
 		if (gameOver) {
 			continueButton.render(batch);
@@ -269,15 +330,13 @@ public class GameScreen extends UntitledScreen {
 		return playerController;
 	}
 
-	public void switchCharacter() {
-		// All characters are dead
-		if (!gameOver && tank.isDispose() && assassin.isDispose()) {
-			gameOver = true;
-			highscores.postHighscore(score);
-			return;
-		}
+	private void gameOver() {
+		gameOver = true;
+		highscores.postHighscore(level, score, (int) time);
+	}
 
-		if (character.useSwitchCharacter() || character.isDispose()) {
+	public void switchCharacter() {
+		if (!gameOver) {
 			Character next;
 
 			// Assassin is alive
@@ -337,5 +396,9 @@ public class GameScreen extends UntitledScreen {
 
 	public EntityManager getEntityManager() {
 		return entityManager;
+	}
+
+	public FloatingTextManager getFloatingTextManager() {
+		return floatingTextManager;
 	}
 }

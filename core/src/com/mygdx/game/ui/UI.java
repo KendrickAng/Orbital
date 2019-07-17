@@ -3,8 +3,8 @@ package com.mygdx.game.ui;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class UI {
-	private float x;
-	private float y;
+	public float x;
+	public float y;
 	private float w;
 	private float h;
 	private UIAlign align;
@@ -33,7 +33,7 @@ public abstract class UI {
 		return this;
 	}
 
-	public float getX() {
+	protected float getX() {
 		switch (align) {
 			case TOP_MIDDLE:
 			case MIDDLE:
@@ -48,7 +48,7 @@ public abstract class UI {
 		}
 	}
 
-	public float getY() {
+	protected float getY() {
 		switch (align) {
 			case TOP_LEFT:
 			case TOP_MIDDLE:

@@ -1,54 +1,65 @@
 package com.mygdx.game.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.Background;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 
 import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
 import static com.mygdx.game.UntitledGame.BUTTON_MENU_WIDTH;
-import static com.mygdx.game.UntitledGame.WINDOW_HEIGHT;
-import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
+import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
+import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_32;
 import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
-import static com.mygdx.game.screens.ScreenName.CONTROLS;
 import static com.mygdx.game.screens.ScreenName.GAME;
 import static com.mygdx.game.screens.ScreenName.HIGHSCORES;
+import static com.mygdx.game.screens.ScreenName.SETTINGS;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 import static com.mygdx.game.ui.UIAlign.TOP_MIDDLE;
 
 public class MainMenuScreen extends UntitledScreen {
 	private static final String TITLE = "UNTITLED";
-	private static final float TITLE_X = WINDOW_WIDTH / 2f;
-	private static final float TITLE_Y = WINDOW_HEIGHT - 50;
+	private static final float TITLE_X = CAMERA_WIDTH / 2f;
+	private static final float TITLE_Y = CAMERA_HEIGHT - 50f;
 
 	private static final String PLAY_BUTTON_TEXT = "PLAY";
-	private static final float PLAY_BUTTON_X = WINDOW_WIDTH / 2f;
-	private static final float PLAY_BUTTON_Y = WINDOW_HEIGHT / 2f;
-
-	private static final String CONTROLS_BUTTON_TEXT = "CONTROLS";
-	private static final float CONTROLS_BUTTON_X = WINDOW_WIDTH / 2f;
-	private static final float CONTROLS_BUTTON_Y = PLAY_BUTTON_Y - BUTTON_HEIGHT;
+	private static final float PLAY_BUTTON_X = CAMERA_WIDTH / 2f;
+	private static final float PLAY_BUTTON_Y = TITLE_Y - 120f;
 
 	private static final String HIGHSCORES_BUTTON_TEXT = "HIGHSCORES";
-	private static final float HIGHSCORES_BUTTON_X = WINDOW_WIDTH / 2f;
-	private static final float HIGHSCORES_BUTTON_Y = CONTROLS_BUTTON_Y - BUTTON_HEIGHT;
+	private static final float HIGHSCORES_BUTTON_X = CAMERA_WIDTH / 2f;
+	private static final float HIGHSCORES_BUTTON_Y = PLAY_BUTTON_Y - BUTTON_HEIGHT;
+
+	private static final String SETTINGS_BUTTON_TEXT = "SETTINGS";
+	private static final float SETTINGS_BUTTON_X = CAMERA_WIDTH / 2f;
+	private static final float SETTINGS_BUTTON_Y = HIGHSCORES_BUTTON_Y - BUTTON_HEIGHT;
+
+	private static final String EXIT_BUTTON_TEXT = "EXIT";
+	private static final float EXIT_BUTTON_X = CAMERA_WIDTH / 2f;
+	private static final float EXIT_BUTTON_Y = SETTINGS_BUTTON_Y - BUTTON_HEIGHT;
 
 	private Background background;
 
 	private TextUI title;
-	private TextUI playText;
+
 	private ButtonUI playButton;
-	private TextUI controlsText;
-	private ButtonUI controlsButton;
-	private TextUI highscoresText;
+	private TextUI playButtonText;
+
+	private ButtonUI settingsButton;
+	private TextUI settingsButtonText;
+
 	private ButtonUI highscoresButton;
+	private TextUI highscoresButtonText;
+
+	private ButtonUI exitButton;
+	private TextUI exitButtonText;
 
 	public MainMenuScreen(UntitledGame game) {
 		super(game);
@@ -63,11 +74,6 @@ public class MainMenuScreen extends UntitledScreen {
 				.setY(TITLE_Y)
 				.setText(TITLE);
 
-		this.playText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
-				.setX(PLAY_BUTTON_X)
-				.setY(PLAY_BUTTON_Y)
-				.setText(PLAY_BUTTON_TEXT);
-
 		this.playButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(GAME))
 				.setX(PLAY_BUTTON_X)
 				.setY(PLAY_BUTTON_Y)
@@ -75,22 +81,10 @@ public class MainMenuScreen extends UntitledScreen {
 				.setH(BUTTON_HEIGHT)
 				.setHoverTexture(A.getTexture(BUTTON_MENU_HOVER));
 
-		this.controlsText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
-				.setX(CONTROLS_BUTTON_X)
-				.setY(CONTROLS_BUTTON_Y)
-				.setText(CONTROLS_BUTTON_TEXT);
-
-		this.controlsButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(CONTROLS))
-				.setX(CONTROLS_BUTTON_X)
-				.setY(CONTROLS_BUTTON_Y)
-				.setW(BUTTON_MENU_WIDTH)
-				.setH(BUTTON_HEIGHT)
-				.setHoverTexture(A.getTexture(BUTTON_MENU_HOVER));
-
-		this.highscoresText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
-				.setX(HIGHSCORES_BUTTON_X)
-				.setY(HIGHSCORES_BUTTON_Y)
-				.setText(HIGHSCORES_BUTTON_TEXT);
+		this.playButtonText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
+				.setX(PLAY_BUTTON_X)
+				.setY(PLAY_BUTTON_Y)
+				.setText(PLAY_BUTTON_TEXT);
 
 		this.highscoresButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(HIGHSCORES))
 				.setX(HIGHSCORES_BUTTON_X)
@@ -99,10 +93,40 @@ public class MainMenuScreen extends UntitledScreen {
 				.setH(BUTTON_HEIGHT)
 				.setHoverTexture(A.getTexture(BUTTON_MENU_HOVER));
 
+		this.highscoresButtonText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
+				.setX(HIGHSCORES_BUTTON_X)
+				.setY(HIGHSCORES_BUTTON_Y)
+				.setText(HIGHSCORES_BUTTON_TEXT);
+
+		this.settingsButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(SETTINGS))
+				.setX(SETTINGS_BUTTON_X)
+				.setY(SETTINGS_BUTTON_Y)
+				.setW(BUTTON_MENU_WIDTH)
+				.setH(BUTTON_HEIGHT)
+				.setHoverTexture(A.getTexture(BUTTON_MENU_HOVER));
+
+		this.settingsButtonText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
+				.setX(SETTINGS_BUTTON_X)
+				.setY(SETTINGS_BUTTON_Y)
+				.setText(SETTINGS_BUTTON_TEXT);
+
+		this.exitButton = new ButtonUI(MIDDLE, viewport, () -> Gdx.app.exit())
+				.setX(EXIT_BUTTON_X)
+				.setY(EXIT_BUTTON_Y)
+				.setW(BUTTON_MENU_WIDTH)
+				.setH(BUTTON_HEIGHT)
+				.setHoverTexture(A.getTexture(BUTTON_MENU_HOVER));
+
+		this.exitButtonText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
+				.setX(EXIT_BUTTON_X)
+				.setY(EXIT_BUTTON_Y)
+				.setText(EXIT_BUTTON_TEXT);
+
 		// Add input processors
 		multiplexer.addProcessor(playButton);
-		multiplexer.addProcessor(controlsButton);
 		multiplexer.addProcessor(highscoresButton);
+		multiplexer.addProcessor(settingsButton);
+		multiplexer.addProcessor(exitButton);
 	}
 
 	@Override
@@ -114,12 +138,18 @@ public class MainMenuScreen extends UntitledScreen {
 	public void render(SpriteBatch batch) {
 		this.background.render(batch);
 		this.title.render(batch);
+
 		this.playButton.render(batch);
-		this.playText.render(batch);
-		this.controlsButton.render(batch);
-		this.controlsText.render(batch);
+		this.playButtonText.render(batch);
+
 		this.highscoresButton.render(batch);
-		this.highscoresText.render(batch);
+		this.highscoresButtonText.render(batch);
+
+		this.settingsButton.render(batch);
+		this.settingsButtonText.render(batch);
+
+		this.exitButton.render(batch);
+		this.exitButtonText.render(batch);
 	}
 
 	@Override
