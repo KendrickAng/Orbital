@@ -13,11 +13,12 @@ import com.mygdx.game.screens.name.NameProcessor;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 
-import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
-import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
+import static com.mygdx.game.UntitledGame.BUTTON_H;
+import static com.mygdx.game.UntitledGame.BUTTON_W;
 import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
 import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
+import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
@@ -78,7 +79,7 @@ public class NameScreen extends UntitledScreen {
 					.setColor(Color.GOLD);
 		}
 
-		this.continueText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
+		this.continueText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
 				.setX(CONTINUE_X)
 				.setY(CONTINUE_Y)
 				.setText(CONTINUE_TEXT);
@@ -91,8 +92,8 @@ public class NameScreen extends UntitledScreen {
 		})
 				.setX(CONTINUE_X)
 				.setY(CONTINUE_Y)
-				.setW(BUTTON_WIDTH)
-				.setH(BUTTON_HEIGHT)
+				.setW(BUTTON_W)
+				.setH(BUTTON_H)
 				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 

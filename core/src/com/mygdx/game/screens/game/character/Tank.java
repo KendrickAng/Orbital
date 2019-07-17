@@ -85,7 +85,7 @@ import static com.mygdx.game.screens.game.debuff.DebuffType.STUN;
  */
 public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float MOVESPEED = 2f;
-	private static final float HEALTH = 100f;
+	private static final float HEALTH = 120f;
 
 	// Skill cooldown in seconds.
 	private static final float BLOCK_COOLDOWN = 0.2f;

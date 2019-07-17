@@ -87,7 +87,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float FRICTION = 0.6f;
 	private static final float AIR_FRICTION = 0.95f;
 
-	private static final float HEALTH = 50f;
+	private static final float HEALTH = 80f;
 
 	// Skill modifiers
 	private static final float DASH_SPEED = 15f;

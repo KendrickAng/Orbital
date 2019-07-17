@@ -42,14 +42,14 @@ public class Boss1AI {
 	}
 
 	private void nextState(float delay) {
-		Character character = game.getCharacter();
-		if (character.isDispose() || boss1.isDispose()) {
+		if (game.isGameOver()) {
 			return;
 		}
 
 		timer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
+				Character character = game.getCharacter();
 				float displacement = character.getPosition().x - (boss1.getPosition().x + 80);
 				float distance = Math.abs(displacement);
 //				Gdx.app.log("Displacement", displacement + "");

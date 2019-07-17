@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -19,10 +20,6 @@ import com.mygdx.game.screens.game.shuriken.ShurikenParts;
 
 import java.util.HashMap;
 
-import static com.mygdx.game.assets.FontName.MINECRAFT_16;
-import static com.mygdx.game.assets.FontName.MINECRAFT_24;
-import static com.mygdx.game.assets.FontName.MINECRAFT_32;
-import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BACKGROUND;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
@@ -57,6 +54,7 @@ public class Assets {
 
 	private HashMap<TextureName, TextureAsset> textures;
 	private HashMap<FontName, FontAsset> fonts;
+	private HashMap<MusicName, MusicAsset> music;
 	private HashMap<TankAnimationName, AnimationAsset<TankParts>> tankAnimations;
 	private HashMap<AssassinAnimationName, AnimationAsset<AssassinParts>> assassinAnimations;
 	private HashMap<Boss1AnimationName, AnimationAsset<Boss1Parts>> boss1Animations;
@@ -146,6 +144,15 @@ public class Assets {
 		}
 	}
 
+	private class MusicAsset {
+		private String path;
+		private Music music;
+
+		private MusicAsset(String path) {
+			this.path = path;
+		}
+	}
+
 	private class AnimationAsset<P extends Enum> {
 		private String path;
 		private Animation<P> animation;
@@ -166,6 +173,8 @@ public class Assets {
 
 		textures = new HashMap<>();
 		fonts = new HashMap<>();
+		music = new HashMap<>();
+
 		tankAnimations = new HashMap<>();
 		assassinAnimations = new HashMap<>();
 		boss1Animations = new HashMap<>();
@@ -206,10 +215,13 @@ public class Assets {
 		defineTexture(COOLDOWN_CLEANSE, "Cooldowns/Cleanse Ability.png");
 		defineTexture(COOLDOWN_SWITCH_CHARACTER, "Cooldowns/Switch Character.png");
 
-		defineFont(MINECRAFT_8, "Fonts/Minecraft.ttf", 8);
-		defineFont(MINECRAFT_16, "Fonts/Minecraft.ttf", 16);
-		defineFont(MINECRAFT_24, "Fonts/Minecraft.ttf", 24);
-		defineFont(MINECRAFT_32, "Fonts/Minecraft.ttf", 32);
+		defineFont(FontName.MINECRAFT_8, "Fonts/Minecraft.ttf", 8);
+		defineFont(FontName.MINECRAFT_16, "Fonts/Minecraft.ttf", 16);
+		defineFont(FontName.MINECRAFT_24, "Fonts/Minecraft.ttf", 24);
+		defineFont(FontName.MINECRAFT_32, "Fonts/Minecraft.ttf", 32);
+
+		defineMusic(MusicName.MAIN_MENU, "Music/Main Menu.mp3");
+		defineMusic(MusicName.GAME, "Music/Game.mp3");
 
 		defineTankAnimation(TankAnimationName.STANDING, TANK_STANDING_PATH);
 		defineTankAnimation(TankAnimationName.WALKING, TANK_WALKING_PATH);
@@ -243,6 +255,10 @@ public class Assets {
 		fonts.put(name, new FontAsset(path, size));
 	}
 
+	private void defineMusic(MusicName name, String path) {
+		music.put(name, new MusicAsset(path));
+	}
+
 	private void defineTankAnimation(TankAnimationName name, String path) {
 		tankAnimations.put(name, new AnimationAsset<>(path));
 	}
@@ -273,6 +289,10 @@ public class Assets {
 		parameter.fontFileName = asset.path;
 		parameter.fontParameters.size = asset.size;
 		assetManager.load(asset.id, BitmapFont.class, parameter);
+	}
+
+	public void loadMusic(MusicName name) {
+		assetManager.load(music.get(name).path, Music.class);
 	}
 
 	public void loadTankAnimation(TankAnimationName name) {
@@ -318,6 +338,12 @@ public class Assets {
 		for (FontAsset asset : fonts.values()) {
 			asset.font = assetManager.get(asset.id, BitmapFont.class);
 		}
+
+		// Copy music from assetManager back
+		for (MusicAsset asset : music.values()) {
+			asset.music = assetManager.get(asset.path, Music.class);
+			asset.music.setLooping(true);
+		}
 	}
 
 	public Texture getTexture(TextureName name) {
@@ -326,6 +352,10 @@ public class Assets {
 
 	public BitmapFont getFont(FontName name) {
 		return fonts.get(name).font;
+	}
+
+	public Music getMusic(MusicName name) {
+		return music.get(name).music;
 	}
 
 	public Animation<TankParts> getTankAnimation(TankAnimationName name) {

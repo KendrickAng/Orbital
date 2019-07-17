@@ -13,10 +13,13 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.assets.AssassinAnimationName;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.Boss1AnimationName;
+import com.mygdx.game.assets.FontName;
+import com.mygdx.game.assets.MusicName;
 import com.mygdx.game.assets.RockAnimationName;
 import com.mygdx.game.assets.ShurikenAnimationName;
 import com.mygdx.game.assets.TankAnimationName;
 import com.mygdx.game.highscores.Highscores;
+import com.mygdx.game.screens.CreditsScreen;
 import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.screens.HighscoresScreen;
 import com.mygdx.game.screens.MainMenuScreen;
@@ -26,10 +29,6 @@ import com.mygdx.game.screens.SettingsScreen;
 
 import java.util.Locale;
 
-import static com.mygdx.game.assets.FontName.MINECRAFT_16;
-import static com.mygdx.game.assets.FontName.MINECRAFT_24;
-import static com.mygdx.game.assets.FontName.MINECRAFT_32;
-import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BACKGROUND;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
@@ -63,6 +62,8 @@ import static com.mygdx.game.screens.ScreenName.NAME_MENU;
 import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
+	public static final String VERSION = "BETA 0.7";
+
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;
 	public static final int CAMERA_HEIGHT = 360;
@@ -71,10 +72,9 @@ public class UntitledGame extends Game {
 	public static final int WINDOW_WIDTH = CAMERA_WIDTH * 2;
 	public static final int WINDOW_HEIGHT = CAMERA_HEIGHT * 2;
 
-	// Menu Buttons
-	public static final float BUTTON_WIDTH = 160;
-	public static final float BUTTON_MENU_WIDTH = CAMERA_WIDTH;
-	public static final float BUTTON_HEIGHT = 40;
+	// Button Size
+	public static final float BUTTON_W = 85f;
+	public static final float BUTTON_H = 25f;
 
 	// Game Variables
 	public static final boolean DEBUG = false; // flag to view hitboxes
@@ -86,6 +86,10 @@ public class UntitledGame extends Game {
 	public static final boolean SETTINGS_VSYNC_DEFAULT = true;
 	public static final String SETTINGS_FULLSCREEN = "fullscreen";
 	public static final boolean SETTINGS_FULLSCREEN_DEFAULT = false;
+	public static final String SETTINGS_MUSIC_VOLUME = "music volume";
+	public static final int SETTINGS_MUSIC_VOLUME_DEFAULT = 30;
+	public static final String SETTINGS_SOUND = "sound volume";
+	public static final int SETTINGS_SOUND_DEFAULT = 50;
 	private static final String PREFERENCES_SETTINGS = "settings";
 
 	private Assets assets;
@@ -147,10 +151,13 @@ public class UntitledGame extends Game {
 		assets.loadTexture(COOLDOWN_CLEANSE);
 		assets.loadTexture(COOLDOWN_SWITCH_CHARACTER);
 
-		assets.loadFont(MINECRAFT_8);
-		assets.loadFont(MINECRAFT_16);
-		assets.loadFont(MINECRAFT_24);
-		assets.loadFont(MINECRAFT_32);
+		assets.loadFont(FontName.MINECRAFT_8);
+		assets.loadFont(FontName.MINECRAFT_16);
+		assets.loadFont(FontName.MINECRAFT_24);
+		assets.loadFont(FontName.MINECRAFT_32);
+
+		assets.loadMusic(MusicName.MAIN_MENU);
+		assets.loadMusic(MusicName.GAME);
 
 		assets.loadTankAnimation(TankAnimationName.STANDING);
 		assets.loadTankAnimation(TankAnimationName.WALKING);
@@ -224,14 +231,17 @@ public class UntitledGame extends Game {
 			case MAIN_MENU:
 				setScreen(new MainMenuScreen(this));
 				break;
-			case SETTINGS:
-				setScreen(new SettingsScreen(this));
+			case GAME:
+				setScreen(new GameScreen(this));
 				break;
 			case HIGHSCORES:
 				setScreen(new HighscoresScreen(this));
 				break;
-			case GAME:
-				setScreen(new GameScreen(this));
+			case SETTINGS:
+				setScreen(new SettingsScreen(this));
+				break;
+			case CREDITS:
+				setScreen(new CreditsScreen(this));
 				break;
 		}
 	}

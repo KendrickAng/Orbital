@@ -15,11 +15,10 @@ import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 import com.mygdx.game.ui.TextureUI;
 
-import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
-import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
+import static com.mygdx.game.UntitledGame.BUTTON_H;
+import static com.mygdx.game.UntitledGame.BUTTON_W;
 import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
 import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
-import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
@@ -31,7 +30,7 @@ import static com.mygdx.game.ui.UIAlign.LEFT;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 
 public class HighscoresScreen extends UntitledScreen {
-	private static final int HIGHSCORES_LIMIT = 10;
+	private static final int HIGHSCORES_LIMIT = 12;
 
 	private static final float HIGHSCORES_ID_W = 30f;
 
@@ -123,7 +122,7 @@ public class HighscoresScreen extends UntitledScreen {
 		this.loading = true;
 		this.background = new Background(A);
 
-		this.backText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
+		this.backText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
 				.setX(BACK_BUTTON_X)
 				.setY(BACK_BUTTON_Y)
 				.setText(BACK_BUTTON_TEXT);
@@ -131,8 +130,8 @@ public class HighscoresScreen extends UntitledScreen {
 		this.backButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(MAIN_MENU))
 				.setX(BACK_BUTTON_X)
 				.setY(BACK_BUTTON_Y)
-				.setW(BUTTON_WIDTH)
-				.setH(BUTTON_HEIGHT)
+				.setW(BUTTON_W)
+				.setH(BUTTON_H)
 				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 

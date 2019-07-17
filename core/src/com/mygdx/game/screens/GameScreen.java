@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.MusicName;
 import com.mygdx.game.highscores.Highscores;
 import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.screens.game.EntityManager;
@@ -29,11 +30,11 @@ import com.mygdx.game.ui.StackBar;
 import com.mygdx.game.ui.TextUI;
 
 import static com.mygdx.game.UntitledGame.BOSS1_AI;
-import static com.mygdx.game.UntitledGame.BUTTON_HEIGHT;
-import static com.mygdx.game.UntitledGame.BUTTON_WIDTH;
 import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
 import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
 import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.UntitledGame.SETTINGS_MUSIC_VOLUME;
+import static com.mygdx.game.UntitledGame.SETTINGS_MUSIC_VOLUME_DEFAULT;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
@@ -103,6 +104,8 @@ public class GameScreen extends UntitledScreen {
 	private static final String CONTINUE_TEXT = "CONTINUE";
 	private static final float CONTINUE_TEXT_X = CAMERA_WIDTH / 2f;
 	private static final float CONTINUE_TEXT_Y = CAMERA_HEIGHT / 2f;
+	private static final float CONTINUE_W = 160;
+	private static final float CONTINUE_H = 40;
 
 	private static final float SWITCH_CHARACTER_COOLDOWN = 2f;
 	private static final float DEAD_CHARACTER_INVULNERABLE_DURATION = 1f;
@@ -265,12 +268,19 @@ public class GameScreen extends UntitledScreen {
 		})
 				.setX(CONTINUE_TEXT_X)
 				.setY(CONTINUE_TEXT_Y)
-				.setW(BUTTON_WIDTH)
-				.setH(BUTTON_HEIGHT)
+				.setW(CONTINUE_W)
+				.setH(CONTINUE_H)
 				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 
 		multiplexer.addProcessor(continueButton);
+
+		/* Music */
+		A.getMusic(MusicName.MAIN_MENU).stop();
+
+		float volume = game.getSettings().getInteger(SETTINGS_MUSIC_VOLUME, SETTINGS_MUSIC_VOLUME_DEFAULT) / 100f;
+		A.getMusic(MusicName.GAME).setVolume(volume);
+		A.getMusic(MusicName.GAME).play();
 	}
 
 	@Override
@@ -396,6 +406,10 @@ public class GameScreen extends UntitledScreen {
 	}
 
 	/* Getters */
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
 	public Tank getTank() {
 		return tank;
 	}
