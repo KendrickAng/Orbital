@@ -3,7 +3,7 @@ package com.mygdx.game.screens.game.ability;
 import com.badlogic.gdx.utils.Timer;
 
 public class CooldownState {
-	private static final int COOLDOWN_STATES = 6;
+	public static final int COOLDOWN_STATES = 6;
 
 	private float cooldown;
 	private int state;
@@ -15,16 +15,16 @@ public class CooldownState {
 		this.timer = new Timer();
 	}
 
-	void begin() {
+	public void begin() {
 		this.state = 0;
 	}
 
-	void end() {
+	public void end() {
 		timer.clear();
 		this.state = COOLDOWN_STATES;
 	}
 
-	void run() {
+	public void run() {
 		if (state < COOLDOWN_STATES) {
 			timer.scheduleTask(new Timer.Task() {
 				@Override

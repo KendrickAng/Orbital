@@ -39,6 +39,7 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
 import static com.mygdx.game.assets.TextureName.FLOOR;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
@@ -203,6 +204,7 @@ public class Assets {
 		defineTexture(COOLDOWN_DASH, "Cooldowns/Dash Ability.png");
 		defineTexture(COOLDOWN_SHURIKEN_THROW, "Cooldowns/Shuriken Ability.png");
 		defineTexture(COOLDOWN_CLEANSE, "Cooldowns/Cleanse Ability.png");
+		defineTexture(COOLDOWN_SWITCH_CHARACTER, "Cooldowns/Switch Character.png");
 
 		defineFont(MINECRAFT_8, "Fonts/Minecraft.ttf", 8);
 		defineFont(MINECRAFT_16, "Fonts/Minecraft.ttf", 16);

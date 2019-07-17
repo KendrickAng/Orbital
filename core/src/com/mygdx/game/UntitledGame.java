@@ -46,6 +46,7 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
 import static com.mygdx.game.assets.TextureName.FLOOR;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
@@ -137,12 +138,14 @@ public class UntitledGame extends Game {
 		assets.loadTexture(COOLDOWN_3);
 		assets.loadTexture(COOLDOWN_4);
 		assets.loadTexture(COOLDOWN_5);
+
 		assets.loadTexture(COOLDOWN_BLOCK);
 		assets.loadTexture(COOLDOWN_IMPALE);
 		assets.loadTexture(COOLDOWN_FORTRESS);
 		assets.loadTexture(COOLDOWN_DASH);
 		assets.loadTexture(COOLDOWN_SHURIKEN_THROW);
 		assets.loadTexture(COOLDOWN_CLEANSE);
+		assets.loadTexture(COOLDOWN_SWITCH_CHARACTER);
 
 		assets.loadFont(MINECRAFT_8);
 		assets.loadFont(MINECRAFT_16);

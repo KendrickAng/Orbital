@@ -13,6 +13,7 @@ import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.screens.game.EntityManager;
 import com.mygdx.game.screens.game.FloatingTextManager;
 import com.mygdx.game.screens.game.Floor;
+import com.mygdx.game.screens.game.ability.CooldownState;
 import com.mygdx.game.screens.game.boss1.Boss1;
 import com.mygdx.game.screens.game.boss1.Boss1AI;
 import com.mygdx.game.screens.game.boss1.Boss1Controller;
@@ -20,6 +21,7 @@ import com.mygdx.game.screens.game.character.Assassin;
 import com.mygdx.game.screens.game.character.Character;
 import com.mygdx.game.screens.game.character.CharacterController;
 import com.mygdx.game.screens.game.character.Tank;
+import com.mygdx.game.screens.game.debuff.Debuff;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.Cooldowns;
 import com.mygdx.game.ui.HealthBar;
@@ -42,12 +44,15 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
 import static com.mygdx.game.assets.TextureName.INFO_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.STACK_BAR_ASSASSIN;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
+import static com.mygdx.game.screens.game.ability.CooldownState.COOLDOWN_STATES;
+import static com.mygdx.game.screens.game.debuff.DebuffType.DAMAGE_REDUCTION;
 import static com.mygdx.game.ui.UIAlign.BOTTOM_LEFT;
 import static com.mygdx.game.ui.UIAlign.BOTTOM_RIGHT;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
@@ -99,6 +104,9 @@ public class GameScreen extends UntitledScreen {
 	private static final float CONTINUE_TEXT_X = CAMERA_WIDTH / 2f;
 	private static final float CONTINUE_TEXT_Y = CAMERA_HEIGHT / 2f;
 
+	private static final float SWITCH_CHARACTER_COOLDOWN = 2f;
+	private static final float DEAD_CHARACTER_INVULNERABLE_DURATION = 1f;
+
 	private Assets A;
 	private Highscores highscores;
 
@@ -113,6 +121,9 @@ public class GameScreen extends UntitledScreen {
 	private int level;
 	private float time;
 	private boolean gameOver;
+
+	private CooldownState switchCharacter;
+	private Debuff deadCharacterDebuff;
 
 	/* Entities */
 	private Character character;
@@ -151,6 +162,9 @@ public class GameScreen extends UntitledScreen {
 		this.entityManager = new EntityManager();
 		this.floatingTextManager = new FloatingTextManager(A);
 
+		this.switchCharacter = new CooldownState(SWITCH_CHARACTER_COOLDOWN);
+		this.deadCharacterDebuff = new Debuff(DAMAGE_REDUCTION, 1f, DEAD_CHARACTER_INVULNERABLE_DURATION);
+
 		/* Entities */
 		this.tank = new Tank(this);
 		this.assassin = new Assassin(this);
@@ -188,7 +202,8 @@ public class GameScreen extends UntitledScreen {
 				.setY(TANK_COOLDOWNS_Y)
 				.add(tank.getBlockState(), A.getTexture(COOLDOWN_BLOCK))
 				.add(tank.getImpaleState(), A.getTexture(COOLDOWN_IMPALE))
-				.add(tank.getFortressState(), A.getTexture(COOLDOWN_FORTRESS));
+				.add(tank.getFortressState(), A.getTexture(COOLDOWN_FORTRESS))
+				.add(switchCharacter, A.getTexture(COOLDOWN_SWITCH_CHARACTER));
 
 		// Assassin
 		assassinText = new TextUI(TOP_LEFT, A.getFont(MINECRAFT_8))
@@ -211,7 +226,8 @@ public class GameScreen extends UntitledScreen {
 				.setY(ASSASSIN_COOLDOWNS_Y)
 				.add(assassin.getDashState(), A.getTexture(COOLDOWN_DASH))
 				.add(assassin.getShurikenState(), A.getTexture(COOLDOWN_SHURIKEN_THROW))
-				.add(assassin.getCleanseState(), A.getTexture(COOLDOWN_CLEANSE));
+				.add(assassin.getCleanseState(), A.getTexture(COOLDOWN_CLEANSE))
+				.add(switchCharacter, A.getTexture(COOLDOWN_SWITCH_CHARACTER));
 
 		// Boss
 		bossText = new TextUI(BOTTOM_LEFT, A.getFont(MINECRAFT_8))
@@ -266,12 +282,14 @@ public class GameScreen extends UntitledScreen {
 			if (tank.isDispose() && assassin.isDispose()) {
 				gameOver();
 
-				// Assassin is alive
+				// Tank died
 			} else if (character == tank && tank.isDispose()) {
+				assassin.inflictDebuff(deadCharacterDebuff);
 				switchCharacter();
 
-				// Tank is alive
+				// Assassin died
 			} else if (character == assassin && assassin.isDispose()) {
+				tank.inflictDebuff(deadCharacterDebuff);
 				switchCharacter();
 
 				// Boss is dead
@@ -337,14 +355,15 @@ public class GameScreen extends UntitledScreen {
 
 	public void switchCharacter() {
 		if (!gameOver) {
+			boolean canSwitchCharacter = switchCharacter.get() == COOLDOWN_STATES;
 			Character next;
 
 			// Assassin is alive
-			if (character == tank && !assassin.isDispose()) {
+			if (canSwitchCharacter && character == tank && !assassin.isDispose()) {
 				next = assassin;
 
 				// Tank is alive
-			} else if (character == assassin && !tank.isDispose()) {
+			} else if (canSwitchCharacter && character == assassin && !tank.isDispose()) {
 				next = tank;
 
 				// Other character is not alive
@@ -366,6 +385,9 @@ public class GameScreen extends UntitledScreen {
 
 			playerController.update();
 //			Gdx.app.log("GameScreen.java", "Switched Characters");
+
+			this.switchCharacter.begin();
+			this.switchCharacter.run();
 		}
 	}
 

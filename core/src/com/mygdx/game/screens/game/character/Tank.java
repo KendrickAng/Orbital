@@ -330,7 +330,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK)
 						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE)
 						.addEdge(FORTRESS_KEYUP, STANDING)
-						.addEdge(SWITCH_CHARACTER, STANDING))
+						.addEdge(SWITCH_CHARACTER, FORTRESS_STANDING))
 
 				.add(new State<TankInput, TankStates>(FORTRESS_WALKING_LEFT)
 						.defineBegin(() -> getFlipX().set(true))
@@ -340,7 +340,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_LEFT)
 						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_LEFT)
 						.addEdge(FORTRESS_KEYUP, WALKING_LEFT)
-						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(SWITCH_CHARACTER, FORTRESS_STANDING)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
 
 				.add(new State<TankInput, TankStates>(FORTRESS_WALKING_RIGHT)
@@ -351,7 +351,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_RIGHT)
 						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_RIGHT)
 						.addEdge(FORTRESS_KEYUP, WALKING_RIGHT)
-						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(SWITCH_CHARACTER, FORTRESS_STANDING)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
 
 				.add(new State<TankInput, TankStates>(FORTRESS_STANDING_LEFT_RIGHT)
@@ -360,7 +360,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_LEFT_RIGHT)
 						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_LEFT_RIGHT)
 						.addEdge(FORTRESS_KEYUP, STANDING_LEFT_RIGHT)
-						.addEdge(SWITCH_CHARACTER, STANDING)
+						.addEdge(SWITCH_CHARACTER, FORTRESS_STANDING)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
 
 				/* Fortress Block */

@@ -120,8 +120,8 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float WALKING_ANIMATION_DURATION = 0.5f;
 	private static final float DASH_ANIMATION_DURATION = 0.05f;
 	private static final float PERFECT_DASH_DURATION = 0.2f;
-	private static final float SHURIKEN_THROW_ANIMATION_DURATION = 0.3f;
-	private static final float CLEANSE_ANIMATION_DURATION = 0.3f;
+	private static final float SHURIKEN_THROW_ANIMATION_DURATION = 0.25f;
+	private static final float CLEANSE_ANIMATION_DURATION = 0.25f;
 
 	// Scores
 	private static final int STACKS_SCORE = 10;
