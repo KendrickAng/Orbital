@@ -2,9 +2,11 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
@@ -111,7 +113,10 @@ public class GameScreen extends UntitledScreen {
 	private static final float DEAD_CHARACTER_INVULNERABLE_DURATION = 1f;
 
 	private Assets A;
+	private Camera camera;
+	private float cameraX;
 	private Highscores highscores;
+	private Timer timer;
 
 	private Background background;
 	private Floor floor;
@@ -161,9 +166,12 @@ public class GameScreen extends UntitledScreen {
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
 		this.A = game.getAssets();
+		this.camera = game.getCamera();
+		this.cameraX = camera.position.x;
 		this.highscores = game.getHighscores();
 		this.entityManager = new EntityManager();
 		this.floatingTextManager = new FloatingTextManager(A);
+		this.timer = new Timer();
 
 		this.switchCharacter = new CooldownState(SWITCH_CHARACTER_COOLDOWN);
 		this.deadCharacterDebuff = new Debuff(DAMAGE_REDUCTION, 1f, DEAD_CHARACTER_INVULNERABLE_DURATION);
@@ -355,6 +363,16 @@ public class GameScreen extends UntitledScreen {
 		entityManager.renderDebugAll(renderer);
 	}
 
+	@Override
+	public void pauseScreen() {
+		A.getMusic(MusicName.GAME).pause();
+	}
+
+	@Override
+	public void resumeScreen() {
+		A.getMusic(MusicName.GAME).play();
+	}
+
 	public CharacterController getPlayerController() {
 		return playerController;
 	}
@@ -400,6 +418,33 @@ public class GameScreen extends UntitledScreen {
 
 			this.switchCharacter.begin();
 			this.switchCharacter.run();
+		}
+	}
+
+	public void screenShake(int count, float offset, float interval) {
+		if (count > 0) {
+			timer.scheduleTask(new Timer.Task() {
+				@Override
+				public void run() {
+					camera.position.x = cameraX;
+					camera.position.x += offset;
+					timer.scheduleTask(new Timer.Task() {
+						@Override
+						public void run() {
+							camera.position.x = cameraX;
+							camera.position.x -= offset;
+							screenShake(count - 1, offset * 0.9f, interval);
+						}
+					}, interval);
+				}
+			}, interval);
+		} else {
+			timer.scheduleTask(new Timer.Task() {
+				@Override
+				public void run() {
+					camera.position.x = cameraX;
+				}
+			}, interval);
 		}
 	}
 

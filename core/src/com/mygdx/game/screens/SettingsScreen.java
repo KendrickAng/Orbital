@@ -329,4 +329,14 @@ public class SettingsScreen extends UntitledScreen {
 	public void renderDebug(ShapeRenderer renderer) {
 
 	}
+
+	@Override
+	public void pauseScreen() {
+		A.getMusic(MusicName.MAIN_MENU).pause();
+	}
+
+	@Override
+	public void resumeScreen() {
+		A.getMusic(MusicName.MAIN_MENU).play();
+	}
 }

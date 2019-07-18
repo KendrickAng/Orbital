@@ -31,8 +31,14 @@ public class PostRequest extends HttpRequest {
 	}
 
 	@Override
-	public PostRequest setSuccessCallback(HttpResponseCallback success) {
-		super.setSuccessCallback(success);
+	public PostRequest setResponse200(HttpResponseCallback success) {
+		super.setResponse200(success);
+		return this;
+	}
+
+	@Override
+	public PostRequest setFailedCallback(HttpFailedCallback failedCallback) {
+		super.setFailedCallback(failedCallback);
 		return this;
 	}
 

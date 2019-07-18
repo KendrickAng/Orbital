@@ -79,6 +79,19 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float ROLL_SPEED = 4f;
 	private static final float ROLL_DAMAGE = 20;
 
+	// Screen shake
+	private static final int SLAM_SHAKE_COUNT = 1;
+	private static final float SLAM_SHAKE_OFFSET = 3f;
+	private static final float SLAM_SHAKE_INTERVAL = 0.05f;
+
+	private static final int EARTHQUAKE_SHAKE_COUNT = 3;
+	private static final float EARTHQUAKE_SHAKE_OFFSET = 1f;
+	private static final float EARTHQUAKE_SHAKE_INTERVAL = 0.1f;
+
+	private static final int ROLL_SHAKE_COUNT = 1;
+	private static final float ROLL_SHAKE_OFFSET = 1f;
+	private static final float ROLL_SHAKE_INTERVAL = 0.05f;
+
 	// Scores
 	private static final int DAMAGE_SCORE_MULTIPLIER = 1;
 	private static final int TRUE_DAMAGE_SCORE_MULTIPLIER = 4;
@@ -222,6 +235,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 		Animation<Boss1Parts> slam = assets.getBoss1Animation(Boss1AnimationName.GROUND_SMASH)
 				.setDuration(SLAM_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> {
+					getGame().screenShake(SLAM_SHAKE_COUNT, SLAM_SHAKE_OFFSET, SLAM_SHAKE_INTERVAL);
+
 					Character character = getGame().getCharacter();
 					if (character.damageTest(this, getHitbox(SHOCKWAVE), SLAM_DAMAGE)) {
 						character.inflictDebuff(new Debuff(DebuffType.STUN, 0, 2f));
@@ -232,6 +247,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 		Animation<Boss1Parts> earthquake = assets.getBoss1Animation(Boss1AnimationName.EARTHQUAKE)
 				.setDuration(EARTHQUAKE_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> {
+					getGame().screenShake(EARTHQUAKE_SHAKE_COUNT, EARTHQUAKE_SHAKE_OFFSET, EARTHQUAKE_SHAKE_INTERVAL);
+
 					Character character = getGame().getCharacter();
 					character.damageTest(this, getHitbox(SHOCKWAVE), EARTHQUAKE_DAMAGE);
 
@@ -264,6 +281,8 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 		Animation<Boss1Parts> roll = assets.getBoss1Animation(Boss1AnimationName.ROLL)
 				.setDuration(ROLL_ANIMATION_DURATION)
 				.defineFrameTask(5, () -> rolling = true)
+				.defineFrameTask(9, () -> getGame()
+						.screenShake(ROLL_SHAKE_COUNT, ROLL_SHAKE_OFFSET, ROLL_SHAKE_INTERVAL))
 				.defineEnd(() -> input(ROLL_KEYUP));
 
 		animations.map(STANDING, standing)

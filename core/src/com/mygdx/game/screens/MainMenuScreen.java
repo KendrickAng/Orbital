@@ -61,6 +61,7 @@ public class MainMenuScreen extends UntitledScreen {
 	private static final float VERSION_TEXT_X = CAMERA_WIDTH - 10f;
 	private static final float VERSION_TEXT_Y = 10f;
 
+	private Assets A;
 	private Background background;
 
 	private TextUI title;
@@ -84,10 +85,10 @@ public class MainMenuScreen extends UntitledScreen {
 
 	public MainMenuScreen(UntitledGame game) {
 		super(game);
-		Assets A = game.getAssets();
 		Viewport viewport = game.getViewport();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
+		this.A = game.getAssets();
 		this.background = new Background(A);
 
 		/* UI */
@@ -208,5 +209,15 @@ public class MainMenuScreen extends UntitledScreen {
 	@Override
 	public void renderDebug(ShapeRenderer renderer) {
 
+	}
+
+	@Override
+	public void pauseScreen() {
+		A.getMusic(MusicName.MAIN_MENU).pause();
+	}
+
+	@Override
+	public void resumeScreen() {
+		A.getMusic(MusicName.MAIN_MENU).play();
 	}
 }

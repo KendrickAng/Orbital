@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.MusicName;
 import com.mygdx.game.highscores.Highscore;
 import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.ui.ButtonUI;
@@ -55,9 +56,13 @@ public class HighscoresScreen extends UntitledScreen {
 	private static final float LOADING_X = CAMERA_WIDTH / 2f;
 	private static final float LOADING_Y = CAMERA_HEIGHT - 100f;
 
+	private static final String HIGHSCORES_FAILED_TEXT = "FAILED TO RETRIEVE HIGHSCORES.";
+
 	private static final String BACK_BUTTON_TEXT = "BACK";
 	private static final float BACK_BUTTON_X = CAMERA_WIDTH / 2f;
 	private static final float BACK_BUTTON_Y = 50;
+
+	private Assets A;
 
 	private Background background;
 	private TextUI backText;
@@ -115,10 +120,10 @@ public class HighscoresScreen extends UntitledScreen {
 
 	public HighscoresScreen(UntitledGame game) {
 		super(game);
-		Assets A = game.getAssets();
 		Viewport viewport = game.getViewport();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
+		this.A = game.getAssets();
 		this.loading = true;
 		this.background = new Background(A);
 
@@ -171,18 +176,23 @@ public class HighscoresScreen extends UntitledScreen {
 
 		// Http request highscores
 		game.getHighscores().getHighscores(HIGHSCORES_LIMIT, highscores -> {
-			for (int i = 0; i < highscores.size; i++) {
-				Highscore highscore = highscores.get(i);
-				HighscoreUI ui = highscoresUI.get(i + 1);
+			if (highscores == null) {
+				loadingText.setText(HIGHSCORES_FAILED_TEXT);
 
-				ui.idText.setText(i + 1 + ".");
-				ui.nameText.setText(highscore.getName());
-				ui.levelText.setText(String.valueOf(highscore.getLevel()));
-				ui.scoreText.setText(String.valueOf(highscore.getScore()));
-				ui.timeText.setText(UntitledGame.formatTime(highscore.getTime()));
+			} else {
+				for (int i = 0; i < highscores.size; i++) {
+					Highscore highscore = highscores.get(i);
+					HighscoreUI ui = highscoresUI.get(i + 1);
+
+					ui.idText.setText(i + 1 + ".");
+					ui.nameText.setText(highscore.getName());
+					ui.levelText.setText(String.valueOf(highscore.getLevel()));
+					ui.scoreText.setText(String.valueOf(highscore.getScore()));
+					ui.timeText.setText(UntitledGame.formatTime(highscore.getTime()));
+				}
+
+				loading = false;
 			}
-
-			loading = false;
 		});
 	}
 
@@ -204,6 +214,16 @@ public class HighscoresScreen extends UntitledScreen {
 				h.render(batch);
 			}
 		}
+	}
+
+	@Override
+	public void pauseScreen() {
+		A.getMusic(MusicName.MAIN_MENU).pause();
+	}
+
+	@Override
+	public void resumeScreen() {
+		A.getMusic(MusicName.MAIN_MENU).play();
 	}
 
 	@Override

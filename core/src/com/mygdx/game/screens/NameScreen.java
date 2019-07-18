@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.MusicName;
 import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.screens.name.NameProcessor;
 import com.mygdx.game.ui.ButtonUI;
@@ -39,6 +40,7 @@ public class NameScreen extends UntitledScreen {
 	private static final float CONTINUE_X = CAMERA_WIDTH / 2f;
 	private static final float CONTINUE_Y = 50f;
 
+	private Assets A;
 	private Array<Character> characterStack;
 
 	private Background background;
@@ -51,10 +53,10 @@ public class NameScreen extends UntitledScreen {
 
 	public NameScreen(UntitledGame game, ScreenName next) {
 		super(game);
-		Assets A = game.getAssets();
 		Viewport viewport = game.getViewport();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
+		this.A = game.getAssets();
 		this.characterStack = new Array<>();
 		this.background = new Background(A);
 
@@ -131,5 +133,15 @@ public class NameScreen extends UntitledScreen {
 	@Override
 	public void renderDebug(ShapeRenderer renderer) {
 
+	}
+
+	@Override
+	public void pauseScreen() {
+		A.getMusic(MusicName.MAIN_MENU).pause();
+	}
+
+	@Override
+	public void resumeScreen() {
+		A.getMusic(MusicName.MAIN_MENU).play();
 	}
 }

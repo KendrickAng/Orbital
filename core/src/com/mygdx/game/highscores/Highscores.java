@@ -24,7 +24,7 @@ public class Highscores {
 	private void createNewUser(NewUserCallback callback) {
 		new PostRequest(NEW_USER_URL)
 				.setURLParameter("key", WEB_API_KEY)
-				.setSuccessCallback(response -> {
+				.setResponse200(response -> {
 					JsonReader jsonReader = new JsonReader();
 					JsonValue jsonNewUser = jsonReader.parse(response);
 
@@ -64,7 +64,7 @@ public class Highscores {
 					.setHeader("Authorization", "Bearer " + token)
 					.setHeader("Content-Type", "application/json")
 					.setBody(jsonHighscoreWriter.toString())
-					.setSuccessCallback(response -> {
+					.setResponse200(response -> {
 //						Gdx.app.log("Highscores.java", response);
 					})
 					.call();
@@ -100,7 +100,7 @@ public class Highscores {
 		new PostRequest(QUERY_URL)
 				.setHeader("Content-Type", "application/json")
 				.setBody(jsonQueryWriter.toString())
-				.setSuccessCallback(response -> {
+				.setResponse200(response -> {
 //					Gdx.app.log("Response", response);
 
 					Array<Highscore> highscores = new Array<>();
@@ -121,6 +121,7 @@ public class Highscores {
 
 					callback.call(highscores);
 				})
+				.setFailedCallback(() -> callback.call(null))
 				.call();
 	}
 }

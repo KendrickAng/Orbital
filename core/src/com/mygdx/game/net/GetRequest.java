@@ -15,8 +15,8 @@ public class GetRequest extends HttpRequest {
 	}
 
 	@Override
-	public GetRequest setSuccessCallback(HttpResponseCallback success) {
-		super.setSuccessCallback(success);
+	public GetRequest setResponse200(HttpResponseCallback success) {
+		super.setResponse200(success);
 		return this;
 	}
 }

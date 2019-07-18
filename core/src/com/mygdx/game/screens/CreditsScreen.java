@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
+import com.mygdx.game.assets.MusicName;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 
@@ -33,6 +34,8 @@ public class CreditsScreen extends UntitledScreen {
 	private static final float BACK_BUTTON_X = CAMERA_WIDTH / 2f;
 	private static final float BACK_BUTTON_Y = 50;
 
+	private Assets A;
+
 	private TextUI menuMusicText;
 	private TextUI gameMusicText;
 
@@ -42,7 +45,7 @@ public class CreditsScreen extends UntitledScreen {
 	public CreditsScreen(UntitledGame game) {
 		super(game);
 
-		Assets A = game.getAssets();
+		this.A = game.getAssets();
 		Viewport viewport = game.getViewport();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
@@ -91,5 +94,15 @@ public class CreditsScreen extends UntitledScreen {
 	@Override
 	public void renderDebug(ShapeRenderer renderer) {
 
+	}
+
+	@Override
+	public void pauseScreen() {
+		A.getMusic(MusicName.MAIN_MENU).pause();
+	}
+
+	@Override
+	public void resumeScreen() {
+		A.getMusic(MusicName.MAIN_MENU).play();
 	}
 }

@@ -3,6 +3,7 @@ package com.mygdx.game.net;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.HttpRequestBuilder;
+import com.badlogic.gdx.net.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +11,10 @@ import java.util.Map;
 public abstract class HttpRequest {
 	private URL url;
 	private HashMap<String, String> headers;
-	private HttpResponseCallback success;
 	private HttpRequestBuilder httpRequestBuilder;
+
+	private HttpResponseCallback response200;
+	private HttpFailedCallback failedCallback;
 
 	public HttpRequest(String url) {
 		this.url = new URL(url);
@@ -29,8 +32,13 @@ public abstract class HttpRequest {
 		return this;
 	}
 
-	protected HttpRequest setSuccessCallback(HttpResponseCallback success) {
-		this.success = success;
+	protected HttpRequest setResponse200(HttpResponseCallback success) {
+		this.response200 = success;
+		return this;
+	}
+
+	protected HttpRequest setFailedCallback(HttpFailedCallback failedCallback) {
+		this.failedCallback = failedCallback;
 		return this;
 	}
 
@@ -53,14 +61,26 @@ public abstract class HttpRequest {
 		Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
 			@Override
 			public void handleHttpResponse(Net.HttpResponse httpResponse) {
-				if (success != null) {
-					success.call(httpResponse.getResultAsString());
+				int status = httpResponse.getStatus().getStatusCode();
+
+				switch (status) {
+					case HttpStatus.SC_OK:
+						if (response200 != null) {
+							response200.call(httpResponse.getResultAsString());
+						}
+						break;
+					default:
+						Gdx.app.log("Status", String.valueOf(status));
+						break;
 				}
 			}
 
 			@Override
 			public void failed(Throwable t) {
-
+				Gdx.app.log("HttpRequest.java", "Failed");
+				if (failedCallback != null) {
+					failedCallback.call();
+				}
 			}
 
 			@Override
