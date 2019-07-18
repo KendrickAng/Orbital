@@ -22,11 +22,11 @@ import static com.mygdx.game.ui.UIAlign.MIDDLE;
 import static com.mygdx.game.ui.UIAlign.TOP_LEFT;
 
 public class CreditsScreen extends UntitledScreen {
-	private static final String MENU_MUSIC_TEXT = "MAIN MENU MUSIC:\n\nSAD DAY - BY HEATLYBROS";
+	private static final String MENU_MUSIC_TEXT = "MAIN MENU MUSIC:\n\nSAD DAY - BY HEATLEYBROS";
 	private static final float MENU_MUSIC_TEXT_X = 200f;
 	private static final float MENU_MUSIC_TEXT_Y = CAMERA_HEIGHT - 50f;
 
-	private static final String GAME_MUSIC_TEXT = "BOSS MUSIC:\n\nHERO'S HEART! - BY HEATLYBROS";
+	private static final String GAME_MUSIC_TEXT = "BOSS MUSIC:\n\nEPIC BOSS BATTLE - BY JUHANI JUNKALA";
 	private static final float GAME_MUSIC_TEXT_X = MENU_MUSIC_TEXT_X;
 	private static final float GAME_MUSIC_TEXT_Y = MENU_MUSIC_TEXT_Y - 50f;
 

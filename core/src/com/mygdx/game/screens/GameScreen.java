@@ -288,8 +288,8 @@ public class GameScreen extends UntitledScreen {
 		A.getMusic(MusicName.MAIN_MENU).stop();
 
 		float volume = game.getSettings().getInteger(SETTINGS_MUSIC_VOLUME, SETTINGS_MUSIC_VOLUME_DEFAULT) / 100f;
-		A.getMusic(MusicName.GAME).setVolume(volume);
-		A.getMusic(MusicName.GAME).play();
+		A.getMusic(MusicName.BOSS).setVolume(volume);
+		A.getMusic(MusicName.BOSS).play();
 	}
 
 	@Override
@@ -365,12 +365,12 @@ public class GameScreen extends UntitledScreen {
 
 	@Override
 	public void pauseScreen() {
-		A.getMusic(MusicName.GAME).pause();
+		A.getMusic(MusicName.BOSS).pause();
 	}
 
 	@Override
 	public void resumeScreen() {
-		A.getMusic(MusicName.GAME).play();
+		A.getMusic(MusicName.BOSS).play();
 	}
 
 	public CharacterController getPlayerController() {

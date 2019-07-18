@@ -221,7 +221,7 @@ public class Assets {
 		defineFont(FontName.MINECRAFT_32, "Fonts/Minecraft.ttf", 32);
 
 		defineMusic(MusicName.MAIN_MENU, "Music/Main Menu.mp3");
-		defineMusic(MusicName.GAME, "Music/Game.mp3");
+		defineMusic(MusicName.BOSS, "Music/Boss.mp3");
 
 		defineTankAnimation(TankAnimationName.STANDING, TANK_STANDING_PATH);
 		defineTankAnimation(TankAnimationName.WALKING, TANK_WALKING_PATH);

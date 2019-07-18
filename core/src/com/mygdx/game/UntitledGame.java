@@ -157,7 +157,7 @@ public class UntitledGame extends Game {
 		assets.loadFont(FontName.MINECRAFT_32);
 
 		assets.loadMusic(MusicName.MAIN_MENU);
-		assets.loadMusic(MusicName.GAME);
+		assets.loadMusic(MusicName.BOSS);
 
 		assets.loadTankAnimation(TankAnimationName.STANDING);
 		assets.loadTankAnimation(TankAnimationName.WALKING);

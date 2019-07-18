@@ -170,7 +170,7 @@ public class MainMenuScreen extends UntitledScreen {
 		multiplexer.addProcessor(exitButton);
 
 		/* Music */
-		A.getMusic(MusicName.GAME).stop();
+		A.getMusic(MusicName.BOSS).stop();
 
 		float volume = game.getSettings().getInteger(SETTINGS_MUSIC_VOLUME, SETTINGS_MUSIC_VOLUME_DEFAULT) / 100f;
 		A.getMusic(MAIN_MENU).setVolume(volume);
