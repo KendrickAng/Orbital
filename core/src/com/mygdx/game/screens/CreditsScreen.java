@@ -22,13 +22,12 @@ import static com.mygdx.game.ui.UIAlign.MIDDLE;
 import static com.mygdx.game.ui.UIAlign.TOP_LEFT;
 
 public class CreditsScreen extends UntitledScreen {
-	private static final String MENU_MUSIC_TEXT = "MAIN MENU MUSIC:\n\nSAD DAY - BY HEATLEYBROS";
-	private static final float MENU_MUSIC_TEXT_X = 200f;
-	private static final float MENU_MUSIC_TEXT_Y = CAMERA_HEIGHT - 50f;
+	private static final String MUSIC_TEXT = "MENU MUSIC:\n\nTHE FALL OF ARCANA" +
+			"\n\n\n\nBOSS MUSIC:\n\nHEROIC DEMISE" +
+			"\n\n\n\nMUSIC BY MATTHEW PABLO\n\nWWW.MATTHEWPABLO.COM";
 
-	private static final String GAME_MUSIC_TEXT = "BOSS MUSIC:\n\nEPIC BOSS BATTLE - BY JUHANI JUNKALA";
-	private static final float GAME_MUSIC_TEXT_X = MENU_MUSIC_TEXT_X;
-	private static final float GAME_MUSIC_TEXT_Y = MENU_MUSIC_TEXT_Y - 50f;
+	private static final float MUSIC_TEXT_X = 200f;
+	private static final float MUSIC_TEXT_Y = CAMERA_HEIGHT - 50f;
 
 	private static final String BACK_BUTTON_TEXT = "BACK";
 	private static final float BACK_BUTTON_X = CAMERA_WIDTH / 2f;
@@ -36,8 +35,7 @@ public class CreditsScreen extends UntitledScreen {
 
 	private Assets A;
 
-	private TextUI menuMusicText;
-	private TextUI gameMusicText;
+	private TextUI musicText;
 
 	private ButtonUI backButton;
 	private TextUI backButtonText;
@@ -49,15 +47,10 @@ public class CreditsScreen extends UntitledScreen {
 		Viewport viewport = game.getViewport();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
-		this.menuMusicText = new TextUI(TOP_LEFT, A.getFont(MINECRAFT_8))
-				.setX(MENU_MUSIC_TEXT_X)
-				.setY(MENU_MUSIC_TEXT_Y)
-				.setText(MENU_MUSIC_TEXT);
-
-		this.gameMusicText = new TextUI(TOP_LEFT, A.getFont(MINECRAFT_8))
-				.setX(GAME_MUSIC_TEXT_X)
-				.setY(GAME_MUSIC_TEXT_Y)
-				.setText(GAME_MUSIC_TEXT);
+		this.musicText = new TextUI(TOP_LEFT, A.getFont(MINECRAFT_8))
+				.setX(MUSIC_TEXT_X)
+				.setY(MUSIC_TEXT_Y)
+				.setText(MUSIC_TEXT);
 
 		// Back
 		this.backButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(MAIN_MENU))
@@ -84,8 +77,7 @@ public class CreditsScreen extends UntitledScreen {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		this.menuMusicText.render(batch);
-		this.gameMusicText.render(batch);
+		this.musicText.render(batch);
 
 		this.backButton.render(batch);
 		this.backButtonText.render(batch);
