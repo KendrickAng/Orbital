@@ -19,6 +19,7 @@ import static com.mygdx.game.UntitledGame.BUTTON_W;
 import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
 import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
 import static com.mygdx.game.UntitledGame.SETTINGS_FULLSCREEN;
+import static com.mygdx.game.UntitledGame.SETTINGS_FULLSCREEN_DEFAULT;
 import static com.mygdx.game.UntitledGame.SETTINGS_MUSIC_VOLUME;
 import static com.mygdx.game.UntitledGame.SETTINGS_MUSIC_VOLUME_DEFAULT;
 import static com.mygdx.game.UntitledGame.SETTINGS_NAME;
@@ -76,9 +77,9 @@ public class SettingsScreen extends UntitledScreen {
 	private static final String BUTTON_ON_TEXT = "ON";
 	private static final String BUTTON_OFF_TEXT = "OFF";
 
-	private static final String BACK_BUTTON_TEXT = "BACK";
-	private static final float BACK_BUTTON_X = CAMERA_WIDTH / 2f;
-	private static final float BACK_BUTTON_Y = 50;
+	private static final String SAVE_BUTTON_TEXT = "SAVE";
+	private static final float SAVE_BUTTON_X = CAMERA_WIDTH / 2f;
+	private static final float SAVE_BUTTON_Y = 50;
 
 	private Assets A;
 	private Preferences settings;
@@ -91,10 +92,12 @@ public class SettingsScreen extends UntitledScreen {
 	private TextUI vsyncText;
 	private ButtonUI vsyncButton;
 	private TextUI vsyncButtonText;
+	private boolean vsyncSetting;
 
 	private TextUI fullscreenText;
 	private ButtonUI fullscreenButton;
 	private TextUI fullscreenButtonText;
+	private boolean fullscreenSetting;
 
 	private TextUI musicVolumeText;
 	private ButtonUI musicVolumeMinusButton;
@@ -102,9 +105,10 @@ public class SettingsScreen extends UntitledScreen {
 	private TextUI musicVolumePercentageText;
 	private ButtonUI musicVolumePlusButton;
 	private TextUI musicVolumePlusButtonText;
+	private int musicVolumeSetting;
 
-	private ButtonUI backButton;
-	private TextUI backButtonText;
+	private ButtonUI saveButton;
+	private TextUI saveButtonText;
 
 	public SettingsScreen(UntitledGame game) {
 		super(game);
@@ -114,6 +118,10 @@ public class SettingsScreen extends UntitledScreen {
 		this.A = game.getAssets();
 		this.settings = game.getSettings();
 		this.background = new Background(A);
+
+		this.vsyncSetting = settings.getBoolean(SETTINGS_VSYNC, SETTINGS_VSYNC_DEFAULT);
+		this.fullscreenSetting = settings.getBoolean(SETTINGS_FULLSCREEN, SETTINGS_FULLSCREEN_DEFAULT);
+		this.musicVolumeSetting = settings.getInteger(SETTINGS_MUSIC_VOLUME, SETTINGS_MUSIC_VOLUME_DEFAULT);
 
 		// Name
 		this.nameText = new TextUI(LEFT, A.getFont(MINECRAFT_8))
@@ -142,10 +150,8 @@ public class SettingsScreen extends UntitledScreen {
 				.setText(VSYNC_TEXT);
 
 		this.vsyncButton = new ButtonUI(MIDDLE, viewport, () -> {
-			boolean vsync = settings.getBoolean(SETTINGS_VSYNC, SETTINGS_VSYNC_DEFAULT);
-			Gdx.graphics.setVSync(!vsync);
-			settings.putBoolean(SETTINGS_VSYNC, !vsync);
-			settings.flush();
+			vsyncSetting = !vsyncSetting;
+			Gdx.graphics.setVSync(vsyncSetting);
 			updateVsyncText();
 		})
 				.setX(VSYNC_BUTTON_X)
@@ -174,9 +180,7 @@ public class SettingsScreen extends UntitledScreen {
 			} else {
 				Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 			}
-
-			game.getSettings().putBoolean(SETTINGS_FULLSCREEN, Gdx.graphics.isFullscreen());
-			game.getSettings().flush();
+			fullscreenSetting = Gdx.graphics.isFullscreen();
 			updateFullscreenText();
 		})
 				.setX(FULLSCREEN_BUTTON_X)
@@ -200,12 +204,9 @@ public class SettingsScreen extends UntitledScreen {
 				.setText(MUSIC_VOLUME_TEXT);
 
 		this.musicVolumeMinusButton = new ButtonUI(MIDDLE, viewport, () -> {
-			int volume = game.getSettings().getInteger(SETTINGS_MUSIC_VOLUME, SETTINGS_MUSIC_VOLUME_DEFAULT);
-			if (volume > 0) {
-				volume -= VOLUME_DELTA;
+			if (musicVolumeSetting > 0) {
+				musicVolumeSetting -= VOLUME_DELTA;
 			}
-			game.getSettings().putInteger(SETTINGS_MUSIC_VOLUME, volume);
-			game.getSettings().flush();
 			updateMusicVolumeText();
 		})
 				.setX(MUSIC_VOLUME_MINUS_BUTTON_X)
@@ -226,12 +227,9 @@ public class SettingsScreen extends UntitledScreen {
 				.setColor(Color.GOLD);
 
 		this.musicVolumePlusButton = new ButtonUI(MIDDLE, viewport, () -> {
-			int volume = game.getSettings().getInteger(SETTINGS_MUSIC_VOLUME, SETTINGS_MUSIC_VOLUME_DEFAULT);
-			if (volume < 100) {
-				volume += VOLUME_DELTA;
+			if (musicVolumeSetting < 100) {
+				musicVolumeSetting += VOLUME_DELTA;
 			}
-			game.getSettings().putInteger(SETTINGS_MUSIC_VOLUME, volume);
-			game.getSettings().flush();
 			updateMusicVolumeText();
 		})
 				.setX(MUSIC_VOLUME_PLUS_BUTTON_X)
@@ -248,19 +246,25 @@ public class SettingsScreen extends UntitledScreen {
 
 		updateMusicVolumeText();
 
-		// Back
-		this.backButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(MAIN_MENU))
-				.setX(BACK_BUTTON_X)
-				.setY(BACK_BUTTON_Y)
+		// Save
+		this.saveButton = new ButtonUI(MIDDLE, viewport, () -> {
+			settings.putBoolean(SETTINGS_VSYNC, vsyncSetting);
+			settings.putBoolean(SETTINGS_FULLSCREEN, fullscreenSetting);
+			settings.putInteger(SETTINGS_MUSIC_VOLUME, musicVolumeSetting);
+			settings.flush();
+			setScreen(MAIN_MENU);
+		})
+				.setX(SAVE_BUTTON_X)
+				.setY(SAVE_BUTTON_Y)
 				.setW(BUTTON_W)
 				.setH(BUTTON_H)
 				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 
-		this.backButtonText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
-				.setX(BACK_BUTTON_X)
-				.setY(BACK_BUTTON_Y)
-				.setText(BACK_BUTTON_TEXT);
+		this.saveButtonText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
+				.setX(SAVE_BUTTON_X)
+				.setY(SAVE_BUTTON_Y)
+				.setText(SAVE_BUTTON_TEXT);
 
 		// Add input processors
 		multiplexer.addProcessor(nameButton);
@@ -268,11 +272,11 @@ public class SettingsScreen extends UntitledScreen {
 		multiplexer.addProcessor(fullscreenButton);
 		multiplexer.addProcessor(musicVolumeMinusButton);
 		multiplexer.addProcessor(musicVolumePlusButton);
-		multiplexer.addProcessor(backButton);
+		multiplexer.addProcessor(saveButton);
 	}
 
 	private void updateVsyncText() {
-		if (settings.getBoolean(SETTINGS_VSYNC, SETTINGS_VSYNC_DEFAULT)) {
+		if (vsyncSetting) {
 			this.vsyncButtonText.setText(BUTTON_ON_TEXT);
 		} else {
 			this.vsyncButtonText.setText(BUTTON_OFF_TEXT);
@@ -280,7 +284,7 @@ public class SettingsScreen extends UntitledScreen {
 	}
 
 	private void updateFullscreenText() {
-		if (Gdx.graphics.isFullscreen()) {
+		if (fullscreenSetting) {
 			this.fullscreenButtonText.setText(BUTTON_ON_TEXT);
 		} else {
 			this.fullscreenButtonText.setText(BUTTON_OFF_TEXT);
@@ -288,9 +292,8 @@ public class SettingsScreen extends UntitledScreen {
 	}
 
 	private void updateMusicVolumeText() {
-		int volume = settings.getInteger(SETTINGS_MUSIC_VOLUME, SETTINGS_MUSIC_VOLUME_DEFAULT);
-		this.musicVolumePercentageText.setText(volume + "%");
-		A.getMusic(MusicName.MAIN_MENU).setVolume(volume / 100f);
+		this.musicVolumePercentageText.setText(musicVolumeSetting + "%");
+		A.getMusic(MusicName.MAIN_MENU).setVolume(musicVolumeSetting / 100f);
 	}
 
 	@Override
@@ -321,8 +324,8 @@ public class SettingsScreen extends UntitledScreen {
 		this.musicVolumePlusButton.render(batch);
 		this.musicVolumePlusButtonText.render(batch);
 
-		this.backButton.render(batch);
-		this.backButtonText.render(batch);
+		this.saveButton.render(batch);
+		this.saveButtonText.render(batch);
 	}
 
 	@Override

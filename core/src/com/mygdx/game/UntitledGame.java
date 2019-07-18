@@ -62,7 +62,7 @@ import static com.mygdx.game.screens.ScreenName.NAME_MENU;
 import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
-	public static final String VERSION = "BETA 0.73";
+	public static final String VERSION = "BETA 0.74";
 
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;
@@ -85,7 +85,7 @@ public class UntitledGame extends Game {
 	public static final String SETTINGS_VSYNC = "vsync";
 	public static final boolean SETTINGS_VSYNC_DEFAULT = true;
 	public static final String SETTINGS_FULLSCREEN = "fullscreen";
-	public static final boolean SETTINGS_FULLSCREEN_DEFAULT = true;
+	public static final boolean SETTINGS_FULLSCREEN_DEFAULT = false;
 	public static final String SETTINGS_MUSIC_VOLUME = "music volume";
 	public static final int SETTINGS_MUSIC_VOLUME_DEFAULT = 30;
 	public static final String SETTINGS_SOUND = "sound volume";

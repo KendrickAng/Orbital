@@ -12,7 +12,7 @@ buildscript {
 allprojects {
     apply plugin: "idea"
 
-    version = 'beta-0.73'
+    version = 'beta-0.74'
     ext {
         appName = "Untitled"
         gdxVersion = '1.9.9'
