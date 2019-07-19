@@ -153,6 +153,11 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 
 	public void heal(float health) {
 		this.health += health;
+
+		// Ensure health doesn't go above maxHealth
+		if (this.health > maxHealth) {
+			this.health = maxHealth;
+		}
 	}
 
 	public boolean inflictDamage(LivingEntity entity, float damage) {
@@ -183,6 +188,7 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 
 //				Gdx.app.log("LivingEntity.java", "HP: " + health);
 				if (health <= 0) {
+					health = 0;
 					dispose();
 				}
 

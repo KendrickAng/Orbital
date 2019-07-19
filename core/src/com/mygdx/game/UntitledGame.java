@@ -62,7 +62,7 @@ import static com.mygdx.game.screens.ScreenName.NAME_MENU;
 import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
-	public static final String VERSION = "BETA 0.75";
+	public static final String VERSION = "BETA 0.8";
 
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;
@@ -244,6 +244,10 @@ public class UntitledGame extends Game {
 				setScreen(new CreditsScreen(this));
 				break;
 		}
+	}
+
+	public static String formatLevel(int level) {
+		return String.format(Locale.US, "%.2f", level / 100f);
 	}
 
 	public static String formatTime(int time) {

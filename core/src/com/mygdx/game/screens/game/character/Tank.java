@@ -576,7 +576,9 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.addEnd(FORTRESS_STANDING, fortressAbility)
 				.addEnd(FORTRESS_WALKING_LEFT, fortressAbility)
 				.addEnd(FORTRESS_WALKING_RIGHT, fortressAbility)
-				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, fortressAbility);
+				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, fortressAbility)
+				// Stunned
+				.addEnd(STANDING, fortressAbility);
 	}
 
 	private void walkLeft() {

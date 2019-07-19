@@ -69,6 +69,10 @@ public abstract class HttpRequest {
 							response200.call(httpResponse.getResultAsString());
 						}
 						break;
+					case HttpStatus.SC_FORBIDDEN:
+						// Incorrect permissions.
+						// Either not authenticated, or submitted data is invalid.
+						break;
 					default:
 						Gdx.app.log("Status", String.valueOf(status));
 						break;

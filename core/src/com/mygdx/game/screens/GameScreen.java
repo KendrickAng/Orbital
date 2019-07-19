@@ -95,9 +95,13 @@ public class GameScreen extends UntitledScreen {
 	private static final float FPS_TEXT_X = CAMERA_WIDTH - 5f;
 	private static final float FPS_TEXT_Y = 5f;
 
+	private static final String LEVEL_TEXT = "LEVEL: ";
+	private static final float LEVEL_TEXT_X = CAMERA_WIDTH - 20f;
+	private static final float LEVEL_TEXT_Y = CAMERA_HEIGHT - 20f;
+
 	private static final String SCORE_TEXT = "SCORE: ";
 	private static final float SCORE_TEXT_X = CAMERA_WIDTH - 20f;
-	private static final float SCORE_TEXT_Y = CAMERA_HEIGHT - 20f;
+	private static final float SCORE_TEXT_Y = LEVEL_TEXT_Y - 14f;
 
 	private static final String TIME_TEXT = "TIME: ";
 	private static final float TIME_TEXT_X = CAMERA_WIDTH - 20f;
@@ -153,6 +157,7 @@ public class GameScreen extends UntitledScreen {
 	private HealthBar bossHealthBar;
 
 	private TextUI fpsText;
+	private TextUI levelText;
 	private TextUI scoreText;
 	private TextUI timeText;
 
@@ -256,13 +261,17 @@ public class GameScreen extends UntitledScreen {
 				.setY(FPS_TEXT_Y)
 				.setColor(Color.GRAY);
 
-		scoreText = new TextUI(TOP_RIGHT, A.getFont(MINECRAFT_8))
-				.setX(SCORE_TEXT_X)
-				.setY(SCORE_TEXT_Y);
+		levelText = new TextUI(TOP_RIGHT, A.getFont(MINECRAFT_8))
+				.setX(LEVEL_TEXT_X)
+				.setY(LEVEL_TEXT_Y);
 
 		timeText = new TextUI(TOP_RIGHT, A.getFont(MINECRAFT_8))
 				.setX(TIME_TEXT_X)
 				.setY(TIME_TEXT_Y);
+
+		scoreText = new TextUI(TOP_RIGHT, A.getFont(MINECRAFT_8))
+				.setX(SCORE_TEXT_X)
+				.setY(SCORE_TEXT_Y);
 
 		continueText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
 				.setX(CONTINUE_TEXT_X)
@@ -295,6 +304,7 @@ public class GameScreen extends UntitledScreen {
 	@Override
 	public void update() {
 		if (!gameOver) {
+			level = (int) ((1 - boss1.getHealth() / boss1.getMaxHealth()) * 100);
 			time += Gdx.graphics.getRawDeltaTime();
 
 			// All characters are dead
@@ -304,23 +314,23 @@ public class GameScreen extends UntitledScreen {
 				// Tank died
 			} else if (character == tank && tank.isDispose()) {
 				assassin.inflictDebuff(deadCharacterDebuff);
-				switchCharacter();
+				switchCharacter(assassin);
 
 				// Assassin died
 			} else if (character == assassin && assassin.isDispose()) {
 				tank.inflictDebuff(deadCharacterDebuff);
-				switchCharacter();
+				switchCharacter(tank);
 
 				// Boss is dead
 			} else if (boss1.isDispose()) {
-				level++;
 				gameOver();
 			}
 		}
 
 		fpsText.setText(FPS_TEXT + Gdx.graphics.getFramesPerSecond());
-		scoreText.setText(SCORE_TEXT + score);
+		levelText.setText(LEVEL_TEXT + UntitledGame.formatLevel(level));
 		timeText.setText(TIME_TEXT + UntitledGame.formatTime((int) time));
+		scoreText.setText(SCORE_TEXT + score);
 	}
 
 	@Override
@@ -349,8 +359,9 @@ public class GameScreen extends UntitledScreen {
 		}
 
 		fpsText.render(batch);
-		scoreText.render(batch);
+		levelText.render(batch);
 		timeText.render(batch);
+		scoreText.render(batch);
 
 		if (gameOver) {
 			continueButton.render(batch);
@@ -383,41 +394,41 @@ public class GameScreen extends UntitledScreen {
 		highscores.postHighscore(level, score, (int) time);
 	}
 
+	private void switchCharacter(Character next) {
+		character.setVisible(false);
+		float x = character.getPosition().x;
+		boolean flipX = character.getFlipX().get();
+
+		character = next;
+		character.endCrowdControl();
+		character.setVisible(true);
+		character.getPosition().x = x;
+		character.getPosition().y = FLOOR_HEIGHT;
+		character.getFlipX().set(flipX);
+
+		playerController.update();
+//			Gdx.app.log("GameScreen.java", "Switched Characters");
+
+		this.switchCharacter.begin();
+		this.switchCharacter.run();
+	}
+
 	public void switchCharacter() {
 		if (!gameOver) {
 			boolean canSwitchCharacter = switchCharacter.get() == COOLDOWN_STATES;
-			Character next;
 
 			// Assassin is alive
 			if (canSwitchCharacter && character == tank && !assassin.isDispose()) {
-				next = assassin;
+				switchCharacter(assassin);
 
 				// Tank is alive
 			} else if (canSwitchCharacter && character == assassin && !tank.isDispose()) {
-				next = tank;
+				switchCharacter(tank);
 
 				// Other character is not alive
 			} else {
 				character.endCrowdControl();
-				return;
 			}
-
-			character.setVisible(false);
-			float x = character.getPosition().x;
-			boolean flipX = character.getFlipX().get();
-
-			character = next;
-			character.endCrowdControl();
-			character.setVisible(true);
-			character.getPosition().x = x;
-			character.getPosition().y = FLOOR_HEIGHT;
-			character.getFlipX().set(flipX);
-
-			playerController.update();
-//			Gdx.app.log("GameScreen.java", "Switched Characters");
-
-			this.switchCharacter.begin();
-			this.switchCharacter.run();
 		}
 	}
 

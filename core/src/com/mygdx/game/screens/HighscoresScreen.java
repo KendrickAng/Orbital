@@ -41,11 +41,11 @@ public class HighscoresScreen extends UntitledScreen {
 	private static final String HIGHSCORES_LEVEL_TEXT = "LEVEL";
 	private static final float HIGHSCORES_LEVEL_W = 70f;
 
-	private static final String HIGHSCORES_SCORE_TEXT = "SCORE";
-	private static final float HIGHSCORES_SCORE_W = 100f;
-
 	private static final String HIGHSCORES_TIME_TEXT = "TIME";
 	private static final float HIGHSCORES_TIME_W = 100f;
+
+	private static final String HIGHSCORES_SCORE_TEXT = "SCORE";
+	private static final float HIGHSCORES_SCORE_W = 100f;
 
 	private static final float HIGHSCORES_W = HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W + HIGHSCORES_SCORE_W + HIGHSCORES_TIME_W;
 	private static final float HIGHSCORES_H = 16f;
@@ -93,12 +93,12 @@ public class HighscoresScreen extends UntitledScreen {
 					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W / 2f)
 					.setY(y);
 
-			this.scoreText = new TextUI(MIDDLE, font)
-					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W + HIGHSCORES_SCORE_W / 2f)
+			this.timeText = new TextUI(MIDDLE, font)
+					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W + HIGHSCORES_TIME_W / 2f)
 					.setY(y);
 
-			this.timeText = new TextUI(MIDDLE, font)
-					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W + HIGHSCORES_SCORE_W + HIGHSCORES_TIME_W / 2f)
+			this.scoreText = new TextUI(MIDDLE, font)
+					.setX(x + HIGHSCORES_ID_W + HIGHSCORES_NAME_W + HIGHSCORES_LEVEL_W + HIGHSCORES_TIME_W + HIGHSCORES_SCORE_W / 2f)
 					.setY(y);
 
 			this.background = new TextureUI(LEFT, background)
@@ -113,8 +113,8 @@ public class HighscoresScreen extends UntitledScreen {
 			this.idText.render(batch);
 			this.nameText.render(batch);
 			this.levelText.render(batch);
-			this.scoreText.render(batch);
 			this.timeText.render(batch);
+			this.scoreText.render(batch);
 		}
 	}
 
@@ -167,8 +167,8 @@ public class HighscoresScreen extends UntitledScreen {
 			if (i == 0) {
 				highscoreUI.nameText.setText(HIGHSCORES_NAME_TEXT);
 				highscoreUI.levelText.setText(HIGHSCORES_LEVEL_TEXT);
-				highscoreUI.scoreText.setText(HIGHSCORES_SCORE_TEXT);
 				highscoreUI.timeText.setText(HIGHSCORES_TIME_TEXT);
+				highscoreUI.scoreText.setText(HIGHSCORES_SCORE_TEXT);
 			}
 
 			highscoresUI.add(highscoreUI);
@@ -186,9 +186,9 @@ public class HighscoresScreen extends UntitledScreen {
 
 					ui.idText.setText(i + 1 + ".");
 					ui.nameText.setText(highscore.getName());
-					ui.levelText.setText(String.valueOf(highscore.getLevel()));
-					ui.scoreText.setText(String.valueOf(highscore.getScore()));
+					ui.levelText.setText(UntitledGame.formatLevel(highscore.getLevel()));
 					ui.timeText.setText(UntitledGame.formatTime(highscore.getTime()));
+					ui.scoreText.setText(String.valueOf(highscore.getScore()));
 				}
 
 				loading = false;

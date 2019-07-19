@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.4.1'
 //        classpath 'org.wisepersist:gwt-gradle-plugin:1.0.6'
     }
 }
@@ -12,10 +12,10 @@ buildscript {
 allprojects {
     apply plugin: "idea"
 
-    version = 'beta-0.75'
+    version = 'beta-0.8'
     ext {
         appName = "Untitled"
-        gdxVersion = '1.9.9'
+        gdxVersion = '1.9.10'
     }
 
     repositories {

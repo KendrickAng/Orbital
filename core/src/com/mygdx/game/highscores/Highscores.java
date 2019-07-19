@@ -49,12 +49,12 @@ public class Highscores {
 			jsonHighscore.writeValue("integerValue", level);
 			jsonHighscore.writeObjectEnd();
 
-			jsonHighscore.writeObjectStart("score");
-			jsonHighscore.writeValue("integerValue", score);
-			jsonHighscore.writeObjectEnd();
-
 			jsonHighscore.writeObjectStart("time");
 			jsonHighscore.writeValue("integerValue", time);
+			jsonHighscore.writeObjectEnd();
+
+			jsonHighscore.writeObjectStart("score");
+			jsonHighscore.writeValue("integerValue", score);
 			jsonHighscore.writeObjectEnd();
 
 			jsonHighscore.writeObjectEnd();
@@ -87,6 +87,19 @@ public class Highscores {
 		jsonQuery.writeArrayStart("orderBy");
 		jsonQuery.writeObjectStart();
 		jsonQuery.writeObjectStart("field");
+		jsonQuery.writeValue("fieldPath", "level");
+		jsonQuery.writeObjectEnd();
+		jsonQuery.writeValue("direction", "DESCENDING");
+		jsonQuery.writeObjectEnd();
+
+		jsonQuery.writeObjectStart();
+		jsonQuery.writeObjectStart("field");
+		jsonQuery.writeValue("fieldPath", "time");
+		jsonQuery.writeObjectEnd();
+		jsonQuery.writeObjectEnd();
+
+		jsonQuery.writeObjectStart();
+		jsonQuery.writeObjectStart("field");
 		jsonQuery.writeValue("fieldPath", "score");
 		jsonQuery.writeObjectEnd();
 		jsonQuery.writeValue("direction", "DESCENDING");
@@ -112,8 +125,8 @@ public class Highscores {
 						JsonValue fields = query.get("document").get("fields");
 						String name = fields.get("name").getString("stringValue");
 						int level = fields.get("level").getInt("integerValue");
-						int score = fields.get("score").getInt("integerValue");
 						int time = fields.get("time").getInt("integerValue");
+						int score = fields.get("score").getInt("integerValue");
 //						Gdx.app.log(name, String.valueOf(score));
 
 						highscores.add(new Highscore(name, level, score, time));
