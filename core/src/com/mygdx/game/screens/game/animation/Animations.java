@@ -16,7 +16,6 @@ public class Animations<S extends Enum, P extends Enum> implements StateListener
 	// E.g P = AssassinParts. Animation contains a map of all enum parts of AssassinParts to corrs. AnimationPart instance
 	private EntityData entityData;
 	private Animation<P> animation;
-	private Color color;
 
 	// Map of states to animation
 	private HashMap<S, Animation<P>> animations;

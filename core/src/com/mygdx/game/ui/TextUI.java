@@ -10,12 +10,14 @@ public class TextUI extends UI {
 	private BitmapFont font;
 	private String text;
 	private Color color;
+	private int align;
 
-	public TextUI(UIAlign align, BitmapFont font) {
-		super(align);
+	public TextUI(UIAlign textAlign, BitmapFont font) {
+		super(textAlign);
 		this.text = "";
 		this.font = font;
 		this.color = Color.WHITE;
+		setTextAlign(TextUIAlign.LEFT);
 	}
 
 	@Override
@@ -44,9 +46,24 @@ public class TextUI extends UI {
 		return this;
 	}
 
+	public TextUI setTextAlign(TextUIAlign textAlign) {
+		switch (textAlign) {
+			case LEFT:
+				this.align = -1;
+				break;
+			case RIGHT:
+				this.align = 0;
+				break;
+			case MIDDLE:
+				this.align = 1;
+				break;
+		}
+		return this;
+	}
+
 	@Override
 	public void render(SpriteBatch batch) {
 		font.setColor(color);
-		font.draw(batch, text, getX(), getY() + getH());
+		font.draw(batch, text, getX(), getY() + getH(), getW(), align, false);
 	}
 }

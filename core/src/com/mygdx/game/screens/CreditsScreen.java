@@ -10,6 +10,7 @@ import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.MusicName;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
+import com.mygdx.game.ui.TextUIAlign;
 
 import static com.mygdx.game.UntitledGame.BUTTON_H;
 import static com.mygdx.game.UntitledGame.BUTTON_W;
@@ -21,13 +22,14 @@ import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 import static com.mygdx.game.ui.UIAlign.TOP_LEFT;
+import static com.mygdx.game.ui.UIAlign.TOP_MIDDLE;
 
 public class CreditsScreen extends UntitledScreen {
 	private static final String MUSIC_TEXT = "MENU MUSIC:\n\nTHE FALL OF ARCANA" +
 			"\n\n\n\nBOSS MUSIC:\n\nHEROIC DEMISE" +
 			"\n\n\n\nMUSIC BY MATTHEW PABLO\n\nWWW.MATTHEWPABLO.COM";
 
-	private static final float MUSIC_TEXT_X = 200f;
+	private static final float MUSIC_TEXT_X = CAMERA_WIDTH / 2f;
 	private static final float MUSIC_TEXT_Y = CAMERA_HEIGHT - 50f;
 
 	private static final String BACK_BUTTON_TEXT = "BACK";
@@ -51,10 +53,11 @@ public class CreditsScreen extends UntitledScreen {
 		Viewport viewport = game.getViewport();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
-		this.musicText = new TextUI(TOP_LEFT, A.getFont(MINECRAFT_8))
+		this.musicText = new TextUI(TOP_MIDDLE, A.getFont(MINECRAFT_8))
 				.setX(MUSIC_TEXT_X)
 				.setY(MUSIC_TEXT_Y)
-				.setText(MUSIC_TEXT);
+				.setText(MUSIC_TEXT)
+				.setTextAlign(TextUIAlign.MIDDLE);
 
 		// Back
 		this.backButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(MAIN_MENU))

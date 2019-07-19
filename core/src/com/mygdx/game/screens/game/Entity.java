@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.MutableBoolean;
+import com.mygdx.game.MutableFloat;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.screens.game.animation.Animations;
@@ -25,15 +26,12 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	private States<I, S> states;
 	private Animations<S, P> animations;
 
-	private boolean visible;
 	private boolean dispose;
 
 	public Entity(GameScreen game, int renderPriority) {
 		data = new EntityData();
 
 		this.game = game;
-		this.visible = true;
-
 		this.states = new States<>();
 		this.animations = new Animations<>(data);
 
@@ -63,7 +61,8 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		animations.renderDebug(shapeRenderer);
 	}
 
-	public void dispose() {
+	public void dispose(float alpha) {
+		getAlpha().set(alpha);
 		dispose = true;
 	}
 
@@ -85,15 +84,7 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		return false;
 	}
 
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
-
 	/* Getters */
-	public boolean isVisible() {
-		return visible;
-	}
-
 	public boolean isDispose() {
 		return dispose;
 	}
@@ -108,6 +99,10 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 
 	public MutableBoolean getFlipX() {
 		return data.getFlipX();
+	}
+
+	public MutableFloat getAlpha() {
+		return data.getAlpha();
 	}
 
 	public Color getColor() {

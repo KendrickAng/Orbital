@@ -8,7 +8,7 @@ import com.mygdx.game.screens.game.animation.Animations;
 import com.mygdx.game.screens.game.state.State;
 import com.mygdx.game.screens.game.state.States;
 
-import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.screens.GameScreen.GAME_FLOOR_HEIGHT;
 import static com.mygdx.game.screens.game.EntityManager.ROCK_RENDER_PRIORITY;
 import static com.mygdx.game.screens.game.rock.RockParts.BODY;
 import static com.mygdx.game.screens.game.rock.RockStates.ERUPT;
@@ -21,7 +21,7 @@ public class Rock extends Entity<Enum, RockStates, RockParts> {
 		super(game, ROCK_RENDER_PRIORITY);
 
 		getPosition().x = x - getHitbox(BODY).getWidth() / 2;
-		getPosition().y = FLOOR_HEIGHT;
+		getPosition().y = GAME_FLOOR_HEIGHT;
 		this.damage = damage;
 	}
 
@@ -36,7 +36,7 @@ public class Rock extends Entity<Enum, RockStates, RockParts> {
 				.setDuration(ERUPT_ANIMATION_DURATION)
 				.defineFrameTask(1, () -> getGame().getCharacter()
 						.damageTest(null, getHitbox(BODY), damage))
-				.defineEnd(this::dispose));
+				.defineEnd(() -> dispose(0)));
 	}
 
 	@Override

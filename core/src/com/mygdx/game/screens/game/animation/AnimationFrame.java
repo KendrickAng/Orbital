@@ -45,6 +45,7 @@ public class AnimationFrame<P> {
 		sprite.setPosition(entityData.getPosition().x, entityData.getPosition().y);
 		sprite.setFlip(entityData.getFlipX().get(), false);
 		sprite.setColor(entityData.getColor());
+		sprite.setAlpha(entityData.getAlpha().get());
 		sprite.draw(batch);
 	}
 
@@ -52,10 +53,6 @@ public class AnimationFrame<P> {
 		for (Hitbox hitbox : hitboxes.values()) {
 			hitbox.renderDebug(shapeRenderer);
 		}
-	}
-
-	public Sprite getSprite() {
-		return sprite;
 	}
 
 	public Hitbox getHitbox(P part) {

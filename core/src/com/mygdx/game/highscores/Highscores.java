@@ -9,6 +9,8 @@ import com.mygdx.game.net.PostRequest;
 
 import java.io.StringWriter;
 
+import static com.mygdx.game.UntitledGame.DEBUG;
+
 public class Highscores {
 	private static final String WEB_API_KEY = "AIzaSyCqpJqKdS-fbgIKlyZ5uMqsg-1JCk8zMBQ";
 	private static final String NEW_USER_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser";
@@ -33,7 +35,12 @@ public class Highscores {
 				.call();
 	}
 
-	public void postHighscore(int level, int score, int time) {
+	public void postHighscore(int level, int score, int time, HighscoresCallback success, HighscoresCallback failed) {
+		// Setting any debug flag will disable highscores.
+		if (DEBUG) {
+			return;
+		}
+
 		createNewUser(token -> {
 			StringWriter jsonHighscoreWriter = new StringWriter();
 			Json jsonHighscore = new Json(JsonWriter.OutputType.json);
@@ -64,14 +71,13 @@ public class Highscores {
 					.setHeader("Authorization", "Bearer " + token)
 					.setHeader("Content-Type", "application/json")
 					.setBody(jsonHighscoreWriter.toString())
-					.setResponse200(response -> {
-//						Gdx.app.log("Highscores.java", response);
-					})
+					.setResponse200(response -> success.call())
+					.setFailedCallback(failed::call)
 					.call();
 		});
 	}
 
-	public void getHighscores(int limit, GetHighscoresCallback callback) {
+	public void getHighscores(int limit, GetHighscoresCallback success, HighscoresCallback failed) {
 		StringWriter jsonQueryWriter = new StringWriter();
 		Json jsonQuery = new Json(JsonWriter.OutputType.json);
 		jsonQuery.setWriter(new JsonWriter(jsonQueryWriter));
@@ -132,9 +138,9 @@ public class Highscores {
 						highscores.add(new Highscore(name, level, score, time));
 					}
 
-					callback.call(highscores);
+					success.call(highscores);
 				})
-				.setFailedCallback(() -> callback.call(null))
+				.setFailedCallback(failed::call)
 				.call();
 	}
 }

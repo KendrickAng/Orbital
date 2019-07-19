@@ -6,13 +6,13 @@ import com.mygdx.game.assets.Assets;
 
 import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
 import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
-import static com.mygdx.game.assets.TextureName.BACKGROUND;
+import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 
 public class Background {
 	private Texture background;
 
 	public Background(Assets assets) {
-		background = assets.getTexture(BACKGROUND);
+		background = assets.getTexture(GAME_BACKGROUND);
 		background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 	}
 

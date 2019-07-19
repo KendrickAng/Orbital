@@ -17,7 +17,7 @@ import com.mygdx.game.screens.game.debuff.Debuff;
 import com.mygdx.game.screens.game.state.State;
 import com.mygdx.game.screens.game.state.States;
 
-import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
+import static com.mygdx.game.screens.GameScreen.GAME_WIDTH;
 import static com.mygdx.game.screens.game.character.TankInput.BLOCK_INPUT;
 import static com.mygdx.game.screens.game.character.TankInput.BLOCK_KEYDOWN;
 import static com.mygdx.game.screens.game.character.TankInput.BLOCK_KEYUP;
@@ -598,8 +598,8 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 			getPosition().x = -x;
 		}
 
-		if (getPosition().x > CAMERA_WIDTH - x - width) {
-			getPosition().x = CAMERA_WIDTH - x - width;
+		if (getPosition().x > GAME_WIDTH - x - width) {
+			getPosition().x = GAME_WIDTH - x - width;
 		}
 	}
 

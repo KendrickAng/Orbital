@@ -1,13 +1,17 @@
 package com.mygdx.game;
 
 public class MutableBoolean {
-	private boolean bool;
+	private boolean value;
 
-	public void set(boolean bool) {
-		this.bool = bool;
+	public MutableBoolean(boolean value) {
+		this.value = value;
+	}
+
+	public void set(boolean value) {
+		this.value = value;
 	}
 
 	public boolean get() {
-		return bool;
+		return value;
 	}
 }

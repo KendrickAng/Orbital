@@ -20,7 +20,7 @@ import com.mygdx.game.screens.game.shuriken.ShurikenParts;
 
 import java.util.HashMap;
 
-import static com.mygdx.game.assets.TextureName.BACKGROUND;
+import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
@@ -37,7 +37,8 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
-import static com.mygdx.game.assets.TextureName.FLOOR;
+import static com.mygdx.game.assets.TextureName.GAME_FLOOR;
+import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
@@ -46,8 +47,8 @@ import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
 import static com.mygdx.game.assets.TextureName.INFO_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.STACK_BAR_ASSASSIN;
-import static com.mygdx.game.assets.TextureName.STUNNED;
-import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
+import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
+import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
 
 public class Assets {
 	private AssetManager assetManager;
@@ -181,8 +182,9 @@ public class Assets {
 		shurikenAnimations = new HashMap<>();
 		rockAnimations = new HashMap<>();
 
-		defineTexture(BACKGROUND, "Textures/Background.png");
-		defineTexture(FLOOR, "Textures/Floor.png");
+		defineTexture(GAME_BACKGROUND, "Textures/Game/Background.png");
+		defineTexture(GAME_FLOOR, "Textures/Game/Floor.png");
+		defineTexture(GAME_OVERLAY, "Textures/Game/Overlay.png");
 
 		defineTexture(BUTTON_NORMAL, "Textures/Button/Normal.png");
 		defineTexture(BUTTON_HOVER, "Textures/Button/Hover.png");
@@ -203,8 +205,8 @@ public class Assets {
 		defineTexture(COOLDOWN_CLEANSE, "Textures/Cooldowns/Cleanse Ability.png");
 		defineTexture(COOLDOWN_SWITCH_CHARACTER, "Textures/Cooldowns/Switch Character.png");
 
-		defineTexture(STUNNED, "Textures/Debuff/Stunned.png");
-		defineTexture(WEAK_SPOT, "Textures/Debuff/Weak Spot.png");
+		defineTexture(DEBUFF_STUNNED, "Textures/Debuff/Stunned.png");
+		defineTexture(DEBUFF_WEAK_SPOT, "Textures/Debuff/Weak Spot.png");
 
 		defineTexture(HIGHSCORES_TITLE, "Textures/Highscores/Title.png");
 		defineTexture(HIGHSCORES_ODD, "Textures/Highscores/Odd.png");

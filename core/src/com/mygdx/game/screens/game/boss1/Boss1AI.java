@@ -42,7 +42,7 @@ public class Boss1AI {
 	}
 
 	private void nextState(float delay) {
-		if (game.isGameOver()) {
+		if (game.getTank().isDispose() && game.getAssassin().isDispose()) {
 			return;
 		}
 

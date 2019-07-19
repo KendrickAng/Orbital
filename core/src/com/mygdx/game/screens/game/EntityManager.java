@@ -1,5 +1,6 @@
 package com.mygdx.game.screens.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -15,6 +16,8 @@ public class EntityManager {
 	public static final int SHURIKEN_RENDER_PRIORITY = 3;
 	public static final int CHARACTER_RENDER_PRIORITY = 2;
 	public static final int BOSS_RENDER_PRIORITY = 1;
+
+	private static final float DISPOSE_SPEED = 2f;
 
 	private TreeMap<Integer, HashSet<Entity>> entitiesPriorityMap;
 
@@ -38,14 +41,17 @@ public class EntityManager {
 			Iterator<Entity> iterator = entities.iterator();
 			while (iterator.hasNext()) {
 				Entity e = iterator.next();
+
 				if (e.isDispose()) {
-					iterator.remove();
-					continue;
+					float alpha = e.getAlpha().get() - DISPOSE_SPEED * Gdx.graphics.getRawDeltaTime();
+					e.getAlpha().set(alpha);
+					if (alpha <= 0) {
+						iterator.remove();
+						continue;
+					}
 				}
 
-				if (e.isVisible()) {
-					e.render(batch);
-				}
+				e.render(batch);
 			}
 		}
 	}
@@ -53,9 +59,7 @@ public class EntityManager {
 	public void renderDebugAll(ShapeRenderer renderer) {
 		for (HashSet<Entity> entities : entitiesPriorityMap.values()) {
 			for (Entity e : entities) {
-				if (e.isVisible()) {
-					e.renderDebug(renderer);
-				}
+				e.renderDebug(renderer);
 			}
 		}
 	}

@@ -179,24 +179,19 @@ public class HighscoresScreen extends UntitledScreen {
 
 		// Http request highscores
 		game.getHighscores().getHighscores(HIGHSCORES_LIMIT, highscores -> {
-			if (highscores == null) {
-				loadingText.setText(HIGHSCORES_FAILED_TEXT);
+			for (int i = 0; i < highscores.size; i++) {
+				Highscore highscore = highscores.get(i);
+				HighscoreUI ui = highscoresUI.get(i + 1);
 
-			} else {
-				for (int i = 0; i < highscores.size; i++) {
-					Highscore highscore = highscores.get(i);
-					HighscoreUI ui = highscoresUI.get(i + 1);
-
-					ui.idText.setText(i + 1 + ".");
-					ui.nameText.setText(highscore.getName());
-					ui.levelText.setText(UntitledGame.formatLevel(highscore.getLevel()));
-					ui.timeText.setText(UntitledGame.formatTime(highscore.getTime()));
-					ui.scoreText.setText(String.valueOf(highscore.getScore()));
-				}
-
-				loading = false;
+				ui.idText.setText(i + 1 + ".");
+				ui.nameText.setText(highscore.getName());
+				ui.levelText.setText(UntitledGame.formatLevel(highscore.getLevel()));
+				ui.timeText.setText(UntitledGame.formatTime(highscore.getTime()));
+				ui.scoreText.setText(String.valueOf(highscore.getScore()));
 			}
-		});
+
+			loading = false;
+		}, () -> loadingText.setText(HIGHSCORES_FAILED_TEXT));
 	}
 
 	@Override

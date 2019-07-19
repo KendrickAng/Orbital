@@ -11,8 +11,9 @@ import com.mygdx.game.screens.game.debuff.Debuffs;
 
 import java.util.HashSet;
 
-import static com.mygdx.game.assets.TextureName.STUNNED;
-import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
+import static com.mygdx.game.UntitledGame.DEBUG_ONE_HEALTH;
+import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
+import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
 import static com.mygdx.game.screens.game.debuff.DebuffType.DAMAGE_REDUCTION;
 import static com.mygdx.game.screens.game.debuff.DebuffType.DAMAGE_REFLECT;
 import static com.mygdx.game.screens.game.debuff.DebuffType.STUN;
@@ -49,15 +50,19 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	public LivingEntity(GameScreen game, int renderPriority) {
 		super(game, renderPriority);
 
-		this.health = health();
+		if (DEBUG_ONE_HEALTH) {
+			this.health = 1;
+		} else {
+			this.health = health();
+		}
 		this.maxHealth = health();
 
 		this.abilities = new Abilities<>();
 		this.inflictedDebuffs = new HashSet<>();
 		this.debuffs = new Debuffs();
 
-		this.stunnedSprite = new Sprite(game.getAssets().getTexture(STUNNED));
-		this.weakSprite = new Sprite(game.getAssets().getTexture(WEAK_SPOT));
+		this.stunnedSprite = new Sprite(game.getAssets().getTexture(DEBUFF_STUNNED));
+		this.weakSprite = new Sprite(game.getAssets().getTexture(DEBUFF_WEAK_SPOT));
 
 		addStateListener(abilities);
 		defineAbilities(abilities);
@@ -189,7 +194,7 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 //				Gdx.app.log("LivingEntity.java", "HP: " + health);
 				if (health <= 0) {
 					health = 0;
-					dispose();
+					dispose(1);
 				}
 
 				return true;
@@ -213,7 +218,7 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		}, DAMAGE_BLINK_DURATION);
 
 		if (health <= 0) {
-			dispose();
+			dispose(1);
 		}
 	}
 

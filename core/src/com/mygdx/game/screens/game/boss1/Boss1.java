@@ -22,7 +22,7 @@ import com.mygdx.game.screens.game.state.State;
 import com.mygdx.game.screens.game.state.States;
 
 import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
-import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.screens.GameScreen.GAME_FLOOR_HEIGHT;
 import static com.mygdx.game.screens.game.EntityManager.BOSS_RENDER_PRIORITY;
 import static com.mygdx.game.screens.game.boss1.Boss1Input.CROWD_CONTROL;
 import static com.mygdx.game.screens.game.boss1.Boss1Input.EARTHQUAKE_KEYDOWN;
@@ -107,7 +107,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 		this.timer = new Timer();
 
 		getPosition().x = CAMERA_WIDTH - getHitbox(BODY).getTextureWidth();
-		getPosition().y = FLOOR_HEIGHT;
+		getPosition().y = GAME_FLOOR_HEIGHT;
 	}
 
 	@Override

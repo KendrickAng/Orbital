@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.UntitledGame;
 
-import static com.mygdx.game.UntitledGame.DEBUG;
+import static com.mygdx.game.UntitledGame.DEBUG_HITBOXES;
 
 public abstract class UntitledScreen implements Screen {
 	private boolean running;
@@ -37,7 +37,7 @@ public abstract class UntitledScreen implements Screen {
 		if (running) {
 			this.render(game.getSpriteBatch());
 
-			if (DEBUG) {
+			if (DEBUG_HITBOXES) {
 				this.renderDebug(game.getShapeRenderer());
 			}
 		}

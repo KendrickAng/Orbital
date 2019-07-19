@@ -44,7 +44,7 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 					float y = getPosition().y - CAMERA_HEIGHT / 2f;
 
 					if (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) > 1000) {
-						dispose();
+						dispose(0);
 					} else {
 						Boss1 boss1 = getGame().getBoss1();
 						if (getGame().getBoss1()
@@ -52,7 +52,7 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 							if (debuff != null) {
 								boss1.inflictDebuff(debuff);
 							}
-							dispose();
+							dispose(0);
 						}
 					}
 				}));

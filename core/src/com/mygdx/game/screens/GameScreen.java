@@ -30,11 +30,13 @@ import com.mygdx.game.ui.Cooldowns;
 import com.mygdx.game.ui.HealthBar;
 import com.mygdx.game.ui.StackBar;
 import com.mygdx.game.ui.TextUI;
+import com.mygdx.game.ui.TextUIAlign;
 
-import static com.mygdx.game.UntitledGame.BOSS1_AI;
+import static com.mygdx.game.UntitledGame.BUTTON_H;
+import static com.mygdx.game.UntitledGame.BUTTON_W;
 import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
 import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
-import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.UntitledGame.DEBUG_BOSS_AI;
 import static com.mygdx.game.UntitledGame.SETTINGS_MUSIC_VOLUME;
 import static com.mygdx.game.UntitledGame.SETTINGS_MUSIC_VOLUME_DEFAULT;
 import static com.mygdx.game.assets.FontName.MINECRAFT_16;
@@ -48,6 +50,7 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
+import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
@@ -63,6 +66,11 @@ import static com.mygdx.game.ui.UIAlign.TOP_LEFT;
 import static com.mygdx.game.ui.UIAlign.TOP_RIGHT;
 
 public class GameScreen extends UntitledScreen {
+	// Game Size
+	public static final int GAME_WIDTH = CAMERA_WIDTH;
+	public static final int GAME_HEIGHT = CAMERA_HEIGHT;
+	public static final float GAME_FLOOR_HEIGHT = 60f;
+
 	private static final String TANK_TEXT = "TANK";
 	private static final String ASSASSIN_TEXT = "ASSASSIN";
 
@@ -99,26 +107,49 @@ public class GameScreen extends UntitledScreen {
 	private static final float LEVEL_TEXT_X = CAMERA_WIDTH - 20f;
 	private static final float LEVEL_TEXT_Y = CAMERA_HEIGHT - 20f;
 
-	private static final String SCORE_TEXT = "SCORE: ";
-	private static final float SCORE_TEXT_X = CAMERA_WIDTH - 20f;
-	private static final float SCORE_TEXT_Y = LEVEL_TEXT_Y - 14f;
-
 	private static final String TIME_TEXT = "TIME: ";
 	private static final float TIME_TEXT_X = CAMERA_WIDTH - 20f;
-	private static final float TIME_TEXT_Y = SCORE_TEXT_Y - 14f;
+	private static final float TIME_TEXT_Y = LEVEL_TEXT_Y - 14f;
 
-	private static final String CONTINUE_TEXT = "CONTINUE";
-	private static final float CONTINUE_TEXT_X = CAMERA_WIDTH / 2f;
-	private static final float CONTINUE_TEXT_Y = CAMERA_HEIGHT / 2f;
-	private static final float CONTINUE_W = 160;
-	private static final float CONTINUE_H = 40;
+	private static final String SCORE_TEXT = "SCORE: ";
+	private static final float SCORE_TEXT_X = CAMERA_WIDTH - 20f;
+	private static final float SCORE_TEXT_Y = TIME_TEXT_Y - 14f;
+
+	private static final String HIGHSCORE_UPLOADING_TEXT = "UPLOADING HIGHSCORE...";
+	private static final String HIGHSCORE_SUCCESS_TEXT = "UPLOAD SUCCESSFUL!";
+	private static final String HIGHSCORE_FAILED_TEXT = "UPLOAD FAILED...";
+	private static final float HIGHSCORE_TEXT_X = CAMERA_WIDTH - 20f;
+	private static final float HIGHSCORE_TEXT_Y = SCORE_TEXT_Y - 14f;
+
+	private static final String GAME_OVER_LOSE_TEXT = "GAME OVER...";
+	private static final String GAME_OVER_WIN_TEXT = "YOU DID IT!\n\nMORE BOSSES COMING SOON (TM)";
+	private static final float GAME_OVER_TEXT_X = CAMERA_WIDTH / 2f;
+	private static final float GAME_OVER_TEXT_Y = CAMERA_HEIGHT / 2f + 50f;
+
+	private static final String EXIT_TEXT = "EXIT";
+	private static final float EXIT_TEXT_X = CAMERA_WIDTH / 2f;
+	private static final float EXIT_TEXT_Y = CAMERA_HEIGHT / 2f - 50f;
 
 	private static final float SWITCH_CHARACTER_COOLDOWN = 2f;
 	private static final float DEAD_CHARACTER_INVULNERABLE_DURATION = 1f;
+	private static final float GAME_OVER_TRANSITION_DURATION = 2f;
+
+	/* Variables */
+	private int score;
+	private int level;
+	private float time;
 
 	private Assets A;
+	private InputMultiplexer multiplexer;
+
+	private CooldownState switchCharacter;
+	private CharacterController playerController;
+	private Debuff deadCharacterDebuff;
+	private EntityManager entityManager;
+	private FloatingTextManager floatingTextManager;
 	private Highscores highscores;
 	private Timer timer;
+	private State state;
 
 	private OrthographicCamera cameraGame;
 	private float cameraX;
@@ -127,18 +158,6 @@ public class GameScreen extends UntitledScreen {
 
 	private Background background;
 	private Floor floor;
-
-	private CharacterController playerController;
-	private EntityManager entityManager;
-	private FloatingTextManager floatingTextManager;
-
-	private int score;
-	private int level;
-	private float time;
-	private boolean gameOver;
-
-	private CooldownState switchCharacter;
-	private Debuff deadCharacterDebuff;
 
 	/* Entities */
 	private Character character;
@@ -163,15 +182,21 @@ public class GameScreen extends UntitledScreen {
 	private TextUI levelText;
 	private TextUI scoreText;
 	private TextUI timeText;
+	private TextUI highscoreText;
 
-	private TextUI continueText;
-	private ButtonUI continueButton;
+	private TextUI gameOverText;
+	private TextUI exitText;
+	private ButtonUI exitButton;
+
+	private enum State {
+		BOSS_FIGHT, GAME_OVER_TRANSITION, GAME_OVER_SCREEN
+	}
 
 	public GameScreen(UntitledGame game) {
 		super(game);
 
 		this.A = game.getAssets();
-		InputMultiplexer multiplexer = game.getInputMultiplexer();
+		this.multiplexer = game.getInputMultiplexer();
 
 		this.cameraGame = game.getCamera();
 		this.cameraX = cameraGame.position.x;
@@ -183,6 +208,7 @@ public class GameScreen extends UntitledScreen {
 		this.entityManager = new EntityManager();
 		this.floatingTextManager = new FloatingTextManager(A);
 		this.timer = new Timer();
+		this.state = State.BOSS_FIGHT;
 
 		this.switchCharacter = new CooldownState(SWITCH_CHARACTER_COOLDOWN);
 		this.deadCharacterDebuff = new Debuff(DAMAGE_REDUCTION, 1f, DEAD_CHARACTER_INVULNERABLE_DURATION);
@@ -190,7 +216,7 @@ public class GameScreen extends UntitledScreen {
 		/* Entities */
 		this.tank = new Tank(this);
 		this.assassin = new Assassin(this);
-		this.assassin.setVisible(false);
+		this.assassin.getAlpha().set(0);
 		this.character = tank;
 		this.boss1 = new Boss1(this);
 
@@ -198,10 +224,10 @@ public class GameScreen extends UntitledScreen {
 		this.playerController = new CharacterController(this);
 
 		multiplexer.addProcessor(playerController);
-		if (BOSS1_AI) {
-			new Boss1AI(this);
-		} else {
+		if (DEBUG_BOSS_AI) {
 			multiplexer.addProcessor(new Boss1Controller(this));
+		} else {
+			new Boss1AI(this);
 		}
 
 		this.background = new Background(A);
@@ -279,24 +305,29 @@ public class GameScreen extends UntitledScreen {
 				.setX(SCORE_TEXT_X)
 				.setY(SCORE_TEXT_Y);
 
-		continueText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
-				.setX(CONTINUE_TEXT_X)
-				.setY(CONTINUE_TEXT_Y)
-				.setText(CONTINUE_TEXT);
+		highscoreText = new TextUI(TOP_RIGHT, A.getFont(MINECRAFT_8))
+				.setX(HIGHSCORE_TEXT_X)
+				.setY(HIGHSCORE_TEXT_Y)
+				.setColor(Color.GOLD);
 
-		continueButton = new ButtonUI(MIDDLE, this.viewportUI, () -> {
-			if (gameOver) {
-				setScreen(MAIN_MENU);
-			}
-		})
-				.setX(CONTINUE_TEXT_X)
-				.setY(CONTINUE_TEXT_Y)
-				.setW(CONTINUE_W)
-				.setH(CONTINUE_H)
+		exitText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
+				.setX(EXIT_TEXT_X)
+				.setY(EXIT_TEXT_Y)
+				.setText(EXIT_TEXT);
+
+		exitButton = new ButtonUI(MIDDLE, this.viewportUI, () -> setScreen(MAIN_MENU))
+				.setX(EXIT_TEXT_X)
+				.setY(EXIT_TEXT_Y)
+				.setW(BUTTON_W)
+				.setH(BUTTON_H)
 				.setNormalTexture(A.getTexture(BUTTON_NORMAL))
 				.setHoverTexture(A.getTexture(BUTTON_HOVER));
 
-		multiplexer.addProcessor(continueButton);
+		gameOverText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
+				.setX(GAME_OVER_TEXT_X)
+				.setY(GAME_OVER_TEXT_Y)
+				.setTextAlign(TextUIAlign.MIDDLE);
+
 		Gdx.input.setCursorCatched(true);
 
 		/* Music */
@@ -310,9 +341,9 @@ public class GameScreen extends UntitledScreen {
 	@Override
 	public void render(SpriteBatch batch) {
 		/* Update */
-		if (!gameOver) {
-			level = (int) ((1 - boss1.getHealth() / boss1.getMaxHealth()) * 100);
-			time += Gdx.graphics.getRawDeltaTime();
+		if (state == State.BOSS_FIGHT) {
+			this.level = (int) ((1 - boss1.getHealth() / boss1.getMaxHealth()) * 100);
+			this.time += Gdx.graphics.getRawDeltaTime();
 
 			// All characters are dead
 			if (tank.isDispose() && assassin.isDispose()) {
@@ -320,12 +351,12 @@ public class GameScreen extends UntitledScreen {
 
 				// Tank died
 			} else if (character == tank && tank.isDispose()) {
-				assassin.inflictDebuff(deadCharacterDebuff);
+				this.assassin.inflictDebuff(deadCharacterDebuff);
 				switchCharacter(assassin);
 
 				// Assassin died
 			} else if (character == assassin && assassin.isDispose()) {
-				tank.inflictDebuff(deadCharacterDebuff);
+				this.tank.inflictDebuff(deadCharacterDebuff);
 				switchCharacter(tank);
 
 				// Boss is dead
@@ -334,19 +365,19 @@ public class GameScreen extends UntitledScreen {
 			}
 		}
 
-		fpsText.setText(FPS_TEXT + Gdx.graphics.getFramesPerSecond());
-		levelText.setText(LEVEL_TEXT + UntitledGame.formatLevel(level));
-		timeText.setText(TIME_TEXT + UntitledGame.formatTime((int) time));
-		scoreText.setText(SCORE_TEXT + score);
+		this.fpsText.setText(FPS_TEXT + Gdx.graphics.getFramesPerSecond());
+		this.levelText.setText(LEVEL_TEXT + UntitledGame.formatLevel(level));
+		this.timeText.setText(TIME_TEXT + UntitledGame.formatTime((int) time));
+		this.scoreText.setText(SCORE_TEXT + score);
 
 		/* Render Game */
 		batch.setProjectionMatrix(cameraGame.combined);
 		batch.begin();
 
-		background.render(batch);
-		floor.render(batch);
-		entityManager.render(batch);
-		floatingTextManager.render(batch);
+		this.background.render(batch);
+		this.floor.render(batch);
+		this.entityManager.render(batch);
+		this.floatingTextManager.render(batch);
 
 		batch.end();
 
@@ -355,31 +386,34 @@ public class GameScreen extends UntitledScreen {
 		batch.begin();
 
 		if (character == tank && !tank.isDispose()) {
-			tankText.render(batch);
-			tankHealthBar.render(batch);
-			tankCooldowns.render(batch);
+			this.tankText.render(batch);
+			this.tankHealthBar.render(batch);
+			this.tankCooldowns.render(batch);
 
 		} else if (character == assassin && !assassin.isDispose()) {
-			assassinText.render(batch);
-			assassinHealthBar.render(batch);
-			assassinStackBar.render(batch);
-			assassinCooldowns.render(batch);
+			this.assassinText.render(batch);
+			this.assassinHealthBar.render(batch);
+			this.assassinStackBar.render(batch);
+			this.assassinCooldowns.render(batch);
 		}
 
 		if (!boss1.isDispose()) {
-			bossText.render(batch);
-			bossHealthBar.render(batch);
+			this.bossText.render(batch);
+			this.bossHealthBar.render(batch);
 		}
 
-		fpsText.render(batch);
-		levelText.render(batch);
-		timeText.render(batch);
-		scoreText.render(batch);
-
-		if (gameOver) {
-			continueButton.render(batch);
-			continueText.render(batch);
+		if (state == State.GAME_OVER_SCREEN) {
+			batch.draw(A.getTexture(GAME_OVERLAY), 0, 0, GAME_WIDTH, GAME_HEIGHT);
+			this.gameOverText.render(batch);
+			this.exitButton.render(batch);
+			this.exitText.render(batch);
 		}
+
+		this.fpsText.render(batch);
+		this.levelText.render(batch);
+		this.timeText.render(batch);
+		this.scoreText.render(batch);
+		this.highscoreText.render(batch);
 
 		batch.end();
 	}
@@ -413,22 +447,42 @@ public class GameScreen extends UntitledScreen {
 	}
 
 	private void gameOver() {
-		gameOver = true;
+		state = State.GAME_OVER_TRANSITION;
 		Gdx.input.setCursorCatched(false);
-		highscores.postHighscore(level, score, (int) time);
+		multiplexer.addProcessor(exitButton);
+
+		if (level > 0 && time > 0 && score > 0) {
+			highscoreText.setText(HIGHSCORE_UPLOADING_TEXT);
+			highscores.postHighscore(level, score, (int) time,
+					() -> highscoreText.setText(HIGHSCORE_SUCCESS_TEXT),
+					() -> highscoreText.setText(HIGHSCORE_FAILED_TEXT));
+		}
+
+		timer.scheduleTask(new Timer.Task() {
+			@Override
+			public void run() {
+				state = State.GAME_OVER_SCREEN;
+
+				if (level == 100) {
+					gameOverText.setText(GAME_OVER_WIN_TEXT);
+				} else {
+					gameOverText.setText(GAME_OVER_LOSE_TEXT);
+				}
+			}
+		}, GAME_OVER_TRANSITION_DURATION);
 	}
 
 	private void switchCharacter(Character next) {
-		character.setVisible(false);
 		float x = character.getPosition().x;
 		boolean flipX = character.getFlipX().get();
+		this.character.getAlpha().set(0);
 
-		character = next;
-		character.endCrowdControl();
-		character.setVisible(true);
-		character.getPosition().x = x;
-		character.getPosition().y = FLOOR_HEIGHT;
-		character.getFlipX().set(flipX);
+		this.character = next;
+		this.character.endCrowdControl();
+		this.character.getPosition().x = x;
+		this.character.getPosition().y = GAME_FLOOR_HEIGHT;
+		this.character.getFlipX().set(flipX);
+		this.character.getAlpha().set(1);
 
 		playerController.update();
 //			Gdx.app.log("GameScreen.java", "Switched Characters");
@@ -438,7 +492,8 @@ public class GameScreen extends UntitledScreen {
 	}
 
 	public void switchCharacter() {
-		if (!gameOver) {
+		// Both characters are not dead
+		if (!(tank.isDispose() && assassin.isDispose())) {
 			boolean canSwitchCharacter = switchCharacter.get() == COOLDOWN_STATES;
 
 			// Assassin is alive
@@ -491,10 +546,6 @@ public class GameScreen extends UntitledScreen {
 	}
 
 	/* Getters */
-	public boolean isGameOver() {
-		return gameOver;
-	}
-
 	public Tank getTank() {
 		return tank;
 	}

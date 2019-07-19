@@ -7,7 +7,7 @@ import com.mygdx.game.screens.game.LivingEntity;
 import com.mygdx.game.screens.game.debuff.DebuffDefinition;
 import com.mygdx.game.screens.game.debuff.Debuffs;
 
-import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.screens.GameScreen.GAME_FLOOR_HEIGHT;
 import static com.mygdx.game.screens.game.EntityManager.CHARACTER_RENDER_PRIORITY;
 import static com.mygdx.game.screens.game.debuff.DebuffType.SLOW;
 
@@ -23,7 +23,7 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 
 	public Character(GameScreen game) {
 		super(game, CHARACTER_RENDER_PRIORITY);
-		getPosition().y = FLOOR_HEIGHT;
+		getPosition().y = GAME_FLOOR_HEIGHT;
 	}
 
 	/* Debuffs */

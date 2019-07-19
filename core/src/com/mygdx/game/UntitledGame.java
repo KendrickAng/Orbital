@@ -28,7 +28,7 @@ import com.mygdx.game.screens.SettingsScreen;
 
 import java.util.Locale;
 
-import static com.mygdx.game.assets.TextureName.BACKGROUND;
+import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
@@ -45,7 +45,8 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
-import static com.mygdx.game.assets.TextureName.FLOOR;
+import static com.mygdx.game.assets.TextureName.GAME_FLOOR;
+import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_TANK;
@@ -54,14 +55,14 @@ import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
 import static com.mygdx.game.assets.TextureName.INFO_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.STACK_BAR_ASSASSIN;
-import static com.mygdx.game.assets.TextureName.STUNNED;
-import static com.mygdx.game.assets.TextureName.WEAK_SPOT;
+import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
+import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.screens.ScreenName.NAME_MENU;
 import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
-	public static final String VERSION = "BETA 1.0";
+	public static final String VERSION = "BETA 1.1";
 
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;
@@ -75,10 +76,15 @@ public class UntitledGame extends Game {
 	public static final float BUTTON_W = 85f;
 	public static final float BUTTON_H = 25f;
 
-	// Game Variables
-	public static final boolean DEBUG = false; // flag to view hitboxes
-	public static final boolean BOSS1_AI = true; // flag to activate Boss1 AI.
-	public static final float FLOOR_HEIGHT = 60;
+	/* Debug Flags */
+	// Set to view hitboxes
+	public static final boolean DEBUG_HITBOXES = false;
+	// Set to disable boss AI & enable controlling the boss
+	public static final boolean DEBUG_BOSS_AI = false;
+	// Set to force all LivingEntities to 1 health
+	public static final boolean DEBUG_ONE_HEALTH = false;
+	// Setting any debug flag will disable highscores.
+	public static final boolean DEBUG = DEBUG_HITBOXES || DEBUG_BOSS_AI || DEBUG_ONE_HEALTH;
 
 	public static final String SETTINGS_NAME = "name";
 	public static final String SETTINGS_VSYNC = "vsync";
@@ -116,10 +122,12 @@ public class UntitledGame extends Game {
 		settings = Gdx.app.getPreferences(PREFERENCES_SETTINGS);
 
 		// TODO: (Optimization) Move to Screens
-		assets.loadTexture(BACKGROUND);
-		assets.loadTexture(FLOOR);
-		assets.loadTexture(STUNNED);
-		assets.loadTexture(WEAK_SPOT);
+		assets.loadTexture(GAME_BACKGROUND);
+		assets.loadTexture(GAME_FLOOR);
+		assets.loadTexture(GAME_OVERLAY);
+
+		assets.loadTexture(DEBUFF_STUNNED);
+		assets.loadTexture(DEBUFF_WEAK_SPOT);
 
 		assets.loadTexture(BUTTON_NORMAL);
 		assets.loadTexture(BUTTON_HOVER);

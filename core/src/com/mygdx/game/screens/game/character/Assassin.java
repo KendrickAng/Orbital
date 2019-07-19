@@ -21,7 +21,8 @@ import com.mygdx.game.screens.game.state.States;
 
 import static com.mygdx.game.UntitledGame.CAMERA_HEIGHT;
 import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
-import static com.mygdx.game.UntitledGame.FLOOR_HEIGHT;
+import static com.mygdx.game.screens.GameScreen.GAME_FLOOR_HEIGHT;
+import static com.mygdx.game.screens.GameScreen.GAME_WIDTH;
 import static com.mygdx.game.screens.game.character.AssassinInput.CLEANSE_KEYDOWN;
 import static com.mygdx.game.screens.game.character.AssassinInput.CLEANSE_KEYUP;
 import static com.mygdx.game.screens.game.character.AssassinInput.CROWD_CONTROL;
@@ -667,10 +668,10 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 		if (falling) {
 			velocity.y += GRAVITY * 60 * Gdx.graphics.getRawDeltaTime();
 			velocity.x *= Math.pow(Math.pow(AIR_FRICTION, 60), Gdx.graphics.getRawDeltaTime());
-			if (getPosition().y < FLOOR_HEIGHT) {
+			if (getPosition().y < GAME_FLOOR_HEIGHT) {
 				falling = false;
 				velocity.y = 0;
-				getPosition().y = FLOOR_HEIGHT;
+				getPosition().y = GAME_FLOOR_HEIGHT;
 			}
 		} else {
 			// f ^ 60 = g ^ fps
@@ -692,8 +693,8 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 			getPosition().x = -x;
 		}
 
-		if (getPosition().x > CAMERA_WIDTH - x - width) {
-			getPosition().x = CAMERA_WIDTH - x - width;
+		if (getPosition().x > GAME_WIDTH - x - width) {
+			getPosition().x = GAME_WIDTH - x - width;
 		}
 	}
 
