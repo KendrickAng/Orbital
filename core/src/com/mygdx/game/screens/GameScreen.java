@@ -2,12 +2,12 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.MusicName;
@@ -117,10 +117,13 @@ public class GameScreen extends UntitledScreen {
 	private static final float DEAD_CHARACTER_INVULNERABLE_DURATION = 1f;
 
 	private Assets A;
-	private Camera camera;
-	private float cameraX;
 	private Highscores highscores;
 	private Timer timer;
+
+	private OrthographicCamera cameraGame;
+	private float cameraX;
+	private OrthographicCamera cameraUI;
+	private FitViewport viewportUI;
 
 	private Background background;
 	private Floor floor;
@@ -167,12 +170,15 @@ public class GameScreen extends UntitledScreen {
 	public GameScreen(UntitledGame game) {
 		super(game);
 
-		Viewport viewport = game.getViewport();
+		this.A = game.getAssets();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
-		this.A = game.getAssets();
-		this.camera = game.getCamera();
-		this.cameraX = camera.position.x;
+		this.cameraGame = game.getCamera();
+		this.cameraX = cameraGame.position.x;
+		this.cameraUI = new OrthographicCamera();
+		this.cameraUI.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
+		this.viewportUI = new FitViewport(CAMERA_WIDTH, CAMERA_HEIGHT, cameraUI);
+
 		this.highscores = game.getHighscores();
 		this.entityManager = new EntityManager();
 		this.floatingTextManager = new FloatingTextManager(A);
@@ -278,7 +284,7 @@ public class GameScreen extends UntitledScreen {
 				.setY(CONTINUE_TEXT_Y)
 				.setText(CONTINUE_TEXT);
 
-		continueButton = new ButtonUI(MIDDLE, viewport, () -> {
+		continueButton = new ButtonUI(MIDDLE, this.viewportUI, () -> {
 			if (gameOver) {
 				setScreen(MAIN_MENU);
 			}
@@ -302,7 +308,8 @@ public class GameScreen extends UntitledScreen {
 	}
 
 	@Override
-	public void update() {
+	public void render(SpriteBatch batch) {
+		/* Update */
 		if (!gameOver) {
 			level = (int) ((1 - boss1.getHealth() / boss1.getMaxHealth()) * 100);
 			time += Gdx.graphics.getRawDeltaTime();
@@ -331,16 +338,22 @@ public class GameScreen extends UntitledScreen {
 		levelText.setText(LEVEL_TEXT + UntitledGame.formatLevel(level));
 		timeText.setText(TIME_TEXT + UntitledGame.formatTime((int) time));
 		scoreText.setText(SCORE_TEXT + score);
-	}
 
-	@Override
-	public void render(SpriteBatch batch) {
+		/* Render Game */
+		batch.setProjectionMatrix(cameraGame.combined);
+		batch.begin();
+
 		background.render(batch);
 		floor.render(batch);
 		entityManager.render(batch);
 		floatingTextManager.render(batch);
 
-		// UI
+		batch.end();
+
+		/* Render UI */
+		batch.setProjectionMatrix(cameraUI.combined);
+		batch.begin();
+
 		if (character == tank && !tank.isDispose()) {
 			tankText.render(batch);
 			tankHealthBar.render(batch);
@@ -367,11 +380,22 @@ public class GameScreen extends UntitledScreen {
 			continueButton.render(batch);
 			continueText.render(batch);
 		}
+
+		batch.end();
 	}
 
 	@Override
 	public void renderDebug(ShapeRenderer renderer) {
-		entityManager.renderDebugAll(renderer);
+		renderer.setProjectionMatrix(cameraGame.combined);
+		renderer.begin();
+		this.entityManager.renderDebugAll(renderer);
+		renderer.end();
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		super.resize(width, height);
+		this.viewportUI.update(width, height);
 	}
 
 	@Override
@@ -437,13 +461,15 @@ public class GameScreen extends UntitledScreen {
 			timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
-					camera.position.x = cameraX;
-					camera.position.x += offset;
+					cameraGame.position.x = cameraX;
+					cameraGame.position.x += offset;
+					cameraGame.update();
 					timer.scheduleTask(new Timer.Task() {
 						@Override
 						public void run() {
-							camera.position.x = cameraX;
-							camera.position.x -= offset;
+							cameraGame.position.x = cameraX;
+							cameraGame.position.x -= offset;
+							cameraGame.update();
 							screenShake(count - 1, offset * 0.9f, interval);
 						}
 					}, interval);
@@ -453,7 +479,8 @@ public class GameScreen extends UntitledScreen {
 			timer.scheduleTask(new Timer.Task() {
 				@Override
 				public void run() {
-					camera.position.x = cameraX;
+					cameraGame.position.x = cameraX;
+					cameraGame.update();
 				}
 			}, interval);
 		}

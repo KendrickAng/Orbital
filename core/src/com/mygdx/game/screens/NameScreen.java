@@ -2,6 +2,7 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
@@ -41,6 +42,7 @@ public class NameScreen extends UntitledScreen {
 	private static final float CONTINUE_Y = 50f;
 
 	private Assets A;
+	private OrthographicCamera camera;
 	private Array<Character> characterStack;
 
 	private Background background;
@@ -57,6 +59,7 @@ public class NameScreen extends UntitledScreen {
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
 		this.A = game.getAssets();
+		this.camera = game.getCamera();
 		this.characterStack = new Array<>();
 		this.background = new Background(A);
 
@@ -104,12 +107,10 @@ public class NameScreen extends UntitledScreen {
 	}
 
 	@Override
-	public void update() {
-
-	}
-
-	@Override
 	public void render(SpriteBatch batch) {
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+
 		this.background.render(batch);
 		this.yourNameText.render(batch);
 
@@ -128,6 +129,8 @@ public class NameScreen extends UntitledScreen {
 			this.continueButton.render(batch);
 			this.continueText.render(batch);
 		}
+
+		batch.end();
 	}
 
 	@Override

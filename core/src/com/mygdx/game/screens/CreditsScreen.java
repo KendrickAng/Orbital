@@ -1,6 +1,7 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -34,6 +35,7 @@ public class CreditsScreen extends UntitledScreen {
 	private static final float BACK_BUTTON_Y = 50;
 
 	private Assets A;
+	private OrthographicCamera camera;
 
 	private TextUI musicText;
 
@@ -44,6 +46,8 @@ public class CreditsScreen extends UntitledScreen {
 		super(game);
 
 		this.A = game.getAssets();
+		this.camera = game.getCamera();
+
 		Viewport viewport = game.getViewport();
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
@@ -71,16 +75,16 @@ public class CreditsScreen extends UntitledScreen {
 	}
 
 	@Override
-	public void update() {
-
-	}
-
-	@Override
 	public void render(SpriteBatch batch) {
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+
 		this.musicText.render(batch);
 
 		this.backButton.render(batch);
 		this.backButtonText.render(batch);
+
+		batch.end();
 	}
 
 	@Override

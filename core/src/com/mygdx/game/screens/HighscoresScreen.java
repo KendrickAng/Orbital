@@ -1,6 +1,7 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -63,6 +64,7 @@ public class HighscoresScreen extends UntitledScreen {
 	private static final float BACK_BUTTON_Y = 50;
 
 	private Assets A;
+	private OrthographicCamera camera;
 
 	private Background background;
 	private TextUI backText;
@@ -124,6 +126,7 @@ public class HighscoresScreen extends UntitledScreen {
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
 		this.A = game.getAssets();
+		this.camera = game.getCamera();
 		this.loading = true;
 		this.background = new Background(A);
 
@@ -197,12 +200,10 @@ public class HighscoresScreen extends UntitledScreen {
 	}
 
 	@Override
-	public void update() {
-
-	}
-
-	@Override
 	public void render(SpriteBatch batch) {
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+
 		this.background.render(batch);
 		this.backButton.render(batch);
 		this.backText.render(batch);
@@ -214,6 +215,8 @@ public class HighscoresScreen extends UntitledScreen {
 				h.render(batch);
 			}
 		}
+
+		batch.end();
 	}
 
 	@Override

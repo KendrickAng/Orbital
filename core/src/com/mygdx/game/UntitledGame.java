@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.assets.AssassinAnimationName;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.Boss1AnimationName;
@@ -62,7 +61,7 @@ import static com.mygdx.game.screens.ScreenName.NAME_MENU;
 import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
-	public static final String VERSION = "BETA 0.8";
+	public static final String VERSION = "BETA 1.0";
 
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;
@@ -95,11 +94,12 @@ public class UntitledGame extends Game {
 	private Assets assets;
 	private Highscores highscores;
 	private InputMultiplexer inputMultiplexer;
-	private OrthographicCamera camera;
 	private Preferences settings;
 	private SpriteBatch batch;
 	private ShapeRenderer renderer;
-	private Viewport viewport;
+
+	private OrthographicCamera camera;
+	private FitViewport viewport;
 
 	@Override
 	public void create() {
@@ -110,11 +110,10 @@ public class UntitledGame extends Game {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
 		viewport = new FitViewport(CAMERA_WIDTH, CAMERA_HEIGHT, camera);
-		inputMultiplexer = new InputMultiplexer();
-
-		settings = Gdx.app.getPreferences(PREFERENCES_SETTINGS);
 
 		assets = new Assets();
+		inputMultiplexer = new InputMultiplexer();
+		settings = Gdx.app.getPreferences(PREFERENCES_SETTINGS);
 
 		// TODO: (Optimization) Move to Screens
 		assets.loadTexture(BACKGROUND);
@@ -300,7 +299,7 @@ public class UntitledGame extends Game {
 		return renderer;
 	}
 
-	public Viewport getViewport() {
+	public FitViewport getViewport() {
 		return viewport;
 	}
 }

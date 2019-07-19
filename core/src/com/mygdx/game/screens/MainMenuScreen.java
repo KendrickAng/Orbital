@@ -2,6 +2,7 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -63,6 +64,7 @@ public class MainMenuScreen extends UntitledScreen {
 
 	private Assets A;
 	private Background background;
+	private OrthographicCamera camera;
 
 	private TextUI title;
 
@@ -90,6 +92,7 @@ public class MainMenuScreen extends UntitledScreen {
 
 		this.A = game.getAssets();
 		this.background = new Background(A);
+		this.camera = game.getCamera();
 
 		/* UI */
 		this.title = new TextUI(TOP_MIDDLE, A.getFont(MINECRAFT_32))
@@ -179,12 +182,10 @@ public class MainMenuScreen extends UntitledScreen {
 	}
 
 	@Override
-	public void update() {
-
-	}
-
-	@Override
 	public void render(SpriteBatch batch) {
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+
 		this.background.render(batch);
 		this.title.render(batch);
 
@@ -204,6 +205,8 @@ public class MainMenuScreen extends UntitledScreen {
 		this.exitButtonText.render(batch);
 
 		this.versionText.render(batch);
+
+		batch.end();
 	}
 
 	@Override

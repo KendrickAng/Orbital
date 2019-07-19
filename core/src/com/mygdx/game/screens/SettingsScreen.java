@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -82,6 +83,7 @@ public class SettingsScreen extends UntitledScreen {
 	private static final float SAVE_BUTTON_Y = 50;
 
 	private Assets A;
+	private OrthographicCamera camera;
 	private Preferences settings;
 	private Background background;
 
@@ -116,6 +118,7 @@ public class SettingsScreen extends UntitledScreen {
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
 		this.A = game.getAssets();
+		this.camera = game.getCamera();
 		this.settings = game.getSettings();
 		this.background = new Background(A);
 
@@ -297,12 +300,10 @@ public class SettingsScreen extends UntitledScreen {
 	}
 
 	@Override
-	public void update() {
-
-	}
-
-	@Override
 	public void render(SpriteBatch batch) {
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+
 		this.background.render(batch);
 
 		this.nameText.render(batch);
@@ -326,6 +327,8 @@ public class SettingsScreen extends UntitledScreen {
 
 		this.saveButton.render(batch);
 		this.saveButtonText.render(batch);
+
+		batch.end();
 	}
 
 	@Override

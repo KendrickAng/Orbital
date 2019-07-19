@@ -62,33 +62,33 @@ public class Assets {
 	private HashMap<RockAnimationName, AnimationAsset<RockParts>> rockAnimations;
 
 	public static final HashMap<String, TankParts> TANK_PARTS;
-	public static final String TANK_STANDING_PATH = "Entity/Tank/Standing";
-	public static final String TANK_WALKING_PATH = "Entity/Tank/Walking";
-	public static final String TANK_BLOCK_PATH = "Entity/Tank/Block";
-	public static final String TANK_IMPALE_PATH = "Entity/Tank/Impale";
-	public static final String TANK_FORTRESS_PATH = "Entity/Tank/Fortress";
-	public static final String TANK_FORTRESS_STANDING_PATH = "Entity/Tank/Fortress Standing";
-	public static final String TANK_FORTRESS_WALKING_PATH = "Entity/Tank/Fortress Walking";
-	public static final String TANK_FORTRESS_BLOCK_PATH = "Entity/Tank/Fortress Block";
-	public static final String TANK_FORTRESS_IMAPLE_PATH = "Entity/Tank/Fortress Impale";
+	public static final String TANK_STANDING_PATH = "Animations/Tank/Standing";
+	public static final String TANK_WALKING_PATH = "Animations/Tank/Walking";
+	public static final String TANK_BLOCK_PATH = "Animations/Tank/Block";
+	public static final String TANK_IMPALE_PATH = "Animations/Tank/Impale";
+	public static final String TANK_FORTRESS_PATH = "Animations/Tank/Fortress";
+	public static final String TANK_FORTRESS_STANDING_PATH = "Animations/Tank/Fortress Standing";
+	public static final String TANK_FORTRESS_WALKING_PATH = "Animations/Tank/Fortress Walking";
+	public static final String TANK_FORTRESS_BLOCK_PATH = "Animations/Tank/Fortress Block";
+	public static final String TANK_FORTRESS_IMAPLE_PATH = "Animations/Tank/Fortress Impale";
 
 	public static final HashMap<String, AssassinParts> ASSASSIN_PARTS;
-	public static final String ASSASSIN_STANDING_PATH = "Entity/Assassin/Standing";
-	public static final String ASSASSIN_WALKING_PATH = "Entity/Assassin/Walking";
-	public static final String ASSASSIN_DASH_PATH = "Entity/Assassin/Dash";
-	public static final String ASSASSIN_SHURIKEN_THROW_PATH = "Entity/Assassin/Shuriken Throw";
+	public static final String ASSASSIN_STANDING_PATH = "Animations/Assassin/Standing";
+	public static final String ASSASSIN_WALKING_PATH = "Animations/Assassin/Walking";
+	public static final String ASSASSIN_DASH_PATH = "Animations/Assassin/Dash";
+	public static final String ASSASSIN_SHURIKEN_THROW_PATH = "Animations/Assassin/Shuriken Throw";
 
 	public static final HashMap<String, Boss1Parts> BOSS1_PARTS;
-	public static final String BOSS1_STANDING_PATH = "Entity/Boss1/Standing";
-	public static final String BOSS1_GROUND_SMASH_PATH = "Entity/Boss1/Ground Smash";
-	public static final String BOSS1_EARTHQUAKE_PATH = "Entity/Boss1/Earthquake";
-	public static final String BOSS1_ROLL_PATH = "Entity/Boss1/Roll";
+	public static final String BOSS1_STANDING_PATH = "Animations/Boss1/Standing";
+	public static final String BOSS1_GROUND_SMASH_PATH = "Animations/Boss1/Ground Smash";
+	public static final String BOSS1_EARTHQUAKE_PATH = "Animations/Boss1/Earthquake";
+	public static final String BOSS1_ROLL_PATH = "Animations/Boss1/Roll";
 
 	public static final HashMap<String, ShurikenParts> SHURIKEN_PARTS;
-	public static final String SHURIKEN_FLYING_PATH = "Entity/Shuriken";
+	public static final String SHURIKEN_FLYING_PATH = "Animations/Shuriken";
 
 	public static final HashMap<String, RockParts> ROCK_PARTS;
-	public static final String ROCK_ERUPT_PATH = "Entity/Rock";
+	public static final String ROCK_ERUPT_PATH = "Animations/Rock";
 
 	static {
 		TANK_PARTS = new HashMap<>();
@@ -181,39 +181,40 @@ public class Assets {
 		shurikenAnimations = new HashMap<>();
 		rockAnimations = new HashMap<>();
 
-		defineTexture(BACKGROUND, "Background.png");
-		defineTexture(FLOOR, "Floor.png");
-		defineTexture(STUNNED, "Stunned.png");
-		defineTexture(WEAK_SPOT, "Weak Spot.png");
+		defineTexture(BACKGROUND, "Textures/Background.png");
+		defineTexture(FLOOR, "Textures/Floor.png");
 
-		defineTexture(BUTTON_NORMAL, "Button/Normal.png");
-		defineTexture(BUTTON_HOVER, "Button/Hover.png");
-		defineTexture(BUTTON_MENU_HOVER, "Button/Menu Hover.png");
+		defineTexture(BUTTON_NORMAL, "Textures/Button/Normal.png");
+		defineTexture(BUTTON_HOVER, "Textures/Button/Hover.png");
+		defineTexture(BUTTON_MENU_HOVER, "Textures/Button/Menu Hover.png");
 
-		defineTexture(HIGHSCORES_TITLE, "Highscores/Title.png");
-		defineTexture(HIGHSCORES_ODD, "Highscores/Odd.png");
-		defineTexture(HIGHSCORES_EVEN, "Highscores/Even.png");
+		defineTexture(COOLDOWN_0, "Textures/Cooldowns/0.png");
+		defineTexture(COOLDOWN_1, "Textures/Cooldowns/1.png");
+		defineTexture(COOLDOWN_2, "Textures/Cooldowns/2.png");
+		defineTexture(COOLDOWN_3, "Textures/Cooldowns/3.png");
+		defineTexture(COOLDOWN_4, "Textures/Cooldowns/4.png");
+		defineTexture(COOLDOWN_5, "Textures/Cooldowns/5.png");
 
-		defineTexture(INFO_BAR_BACKGROUND, "InfoBar/Background.png");
-		defineTexture(HEALTH_BAR_TANK, "InfoBar/TankHealthBar.png");
-		defineTexture(HEALTH_BAR_ASSASSIN, "InfoBar/AssassinHealthBar.png");
-		defineTexture(STACK_BAR_ASSASSIN, "InfoBar/AssassinStackBar.png");
-		defineTexture(HEALTH_BAR_BOSS, "InfoBar/BossHealthBar.png");
+		defineTexture(COOLDOWN_BLOCK, "Textures/Cooldowns/Block Ability.png");
+		defineTexture(COOLDOWN_IMPALE, "Textures/Cooldowns/Impale Ability.png");
+		defineTexture(COOLDOWN_FORTRESS, "Textures/Cooldowns/Fortress Ability.png");
+		defineTexture(COOLDOWN_DASH, "Textures/Cooldowns/Dash Ability.png");
+		defineTexture(COOLDOWN_SHURIKEN_THROW, "Textures/Cooldowns/Shuriken Ability.png");
+		defineTexture(COOLDOWN_CLEANSE, "Textures/Cooldowns/Cleanse Ability.png");
+		defineTexture(COOLDOWN_SWITCH_CHARACTER, "Textures/Cooldowns/Switch Character.png");
 
-		defineTexture(COOLDOWN_0, "Cooldowns/0.png");
-		defineTexture(COOLDOWN_1, "Cooldowns/1.png");
-		defineTexture(COOLDOWN_2, "Cooldowns/2.png");
-		defineTexture(COOLDOWN_3, "Cooldowns/3.png");
-		defineTexture(COOLDOWN_4, "Cooldowns/4.png");
-		defineTexture(COOLDOWN_5, "Cooldowns/5.png");
+		defineTexture(STUNNED, "Textures/Debuff/Stunned.png");
+		defineTexture(WEAK_SPOT, "Textures/Debuff/Weak Spot.png");
 
-		defineTexture(COOLDOWN_BLOCK, "Cooldowns/Block Ability.png");
-		defineTexture(COOLDOWN_IMPALE, "Cooldowns/Impale Ability.png");
-		defineTexture(COOLDOWN_FORTRESS, "Cooldowns/Fortress Ability.png");
-		defineTexture(COOLDOWN_DASH, "Cooldowns/Dash Ability.png");
-		defineTexture(COOLDOWN_SHURIKEN_THROW, "Cooldowns/Shuriken Ability.png");
-		defineTexture(COOLDOWN_CLEANSE, "Cooldowns/Cleanse Ability.png");
-		defineTexture(COOLDOWN_SWITCH_CHARACTER, "Cooldowns/Switch Character.png");
+		defineTexture(HIGHSCORES_TITLE, "Textures/Highscores/Title.png");
+		defineTexture(HIGHSCORES_ODD, "Textures/Highscores/Odd.png");
+		defineTexture(HIGHSCORES_EVEN, "Textures/Highscores/Even.png");
+
+		defineTexture(INFO_BAR_BACKGROUND, "Textures/InfoBar/Background.png");
+		defineTexture(HEALTH_BAR_TANK, "Textures/InfoBar/TankHealthBar.png");
+		defineTexture(HEALTH_BAR_ASSASSIN, "Textures/InfoBar/AssassinHealthBar.png");
+		defineTexture(STACK_BAR_ASSASSIN, "Textures/InfoBar/AssassinStackBar.png");
+		defineTexture(HEALTH_BAR_BOSS, "Textures/InfoBar/BossHealthBar.png");
 
 		defineFont(FontName.MINECRAFT_8, "Fonts/Minecraft.ttf", 8);
 		defineFont(FontName.MINECRAFT_16, "Fonts/Minecraft.ttf", 16);

@@ -1,5 +1,6 @@
 ## Assets
-/android/assets/**/Animation.xml
+/android/assets/Animations/**/Animation.xml
+/android/assets/Animations/**/*.png
 
 ## Java
 
