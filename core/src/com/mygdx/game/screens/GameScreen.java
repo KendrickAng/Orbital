@@ -47,7 +47,7 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_BLOCK;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_CLEANSE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
-import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_HAMMER_SWING;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
 import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
@@ -249,7 +249,7 @@ public class GameScreen extends UntitledScreen {
 				.setX(TANK_COOLDOWNS_X)
 				.setY(TANK_COOLDOWNS_Y)
 				.add(tank.getBlockState(), A.getTexture(COOLDOWN_BLOCK))
-				.add(tank.getImpaleState(), A.getTexture(COOLDOWN_IMPALE))
+				.add(tank.getImpaleState(), A.getTexture(COOLDOWN_HAMMER_SWING))
 				.add(tank.getFortressState(), A.getTexture(COOLDOWN_FORTRESS))
 				.add(switchCharacter, A.getTexture(COOLDOWN_SWITCH_CHARACTER));
 
@@ -458,12 +458,17 @@ public class GameScreen extends UntitledScreen {
 					() -> highscoreText.setText(HIGHSCORE_FAILED_TEXT));
 		}
 
+		boolean win = level == 100;
+		if (!win) {
+			multiplexer.removeProcessor(playerController);
+		}
+
 		timer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
 				state = State.GAME_OVER_SCREEN;
 
-				if (level == 100) {
+				if (win) {
 					gameOverText.setText(GAME_OVER_WIN_TEXT);
 				} else {
 					gameOverText.setText(GAME_OVER_LOSE_TEXT);

@@ -34,7 +34,7 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_BLOCK;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_CLEANSE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
-import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_HAMMER_SWING;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
 import static com.mygdx.game.assets.TextureName.GAME_FLOOR;
@@ -66,18 +66,19 @@ public class Assets {
 	public static final String TANK_STANDING_PATH = "Animations/Tank/Standing";
 	public static final String TANK_WALKING_PATH = "Animations/Tank/Walking";
 	public static final String TANK_BLOCK_PATH = "Animations/Tank/Block";
-	public static final String TANK_IMPALE_PATH = "Animations/Tank/Impale";
+	public static final String TANK_HAMMER_SWING_PATH = "Animations/Tank/Hammer Swing";
 	public static final String TANK_FORTRESS_PATH = "Animations/Tank/Fortress";
 	public static final String TANK_FORTRESS_STANDING_PATH = "Animations/Tank/Fortress Standing";
 	public static final String TANK_FORTRESS_WALKING_PATH = "Animations/Tank/Fortress Walking";
 	public static final String TANK_FORTRESS_BLOCK_PATH = "Animations/Tank/Fortress Block";
-	public static final String TANK_FORTRESS_IMAPLE_PATH = "Animations/Tank/Fortress Impale";
+	public static final String TANK_FORTRESS_IMPALE_PATH = "Animations/Tank/Fortress Impale";
 
 	public static final HashMap<String, AssassinParts> ASSASSIN_PARTS;
 	public static final String ASSASSIN_STANDING_PATH = "Animations/Assassin/Standing";
 	public static final String ASSASSIN_WALKING_PATH = "Animations/Assassin/Walking";
 	public static final String ASSASSIN_DASH_PATH = "Animations/Assassin/Dash";
 	public static final String ASSASSIN_SHURIKEN_THROW_PATH = "Animations/Assassin/Shuriken Throw";
+	public static final String ASSASSIN_CLEANSE_PATH = "Animations/Assassin/Cleanse";
 
 	public static final HashMap<String, Boss1Parts> BOSS1_PARTS;
 	public static final String BOSS1_STANDING_PATH = "Animations/Boss1/Standing";
@@ -198,7 +199,7 @@ public class Assets {
 		defineTexture(COOLDOWN_5, "Textures/Cooldowns/5.png");
 
 		defineTexture(COOLDOWN_BLOCK, "Textures/Cooldowns/Block Ability.png");
-		defineTexture(COOLDOWN_IMPALE, "Textures/Cooldowns/Impale Ability.png");
+		defineTexture(COOLDOWN_HAMMER_SWING, "Textures/Cooldowns/Impale Ability.png");
 		defineTexture(COOLDOWN_FORTRESS, "Textures/Cooldowns/Fortress Ability.png");
 		defineTexture(COOLDOWN_DASH, "Textures/Cooldowns/Dash Ability.png");
 		defineTexture(COOLDOWN_SHURIKEN_THROW, "Textures/Cooldowns/Shuriken Ability.png");
@@ -229,17 +230,18 @@ public class Assets {
 		defineTankAnimation(TankAnimationName.STANDING, TANK_STANDING_PATH);
 		defineTankAnimation(TankAnimationName.WALKING, TANK_WALKING_PATH);
 		defineTankAnimation(TankAnimationName.BLOCK, TANK_BLOCK_PATH);
-		defineTankAnimation(TankAnimationName.IMPALE, TANK_IMPALE_PATH);
+		defineTankAnimation(TankAnimationName.HAMMER_SWING, TANK_HAMMER_SWING_PATH);
 		defineTankAnimation(TankAnimationName.FORTRESS, TANK_FORTRESS_PATH);
 		defineTankAnimation(TankAnimationName.FORTRESS_STANDING, TANK_FORTRESS_STANDING_PATH);
 		defineTankAnimation(TankAnimationName.FORTRESS_WALKING, TANK_FORTRESS_WALKING_PATH);
 		defineTankAnimation(TankAnimationName.FORTRESS_BLOCK, TANK_FORTRESS_BLOCK_PATH);
-		defineTankAnimation(TankAnimationName.FORTRESS_IMPALE, TANK_FORTRESS_IMAPLE_PATH);
+		defineTankAnimation(TankAnimationName.FORTRESS_IMPALE, TANK_FORTRESS_IMPALE_PATH);
 
 		defineAssassinAnimation(AssassinAnimationName.STANDING, ASSASSIN_STANDING_PATH);
 		defineAssassinAnimation(AssassinAnimationName.WALKING, ASSASSIN_WALKING_PATH);
 		defineAssassinAnimation(AssassinAnimationName.DASH, ASSASSIN_DASH_PATH);
 		defineAssassinAnimation(AssassinAnimationName.SHURIKEN_THROW, ASSASSIN_SHURIKEN_THROW_PATH);
+		defineAssassinAnimation(AssassinAnimationName.CLEANSE, ASSASSIN_CLEANSE_PATH);
 
 		defineBoss1Animation(Boss1AnimationName.STANDING, BOSS1_STANDING_PATH);
 		defineBoss1Animation(Boss1AnimationName.GROUND_SMASH, BOSS1_GROUND_SMASH_PATH);

@@ -25,8 +25,8 @@ import static com.mygdx.game.screens.game.character.TankInput.CROWD_CONTROL;
 import static com.mygdx.game.screens.game.character.TankInput.FORTRESS_INPUT;
 import static com.mygdx.game.screens.game.character.TankInput.FORTRESS_KEYDOWN;
 import static com.mygdx.game.screens.game.character.TankInput.FORTRESS_KEYUP;
-import static com.mygdx.game.screens.game.character.TankInput.IMPALE_KEYDOWN;
-import static com.mygdx.game.screens.game.character.TankInput.IMPALE_KEYUP;
+import static com.mygdx.game.screens.game.character.TankInput.HAMMER_SWING_KEYDOWN;
+import static com.mygdx.game.screens.game.character.TankInput.HAMMER_SWING_KEYUP;
 import static com.mygdx.game.screens.game.character.TankInput.LEFT_KEYDOWN;
 import static com.mygdx.game.screens.game.character.TankInput.LEFT_KEYUP;
 import static com.mygdx.game.screens.game.character.TankInput.RIGHT_KEYDOWN;
@@ -67,10 +67,10 @@ import static com.mygdx.game.screens.game.character.TankStates.FORTRESS_STANDING
 import static com.mygdx.game.screens.game.character.TankStates.FORTRESS_STANDING_LEFT_RIGHT;
 import static com.mygdx.game.screens.game.character.TankStates.FORTRESS_WALKING_LEFT;
 import static com.mygdx.game.screens.game.character.TankStates.FORTRESS_WALKING_RIGHT;
-import static com.mygdx.game.screens.game.character.TankStates.IMPALE;
-import static com.mygdx.game.screens.game.character.TankStates.IMPALE_LEFT;
-import static com.mygdx.game.screens.game.character.TankStates.IMPALE_LEFT_RIGHT;
-import static com.mygdx.game.screens.game.character.TankStates.IMPALE_RIGHT;
+import static com.mygdx.game.screens.game.character.TankStates.HAMMER_SWING;
+import static com.mygdx.game.screens.game.character.TankStates.HAMMER_SWING_LEFT;
+import static com.mygdx.game.screens.game.character.TankStates.HAMMER_SWING_LEFT_RIGHT;
+import static com.mygdx.game.screens.game.character.TankStates.HAMMER_SWING_RIGHT;
 import static com.mygdx.game.screens.game.character.TankStates.STANDING;
 import static com.mygdx.game.screens.game.character.TankStates.STANDING_LEFT_RIGHT;
 import static com.mygdx.game.screens.game.character.TankStates.WALKING_LEFT;
@@ -89,7 +89,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 	// Skill cooldown in seconds.
 	private static final float BLOCK_COOLDOWN = 0.2f;
-	private static final float IMPALE_COOLDOWN = 1f;
+	private static final float HAMMER_SWING_COOLDOWN = 1f;
 	private static final float FORTRESS_DURATION = 10f;
 	private static final float FORTRESS_COOLDOWN = FORTRESS_DURATION + 20f;
 
@@ -97,15 +97,15 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float STANDING_ANIMATION_DURATION = 1f;
 	private static final float WALKING_ANIMATION_DURATION = 1f;
 	private static final float BLOCK_ANIMATION_DURATION = 0.25f;
-	private static final float IMPALE_ANIMATION_DURATION = 0.5f;
+	private static final float HAMMER_SWING_ANIMATION_DURATION = 0.75f;
 
 	private static final float FORTRESS_ANIMATION_DURATION = 0.75f;
 	private static final float FORTRESS_STANDING_ANIMATION_DURATION = 2f;
 	private static final float FORTRESS_WALKING_ANIMATION_DURATION = 2f;
 
 	// Skill modifiers
-	private static final float IMPALE_DAMAGE = 10f;
-	private static final float IMPALE_BONUS_DAMAGE = IMPALE_DAMAGE + 10f;
+	private static final float HAMMER_SWING_DAMAGE = 10f;
+	private static final float HAMMER_SWING_BONUS_DAMAGE = HAMMER_SWING_DAMAGE + 10f;
 
 	private static final float BLOCK_SLOW_MODIFIER = 0.5f;
 	private static final float FORTRESS_SLOW_MODIFIER = 0.5f;
@@ -126,10 +126,10 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final Color HEAL_TEXT_COLOR = Color.valueOf("a5d6a7");
 
 	private Ability<TankStates> blockAbility;
-	private Ability<TankStates> impaleAbility;
+	private Ability<TankStates> hammerSwingAbility;
 	private Ability<TankStates> fortressAbility;
 
-	private Animation<TankParts> impaleAnimation;
+	private Animation<TankParts> hammerSwingAnimation;
 	private Animation<TankParts> blockAnimation;
 	private Animation<TankParts> fortressBlockAnimation;
 
@@ -158,7 +158,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.addEdge(LEFT_KEYDOWN, WALKING_LEFT)
 				.addEdge(RIGHT_KEYDOWN, WALKING_RIGHT)
 				.addEdge(BLOCK_KEYDOWN, BLOCK)
-				.addEdge(IMPALE_KEYDOWN, IMPALE)
+				.addEdge(HAMMER_SWING_KEYDOWN, HAMMER_SWING)
 				.addEdge(FORTRESS_KEYDOWN, FORTRESS)
 				.addEdge(SWITCH_CHARACTER, STANDING))
 
@@ -166,7 +166,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(LEFT_KEYUP, WALKING_RIGHT)
 						.addEdge(RIGHT_KEYUP, WALKING_LEFT)
 						.addEdge(BLOCK_KEYDOWN, BLOCK_LEFT_RIGHT)
-						.addEdge(IMPALE_KEYDOWN, IMPALE_LEFT_RIGHT)
+						.addEdge(HAMMER_SWING_KEYDOWN, HAMMER_SWING_LEFT_RIGHT)
 						.addEdge(FORTRESS_KEYDOWN, FORTRESS_LEFT_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING)
 						.addEdge(CROWD_CONTROL, STANDING))
@@ -177,7 +177,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(LEFT_KEYUP, STANDING)
 						.addEdge(RIGHT_KEYDOWN, STANDING_LEFT_RIGHT)
 						.addEdge(BLOCK_KEYDOWN, BLOCK_LEFT)
-						.addEdge(IMPALE_KEYDOWN, IMPALE_LEFT)
+						.addEdge(HAMMER_SWING_KEYDOWN, HAMMER_SWING_LEFT)
 						.addEdge(FORTRESS_KEYDOWN, FORTRESS_LEFT)
 						.addEdge(SWITCH_CHARACTER, STANDING)
 						.addEdge(CROWD_CONTROL, STANDING))
@@ -188,7 +188,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(RIGHT_KEYUP, STANDING)
 						.addEdge(LEFT_KEYDOWN, STANDING_LEFT_RIGHT)
 						.addEdge(BLOCK_KEYDOWN, BLOCK_RIGHT)
-						.addEdge(IMPALE_KEYDOWN, IMPALE_RIGHT)
+						.addEdge(HAMMER_SWING_KEYDOWN, HAMMER_SWING_RIGHT)
 						.addEdge(FORTRESS_KEYDOWN, FORTRESS_RIGHT)
 						.addEdge(SWITCH_CHARACTER, STANDING)
 						.addEdge(CROWD_CONTROL, STANDING))
@@ -274,28 +274,28 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(CROWD_CONTROL, STANDING))
 
 				/* Slash */
-				.add(new State<TankInput, TankStates>(IMPALE)
-						.addEdge(LEFT_KEYDOWN, IMPALE_LEFT)
-						.addEdge(RIGHT_KEYDOWN, IMPALE_RIGHT)
-						.addEdge(IMPALE_KEYUP, STANDING)
+				.add(new State<TankInput, TankStates>(HAMMER_SWING)
+						.addEdge(LEFT_KEYDOWN, HAMMER_SWING_LEFT)
+						.addEdge(RIGHT_KEYDOWN, HAMMER_SWING_RIGHT)
+						.addEdge(HAMMER_SWING_KEYUP, STANDING)
 						.addEdge(CROWD_CONTROL, STANDING))
 
-				.add(new State<TankInput, TankStates>(IMPALE_LEFT)
-						.addEdge(LEFT_KEYUP, IMPALE)
-						.addEdge(RIGHT_KEYDOWN, IMPALE_LEFT_RIGHT)
-						.addEdge(IMPALE_KEYUP, WALKING_LEFT)
+				.add(new State<TankInput, TankStates>(HAMMER_SWING_LEFT)
+						.addEdge(LEFT_KEYUP, HAMMER_SWING)
+						.addEdge(RIGHT_KEYDOWN, HAMMER_SWING_LEFT_RIGHT)
+						.addEdge(HAMMER_SWING_KEYUP, WALKING_LEFT)
 						.addEdge(CROWD_CONTROL, STANDING))
 
-				.add(new State<TankInput, TankStates>(IMPALE_RIGHT)
-						.addEdge(RIGHT_KEYUP, IMPALE)
-						.addEdge(LEFT_KEYDOWN, IMPALE_LEFT_RIGHT)
-						.addEdge(IMPALE_KEYUP, WALKING_RIGHT)
+				.add(new State<TankInput, TankStates>(HAMMER_SWING_RIGHT)
+						.addEdge(RIGHT_KEYUP, HAMMER_SWING)
+						.addEdge(LEFT_KEYDOWN, HAMMER_SWING_LEFT_RIGHT)
+						.addEdge(HAMMER_SWING_KEYUP, WALKING_RIGHT)
 						.addEdge(CROWD_CONTROL, STANDING))
 
-				.add(new State<TankInput, TankStates>(IMPALE_LEFT_RIGHT)
-						.addEdge(LEFT_KEYUP, IMPALE_RIGHT)
-						.addEdge(RIGHT_KEYUP, IMPALE_LEFT)
-						.addEdge(IMPALE_KEYUP, STANDING_LEFT_RIGHT)
+				.add(new State<TankInput, TankStates>(HAMMER_SWING_LEFT_RIGHT)
+						.addEdge(LEFT_KEYUP, HAMMER_SWING_RIGHT)
+						.addEdge(RIGHT_KEYUP, HAMMER_SWING_LEFT)
+						.addEdge(HAMMER_SWING_KEYUP, STANDING_LEFT_RIGHT)
 						.addEdge(CROWD_CONTROL, STANDING))
 
 				/* Fortress Animation */
@@ -328,7 +328,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(LEFT_KEYDOWN, FORTRESS_WALKING_LEFT)
 						.addEdge(RIGHT_KEYDOWN, FORTRESS_WALKING_RIGHT)
 						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK)
-						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE)
+						.addEdge(HAMMER_SWING_KEYDOWN, FORTRESS_IMPALE)
 						.addEdge(FORTRESS_KEYUP, STANDING)
 						.addEdge(SWITCH_CHARACTER, FORTRESS_STANDING))
 
@@ -338,7 +338,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(LEFT_KEYUP, FORTRESS_STANDING)
 						.addEdge(RIGHT_KEYDOWN, FORTRESS_STANDING_LEFT_RIGHT)
 						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_LEFT)
-						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_LEFT)
+						.addEdge(HAMMER_SWING_KEYDOWN, FORTRESS_IMPALE_LEFT)
 						.addEdge(FORTRESS_KEYUP, WALKING_LEFT)
 						.addEdge(SWITCH_CHARACTER, FORTRESS_STANDING)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
@@ -349,7 +349,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(RIGHT_KEYUP, FORTRESS_STANDING)
 						.addEdge(LEFT_KEYDOWN, FORTRESS_STANDING_LEFT_RIGHT)
 						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_RIGHT)
-						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_RIGHT)
+						.addEdge(HAMMER_SWING_KEYDOWN, FORTRESS_IMPALE_RIGHT)
 						.addEdge(FORTRESS_KEYUP, WALKING_RIGHT)
 						.addEdge(SWITCH_CHARACTER, FORTRESS_STANDING)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
@@ -358,7 +358,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 						.addEdge(LEFT_KEYUP, FORTRESS_WALKING_RIGHT)
 						.addEdge(RIGHT_KEYUP, FORTRESS_WALKING_LEFT)
 						.addEdge(BLOCK_KEYDOWN, FORTRESS_BLOCK_LEFT_RIGHT)
-						.addEdge(IMPALE_KEYDOWN, FORTRESS_IMPALE_LEFT_RIGHT)
+						.addEdge(HAMMER_SWING_KEYDOWN, FORTRESS_IMPALE_LEFT_RIGHT)
 						.addEdge(FORTRESS_KEYUP, STANDING_LEFT_RIGHT)
 						.addEdge(SWITCH_CHARACTER, FORTRESS_STANDING)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
@@ -398,29 +398,29 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.add(new State<TankInput, TankStates>(FORTRESS_IMPALE)
 						.addEdge(LEFT_KEYDOWN, FORTRESS_IMPALE_LEFT)
 						.addEdge(RIGHT_KEYDOWN, FORTRESS_IMPALE_RIGHT)
-						.addEdge(IMPALE_KEYUP, FORTRESS_STANDING)
-						.addEdge(FORTRESS_KEYUP, IMPALE)
+						.addEdge(HAMMER_SWING_KEYUP, FORTRESS_STANDING)
+						.addEdge(FORTRESS_KEYUP, HAMMER_SWING)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
 
 				.add(new State<TankInput, TankStates>(FORTRESS_IMPALE_LEFT)
 						.addEdge(LEFT_KEYUP, FORTRESS_IMPALE)
 						.addEdge(RIGHT_KEYDOWN, FORTRESS_IMPALE_LEFT_RIGHT)
-						.addEdge(IMPALE_KEYUP, FORTRESS_WALKING_LEFT)
-						.addEdge(FORTRESS_KEYUP, IMPALE_LEFT)
+						.addEdge(HAMMER_SWING_KEYUP, FORTRESS_WALKING_LEFT)
+						.addEdge(FORTRESS_KEYUP, HAMMER_SWING_LEFT)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
 
 				.add(new State<TankInput, TankStates>(FORTRESS_IMPALE_RIGHT)
 						.addEdge(RIGHT_KEYUP, FORTRESS_IMPALE)
 						.addEdge(LEFT_KEYDOWN, FORTRESS_IMPALE_LEFT_RIGHT)
-						.addEdge(IMPALE_KEYUP, FORTRESS_WALKING_RIGHT)
-						.addEdge(FORTRESS_KEYUP, IMPALE_RIGHT)
+						.addEdge(HAMMER_SWING_KEYUP, FORTRESS_WALKING_RIGHT)
+						.addEdge(FORTRESS_KEYUP, HAMMER_SWING_RIGHT)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING))
 
 				.add(new State<TankInput, TankStates>(FORTRESS_IMPALE_LEFT_RIGHT)
 						.addEdge(LEFT_KEYUP, FORTRESS_IMPALE_RIGHT)
 						.addEdge(RIGHT_KEYUP, FORTRESS_IMPALE_LEFT)
-						.addEdge(IMPALE_KEYUP, FORTRESS_STANDING_LEFT_RIGHT)
-						.addEdge(FORTRESS_KEYUP, IMPALE_LEFT_RIGHT)
+						.addEdge(HAMMER_SWING_KEYUP, FORTRESS_STANDING_LEFT_RIGHT)
+						.addEdge(FORTRESS_KEYUP, HAMMER_SWING_LEFT_RIGHT)
 						.addEdge(CROWD_CONTROL, FORTRESS_STANDING));
 	}
 
@@ -442,15 +442,15 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 					input(BLOCK_INPUT);
 				});
 
-		impaleAnimation = assets.getTankAnimation(TankAnimationName.IMPALE)
-				.setDuration(IMPALE_ANIMATION_DURATION)
-				.defineEnd(() -> input(IMPALE_KEYUP));
+		hammerSwingAnimation = assets.getTankAnimation(TankAnimationName.HAMMER_SWING)
+				.setDuration(HAMMER_SWING_ANIMATION_DURATION)
+				.defineEnd(() -> input(HAMMER_SWING_KEYUP));
 		initImpaleHitTest();
 
 		Animation<TankParts> fortress = assets.getTankAnimation(TankAnimationName.FORTRESS)
 				.setDuration(FORTRESS_ANIMATION_DURATION)
-				.defineFrameTask(2, () -> inflictDebuff(fortressPerfectDebuff))
-				.defineFrameTask(5, () -> cancelDebuff(fortressPerfectDebuff))
+				.defineFrameTask(5, () -> inflictDebuff(fortressPerfectDebuff))
+				.defineFrameTask(9, () -> cancelDebuff(fortressPerfectDebuff))
 				.defineEnd(() -> input(FORTRESS_INPUT));
 
 		Animation<TankParts> fortressStanding = assets.getTankAnimation(TankAnimationName.FORTRESS_STANDING)
@@ -470,10 +470,10 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				});
 
 		Animation<TankParts> fortressImpale = assets.getTankAnimation(TankAnimationName.FORTRESS_IMPALE)
-				.setDuration(IMPALE_ANIMATION_DURATION)
-				.defineFrameTask(0, () -> getGame().getBoss1()
-						.damageTest(this, getHitbox(WEAPON), IMPALE_DAMAGE))
-				.defineEnd(() -> input(IMPALE_KEYUP));
+				.setDuration(HAMMER_SWING_ANIMATION_DURATION)
+				.defineFrameTask(2, () -> getGame().getBoss1()
+						.damageTest(this, getHitbox(WEAPON), HAMMER_SWING_DAMAGE))
+				.defineEnd(() -> input(HAMMER_SWING_KEYUP));
 
 		animations.map(STANDING, standing)
 				.map(STANDING_LEFT_RIGHT, standing)
@@ -485,10 +485,10 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.map(BLOCK_LEFT, blockAnimation)
 				.map(BLOCK_RIGHT, blockAnimation)
 
-				.map(IMPALE, impaleAnimation)
-				.map(IMPALE_LEFT, impaleAnimation)
-				.map(IMPALE_RIGHT, impaleAnimation)
-				.map(IMPALE_LEFT_RIGHT, impaleAnimation)
+				.map(HAMMER_SWING, hammerSwingAnimation)
+				.map(HAMMER_SWING_LEFT, hammerSwingAnimation)
+				.map(HAMMER_SWING_RIGHT, hammerSwingAnimation)
+				.map(HAMMER_SWING_LEFT_RIGHT, hammerSwingAnimation)
 
 				.map(FORTRESS, fortress)
 				.map(FORTRESS_LEFT, fortress)
@@ -528,7 +528,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 					cancelDebuff(blockDebuff);
 				});
 
-		impaleAbility = new Ability<>(IMPALE_COOLDOWN);
+		hammerSwingAbility = new Ability<>(HAMMER_SWING_COOLDOWN);
 
 		fortressAbility = new Ability<>(FORTRESS_COOLDOWN);
 		initFortress();
@@ -551,23 +551,23 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 				.addEnd(FORTRESS_WALKING_RIGHT, blockAbility)
 				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, blockAbility)
 
-				.addBegin(IMPALE, impaleAbility)
-				.addBegin(IMPALE_LEFT, impaleAbility)
-				.addBegin(IMPALE_RIGHT, impaleAbility)
-				.addBegin(IMPALE_LEFT_RIGHT, impaleAbility)
-				.addEnd(STANDING, impaleAbility)
-				.addEnd(WALKING_LEFT, impaleAbility)
-				.addEnd(WALKING_RIGHT, impaleAbility)
-				.addEnd(STANDING_LEFT_RIGHT, impaleAbility)
+				.addBegin(HAMMER_SWING, hammerSwingAbility)
+				.addBegin(HAMMER_SWING_LEFT, hammerSwingAbility)
+				.addBegin(HAMMER_SWING_RIGHT, hammerSwingAbility)
+				.addBegin(HAMMER_SWING_LEFT_RIGHT, hammerSwingAbility)
+				.addEnd(STANDING, hammerSwingAbility)
+				.addEnd(WALKING_LEFT, hammerSwingAbility)
+				.addEnd(WALKING_RIGHT, hammerSwingAbility)
+				.addEnd(STANDING_LEFT_RIGHT, hammerSwingAbility)
 
-				.addBegin(FORTRESS_IMPALE, impaleAbility)
-				.addBegin(FORTRESS_IMPALE_LEFT, impaleAbility)
-				.addBegin(FORTRESS_IMPALE_RIGHT, impaleAbility)
-				.addBegin(FORTRESS_IMPALE_LEFT_RIGHT, impaleAbility)
-				.addEnd(FORTRESS_STANDING, impaleAbility)
-				.addEnd(FORTRESS_WALKING_LEFT, impaleAbility)
-				.addEnd(FORTRESS_WALKING_RIGHT, impaleAbility)
-				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, impaleAbility)
+				.addBegin(FORTRESS_IMPALE, hammerSwingAbility)
+				.addBegin(FORTRESS_IMPALE_LEFT, hammerSwingAbility)
+				.addBegin(FORTRESS_IMPALE_RIGHT, hammerSwingAbility)
+				.addBegin(FORTRESS_IMPALE_LEFT_RIGHT, hammerSwingAbility)
+				.addEnd(FORTRESS_STANDING, hammerSwingAbility)
+				.addEnd(FORTRESS_WALKING_LEFT, hammerSwingAbility)
+				.addEnd(FORTRESS_WALKING_RIGHT, hammerSwingAbility)
+				.addEnd(FORTRESS_STANDING_LEFT_RIGHT, hammerSwingAbility)
 
 				.addBegin(FORTRESS, fortressAbility)
 				.addBegin(FORTRESS_LEFT, fortressAbility)
@@ -631,10 +631,10 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 			getGame().getFloatingTextManager()
 					.addFloatingText(getMiddleX(), getTopY(), PERFECT_TEXT, FLOATING_TEXT_COLOR);
 
-			impaleAbility.reset();
-			impaleAnimation.defineFrameTask(0, () -> {
+			hammerSwingAbility.reset();
+			hammerSwingAnimation.defineFrameTask(2, () -> {
 				Boss1 boss1 = getGame().getBoss1();
-				if (boss1.damageTest(this, getHitbox(WEAPON), IMPALE_BONUS_DAMAGE)) {
+				if (boss1.damageTest(this, getHitbox(WEAPON), HAMMER_SWING_BONUS_DAMAGE)) {
 					if (boss1.isWeak()) {
 						setFortressHeal();
 					}
@@ -694,9 +694,9 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	}
 
 	private void initImpaleHitTest() {
-		impaleAnimation.defineFrameTask(0, () -> {
+		hammerSwingAnimation.defineFrameTask(2, () -> {
 			Boss1 boss1 = getGame().getBoss1();
-			if (boss1.damageTest(this, getHitbox(WEAPON), IMPALE_DAMAGE)) {
+			if (boss1.damageTest(this, getHitbox(WEAPON), HAMMER_SWING_DAMAGE)) {
 				if (boss1.isWeak()) {
 					setFortressHeal();
 				}
@@ -770,7 +770,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	@Override
 	protected void useSecondary(boolean keydown) {
 		if (keydown) {
-			input(IMPALE_KEYDOWN);
+			input(HAMMER_SWING_KEYDOWN);
 		}
 	}
 
@@ -793,7 +793,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	}
 
 	public CooldownState getImpaleState() {
-		return impaleAbility.getCooldownState();
+		return hammerSwingAbility.getCooldownState();
 	}
 
 	public CooldownState getFortressState() {

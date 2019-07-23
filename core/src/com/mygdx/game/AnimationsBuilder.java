@@ -18,6 +18,7 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
+import static com.mygdx.game.assets.Assets.ASSASSIN_CLEANSE_PATH;
 import static com.mygdx.game.assets.Assets.ASSASSIN_DASH_PATH;
 import static com.mygdx.game.assets.Assets.ASSASSIN_PARTS;
 import static com.mygdx.game.assets.Assets.ASSASSIN_SHURIKEN_THROW_PATH;
@@ -34,11 +35,11 @@ import static com.mygdx.game.assets.Assets.SHURIKEN_FLYING_PATH;
 import static com.mygdx.game.assets.Assets.SHURIKEN_PARTS;
 import static com.mygdx.game.assets.Assets.TANK_BLOCK_PATH;
 import static com.mygdx.game.assets.Assets.TANK_FORTRESS_BLOCK_PATH;
-import static com.mygdx.game.assets.Assets.TANK_FORTRESS_IMAPLE_PATH;
+import static com.mygdx.game.assets.Assets.TANK_FORTRESS_IMPALE_PATH;
 import static com.mygdx.game.assets.Assets.TANK_FORTRESS_PATH;
 import static com.mygdx.game.assets.Assets.TANK_FORTRESS_STANDING_PATH;
 import static com.mygdx.game.assets.Assets.TANK_FORTRESS_WALKING_PATH;
-import static com.mygdx.game.assets.Assets.TANK_IMPALE_PATH;
+import static com.mygdx.game.assets.Assets.TANK_HAMMER_SWING_PATH;
 import static com.mygdx.game.assets.Assets.TANK_PARTS;
 import static com.mygdx.game.assets.Assets.TANK_STANDING_PATH;
 import static com.mygdx.game.assets.Assets.TANK_WALKING_PATH;
@@ -49,17 +50,18 @@ public class AnimationsBuilder {
 		builder.buildDirectory(TANK_STANDING_PATH, TANK_PARTS.keySet());
 		builder.buildDirectory(TANK_WALKING_PATH, TANK_PARTS.keySet());
 		builder.buildDirectory(TANK_BLOCK_PATH, TANK_PARTS.keySet());
-		builder.buildDirectory(TANK_IMPALE_PATH, TANK_PARTS.keySet());
+		builder.buildDirectory(TANK_HAMMER_SWING_PATH, TANK_PARTS.keySet());
 		builder.buildDirectory(TANK_FORTRESS_PATH, TANK_PARTS.keySet());
 		builder.buildDirectory(TANK_FORTRESS_WALKING_PATH, TANK_PARTS.keySet());
 		builder.buildDirectory(TANK_FORTRESS_STANDING_PATH, TANK_PARTS.keySet());
 		builder.buildDirectory(TANK_FORTRESS_BLOCK_PATH, TANK_PARTS.keySet());
-		builder.buildDirectory(TANK_FORTRESS_IMAPLE_PATH, TANK_PARTS.keySet());
+		builder.buildDirectory(TANK_FORTRESS_IMPALE_PATH, TANK_PARTS.keySet());
 
 		builder.buildDirectory(ASSASSIN_STANDING_PATH, ASSASSIN_PARTS.keySet());
 		builder.buildDirectory(ASSASSIN_WALKING_PATH, ASSASSIN_PARTS.keySet());
 		builder.buildDirectory(ASSASSIN_DASH_PATH, ASSASSIN_PARTS.keySet());
 		builder.buildDirectory(ASSASSIN_SHURIKEN_THROW_PATH, ASSASSIN_PARTS.keySet());
+		builder.buildDirectory(ASSASSIN_CLEANSE_PATH, ASSASSIN_PARTS.keySet());
 
 		builder.buildDirectory(BOSS1_STANDING_PATH, BOSS1_PARTS.keySet());
 		builder.buildDirectory(BOSS1_GROUND_SMASH_PATH, BOSS1_PARTS.keySet());

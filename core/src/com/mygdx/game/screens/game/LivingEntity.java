@@ -192,10 +192,7 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 				}, DAMAGE_BLINK_DURATION);
 
 //				Gdx.app.log("LivingEntity.java", "HP: " + health);
-				if (health <= 0) {
-					health = 0;
-					dispose(1);
-				}
+				checkDispose();
 
 				return true;
 			} else {
@@ -217,7 +214,13 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 			}
 		}, DAMAGE_BLINK_DURATION);
 
+		checkDispose();
+	}
+
+	private void checkDispose() {
 		if (health <= 0) {
+			health = 0;
+			beginCrowdControl();
 			dispose(1);
 		}
 	}

@@ -17,7 +17,9 @@ import static com.mygdx.game.screens.game.boss1.Boss1Input.ROLL_KEYDOWN;
 import static com.mygdx.game.screens.game.boss1.Boss1Input.SLAM_KEYDOWN;
 
 public class Boss1AI {
-	private static final float RESTING_DURATION = 2f;
+	private static final float MIN_RESTING_DURATION = 2f;
+	private static final float MAX_RESTING_DURATION = 3f;
+	private static final float ABILITY_BUFFER_DURATION = 0.2f;
 	private static final float FACE_CHARACTER_DURATION = 0.5f;
 	private static final float WALKING_DURATION = 0.5f;
 	private static final float ROLL_DISTANCE = 140f;
@@ -142,7 +144,7 @@ public class Boss1AI {
 							if (isFacing) {
 								roll();
 							} else {
-								faceCharacter(isFacing);
+								faceCharacter(false);
 							}
 						} else {
 							switch (MathUtils.random(0, 1)) {
@@ -177,7 +179,7 @@ public class Boss1AI {
 
 	private void rest() {
 		state = State.RESTING;
-		nextState(RESTING_DURATION);
+		nextState(MathUtils.random(MIN_RESTING_DURATION, MAX_RESTING_DURATION));
 	}
 
 	private void walk() {
@@ -193,24 +195,24 @@ public class Boss1AI {
 	private void slam() {
 		state = State.SLAM;
 		boss1.input(SLAM_KEYDOWN);
-		nextState(SLAM_ANIMATION_DURATION + 0.2f);
+		nextState(SLAM_ANIMATION_DURATION + ABILITY_BUFFER_DURATION);
 	}
 
 	private void slamOnce() {
 		state = State.SLAM_ONCE;
 		boss1.input(SLAM_KEYDOWN);
-		nextState(SLAM_ANIMATION_DURATION + 0.2f);
+		nextState(SLAM_ANIMATION_DURATION + ABILITY_BUFFER_DURATION);
 	}
 
 	private void earthquake() {
 		state = State.EARTHQUAKE;
 		boss1.input(EARTHQUAKE_KEYDOWN);
-		nextState(EARTHQUAKE_ANIMATION_DURATION + 0.2f);
+		nextState(EARTHQUAKE_ANIMATION_DURATION + ABILITY_BUFFER_DURATION);
 	}
 
 	private void roll() {
 		state = State.ROLL;
 		boss1.input(ROLL_KEYDOWN);
-		nextState(ROLL_ANIMATION_DURATION + 0.2f);
+		nextState(ROLL_ANIMATION_DURATION + ABILITY_BUFFER_DURATION);
 	}
 }

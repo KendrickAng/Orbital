@@ -57,7 +57,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float STANDING_ANIMATION_DURATION = 2f;
 	public static final float SLAM_ANIMATION_DURATION = 1f;
 	public static final float EARTHQUAKE_ANIMATION_DURATION = 1f;
-	public static final float ROLL_ANIMATION_DURATION = 1f;
+	public static final float ROLL_ANIMATION_DURATION = 1.2f;
 
 	private static final float HEALTH = 2000;
 	private static final float DAMAGED_DURATION = 0f;
@@ -76,7 +76,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	private static final float EARTHQUAKE_MIN_DELAY = 0.04f;
 	private static final float EARTHQUAKE_MAX_DELAY = 0.06f;
 	private static final float EARTHQUAKE_ROCK_DAMAGE = 20;
-	private static final float ROLL_SPEED = 4f;
+	private static final float ROLL_SPEED = 5.5f;
 	private static final float ROLL_DAMAGE = 20;
 
 	// Screen shake
@@ -177,8 +177,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	protected void defineAbilities(Abilities<Boss1States> abilities) {
 		Ability<Boss1States> slam = new Ability<>(SLAM_COOLDOWN);
 		Ability<Boss1States> earthquake = new Ability<>(EARTHQUAKE_COOLDOWN);
-		Ability<Boss1States> roll = new Ability<Boss1States>(ROLL_COOLDOWN)
-				.defineEnd(() -> rolling = false);
+		Ability<Boss1States> roll = new Ability<>(ROLL_COOLDOWN);
 
 		abilities.addBegin(SLAM, slam)
 				.addEnd(STANDING, slam)
@@ -280,9 +279,10 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 
 		Animation<Boss1Parts> roll = assets.getBoss1Animation(Boss1AnimationName.ROLL)
 				.setDuration(ROLL_ANIMATION_DURATION)
-				.defineFrameTask(5, () -> rolling = true)
-				.defineFrameTask(9, () -> getGame()
-						.screenShake(ROLL_SHAKE_COUNT, ROLL_SHAKE_OFFSET, ROLL_SHAKE_INTERVAL))
+				.defineFrameTask(8, () -> rolling = true)
+				.defineFrameTask(13, () -> getGame()
+							.screenShake(ROLL_SHAKE_COUNT, ROLL_SHAKE_OFFSET, ROLL_SHAKE_INTERVAL))
+				.defineFrameTask(15, () -> rolling = false)
 				.defineEnd(() -> input(ROLL_KEYUP));
 
 		animations.map(STANDING, standing)

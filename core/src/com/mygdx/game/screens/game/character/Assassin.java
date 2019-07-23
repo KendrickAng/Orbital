@@ -480,7 +480,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 				.setDuration(SHURIKEN_THROW_ANIMATION_DURATION)
 				.defineEnd(() -> input(SHURIKEN_THROW_KEYUP));
 
-		Animation<AssassinParts> cleanse = assets.getAssassinAnimation(AssassinAnimationName.SHURIKEN_THROW)
+		Animation<AssassinParts> cleanse = assets.getAssassinAnimation(AssassinAnimationName.CLEANSE)
 				.setDuration(CLEANSE_ANIMATION_DURATION)
 				.defineEnd(() -> input(CLEANSE_KEYUP));
 

@@ -42,7 +42,7 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_BLOCK;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_CLEANSE;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_DASH;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
-import static com.mygdx.game.assets.TextureName.COOLDOWN_IMPALE;
+import static com.mygdx.game.assets.TextureName.COOLDOWN_HAMMER_SWING;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
 import static com.mygdx.game.assets.TextureName.GAME_FLOOR;
@@ -62,7 +62,7 @@ import static com.mygdx.game.screens.ScreenName.NAME_MENU;
 import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
-	public static final String VERSION = "BETA 1.1";
+	public static final String VERSION = "BETA 1.2";
 
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;
@@ -151,7 +151,7 @@ public class UntitledGame extends Game {
 		assets.loadTexture(COOLDOWN_5);
 
 		assets.loadTexture(COOLDOWN_BLOCK);
-		assets.loadTexture(COOLDOWN_IMPALE);
+		assets.loadTexture(COOLDOWN_HAMMER_SWING);
 		assets.loadTexture(COOLDOWN_FORTRESS);
 		assets.loadTexture(COOLDOWN_DASH);
 		assets.loadTexture(COOLDOWN_SHURIKEN_THROW);
@@ -169,7 +169,7 @@ public class UntitledGame extends Game {
 		assets.loadTankAnimation(TankAnimationName.STANDING);
 		assets.loadTankAnimation(TankAnimationName.WALKING);
 		assets.loadTankAnimation(TankAnimationName.BLOCK);
-		assets.loadTankAnimation(TankAnimationName.IMPALE);
+		assets.loadTankAnimation(TankAnimationName.HAMMER_SWING);
 		assets.loadTankAnimation(TankAnimationName.FORTRESS);
 		assets.loadTankAnimation(TankAnimationName.FORTRESS_STANDING);
 		assets.loadTankAnimation(TankAnimationName.FORTRESS_WALKING);
@@ -180,6 +180,7 @@ public class UntitledGame extends Game {
 		assets.loadAssassinAnimation(AssassinAnimationName.WALKING);
 		assets.loadAssassinAnimation(AssassinAnimationName.DASH);
 		assets.loadAssassinAnimation(AssassinAnimationName.SHURIKEN_THROW);
+		assets.loadAssassinAnimation(AssassinAnimationName.CLEANSE);
 
 		assets.loadBoss1Animation(Boss1AnimationName.STANDING);
 		assets.loadBoss1Animation(Boss1AnimationName.GROUND_SMASH);
