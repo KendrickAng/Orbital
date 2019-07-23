@@ -113,7 +113,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 
 	// Skill cooldown in seconds.
 	private static final float DASH_COOLDOWN = 1.5f;
-	private static final float SHURIKEN_THROW_COOLDOWN = 1f;
+	private static final float SHURIKEN_THROW_COOLDOWN = 0.5f;
 	private static final float CLEANSE_COOLDOWN = LIGHT_REALM_DURATION + 20f;
 
 	// Skill animation duration in seconds.
