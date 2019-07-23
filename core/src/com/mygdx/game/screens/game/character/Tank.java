@@ -731,7 +731,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 	@Override
 	protected boolean canInput(TankInput input) {
-		return !isStunned();
+		return !isStunned() || input == FORTRESS_KEYUP;
 	}
 
 	// TODO: Abstract these out
