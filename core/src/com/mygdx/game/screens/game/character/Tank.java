@@ -104,8 +104,8 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float FORTRESS_WALKING_ANIMATION_DURATION = 2f;
 
 	// Skill modifiers
-	private static final float HAMMER_SWING_DAMAGE = 10f;
-	private static final float HAMMER_SWING_BONUS_DAMAGE = HAMMER_SWING_DAMAGE + 10f;
+	private static final float HAMMER_SWING_DAMAGE = 20f;
+	private static final float HAMMER_SWING_BONUS_DAMAGE = HAMMER_SWING_DAMAGE + 20f;
 
 	private static final float BLOCK_SLOW_MODIFIER = 0.5f;
 	private static final float FORTRESS_SLOW_MODIFIER = 0.5f;
@@ -113,7 +113,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private static final float FORTRESS_DAMAGE_REFLECT = 0.25f;
 	private static final float FORTRESS_HEAL = 20f;
 
-	private static final float SHIELD_BASH_DAMAGE = 20f;
+	private static final float SHIELD_BASH_DAMAGE = 40f;
 	private static final float SHIELD_BASH_STUN_DURATION = 2f;
 
 	// Scores

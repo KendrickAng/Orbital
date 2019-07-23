@@ -59,7 +59,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	public static final float EARTHQUAKE_ANIMATION_DURATION = 1f;
 	public static final float ROLL_ANIMATION_DURATION = 1.2f;
 
-	private static final float HEALTH = 2000;
+	private static final float HEALTH = 3000;
 	private static final float DAMAGED_DURATION = 0f;
 	private static final float WALKING_SPEED = 1f;
 

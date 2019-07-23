@@ -93,7 +93,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	// Skill modifiers
 	private static final float DASH_SPEED = 15f;
 	private static final float DASH_DIAGONAL_SPEED = 10f;
-	private static final float DASH_TRUE_DAMAGE = 40f;
+	private static final float DASH_TRUE_DAMAGE = 80f;
 
 	private static final int MAX_STACKS = 3;
 	private static final float SHURIKEN_DAMAGE = 10f;
@@ -112,7 +112,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float LIGHT_REALM_SHURIKEN_MAX_INTERVAL = 1f;
 
 	// Skill cooldown in seconds.
-	private static final float DASH_COOLDOWN = 1f;
+	private static final float DASH_COOLDOWN = 1.5f;
 	private static final float SHURIKEN_THROW_COOLDOWN = 1f;
 	private static final float CLEANSE_COOLDOWN = LIGHT_REALM_DURATION + 20f;
 
@@ -121,7 +121,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float WALKING_ANIMATION_DURATION = 0.5f;
 	private static final float DASH_ANIMATION_DURATION = 0.05f;
 	private static final float PERFECT_DASH_DURATION = 0.2f;
-	private static final float SHURIKEN_THROW_ANIMATION_DURATION = 0.25f;
+	private static final float SHURIKEN_THROW_ANIMATION_DURATION = 0.2f;
 	private static final float CLEANSE_ANIMATION_DURATION = 0.25f;
 
 	// Scores
