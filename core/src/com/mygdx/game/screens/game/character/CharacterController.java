@@ -2,7 +2,6 @@ package com.mygdx.game.screens.game.character;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.mygdx.game.screens.GameScreen;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,18 +11,16 @@ import static com.mygdx.game.screens.game.character.CharacterControllerInput.RIG
 import static com.mygdx.game.screens.game.character.CharacterControllerInput.UP;
 
 public class CharacterController implements InputProcessor {
-	private GameScreen game;
 	private Character character;
 	private HashSet<CharacterControllerInput> inputs;
 
-	public CharacterController(GameScreen game) {
-		this.game = game;
-		this.character = game.getCharacter();
+	public CharacterController(Character character) {
+		this.character = character;
 		this.inputs = new HashSet<>();
 	}
 
-	public void update() {
-		character = game.getCharacter();
+	public void setCharacter(Character character) {
+		this.character = character;
 	}
 
 	@Override

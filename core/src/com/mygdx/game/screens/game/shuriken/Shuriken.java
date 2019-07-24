@@ -47,8 +47,8 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 						dispose(0);
 					} else {
 						Boss1 boss1 = getGame().getBoss1();
-						if (getGame().getBoss1()
-								.damageTest(null, getHitbox(BODY), damage)) {
+						if (boss1 != null
+								&& getGame().getBoss1().damageTest(null, getHitbox(BODY), damage)) {
 							if (debuff != null) {
 								boss1.inflictDebuff(debuff);
 							}

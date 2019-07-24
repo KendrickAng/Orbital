@@ -281,7 +281,7 @@ public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 				.setDuration(ROLL_ANIMATION_DURATION)
 				.defineFrameTask(8, () -> rolling = true)
 				.defineFrameTask(13, () -> getGame()
-							.screenShake(ROLL_SHAKE_COUNT, ROLL_SHAKE_OFFSET, ROLL_SHAKE_INTERVAL))
+						.screenShake(ROLL_SHAKE_COUNT, ROLL_SHAKE_OFFSET, ROLL_SHAKE_INTERVAL))
 				.defineFrameTask(15, () -> rolling = false)
 				.defineEnd(() -> input(ROLL_KEYUP));
 

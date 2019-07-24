@@ -471,8 +471,12 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 		Animation<TankParts> fortressImpale = assets.getTankAnimation(TankAnimationName.FORTRESS_IMPALE)
 				.setDuration(HAMMER_SWING_ANIMATION_DURATION)
-				.defineFrameTask(2, () -> getGame().getBoss1()
-						.damageTest(this, getHitbox(WEAPON), HAMMER_SWING_DAMAGE))
+				.defineFrameTask(2, () -> {
+					Boss1 boss1 = getGame().getBoss1();
+					if (boss1 != null) {
+						boss1.damageTest(this, getHitbox(WEAPON), HAMMER_SWING_DAMAGE);
+					}
+				})
 				.defineEnd(() -> input(HAMMER_SWING_KEYUP));
 
 		animations.map(STANDING, standing)
@@ -676,7 +680,7 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 
 	@Override
 	public void endCrowdControl() {
-		for (CharacterControllerInput input : getGame().getPlayerController().getInputs()) {
+		for (CharacterControllerInput input : getGame().getCharacterController().getInputs()) {
 			switch (input) {
 				case LEFT:
 					input(LEFT_KEYDOWN);
@@ -696,7 +700,8 @@ public class Tank extends Character<TankInput, TankStates, TankParts> {
 	private void initImpaleHitTest() {
 		hammerSwingAnimation.defineFrameTask(2, () -> {
 			Boss1 boss1 = getGame().getBoss1();
-			if (boss1.damageTest(this, getHitbox(WEAPON), HAMMER_SWING_DAMAGE)) {
+			if (boss1 != null
+					&& boss1.damageTest(this, getHitbox(WEAPON), HAMMER_SWING_DAMAGE)) {
 				if (boss1.isWeak()) {
 					setFortressHeal();
 				}

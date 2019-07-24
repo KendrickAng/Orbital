@@ -20,7 +20,6 @@ import com.mygdx.game.screens.game.shuriken.ShurikenParts;
 
 import java.util.HashMap;
 
-import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
@@ -37,6 +36,9 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_HAMMER_SWING;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
+import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
+import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
+import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.GAME_FLOOR;
 import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
@@ -47,8 +49,6 @@ import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
 import static com.mygdx.game.assets.TextureName.INFO_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.STACK_BAR_ASSASSIN;
-import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
-import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
 
 public class Assets {
 	private AssetManager assetManager;
@@ -61,6 +61,8 @@ public class Assets {
 	private HashMap<Boss1AnimationName, AnimationAsset<Boss1Parts>> boss1Animations;
 	private HashMap<ShurikenAnimationName, AnimationAsset<ShurikenParts>> shurikenAnimations;
 	private HashMap<RockAnimationName, AnimationAsset<RockParts>> rockAnimations;
+
+	private static final float FONT_LINE_HEIGHT = 1.8f;
 
 	public static final HashMap<String, TankParts> TANK_PARTS;
 	public static final String TANK_STANDING_PATH = "Animations/Tank/Standing";
@@ -342,6 +344,8 @@ public class Assets {
 		// Copy fonts from assetManager back
 		for (FontAsset asset : fonts.values()) {
 			asset.font = assetManager.get(asset.id, BitmapFont.class);
+			asset.font.getData().markupEnabled = true;
+			asset.font.getData().setLineHeight(asset.font.getLineHeight() * FONT_LINE_HEIGHT);
 		}
 
 		// Copy music from assetManager back

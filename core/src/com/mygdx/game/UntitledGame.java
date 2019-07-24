@@ -28,7 +28,6 @@ import com.mygdx.game.screens.SettingsScreen;
 
 import java.util.Locale;
 
-import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
@@ -45,6 +44,9 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_HAMMER_SWING;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
+import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
+import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
+import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.GAME_FLOOR;
 import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
@@ -55,14 +57,12 @@ import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
 import static com.mygdx.game.assets.TextureName.INFO_BAR_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.STACK_BAR_ASSASSIN;
-import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
-import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.screens.ScreenName.NAME_MENU;
 import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
-	public static final String VERSION = "BETA 1.2";
+	public static final String VERSION = "BETA 1.3";
 
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;

@@ -701,7 +701,8 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private void dash() {
 		updatePosition();
 		Boss1 boss1 = getGame().getBoss1();
-		if (boss1.isStunned() && dashTrueDamage) {
+		if (boss1 != null
+				&& boss1.isStunned() && dashTrueDamage) {
 			dashTrueDamage = false;
 			boss1.trueDamageTest(this, getHitbox(BODY), DASH_TRUE_DAMAGE);
 		}
@@ -711,12 +712,12 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 		timer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
-				int degrees = MathUtils.random(0, 360);
-				float rad = (float) (degrees * Math.PI / 180);
-				float x = (float) Math.sin(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + CAMERA_WIDTH / 2f;
-				float y = (float) Math.cos(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + CAMERA_HEIGHT / 2f;
-				new Shuriken(getGame(), x, y, degrees - 180, SHURIKEN_DAMAGE, null);
 				if (lightRealm && !isDispose()) {
+					int degrees = MathUtils.random(0, 360);
+					float rad = (float) (degrees * Math.PI / 180);
+					float x = (float) Math.sin(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + CAMERA_WIDTH / 2f;
+					float y = (float) Math.cos(rad) * LIGHT_REALM_SHURIKEN_DISTANCE + CAMERA_HEIGHT / 2f;
+					new Shuriken(getGame(), x, y, degrees - 180, SHURIKEN_DAMAGE, null);
 					lightRealmShuriken();
 				}
 			}
@@ -777,7 +778,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 
 	@Override
 	public void endCrowdControl() {
-		for (CharacterControllerInput input : getGame().getPlayerController().getInputs()) {
+		for (CharacterControllerInput input : getGame().getCharacterController().getInputs()) {
 			switch (input) {
 				case LEFT:
 					input(LEFT_KEYDOWN);

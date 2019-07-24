@@ -21,13 +21,12 @@ import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
-import static com.mygdx.game.ui.UIAlign.TOP_LEFT;
 import static com.mygdx.game.ui.UIAlign.TOP_MIDDLE;
 
 public class CreditsScreen extends UntitledScreen {
-	private static final String MUSIC_TEXT = "MENU MUSIC:\n\nTHE FALL OF ARCANA" +
-			"\n\n\n\nBOSS MUSIC:\n\nHEROIC DEMISE" +
-			"\n\n\n\nMUSIC BY MATTHEW PABLO\n\nWWW.MATTHEWPABLO.COM";
+	private static final String MUSIC_TEXT = "MENU MUSIC:\nTHE FALL OF ARCANA" +
+			"\n\nBOSS MUSIC:\nHEROIC DEMISE" +
+			"\n\nMUSIC BY MATTHEW PABLO\nWWW.MATTHEWPABLO.COM";
 
 	private static final float MUSIC_TEXT_X = CAMERA_WIDTH / 2f;
 	private static final float MUSIC_TEXT_Y = CAMERA_HEIGHT - 50f;
