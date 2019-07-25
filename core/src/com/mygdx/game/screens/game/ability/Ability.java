@@ -2,7 +2,7 @@ package com.mygdx.game.screens.game.ability;
 
 import com.badlogic.gdx.utils.Timer;
 
-public class Ability<S> {
+public class Ability<S extends Enum> {
 
 	// Ability will be off cooldown after this time
 	private float cooldown;
@@ -28,7 +28,7 @@ public class Ability<S> {
 	}
 
 	/* Calls */
-	public void begin(S state) {
+	void begin(S state) {
 		// Ensure that abilityBegin is called only once.
 		if (!using) {
 			using = true;
@@ -40,7 +40,7 @@ public class Ability<S> {
 		}
 	}
 
-	public void end() {
+	void end() {
 		// Ensure that abilityEnd is called only once.
 		if (using) {
 			using = false;
@@ -86,7 +86,7 @@ public class Ability<S> {
 	}
 
 	/* Getters */
-	public boolean isReady() {
+	boolean isReady() {
 		return ready;
 	}
 

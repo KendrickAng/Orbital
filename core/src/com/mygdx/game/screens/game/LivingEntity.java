@@ -249,8 +249,4 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	public float getMaxHealth() {
 		return maxHealth;
 	}
-
-	public Ability[] getAbilities() {
-		return abilities.getAbilities();
-	}
 }

@@ -4,51 +4,44 @@ import com.mygdx.game.screens.game.state.StateListener;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 /**
  * Abilities manager.
  */
 public class Abilities<S extends Enum> implements StateListener<S> {
-	private LinkedList<Ability<S>> abilities;
-
 	// Abilities to use in state.
-	private HashMap<S, Ability<S>> abilitiesUse;
+	private HashMap<S, Ability<S>> abilitiesBegin;
 
 	// Abilities to cancel in state.
-	private HashMap<S, HashSet<Ability<S>>> abilitiesCancel;
+	private HashMap<S, HashSet<Ability<S>>> abilitiesEnd;
 
 	public Abilities() {
-		abilities = new LinkedList<>();
-		abilitiesUse = new HashMap<>();
-		abilitiesCancel = new HashMap<>();
+		abilitiesBegin = new HashMap<>();
+		abilitiesEnd = new HashMap<>();
 	}
 
 	// Map a state to an ability to use. (1 to 1)
 	public Abilities<S> addBegin(S state, Ability<S> ability) {
-		abilitiesUse.put(state, ability);
-		if (!abilities.contains(ability)) {
-			abilities.add(ability);
-		}
+		abilitiesBegin.put(state, ability);
 		return this;
 	}
 
 	// Add an ability to be cancelled when in a state.
 	public Abilities<S> addEnd(S state, Ability<S> ability) {
-		HashSet<Ability<S>> abilitiesCancel = this.abilitiesCancel.get(state);
-		if (abilitiesCancel == null) {
-			abilitiesCancel = new HashSet<>();
-			this.abilitiesCancel.put(state, abilitiesCancel);
+		HashSet<Ability<S>> abilities = this.abilitiesEnd.get(state);
+		if (abilities == null) {
+			abilities = new HashSet<>();
+			this.abilitiesEnd.put(state, abilities);
 		}
-		abilitiesCancel.add(ability);
+		abilities.add(ability);
 		return this;
 	}
 
 
 	@Override
 	public boolean stateValid(S state) {
-		if (abilitiesUse.containsKey(state)) {
-			Ability<S> ability = abilitiesUse.get(state);
+		if (abilitiesBegin.containsKey(state)) {
+			Ability<S> ability = abilitiesBegin.get(state);
 			return ability.isReady();
 		}
 		return true;
@@ -56,19 +49,15 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 
 	@Override
 	public void stateChange(S state) {
-		if (abilitiesUse.containsKey(state)) {
-			Ability<S> ability = abilitiesUse.get(state);
+		if (abilitiesBegin.containsKey(state)) {
+			Ability<S> ability = abilitiesBegin.get(state);
 			ability.begin(state);
 		}
 
-		if (abilitiesCancel.containsKey(state)) {
-			for (Ability<S> ability : abilitiesCancel.get(state)) {
+		if (abilitiesEnd.containsKey(state)) {
+			for (Ability<S> ability : abilitiesEnd.get(state)) {
 				ability.end();
 			}
 		}
-	}
-
-	public Ability[] getAbilities() {
-		return abilities.toArray(new Ability[0]);
 	}
 }
