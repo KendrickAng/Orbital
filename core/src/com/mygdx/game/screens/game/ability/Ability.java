@@ -2,6 +2,10 @@ package com.mygdx.game.screens.game.ability;
 
 import com.badlogic.gdx.utils.Timer;
 
+/**
+ * A character skill with an optional cooldown.
+ * @param <S> a State enum.
+ */
 public class Ability<S> {
 
 	// Ability will be off cooldown after this time
@@ -19,6 +23,10 @@ public class Ability<S> {
 	// Called once when ability ends
 	private AbilityEnd abilityEnd;
 
+	/**
+	 *
+	 * @param cooldown 0.0 if skill has no cooldown, and negative if infinite cooldown.
+	 */
 	public Ability(float cooldown) {
 		this.cooldown = cooldown;
 		this.cooldownState = new CooldownState(cooldown);
@@ -27,8 +35,11 @@ public class Ability<S> {
 		this.timer = new Timer();
 	}
 
-	/* Calls */
-	public void begin(S state) {
+	/**
+	 * Starts the ability.
+	 * @param state the State enum that begun that ability.
+	 */
+	void begin(S state) {
 		// Ensure that abilityBegin is called only once.
 		if (!using) {
 			using = true;
@@ -40,7 +51,10 @@ public class Ability<S> {
 		}
 	}
 
-	public void end() {
+	/**
+	 * Ends the ability.
+	 */
+	void end() {
 		// Ensure that abilityEnd is called only once.
 		if (using) {
 			using = false;
@@ -67,7 +81,9 @@ public class Ability<S> {
 		}
 	}
 
-	// Reset cooldown of the ability
+	/**
+	 * Resets cooldown of the ability.
+	 */
 	public void reset() {
 		timer.clear();
 		cooldownState.end();
@@ -75,17 +91,31 @@ public class Ability<S> {
 	}
 
 	/* Setters */
+	/**
+	 * Sets the AbilityBegin consumer that is consumed when begin() is called.
+	 * @param abilityBegin the consumer to be consumed.
+	 * @return the current Ability instance.
+	 */
 	public Ability<S> defineBegin(AbilityBegin<S> abilityBegin) {
 		this.abilityBegin = abilityBegin;
 		return this;
 	}
 
+	/**
+	 * Sets the AbilityEnd runnable that is run when end() is called.
+	 * @param abilityEnd the runnable to be run.
+	 * @return the current Ability instance.
+	 */
 	public Ability<S> defineEnd(AbilityEnd abilityEnd) {
 		this.abilityEnd = abilityEnd;
 		return this;
 	}
 
 	/* Getters */
+	/**
+	 * Checks if the ability is ready to be used.
+	 * @return true if the ability is off cooldown, false otherwise.
+	 */
 	public boolean isReady() {
 		return ready;
 	}

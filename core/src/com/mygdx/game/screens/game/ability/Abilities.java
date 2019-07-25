@@ -7,7 +7,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 /**
- * Abilities manager.
+ * Abilities manager. Defines when an ability begins or ends based on state by mapping state to
+ * ability calls.
+ * @param <S> a State enum.
  */
 public class Abilities<S extends Enum> implements StateListener<S> {
 	private LinkedList<Ability<S>> abilities;
@@ -24,7 +26,12 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 		abilitiesCancel = new HashMap<>();
 	}
 
-	// Map a state to an ability to use. (1 to 1)
+	/**
+	 * Maps a state to an ability begin.
+	 * @param state the new state being added.
+	 * @param ability the corresponding ability to the state.
+	 * @return the current Abilities instance.
+	 */
 	public Abilities<S> addBegin(S state, Ability<S> ability) {
 		abilitiesUse.put(state, ability);
 		if (!abilities.contains(ability)) {
@@ -34,6 +41,13 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 	}
 
 	// Add an ability to be cancelled when in a state.
+
+	/**
+	 * Maps a state to an ability end. Here, one state can end multiple abilities.
+	 * @param state the new state being added.
+	 * @param ability the ability to end.
+	 * @return the current Abilities instance.
+	 */
 	public Abilities<S> addEnd(S state, Ability<S> ability) {
 		HashSet<Ability<S>> abilitiesCancel = this.abilitiesCancel.get(state);
 		if (abilitiesCancel == null) {
@@ -43,7 +57,6 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 		abilitiesCancel.add(ability);
 		return this;
 	}
-
 
 	@Override
 	public boolean stateValid(S state) {
