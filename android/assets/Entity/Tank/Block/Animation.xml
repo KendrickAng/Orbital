@@ -1,0 +1,11 @@
+<animation width="160" height="80">
+	<frame>
+		<hitbox name="Left Arm" minX="86" maxX="102" minY="22" maxY="39"/>
+		<hitbox name="Left Leg" minX="83" maxX="97" minY="50" maxY="79"/>
+		<hitbox name="Body" minX="71" maxX="86" minY="15" maxY="59"/>
+		<hitbox name="Right Leg" minX="59" maxX="77" minY="50" maxY="79"/>
+		<hitbox name="Weapon" minX="63" maxX="95" minY="31" maxY="52"/>
+		<hitbox name="Right Arm" minX="58" maxX="73" minY="22" maxY="50"/>
+		<hitbox name="Shield" minX="90" maxX="113" minY="24" maxY="75"/>
+	</frame>
+</animation>

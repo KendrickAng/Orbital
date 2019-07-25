@@ -1,0 +1,17 @@
+<animation width="320" height="320">
+	<frame>
+		<hitbox name="Right Arm" minX="56" maxX="127" minY="124" maxY="261"/>
+		<hitbox name="Body" minX="80" maxX="218" minY="119" maxY="273"/>
+		<hitbox name="Right Leg" minX="100" maxX="135" minY="244" maxY="295"/>
+		<hitbox name="Left Leg" minX="160" maxX="194" minY="264" maxY="319"/>
+		<hitbox name="Left Arm" minX="196" maxX="267" minY="139" maxY="265"/>
+	</frame>
+	<frame>
+		<hitbox name="Right Arm" minX="51" maxX="122" minY="130" maxY="267"/>
+		<hitbox name="Body" minX="76" maxX="215" minY="116" maxY="275"/>
+		<hitbox name="Right Leg" minX="94" maxX="139" minY="264" maxY="319"/>
+		<hitbox name="Left Leg" minX="160" maxX="194" minY="264" maxY="319"/>
+		<hitbox name="Left Arm" minX="199" maxX="270" minY="136" maxY="262"/>
+		<hitbox name="Shockwave" minX="16" maxX="238" minY="290" maxY="319"/>
+	</frame>
+</animation>

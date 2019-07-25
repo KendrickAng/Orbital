@@ -1,0 +1,37 @@
+<animation width="160" height="80">
+	<frame>
+		<hitbox name="Body" minX="62" maxX="93" minY="27" maxY="63"/>
+		<hitbox name="Left Arm" minX="85" maxX="92" minY="42" maxY="54"/>
+		<hitbox name="Left Leg" minX="64" maxX="94" minY="54" maxY="79"/>
+		<hitbox name="Right Leg" minX="53" maxX="86" minY="51" maxY="79"/>
+		<hitbox name="Right Arm" minX="67" maxX="90" minY="38" maxY="59"/>
+	</frame>
+	<frame>
+		<hitbox name="Body" minX="61" maxX="93" minY="28" maxY="63"/>
+		<hitbox name="Left Arm" minX="85" maxX="92" minY="42" maxY="54"/>
+		<hitbox name="Left Leg" minX="65" maxX="94" minY="54" maxY="79"/>
+		<hitbox name="Right Leg" minX="60" maxX="86" minY="52" maxY="79"/>
+		<hitbox name="Right Arm" minX="67" maxX="90" minY="38" maxY="59"/>
+	</frame>
+	<frame>
+		<hitbox name="Body" minX="61" maxX="93" minY="23" maxY="59"/>
+		<hitbox name="Left Arm" minX="85" maxX="92" minY="38" maxY="50"/>
+		<hitbox name="Left Leg" minX="74" maxX="94" minY="51" maxY="79"/>
+		<hitbox name="Right Leg" minX="58" maxX="88" minY="48" maxY="79"/>
+		<hitbox name="Right Arm" minX="67" maxX="90" minY="34" maxY="55"/>
+	</frame>
+	<frame>
+		<hitbox name="Body" minX="62" maxX="93" minY="23" maxY="59"/>
+		<hitbox name="Left Arm" minX="85" maxX="92" minY="38" maxY="50"/>
+		<hitbox name="Left Leg" minX="63" maxX="94" minY="53" maxY="79"/>
+		<hitbox name="Right Leg" minX="58" maxX="90" minY="48" maxY="79"/>
+		<hitbox name="Right Arm" minX="67" maxX="90" minY="34" maxY="55"/>
+	</frame>
+	<frame>
+		<hitbox name="Body" minX="60" maxX="93" minY="27" maxY="63"/>
+		<hitbox name="Left Arm" minX="85" maxX="92" minY="42" maxY="54"/>
+		<hitbox name="Right Leg" minX="55" maxX="94" minY="53" maxY="79"/>
+		<hitbox name="Left Leg" minX="53" maxX="86" minY="51" maxY="79"/>
+		<hitbox name="Right Arm" minX="67" maxX="90" minY="38" maxY="59"/>
+	</frame>
+</animation>

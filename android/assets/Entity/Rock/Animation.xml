@@ -1,0 +1,8 @@
+<animation width="50" height="50">
+	<frame>
+		<hitbox name="Body" minX="12" maxX="35" minY="44" maxY="49"/>
+	</frame>
+	<frame>
+		<hitbox name="Body" minX="7" maxX="43" minY="20" maxY="49"/>
+	</frame>
+</animation>

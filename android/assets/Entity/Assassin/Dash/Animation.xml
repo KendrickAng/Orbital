@@ -1,0 +1,9 @@
+<animation width="160" height="80">
+	<frame>
+		<hitbox name="Body" minX="62" maxX="93" minY="24" maxY="60"/>
+		<hitbox name="Left Arm" minX="85" maxX="92" minY="39" maxY="51"/>
+		<hitbox name="Left Leg" minX="74" maxX="91" minY="52" maxY="77"/>
+		<hitbox name="Right Leg" minX="52" maxX="84" minY="52" maxY="79"/>
+		<hitbox name="Right Arm" minX="67" maxX="90" minY="35" maxY="56"/>
+	</frame>
+</animation>
