@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * Abilities manager.
+ * Abilities manager. Defines when an ability begins or ends based on state by mapping state to
+ * ability calls.
+ * @param <S> a State enum.
  */
 public class Abilities<S extends Enum> implements StateListener<S> {
 	// Abilities to use in state.
@@ -20,13 +22,25 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 		abilitiesEnd = new HashMap<>();
 	}
 
-	// Map a state to an ability to use. (1 to 1)
+	/**
+	 * Maps a state to an ability begin.
+	 * @param state the new state being added.
+	 * @param ability the corresponding ability to the state.
+	 * @return the current Abilities instance.
+	 */
 	public Abilities<S> addBegin(S state, Ability<S> ability) {
 		abilitiesBegin.put(state, ability);
 		return this;
 	}
 
 	// Add an ability to be cancelled when in a state.
+
+	/**
+	 * Maps a state to an ability end. Here, one state can end multiple abilities.
+	 * @param state the new state being added.
+	 * @param ability the ability to end.
+	 * @return the current Abilities instance.
+	 */
 	public Abilities<S> addEnd(S state, Ability<S> ability) {
 		HashSet<Ability<S>> abilities = this.abilitiesEnd.get(state);
 		if (abilities == null) {
@@ -36,7 +50,6 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 		abilities.add(ability);
 		return this;
 	}
-
 
 	@Override
 	public boolean stateValid(S state) {
