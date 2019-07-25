@@ -12,7 +12,6 @@ import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.MusicName;
 import com.mygdx.game.highscores.Highscore;
-import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 import com.mygdx.game.ui.TextureUI;
@@ -27,6 +26,7 @@ import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_EVEN;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_ODD;
 import static com.mygdx.game.assets.TextureName.HIGHSCORES_TITLE;
+import static com.mygdx.game.assets.TextureName.MENU_BACKGROUND;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.LEFT;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
@@ -66,7 +66,6 @@ public class HighscoresScreen extends UntitledScreen {
 	private Assets A;
 	private OrthographicCamera camera;
 
-	private Background background;
 	private TextUI backText;
 	private ButtonUI backButton;
 	private TextUI loadingText;
@@ -128,7 +127,6 @@ public class HighscoresScreen extends UntitledScreen {
 		this.A = game.getAssets();
 		this.camera = game.getCamera();
 		this.loading = true;
-		this.background = new Background(A);
 
 		this.backText = new TextUI(MIDDLE, A.getFont(MINECRAFT_8))
 				.setX(BACK_BUTTON_X)
@@ -199,7 +197,8 @@ public class HighscoresScreen extends UntitledScreen {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
-		this.background.render(batch);
+		batch.draw(A.getTexture(MENU_BACKGROUND), 0, 0, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+
 		this.backButton.render(batch);
 		this.backText.render(batch);
 

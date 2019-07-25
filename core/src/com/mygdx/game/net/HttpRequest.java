@@ -62,19 +62,27 @@ public abstract class HttpRequest {
 			@Override
 			public void handleHttpResponse(Net.HttpResponse httpResponse) {
 				int status = httpResponse.getStatus().getStatusCode();
+				String statusCode = String.valueOf(status);
+				String result = httpResponse.getResultAsString();
 
 				switch (status) {
 					case HttpStatus.SC_OK:
 						if (response200 != null) {
-							response200.call(httpResponse.getResultAsString());
+							response200.call(result);
 						}
 						break;
 					case HttpStatus.SC_FORBIDDEN:
 						// Incorrect permissions.
 						// Either not authenticated, or submitted data is invalid.
+						Gdx.app.error(statusCode, result);
+						break;
+					case HttpStatus.SC_BAD_REQUEST:
+						// Submitted data is invalid, or query requires index.
+						Gdx.app.error(statusCode, result);
 						break;
 					default:
-						Gdx.app.log("Status", String.valueOf(status));
+						// Unhandled Status
+						Gdx.app.log(statusCode, result);
 						break;
 				}
 			}

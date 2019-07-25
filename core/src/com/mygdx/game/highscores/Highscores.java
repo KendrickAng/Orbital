@@ -10,6 +10,7 @@ import com.mygdx.game.net.PostRequest;
 import java.io.StringWriter;
 
 import static com.mygdx.game.UntitledGame.DEBUG;
+import static com.mygdx.game.UntitledGame.VERSION;
 
 public class Highscores {
 	private static final String WEB_API_KEY = "AIzaSyCqpJqKdS-fbgIKlyZ5uMqsg-1JCk8zMBQ";
@@ -64,6 +65,10 @@ public class Highscores {
 			jsonHighscore.writeValue("integerValue", score);
 			jsonHighscore.writeObjectEnd();
 
+			jsonHighscore.writeObjectStart("version");
+			jsonHighscore.writeValue("stringValue", VERSION);
+			jsonHighscore.writeObjectEnd();
+
 			jsonHighscore.writeObjectEnd();
 			jsonHighscore.writeObjectEnd();
 
@@ -111,6 +116,18 @@ public class Highscores {
 		jsonQuery.writeValue("direction", "DESCENDING");
 		jsonQuery.writeObjectEnd();
 		jsonQuery.writeArrayEnd();
+
+		jsonQuery.writeObjectStart("where");
+		jsonQuery.writeObjectStart("fieldFilter");
+		jsonQuery.writeObjectStart("field");
+		jsonQuery.writeValue("fieldPath", "version");
+		jsonQuery.writeObjectEnd();
+		jsonQuery.writeValue("op", "EQUAL");
+		jsonQuery.writeObjectStart("value");
+		jsonQuery.writeValue("stringValue", VERSION);
+		jsonQuery.writeObjectEnd();
+		jsonQuery.writeObjectEnd();
+		jsonQuery.writeObjectEnd();
 
 		jsonQuery.writeValue("limit", limit);
 		jsonQuery.writeObjectEnd();

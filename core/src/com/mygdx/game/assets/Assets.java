@@ -38,8 +38,9 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
 import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
 import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
-import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
+import static com.mygdx.game.assets.TextureName.MENU_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.GAME_FLOOR;
+import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
@@ -185,6 +186,7 @@ public class Assets {
 		shurikenAnimations = new HashMap<>();
 		rockAnimations = new HashMap<>();
 
+		defineTexture(MENU_BACKGROUND, "Textures/Game/Menu Background.png");
 		defineTexture(GAME_BACKGROUND, "Textures/Game/Background.png");
 		defineTexture(GAME_FLOOR, "Textures/Game/Floor.png");
 		defineTexture(GAME_OVERLAY, "Textures/Game/Overlay.png");

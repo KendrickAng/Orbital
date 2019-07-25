@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.MusicName;
-import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 
@@ -22,6 +21,7 @@ import static com.mygdx.game.assets.FontName.MINECRAFT_32;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.MusicName.MAIN_MENU;
 import static com.mygdx.game.assets.TextureName.BUTTON_MENU_HOVER;
+import static com.mygdx.game.assets.TextureName.MENU_BACKGROUND;
 import static com.mygdx.game.screens.ScreenName.CREDITS;
 import static com.mygdx.game.screens.ScreenName.GAME;
 import static com.mygdx.game.screens.ScreenName.HIGHSCORES;
@@ -63,7 +63,6 @@ public class MainMenuScreen extends UntitledScreen {
 	private static final float VERSION_TEXT_Y = 10f;
 
 	private Assets A;
-	private Background background;
 	private OrthographicCamera camera;
 
 	private TextUI title;
@@ -91,7 +90,6 @@ public class MainMenuScreen extends UntitledScreen {
 		InputMultiplexer multiplexer = game.getInputMultiplexer();
 
 		this.A = game.getAssets();
-		this.background = new Background(A);
 		this.camera = game.getCamera();
 
 		/* UI */
@@ -186,7 +184,8 @@ public class MainMenuScreen extends UntitledScreen {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
-		this.background.render(batch);
+		batch.draw(A.getTexture(MENU_BACKGROUND), 0, 0, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+
 		this.title.render(batch);
 
 		this.playButton.render(batch);

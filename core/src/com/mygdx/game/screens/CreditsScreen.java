@@ -19,6 +19,7 @@ import static com.mygdx.game.UntitledGame.CAMERA_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
+import static com.mygdx.game.assets.TextureName.MENU_BACKGROUND;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 import static com.mygdx.game.ui.UIAlign.TOP_MIDDLE;
@@ -80,6 +81,8 @@ public class CreditsScreen extends UntitledScreen {
 	public void render(SpriteBatch batch) {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
+
+		batch.draw(A.getTexture(MENU_BACKGROUND), 0, 0, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		this.musicText.render(batch);
 

@@ -69,6 +69,7 @@ public class Ability<S extends Enum> {
 						@Override
 						public void run() {
 							ready = true;
+							cooldownState.end();
 						}
 					}, cooldown);
 				}

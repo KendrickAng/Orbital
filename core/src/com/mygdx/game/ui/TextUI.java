@@ -63,7 +63,8 @@ public class TextUI extends UI {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		font.setColor(color);
+		// Use markup
+		String text = "[#" + color.toString() + "]" + this.text + "[]";
 		font.draw(batch, text, getX(), getY() + getH(), getW(), align, false);
 	}
 }

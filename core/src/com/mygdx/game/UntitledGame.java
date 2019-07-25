@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -46,8 +47,9 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
 import static com.mygdx.game.assets.TextureName.DEBUFF_STUNNED;
 import static com.mygdx.game.assets.TextureName.DEBUFF_WEAK_SPOT;
-import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
+import static com.mygdx.game.assets.TextureName.MENU_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.GAME_FLOOR;
+import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
@@ -62,7 +64,7 @@ import static com.mygdx.game.screens.ScreenName.NAME_MENU;
 import static com.mygdx.game.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
-	public static final String VERSION = "BETA 1.3";
+	public static final String VERSION = "BETA 1.4";
 
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;
@@ -122,6 +124,7 @@ public class UntitledGame extends Game {
 		settings = Gdx.app.getPreferences(PREFERENCES_SETTINGS);
 
 		// TODO: (Optimization) Move to Screens
+		assets.loadTexture(MENU_BACKGROUND);
 		assets.loadTexture(GAME_BACKGROUND);
 		assets.loadTexture(GAME_FLOOR);
 		assets.loadTexture(GAME_OVERLAY);
@@ -190,6 +193,8 @@ public class UntitledGame extends Game {
 		assets.loadShurikenAnimation(ShurikenAnimationName.FLYING);
 		assets.loadRockAnimation(RockAnimationName.ERUPT);
 		assets.load();
+
+		assets.getTexture(MENU_BACKGROUND).setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.input.setInputProcessor(inputMultiplexer); // set processor for input.

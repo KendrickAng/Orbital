@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.MusicName;
-import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.screens.name.NameProcessor;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
@@ -23,6 +22,7 @@ import static com.mygdx.game.assets.FontName.MINECRAFT_16;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
+import static com.mygdx.game.assets.TextureName.MENU_BACKGROUND;
 import static com.mygdx.game.ui.UIAlign.MIDDLE;
 
 public class NameScreen extends UntitledScreen {
@@ -45,7 +45,6 @@ public class NameScreen extends UntitledScreen {
 	private OrthographicCamera camera;
 	private Array<Character> characterStack;
 
-	private Background background;
 	private TextUI yourNameText;
 	private TextUI[] backgroundTexts;
 	private TextUI[] inputTexts;
@@ -61,7 +60,6 @@ public class NameScreen extends UntitledScreen {
 		this.A = game.getAssets();
 		this.camera = game.getCamera();
 		this.characterStack = new Array<>();
-		this.background = new Background(A);
 
 		this.yourNameText = new TextUI(MIDDLE, A.getFont(MINECRAFT_16))
 				.setX(YOUR_NAME_X)
@@ -111,7 +109,8 @@ public class NameScreen extends UntitledScreen {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
-		this.background.render(batch);
+		batch.draw(A.getTexture(MENU_BACKGROUND), 0, 0, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+
 		this.yourNameText.render(batch);
 
 		for (int i = 0; i < CHARACTERS; i++) {

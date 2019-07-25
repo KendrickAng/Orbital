@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.MusicName;
-import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.ui.ButtonUI;
 import com.mygdx.game.ui.TextUI;
 
@@ -31,6 +30,7 @@ import static com.mygdx.game.UntitledGame.WINDOW_WIDTH;
 import static com.mygdx.game.assets.FontName.MINECRAFT_8;
 import static com.mygdx.game.assets.TextureName.BUTTON_HOVER;
 import static com.mygdx.game.assets.TextureName.BUTTON_NORMAL;
+import static com.mygdx.game.assets.TextureName.MENU_BACKGROUND;
 import static com.mygdx.game.screens.ScreenName.MAIN_MENU;
 import static com.mygdx.game.screens.ScreenName.NAME_SETTINGS;
 import static com.mygdx.game.ui.UIAlign.LEFT;
@@ -85,7 +85,6 @@ public class SettingsScreen extends UntitledScreen {
 	private Assets A;
 	private OrthographicCamera camera;
 	private Preferences settings;
-	private Background background;
 
 	private TextUI nameText;
 	private ButtonUI nameButton;
@@ -120,7 +119,6 @@ public class SettingsScreen extends UntitledScreen {
 		this.A = game.getAssets();
 		this.camera = game.getCamera();
 		this.settings = game.getSettings();
-		this.background = new Background(A);
 
 		this.vsyncSetting = settings.getBoolean(SETTINGS_VSYNC, SETTINGS_VSYNC_DEFAULT);
 		this.fullscreenSetting = settings.getBoolean(SETTINGS_FULLSCREEN, SETTINGS_FULLSCREEN_DEFAULT);
@@ -304,7 +302,7 @@ public class SettingsScreen extends UntitledScreen {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
-		this.background.render(batch);
+		batch.draw(A.getTexture(MENU_BACKGROUND), 0, 0, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		this.nameText.render(batch);
 		this.nameButton.render(batch);

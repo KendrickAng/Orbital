@@ -12,10 +12,8 @@ import com.mygdx.game.UntitledGame;
 import com.mygdx.game.assets.Assets;
 import com.mygdx.game.assets.MusicName;
 import com.mygdx.game.highscores.Highscores;
-import com.mygdx.game.screens.game.Background;
 import com.mygdx.game.screens.game.EntityManager;
 import com.mygdx.game.screens.game.FloatingTextManager;
-import com.mygdx.game.screens.game.Floor;
 import com.mygdx.game.screens.game.ability.CooldownState;
 import com.mygdx.game.screens.game.boss1.Boss1;
 import com.mygdx.game.screens.game.boss1.Boss1AI;
@@ -50,6 +48,7 @@ import static com.mygdx.game.assets.TextureName.COOLDOWN_FORTRESS;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_HAMMER_SWING;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SHURIKEN_THROW;
 import static com.mygdx.game.assets.TextureName.COOLDOWN_SWITCH_CHARACTER;
+import static com.mygdx.game.assets.TextureName.GAME_BACKGROUND;
 import static com.mygdx.game.assets.TextureName.GAME_OVERLAY;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_ASSASSIN;
 import static com.mygdx.game.assets.TextureName.HEALTH_BAR_BOSS;
@@ -69,7 +68,7 @@ public class GameScreen extends UntitledScreen {
 	// Game Size
 	public static final int GAME_WIDTH = CAMERA_WIDTH;
 	public static final int GAME_HEIGHT = CAMERA_HEIGHT;
-	public static final float GAME_FLOOR_HEIGHT = 60f;
+	public static final float GAME_FLOOR_HEIGHT = 66f;
 
 	// Help
 	private static final String TANK_TEXT = "TANK";
@@ -90,7 +89,7 @@ public class GameScreen extends UntitledScreen {
 	private static final String STUN = "[#ef5350]STUN[]";
 	private static final String WEAK_SPOT = "[#ef5350]WEAK SPOT[]";
 
-	private static final String TANK_HELP_TEXT = "\n\n[[[GOLD]ARROW KEYS[]]: [#42a5f5]MOVEMENT[]" +
+	private static final String TANK_HELP_TEXT = "[GOLD]TANK SKILLS[] - YOU MAY TRY THESE NOW." +
 			"\n\n[[[GOLD]Q[]] KEY: " + BLOCK +
 			"\n        The tank blocks some damage. If timed perfectly, he will take zero damage." +
 			"\n        [#b2ebf2]If he blocks perfectly, " + HAMMER_SWING + " cooldown will be reset. The next " + HAMMER_SWING + " also deals bonus damage.[]" +
@@ -100,26 +99,27 @@ public class GameScreen extends UntitledScreen {
 			"\n\n[[[GOLD]E[]] KEY: " + FORTRESS +
 			"\n        The tank blocks an attack similar to " + BLOCK + ", then gains some defensive buffs for awhile." +
 			"\n        [#b2ebf2]If he blocks perfectly, the next " + BLOCK + " will also " + STUN + " the boss near him.[]" +
-			"\n\n[[[GOLD]R[]] KEY: [#42a5f5]SWITCH CHARACTER[]";
+			"\n\n[[[GOLD]R[]] KEY: [#42a5f5]SWITCH CHARACTER[]" +
+			"\n[[[GOLD]ARROW KEYS[]]: [#42a5f5]MOVEMENT[]";
 
 	private static final float CHARACTER_HELP_COOLDOWNS_X = 20f;
 	private static final float CHARACTER_HELP_COOLDOWNS_Y = CHARACTER_TEXT_Y - 16f;
 
-	private static final String ASSASSIN_HELP_TEXT = "\n\n[[[GOLD]ARROW KEYS[]]: [#42a5f5]MOVEMENT[]" +
+	private static final String ASSASSIN_HELP_TEXT = "[GOLD]ASSASSIN SKILLS[] - YOU MAY TRY THESE NOW." +
 			"\n\n[[[GOLD]Q[]] KEY: " + DASH +
 			"\n        The assassin dashes in any direction, dodging all attacks." +
-			"\n        [#b2ebf2]If the assassin dodges an attack, her " + STACKS + " increases. Dashing near a " + STUN + "ED boss will deal true damage.[]" +
+			"\n        [#b2ebf2]If the assassin dodges an attack, her " + STACKS + " increases. Dashing near a " + STUN + "[#ef5350]ED[] boss will deal true damage.[]" +
 			"\n\n[[[GOLD]W[]] KEY: " + SHURIKEN_THROW +
 			"\n        The assassin throws a shuriken to inflict some damage." +
 			"\n        [#b2ebf2]At max " + STACKS + ", the shuriken will inflict bonus damage.[]" +
 			"\n\n[[[GOLD]E[]] KEY: " + CLEANSE +
 			"\n        The assassin removes any crowd control from herself and gains some offensive buffs for awhile." +
 			"\n        [#b2ebf2]If she cleanses perfectly, the next " + SHURIKEN_THROW + " will inflict a " + WEAK_SPOT + " on the boss.[]" +
-			"\n\n[[[GOLD]R[]] KEY: [#42a5f5]SWITCH CHARACTER[]";
-	;
+			"\n\n[[[GOLD]R[]] KEY: [#42a5f5]SWITCH CHARACTER[]" +
+			"\n[[[GOLD]ARROW KEYS[]]: [#42a5f5]MOVEMENT[]";
 
 	private static final float CHARACTER_HELP_TEXT_X = 50f;
-	private static final float CHARACTER_HELP_TEXT_Y = CAMERA_HEIGHT - 50f;
+	private static final float CHARACTER_HELP_TEXT_Y = CAMERA_HEIGHT - 80f;
 
 	private static final String START_BUTTON_TEXT = "START";
 	private static final float START_BUTTON_X = CAMERA_WIDTH - 100f;
@@ -166,8 +166,8 @@ public class GameScreen extends UntitledScreen {
 
 	// Game Over
 	private static final String HIGHSCORE_UPLOADING_TEXT = "UPLOADING HIGHSCORE...";
-	private static final String HIGHSCORE_SUCCESS_TEXT = "UPLOAD SUCCESSFUL!";
-	private static final String HIGHSCORE_FAILED_TEXT = "UPLOAD FAILED...";
+	private static final String HIGHSCORE_SUCCESS_TEXT = "UPLOAD HIGHSCORE SUCCESSFUL!";
+	private static final String HIGHSCORE_FAILED_TEXT = "UPLOAD HIGHSCORE FAILED...";
 	private static final float HIGHSCORE_TEXT_X = CAMERA_WIDTH - 20f;
 	private static final float HIGHSCORE_TEXT_Y = SCORE_TEXT_Y - 14f;
 
@@ -205,9 +205,6 @@ public class GameScreen extends UntitledScreen {
 	private float cameraX;
 	private OrthographicCamera cameraUI;
 	private FitViewport viewportUI;
-
-	private Background background;
-	private Floor floor;
 
 	/* Entities */
 	private Character character;
@@ -275,9 +272,6 @@ public class GameScreen extends UntitledScreen {
 
 		/* Input */
 		this.characterController = new CharacterController(this.character);
-
-		this.background = new Background(A);
-		this.floor = new Floor(A);
 
 		/* UI */
 		// Help
@@ -480,8 +474,7 @@ public class GameScreen extends UntitledScreen {
 		batch.setProjectionMatrix(cameraGame.combined);
 		batch.begin();
 
-		this.background.render(batch);
-		this.floor.render(batch);
+		batch.draw(A.getTexture(GAME_BACKGROUND), 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		this.entityManager.render(batch);
 		this.floatingTextManager.render(batch);
 
@@ -560,12 +553,20 @@ public class GameScreen extends UntitledScreen {
 
 	@Override
 	public void pauseScreen() {
-		A.getMusic(MusicName.BOSS).pause();
+		if (state == State.HELP_SCREEN) {
+			A.getMusic(MusicName.MAIN_MENU).pause();
+		} else {
+			A.getMusic(MusicName.BOSS).pause();
+		}
 	}
 
 	@Override
 	public void resumeScreen() {
-		A.getMusic(MusicName.BOSS).play();
+		if (state == State.HELP_SCREEN) {
+			A.getMusic(MusicName.MAIN_MENU).play();
+		} else {
+			A.getMusic(MusicName.BOSS).play();
+		}
 	}
 
 	public CharacterController getCharacterController() {
