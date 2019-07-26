@@ -10,6 +10,18 @@ import com.untitled.net.PostRequest;
 
 import java.io.StringWriter;
 
+import static com.untitled.UntitledGame.HIGHSCORE_VERSION;
+
+/**
+ * Untitled Highscores manager.
+ * <p>
+ * Makes appropriate HTTP requests to the firestore database using the REST API.
+ * https://firebase.google.com/docs/firestore/reference/rest#rest-resource:-v1.projects.databases
+ * <p>
+ * Responsibilities:
+ * - Get highscores
+ * - Post highscores
+ */
 public class Highscores {
 	private static final String WEB_API_KEY = "AIzaSyCqpJqKdS-fbgIKlyZ5uMqsg-1JCk8zMBQ";
 	private static final String NEW_USER_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser";
@@ -18,6 +30,9 @@ public class Highscores {
 
 	private String name;
 
+	/**
+	 * @param name the name of the player.
+	 */
 	public Highscores(String name) {
 		this.name = name;
 	}
@@ -34,6 +49,15 @@ public class Highscores {
 				.call();
 	}
 
+	/**
+	 * Post a highscore using anonymous authentication.
+	 *
+	 * @param level   the level
+	 * @param score   the score
+	 * @param time    the time
+	 * @param success called when posting is successful.
+	 * @param failed  called when posting fails.
+	 */
 	public void postHighscore(int level, int score, int time, HighscoresCallback success, HighscoresCallback failed) {
 		// Setting any debug flag will disable highscores.
 		if (UntitledGame.DEBUG) {
@@ -64,7 +88,7 @@ public class Highscores {
 			jsonHighscore.writeObjectEnd();
 
 			jsonHighscore.writeObjectStart("version");
-			jsonHighscore.writeValue("stringValue", UntitledGame.VERSION);
+			jsonHighscore.writeValue("stringValue", HIGHSCORE_VERSION);
 			jsonHighscore.writeObjectEnd();
 
 			jsonHighscore.writeObjectEnd();
@@ -80,6 +104,13 @@ public class Highscores {
 		});
 	}
 
+	/**
+	 * Get highscores in the latest version of the game.
+	 *
+	 * @param limit   the number of highscores to get.
+	 * @param success called when retrieval of highscores is successful.
+	 * @param failed  called when retrieval of highscores failed.
+	 */
 	public void getHighscores(int limit, GetHighscoresCallback success, HighscoresCallback failed) {
 		StringWriter jsonQueryWriter = new StringWriter();
 		Json jsonQuery = new Json(JsonWriter.OutputType.json);
@@ -122,7 +153,7 @@ public class Highscores {
 		jsonQuery.writeObjectEnd();
 		jsonQuery.writeValue("op", "EQUAL");
 		jsonQuery.writeObjectStart("value");
-		jsonQuery.writeValue("stringValue", UntitledGame.VERSION);
+		jsonQuery.writeValue("stringValue", UntitledGame.GAME_VERSION);
 		jsonQuery.writeObjectEnd();
 		jsonQuery.writeObjectEnd();
 		jsonQuery.writeObjectEnd();

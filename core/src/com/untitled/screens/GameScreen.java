@@ -35,6 +35,9 @@ import com.untitled.ui.UIAlign;
 
 import static com.untitled.game.debuff.DebuffType.DAMAGE_REDUCTION;
 
+/**
+ * Main game screen (Play) of Untitled
+ */
 public class GameScreen extends UntitledScreen {
 	// Game Size
 	public static final int GAME_WIDTH = UntitledGame.CAMERA_WIDTH;
@@ -602,6 +605,9 @@ public class GameScreen extends UntitledScreen {
 		this.switchCharacter.run();
 	}
 
+	/**
+	 * Switch the current character to the next character.
+	 */
 	public void switchCharacter() {
 		// Both characters are not dead
 		if (!(tank.isDispose() && assassin.isDispose())) {
@@ -622,6 +628,13 @@ public class GameScreen extends UntitledScreen {
 		}
 	}
 
+	/**
+	 * Shake the game camera horizontally.
+	 *
+	 * @param count    the amount of times to shake the camera.
+	 * @param offset   the distance to shake the camera.
+	 * @param interval the interval between each shake.
+	 */
 	public void screenShake(int count, float offset, float interval) {
 		if (count > 0) {
 			timer.scheduleTask(new Timer.Task() {
@@ -652,6 +665,9 @@ public class GameScreen extends UntitledScreen {
 		}
 	}
 
+	/**
+	 * @param score adds this score to GameScreen.
+	 */
 	public void addScore(int score) {
 		this.score += score;
 	}

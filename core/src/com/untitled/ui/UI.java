@@ -9,6 +9,9 @@ public abstract class UI {
 	private float h;
 	private UIAlign align;
 
+	/**
+	 * @param align where the origin (x, y) of the UI should be relative to the content.
+	 */
 	public UI(UIAlign align) {
 		this.align = align;
 	}

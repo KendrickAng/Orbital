@@ -146,7 +146,7 @@ public class MainMenuScreen extends UntitledScreen {
 		this.versionText = new TextUI(UIAlign.BOTTOM_RIGHT, A.getFont(FontName.MINECRAFT_8))
 				.setX(VERSION_TEXT_X)
 				.setY(VERSION_TEXT_Y)
-				.setText(UntitledGame.VERSION);
+				.setText(UntitledGame.GAME_VERSION);
 
 		// Add input processors
 		multiplexer.addProcessor(playButton);

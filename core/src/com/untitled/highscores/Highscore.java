@@ -1,5 +1,8 @@
 package com.untitled.highscores;
 
+/**
+ * A Highscore object obtained from Highscores.
+ */
 public class Highscore {
 	private String name;
 	private int level;

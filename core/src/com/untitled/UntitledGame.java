@@ -35,7 +35,8 @@ import static com.untitled.screens.ScreenName.NAME_MENU;
 import static com.untitled.screens.ScreenName.SETTINGS;
 
 public class UntitledGame extends Game {
-	public static final String VERSION = "BETA 1.4";
+	public static final String GAME_VERSION = "BETA 1.5";
+	public static final String HIGHSCORE_VERSION = "BETA 1.5";
 
 	// Camera Size
 	public static final int CAMERA_WIDTH = 640;
