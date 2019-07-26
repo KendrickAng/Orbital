@@ -3,7 +3,7 @@ apply plugin: "java"
 sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-project.ext.mainClassName = "com.mygdx.game.desktop.DesktopLauncher"
+project.ext.mainClassName = "com.untitled.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../android/assets")
 
 task run(type: JavaExec) {
