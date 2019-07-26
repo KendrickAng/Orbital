@@ -19,8 +19,8 @@ public class Rock extends Entity<Enum, RockStates, RockParts> {
 	private float damage;
 
 	/**
-	 * @param game the GameScreen this Rock belongs to.
-	 * @param x where this Rock should be summoned
+	 * @param game   the GameScreen this Rock belongs to.
+	 * @param x      where this Rock should be summoned
 	 * @param damage the amount of damage this Rock should do.
 	 */
 	public Rock(GameScreen game, float x, float damage) {

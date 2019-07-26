@@ -18,11 +18,11 @@ public class Hitbox {
 	/**
 	 * Creates a virtual 2D rectangle in a given texture dimension.
 	 *
-	 * @param minX lowest x coordinate of the rectangle in the texture
-	 * @param maxX highest x coordinate of the rectangle in the texture
-	 * @param minY lowest y coordinate of the rectangle in the texture
-	 * @param maxY highest y coordinate of the rectangle in the texture
-	 * @param textureWidth width of the texture which the rectangle is in
+	 * @param minX          lowest x coordinate of the rectangle in the texture
+	 * @param maxX          highest x coordinate of the rectangle in the texture
+	 * @param minY          lowest y coordinate of the rectangle in the texture
+	 * @param maxY          highest y coordinate of the rectangle in the texture
+	 * @param textureWidth  width of the texture which the rectangle is in
 	 * @param textureHeight height of the texture which the rectangle is in
 	 */
 	public Hitbox(int minX, int maxX, int minY, int maxY, int textureWidth, int textureHeight) {
@@ -58,7 +58,7 @@ public class Hitbox {
 	 *
 	 * @param hitbox the other hitbox to test collision with.
 	 * @return whether there is a collision with the other hitbox.
- 	 */
+	 */
 	public boolean hitTest(Hitbox hitbox) {
 		return getX() < hitbox.getX() + hitbox.getWidth() &&
 				getX() + getWidth() > hitbox.getX() &&

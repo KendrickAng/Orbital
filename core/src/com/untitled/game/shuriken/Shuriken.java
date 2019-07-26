@@ -28,9 +28,9 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	private Debuff debuff;
 
 	/**
-	 * @param game the GameScreen this Shuriken belongs to.
-	 * @param x the x coordinate this Shuriken spawns at
-	 * @param y the y coordinate this Shuriken spawns at
+	 * @param game   the GameScreen this Shuriken belongs to.
+	 * @param x      the x coordinate this Shuriken spawns at
+	 * @param y      the y coordinate this Shuriken spawns at
 	 * @param degree the angle (in degrees) which this Shuriken flies towards. 0 is up, 90 is right, etc.
 	 * @param damage the amount of damage this Shuriken does.
 	 * @param debuff the debuff this Shuriken inflicts. null for no debuff.

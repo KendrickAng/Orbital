@@ -24,7 +24,7 @@ public class URL {
 	 * Set a key value pair of url parameters. Can set multiple parameters.
 	 * Illustration: https://base_url?key1=value1{@literal &}key2=value2
 	 *
-	 * @param key the key
+	 * @param key   the key
 	 * @param value the value
 	 */
 	public void setParameter(String key, String value) {

@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * HTTP REST Request
- *
+ * <p>
  * Able to make http requests with the internet.
  */
 public abstract class HttpRequest {
@@ -34,7 +34,7 @@ public abstract class HttpRequest {
 	 * Set a key value pair of url parameters. Can set multiple parameters.
 	 * Illustration: https://base_url?key1=value1{@literal &}key2=value2
 	 *
-	 * @param key the key
+	 * @param key   the key
 	 * @param value the value
 	 * @return this instance
 	 */
@@ -46,7 +46,7 @@ public abstract class HttpRequest {
 	/**
 	 * Set a key value pair of header content. Can set multiple headers.
 	 *
-	 * @param key the key
+	 * @param key   the key
 	 * @param value the value
 	 * @return this instance
 	 */
@@ -75,6 +75,7 @@ public abstract class HttpRequest {
 
 	/**
 	 * Child classes must return a {@link Net.HttpRequest} from {@link HttpRequestBuilder}
+	 *
 	 * @param builder the builder
 	 * @return a {@link Net.HttpRequest}
 	 */

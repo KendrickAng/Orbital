@@ -36,10 +36,10 @@ import static com.untitled.screens.ScreenName.SETTINGS;
 
 /**
  * LibGDX {@link Game} object, created when the program starts.
- *
+ * <p>
  * Responsible for initializing Assets, Highscores, SpriteBatch and other instances which are
  * meant to be passed by reference to Screens.
- *
+ * <p>
  * Also contains some constant definitions and debug flags for the game.
  */
 public class UntitledGame extends Game {

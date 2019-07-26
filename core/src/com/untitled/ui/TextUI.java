@@ -16,7 +16,7 @@ public class TextUI extends UI {
 
 	/**
 	 * @param align where the origin (x, y) of the UI should be relative to the content.
-	 * @param font the font which this UI should use.
+	 * @param font  the font which this UI should use.
 	 */
 	public TextUI(UIAlign align, BitmapFont font) {
 		super(align);

@@ -146,8 +146,8 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	protected abstract void beginCrowdControl();
 
 	/**
-	 *	Called when this LivingEntity has no more crowd control.
- 	 */
+	 * Called when this LivingEntity has no more crowd control.
+	 */
 	public abstract void endCrowdControl();
 
 	/**
@@ -161,14 +161,15 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 	public abstract float getTopY();
 
 	/**
-	 *	Abstract method that is called when this LivingEntity is damaged.
- 	 */
+	 * Abstract method that is called when this LivingEntity is damaged.
+	 */
 	protected abstract void damage();
 
 	/**
-	 *	Abstract method that is called when this LivingEntity is debuffed.
+	 * Abstract method that is called when this LivingEntity is debuffed.
+	 *
 	 * @param debuff the {@link Debuff} inflicted
- 	 */
+	 */
 	protected abstract void debuff(Debuff debuff);
 
 	/**
