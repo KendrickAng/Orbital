@@ -16,6 +16,9 @@ import static com.untitled.game.EntityManager.SHURIKEN_RENDER_PRIORITY;
 import static com.untitled.game.shuriken.ShurikenParts.BODY;
 import static com.untitled.game.shuriken.ShurikenStates.FLYING;
 
+/**
+ * A Shuriken which is summoned by Assassin.
+ */
 public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	private static final float FLYING_ANIMATION_DURATION = 0.05f;
 	private static final int FLYING_SPEED = 20;
@@ -24,6 +27,14 @@ public class Shuriken extends Entity<Enum, ShurikenStates, ShurikenParts> {
 	private double theta;
 	private Debuff debuff;
 
+	/**
+	 * @param game the GameScreen this Shuriken belongs to.
+	 * @param x the x coordinate this Shuriken spawns at
+	 * @param y the y coordinate this Shuriken spawns at
+	 * @param degree the angle (in degrees) which this Shuriken flies towards. 0 is up, 90 is right, etc.
+	 * @param damage the amount of damage this Shuriken does.
+	 * @param debuff the debuff this Shuriken inflicts. null for no debuff.
+	 */
 	public Shuriken(GameScreen game, float x, float y, float degree, float damage, Debuff debuff) {
 		super(game, SHURIKEN_RENDER_PRIORITY);
 		getPosition().x = x;

@@ -33,6 +33,9 @@ import static com.untitled.UntitledGame.WINDOW_WIDTH;
 import static com.untitled.screens.ScreenName.MAIN_MENU;
 import static com.untitled.screens.ScreenName.NAME_SETTINGS;
 
+/**
+ * Setttings screen of Untitled.
+ */
 public class SettingsScreen extends UntitledScreen {
 	private static final String NAME_TEXT = "YOUR NAME:";
 	private static final float NAME_TEXT_X = 50f;

@@ -1,5 +1,8 @@
 package com.untitled;
 
+/**
+ * Boolean that can be modified with a variable reference.
+ */
 public class MutableBoolean {
 	private boolean value;
 

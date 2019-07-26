@@ -119,41 +119,76 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 						}));
 	}
 
+	/**
+	 * @return health that this LivingEntity has.
+	 */
 	protected abstract float health();
 
+	/**
+	 * @return how long this LivingEntity is invulnerable after taking damage.
+	 */
 	protected abstract float damagedDuration();
 
-	// creates new instances of Ability for primary, secondary and tertiary and maps the corrs CharacterState enum to Ability.
+	/**
+	 * @param abilities the abilities that this LivingEntity will have.
+	 */
 	protected abstract void defineAbilities(Abilities<S> abilities);
 
-	// called when an instance of LivingEntity is created.
+	/**
+	 * @param debuffs the debuffs that this LivingEntity will have.
+	 */
 	protected abstract void defineDebuffs(Debuffs debuffs);
 
-	// Called when crowd control is first inflicted on the entity.
+
+	/**
+	 * Called when crowd control is first inflicted on this LivingEntity.
+	 */
 	protected abstract void beginCrowdControl();
 
-	// Called when entity has no more crowd control.
+	/**
+	 *	Called when this LivingEntity has no more crowd control.
+ 	 */
 	public abstract void endCrowdControl();
 
+	/**
+	 * @return the x coordinate of the center of this LivingEntity.
+	 */
 	public abstract float getMiddleX();
 
+	/**
+	 * @return the y coordinate of the top of this LivingEntity.
+	 */
 	public abstract float getTopY();
 
-	// Abstract method that is called when entity is damaged
+	/**
+	 *	Abstract method that is called when this LivingEntity is damaged.
+ 	 */
 	protected abstract void damage();
 
-	// Abstract method that is called when entity is debuffed
+	/**
+	 *	Abstract method that is called when this LivingEntity is debuffed.
+	 * @param debuff the {@link Debuff} inflicted
+ 	 */
 	protected abstract void debuff(Debuff debuff);
 
+	/**
+	 * @param debuff inflict this debuff to this LivingEntity.
+	 */
 	public void inflictDebuff(Debuff debuff) {
 		debuff(debuff);
 		debuffs.inflict(debuff);
 	}
 
-	public void cancelDebuff(Debuff debuff) {
+	/**
+	 * @param debuff cancel this debuff on this LivingEntity.
+	 */
+	protected void cancelDebuff(Debuff debuff) {
 		debuffs.cancel(debuff);
 	}
 
+	/**
+	 * @param health heal this amount of health to the LivingEntity.
+	 */
 	public void heal(float health) {
 		this.health += health;
 
@@ -163,7 +198,12 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		}
 	}
 
-	public boolean inflictDamage(LivingEntity entity, float damage) {
+	/**
+	 * @param entity the attacker, null if not a LivingEntity.
+	 * @param damage the amount of damage to inflict on this LivingEntity.
+	 * @return whether any damage was inflicted.
+	 */
+	protected boolean inflictDamage(LivingEntity entity, float damage) {
 		if (!damaged) {
 			damaged = true;
 			timer.scheduleTask(new Timer.Task() {
@@ -201,8 +241,12 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		return false;
 	}
 
-	// Ignore damageReduction, damageReflect
-	public void inflictTrueDamage(float damage) {
+	/**
+	 * Damage which ignores damageReduction and damageReflect debuffs.
+	 *
+	 * @param damage the amount of damage to inflict on this LivingEntity.
+	 */
+	protected void inflictTrueDamage(float damage) {
 		health -= damage;
 		getColor().set(1, 0, 0, 1);
 		timer.scheduleTask(new Timer.Task() {
@@ -231,6 +275,9 @@ public abstract class LivingEntity<I extends Enum, S extends Enum, P extends Enu
 		return weak;
 	}
 
+	/**
+	 * @return whether the LivingEntity can move
+	 */
 	public boolean isCrowdControl() {
 		return stunned;
 	}

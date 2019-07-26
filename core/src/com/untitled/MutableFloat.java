@@ -1,5 +1,8 @@
 package com.untitled;
 
+/**
+ * Float that can be modified with a variable reference.
+ */
 public class MutableFloat {
 	private float value;
 

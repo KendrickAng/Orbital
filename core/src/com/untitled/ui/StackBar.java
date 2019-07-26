@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.untitled.game.character.Assassin;
 
+/**
+ * A UI which represents the amount of stacks Assassin has.
+ */
 public class StackBar extends UI {
 	private static final int BORDER = 2;
 	private Assassin assassin;
@@ -36,6 +39,7 @@ public class StackBar extends UI {
 		return this;
 	}
 
+	@Override
 	public void render(SpriteBatch batch) {
 		float width = (float) assassin.getStacks() / assassin.getMaxStacks() * getW();
 		if (width < 0) {

@@ -25,6 +25,9 @@ import static com.untitled.assets.TextureName.BUTTON_NORMAL;
 import static com.untitled.assets.TextureName.MENU_BACKGROUND;
 import static com.untitled.ui.UIAlign.MIDDLE;
 
+/**
+ * The player can pick a name in this screen.
+ */
 public class NameScreen extends UntitledScreen {
 	public static final int CHARACTERS = 3;
 

@@ -6,6 +6,9 @@ import com.badlogic.gdx.utils.Array;
 
 import static com.untitled.screens.NameScreen.CHARACTERS;
 
+/**
+ * Input processor for NameScreen.
+ */
 public class NameProcessor implements InputProcessor {
 	private Array<Character> stack;
 

@@ -1,5 +1,8 @@
 package com.untitled.game.character;
 
+/**
+ * Enum of Tank inputs.
+ */
 public enum TankInput {
 	LEFT_KEYDOWN, LEFT_KEYUP, RIGHT_KEYDOWN, RIGHT_KEYUP,
 	BLOCK_KEYDOWN, BLOCK_INPUT, BLOCK_KEYUP,

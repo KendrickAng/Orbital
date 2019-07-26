@@ -31,6 +31,9 @@ import static com.untitled.screens.ScreenName.MAIN_MENU;
 import static com.untitled.ui.UIAlign.LEFT;
 import static com.untitled.ui.UIAlign.MIDDLE;
 
+/**
+ * Highscores screen of Untitled.
+ */
 public class HighscoresScreen extends UntitledScreen {
 	private static final int HIGHSCORES_LIMIT = 12;
 

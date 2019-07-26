@@ -3,6 +3,9 @@ package com.untitled.ui;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+/**
+ * A {@link UI} which displays a Texture.
+ */
 public class TextureUI extends UI {
 	private Texture texture;
 

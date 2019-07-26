@@ -5,15 +5,21 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-// Is a text
+/**
+ * A {@link UI} that displays Text.
+ */
 public class TextUI extends UI {
 	private BitmapFont font;
 	private String text;
 	private Color color;
 	private int align;
 
-	public TextUI(UIAlign textAlign, BitmapFont font) {
-		super(textAlign);
+	/**
+	 * @param align where the origin (x, y) of the UI should be relative to the content.
+	 * @param font the font which this UI should use.
+	 */
+	public TextUI(UIAlign align, BitmapFont font) {
+		super(align);
 		this.text = "";
 		this.font = font;
 		this.color = Color.WHITE;
@@ -46,6 +52,12 @@ public class TextUI extends UI {
 		return this;
 	}
 
+	/**
+	 * How the text should be aligned inside the bounding box.
+	 *
+	 * @param textAlign the TextUIAlign enum
+	 * @return this instance
+	 */
 	public TextUI setTextAlign(TextUIAlign textAlign) {
 		switch (textAlign) {
 			case LEFT:

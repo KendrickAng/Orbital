@@ -15,6 +15,9 @@ import com.untitled.ui.ButtonUI;
 import com.untitled.ui.TextUI;
 import com.untitled.ui.UIAlign;
 
+/**
+ * Main menu screen of Untitled.
+ */
 public class MainMenuScreen extends UntitledScreen {
 	private static final String TITLE = "UNTITLED";
 	private static final float TITLE_X = UntitledGame.CAMERA_WIDTH / 2f;

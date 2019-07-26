@@ -1,5 +1,8 @@
 package com.untitled.assets;
 
+/**
+ * Enum of Texture names.
+ */
 public enum TextureName {
 	DEBUFF_STUNNED, DEBUFF_WEAK_SPOT,
 	BUTTON_NORMAL, BUTTON_HOVER, BUTTON_MENU_HOVER,

@@ -7,6 +7,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.untitled.UntitledGame;
 
+/**
+ * An abstract Screen of Untitled.
+ * Abstracts common methods.
+ */
 public abstract class UntitledScreen implements Screen {
 	private boolean running;
 	private UntitledGame game;
@@ -21,12 +25,24 @@ public abstract class UntitledScreen implements Screen {
 
 	}
 
+	/**
+	 * @param batch {@link SpriteBatch} to render this Screen on.
+	 */
 	public abstract void render(SpriteBatch batch);
 
+	/**
+	 * @param renderer {@link ShapeRenderer} to render debug this Screen on.
+	 */
 	public abstract void renderDebug(ShapeRenderer renderer);
 
+	/**
+	 * Called when this Screen is paused. (LibGDX lifecycle)
+	 */
 	public abstract void pauseScreen();
 
+	/**
+	 * Called when this Screen is resumed. (LibGDX lifecycle)
+	 */
 	public abstract void resumeScreen();
 
 	@Override

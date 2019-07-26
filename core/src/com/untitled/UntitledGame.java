@@ -34,6 +34,14 @@ import static com.untitled.screens.ScreenName.MAIN_MENU;
 import static com.untitled.screens.ScreenName.NAME_MENU;
 import static com.untitled.screens.ScreenName.SETTINGS;
 
+/**
+ * LibGDX {@link Game} object, created when the program starts.
+ *
+ * Responsible for initializing Assets, Highscores, SpriteBatch and other instances which are
+ * meant to be passed by reference to Screens.
+ *
+ * Also contains some constant definitions and debug flags for the game.
+ */
 public class UntitledGame extends Game {
 	public static final String GAME_VERSION = "BETA 1.5";
 	public static final String HIGHSCORE_VERSION = "BETA 1.5";

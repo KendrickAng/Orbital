@@ -2,9 +2,21 @@ package com.untitled.ui;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+/**
+ * A User Interface object.
+ * Has a (x, y) origin, and alignment of the content relative to the origin.
+ */
 public abstract class UI {
+	/**
+	 * x coordinate of the origin
+	 */
 	public float x;
+
+	/**
+	 * y coordinate of the origin
+	 */
 	public float y;
+
 	private float w;
 	private float h;
 	private UIAlign align;
@@ -66,11 +78,11 @@ public abstract class UI {
 		}
 	}
 
-	public float getW() {
+	float getW() {
 		return w;
 	}
 
-	public float getH() {
+	float getH() {
 		return h;
 	}
 

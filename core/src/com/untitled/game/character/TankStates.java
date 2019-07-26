@@ -1,5 +1,8 @@
 package com.untitled.game.character;
 
+/**
+ * Enum of Tank states.
+ */
 public enum TankStates {
 	STANDING, WALKING_LEFT, WALKING_RIGHT, STANDING_LEFT_RIGHT,
 	BLOCK, BLOCK_LEFT, BLOCK_RIGHT, BLOCK_LEFT_RIGHT,
