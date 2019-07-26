@@ -1,5 +1,8 @@
 package com.untitled.game.character;
 
+/**
+ * Enum of Assassin inputs.
+ */
 public enum AssassinInput {
 	LEFT_KEYDOWN, LEFT_KEYUP, RIGHT_KEYDOWN, RIGHT_KEYUP, UP_KEYDOWN, UP_KEYUP,
 	DASH_KEYDOWN, DASH_KEYUP,

@@ -3,7 +3,7 @@ package com.untitled.game.ability;
 import com.badlogic.gdx.utils.Timer;
 
 /**
- * Represents the state of the cooldown indicator UI.
+ * Represents the current state of a cooldown UI.
  */
 public class CooldownState {
 	public static final int COOLDOWN_STATES = 6;

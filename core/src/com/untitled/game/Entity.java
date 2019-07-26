@@ -13,8 +13,11 @@ import com.untitled.game.state.States;
 import com.untitled.screens.GameScreen;
 
 /**
- * Represents all renderable, interactive objects such as throwing stars/falling rocks.
- * LivingEntity represents Characters, Bosses.
+ * Represents objects with:
+ * - {@link States}
+ * - {@link Animations}
+ * - Parts
+ * - Input
  */
 public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 	public static final float GRAVITY = -3f;
@@ -28,6 +31,10 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 
 	private boolean dispose;
 
+	/**
+	 * @param game           the GameScreen this Entity should use.
+	 * @param renderPriority priority to render in EntityManager.
+	 */
 	public Entity(GameScreen game, int renderPriority) {
 		data = new EntityData();
 
@@ -44,10 +51,22 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		game.getEntityManager().add(this, renderPriority);
 	}
 
+	/**
+	 * @param states define states in this States instance.
+	 */
 	protected abstract void defineStates(States<I, S> states);
 
+	/**
+	 * @param animations define animations in this Animations instance.
+	 * @param assets     Untitled {@link Assets}.
+	 */
 	protected abstract void defineAnimations(Animations<S, P> animations, Assets assets);
 
+	/**
+	 * Renders this Entity.
+	 *
+	 * @param batch {@link SpriteBatch} to render this Entity on.
+	 */
 	public void render(SpriteBatch batch) {
 		states.update();
 		animations.render(batch);
@@ -57,26 +76,49 @@ public abstract class Entity<I extends Enum, S extends Enum, P extends Enum> {
 		}
 	}
 
+	/**
+	 * Renders the debug of animations.
+	 *
+	 * @param shapeRenderer {@link ShapeRenderer} to render debug on.
+	 */
 	public void renderDebug(ShapeRenderer shapeRenderer) {
 		animations.renderDebug(shapeRenderer);
 	}
 
+	/**
+	 * Disposes this Entity in {@link EntityManager}
+	 *
+	 * @param alpha sets this Entity alpha before disposing.
+	 */
 	public void dispose(float alpha) {
 		getAlpha().set(alpha);
 		dispose = true;
 	}
 
-	/* Setters */
+	/**
+	 * @param renderTask will be called when Entity is rendering.
+	 */
 	public void setRenderTask(RenderTask renderTask) {
 		this.renderTask = renderTask;
 	}
 
+	/**
+	 * @param listener adds a listener to this Entity's {@link States}
+	 */
 	protected void addStateListener(StateListener<S> listener) {
 		states.addListener(listener);
 	}
 
+	/**
+	 * @param input a Input enum
+	 * @return whether the Input is valid
+	 */
 	protected abstract boolean canInput(I input);
 
+	/**
+	 * @param input Input into {@link States}
+	 * @return wheter the Input was valid
+	 */
 	public boolean input(I input) {
 		if (!isDispose() && canInput(input)) {
 			return states.input(input);

@@ -1,5 +1,8 @@
 package com.untitled.game.character;
 
+/**
+ * Enum of Assassin states.
+ */
 public enum AssassinStates {
 	STANDING, STANDING_LEFT_RIGHT, WALKING_LEFT, WALKING_RIGHT,
 	STANDING_UP, STANDING_UP_LEFT_RIGHT, WALKING_UP_LEFT, WALKING_UP_RIGHT,

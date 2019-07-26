@@ -6,8 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * Abilities manager. Defines when an ability begins or ends based on state by mapping state to
- * ability calls.
+ * Abilities manager. Defines when an {@link Ability} begins or ends based on a State.
  *
  * @param <S> a State enum.
  */
@@ -25,6 +24,7 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 
 	/**
 	 * Maps a state to an ability begin.
+	 * One state can begin only one ability. (Tentatively)
 	 *
 	 * @param state   the new state being added.
 	 * @param ability the corresponding ability to the state.
@@ -34,8 +34,6 @@ public class Abilities<S extends Enum> implements StateListener<S> {
 		abilitiesBegin.put(state, ability);
 		return this;
 	}
-
-	// Add an ability to be cancelled when in a state.
 
 	/**
 	 * Maps a state to an ability end. Here, one state can end multiple abilities.

@@ -15,6 +15,9 @@ import com.untitled.ui.TextUI;
 import com.untitled.ui.TextUIAlign;
 import com.untitled.ui.UIAlign;
 
+/**
+ * Credits screen of Untitled.
+ */
 public class CreditsScreen extends UntitledScreen {
 	private static final String MUSIC_TEXT = "MENU MUSIC:\nTHE FALL OF ARCANA" +
 			"\n\nBOSS MUSIC:\nHEROIC DEMISE" +

@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 /**
+ * Entity manager.
  * ADT to store all entities and render them.
  */
 public class EntityManager {
@@ -25,6 +26,11 @@ public class EntityManager {
 		entitiesPriorityMap = new TreeMap<>();
 	}
 
+	/**
+	 * @param entity   Entity to store
+	 * @param priority rendering priority of the Entity. (Higher will be rendered on top)
+	 * @return this instance
+	 */
 	public EntityManager add(Entity entity, Integer priority) {
 		HashSet<Entity> entities = entitiesPriorityMap.get(priority);
 		if (entities == null) {
@@ -36,6 +42,12 @@ public class EntityManager {
 		return this;
 	}
 
+	/**
+	 * Renders all entities.
+	 * Also handles Entity disposal.
+	 *
+	 * @param batch {@link SpriteBatch} to render entities on.
+	 */
 	public void render(SpriteBatch batch) {
 		for (HashSet<Entity> entities : entitiesPriorityMap.values()) {
 			Iterator<Entity> iterator = entities.iterator();
@@ -56,6 +68,11 @@ public class EntityManager {
 		}
 	}
 
+	/**
+	 * Render debug all entities.
+	 *
+	 * @param renderer {@link ShapeRenderer} to render debug on.
+	 */
 	public void renderDebugAll(ShapeRenderer renderer) {
 		for (HashSet<Entity> entities : entitiesPriorityMap.values()) {
 			for (Entity e : entities) {

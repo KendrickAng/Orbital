@@ -5,6 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.untitled.MutableBoolean;
 import com.untitled.MutableFloat;
 
+/**
+ * Position, flip, alpha and color of an Entity.
+ * (Mainly used in rendering)
+ */
 public class EntityData {
 	private Vector2 position;
 	private MutableBoolean flipX;

@@ -25,7 +25,8 @@ public class Ability<S extends Enum> {
 	private AbilityEnd abilityEnd;
 
 	/**
-	 * @param cooldown 0.0 if skill has no cooldown, and negative if infinite cooldown.
+	 * @param cooldown Enter a negative number for infinite cooldown,
+	 *                 0 for no cooldown, and positive for normal cooldown.
 	 */
 	public Ability(float cooldown) {
 		this.cooldown = cooldown;

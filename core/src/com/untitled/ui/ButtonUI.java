@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/**
+ * A UI which can be clicked. Clicking will call a {@link ButtonCallback}.
+ */
 public class ButtonUI extends UI implements InputProcessor {
 	private boolean touchedDown;
 	private boolean hovering;
@@ -15,17 +18,34 @@ public class ButtonUI extends UI implements InputProcessor {
 	private Texture hover;
 	private ButtonCallback callback;
 
+	/**
+	 * @param align    where the origin (x, y) of the UI should be relative to the content.
+	 * @param viewport {@link Viewport} which the button should use to detect clicking.
+	 * @param callback {@link ButtonCallback} runnable to call when this ButtonUI is clicked.
+	 */
 	public ButtonUI(UIAlign align, Viewport viewport, ButtonCallback callback) {
 		super(align);
 		this.viewport = viewport;
 		this.callback = callback;
 	}
 
+	/**
+	 * Texture that is displayed when this ButtonUI is not hovered by a mouse.
+	 *
+	 * @param normal {@link Texture} to display.
+	 * @return this instance.
+	 */
 	public ButtonUI setNormalTexture(Texture normal) {
 		this.normal = normal;
 		return this;
 	}
 
+	/**
+	 * Texture that is displayed when this ButtonUI is hovered by a mouse.
+	 *
+	 * @param hover {@link Texture} to display.
+	 * @return this instance.
+	 */
 	public ButtonUI setHoverTexture(Texture hover) {
 		this.hover = hover;
 		return this;

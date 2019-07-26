@@ -12,7 +12,8 @@ import static com.untitled.game.debuff.DebuffType.SLOW;
 import static com.untitled.screens.GameScreen.GAME_FLOOR_HEIGHT;
 
 /**
- * Character is a LivingEntity with 3 abilities: Secondary, Secondary, Tertiary.
+ * A {@link LivingEntity} with certain debuff definitions.
+ * Also can use 3 abilities: Primary, Secondary, Tertiary.
  */
 public abstract class Character<I extends Enum, S extends Enum, P extends Enum> extends LivingEntity<I, S, P> {
 	static final String PERFECT_TEXT = "PERFECT";
@@ -47,10 +48,21 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 		return DAMAGED_DURATION;
 	}
 
-	public float getSlow() {
+	/**
+	 * @return The percentage of slow of this character.
+	 */
+	protected float getSlow() {
 		return slow;
 	}
 
+	/**
+	 * Test if a {@link LivingEntity} can damage this Character.
+	 *
+	 * @param entity the attacker.
+	 * @param hitbox the hitbox of the attacker.
+	 * @param damage the amount of damage the attacker will deal.
+	 * @return whether the attack was successful.
+	 */
 	public boolean damageTest(LivingEntity entity, Hitbox hitbox, float damage) {
 		// Not a LivingEntity
 		if ((entity == null ||
@@ -64,20 +76,60 @@ public abstract class Character<I extends Enum, S extends Enum, P extends Enum> 
 		return false;
 	}
 
+	/**
+	 * Determines whether the attackers hitbox touches this Character.
+	 *
+	 * @param hitbox the hitbox of an attacker
+	 * @return wheter the attack was successful.
+	 */
 	protected abstract boolean hitTest(Hitbox hitbox);
 
 	// TODO: Abstract these out
+
+	/**
+	 * Determines what this Character does to use the left key.
+	 *
+	 * @param keydown false: keyup, true: keydown.
+	 */
 	protected abstract void useLeft(boolean keydown);
 
+	/**
+	 * Determines what this Character does to use the right key.
+	 *
+	 * @param keydown false: keyup, true: keydown.
+	 */
 	protected abstract void useRight(boolean keydown);
 
+	/**
+	 * Determines what this Character does to use the up key.
+	 *
+	 * @param keydown false: keyup, true: keydown.
+	 */
 	protected abstract void useUp(boolean keydown);
 
+	/**
+	 * Determines what this Character does to use the Primary skill.
+	 *
+	 * @param keydown false: keyup, true: keydown.
+	 */
 	protected abstract void usePrimary(boolean keydown);
 
+	/**
+	 * Determines what this Character does to use the Secondary skill.
+	 *
+	 * @param keydown false: keyup, true: keydown.
+	 */
 	protected abstract void useSecondary(boolean keydown);
 
+	/**
+	 * Determines what this Character does to use the Tertiary skill.
+	 *
+	 * @param keydown false: keyup, true: keydown.
+	 */
 	protected abstract void useTertiary(boolean keydown);
 
+	/**
+	 * Determines what this Character does to switch characters.
+	 */
 	public abstract void useSwitchCharacter();
 }

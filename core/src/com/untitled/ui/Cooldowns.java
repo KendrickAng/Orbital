@@ -8,6 +8,9 @@ import com.untitled.game.ability.CooldownState;
 
 import java.util.ArrayList;
 
+/**
+ * A {@link UI} which renders multiple cooldowns in a horizonal row.
+ */
 public class Cooldowns extends UI {
 	private ArrayList<Ability> abilities;
 
@@ -18,6 +21,10 @@ public class Cooldowns extends UI {
 	private Texture cooldown4;
 	private Texture cooldown5;
 
+	/**
+	 * @param align  where the origin (x, y) of the UI should be relative to the content.
+	 * @param assets Untitled {@link Assets}.
+	 */
 	public Cooldowns(UIAlign align, Assets assets) {
 		super(align);
 		abilities = new ArrayList<>();
@@ -54,6 +61,13 @@ public class Cooldowns extends UI {
 		return this;
 	}
 
+	/**
+	 * Maps a {@link CooldownState} to a {@link Texture}.
+	 *
+	 * @param state   a {@link CooldownState} of (usually) an Ability.
+	 * @param texture a {@link Texture} to graphically represent the Ability.
+	 * @return this instance
+	 */
 	public Cooldowns add(CooldownState state, Texture texture) {
 		abilities.add(new Ability(state, texture));
 		return this;

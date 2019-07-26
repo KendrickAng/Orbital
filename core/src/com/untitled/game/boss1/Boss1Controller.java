@@ -4,6 +4,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.untitled.screens.GameScreen;
 
+/**
+ * {@link InputProcessor} of a {@link Boss1}, giving any user the ability to control a Boss1.
+ */
 public class Boss1Controller implements InputProcessor {
 	private Boss1 boss1;
 

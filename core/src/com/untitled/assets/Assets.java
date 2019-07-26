@@ -20,6 +20,9 @@ import com.untitled.game.shuriken.ShurikenParts;
 
 import java.util.HashMap;
 
+/**
+ * Asset manager for Untitled.
+ */
 public class Assets {
 	private AssetManager assetManager;
 
@@ -136,6 +139,9 @@ public class Assets {
 		}
 	}
 
+	/**
+	 * Definition of all assets.
+	 */
 	public Assets() {
 		assetManager = new AssetManager();
 
@@ -257,10 +263,20 @@ public class Assets {
 		rockAnimations.put(name, new AnimationAsset<>(path));
 	}
 
+	/**
+	 * Queue Asset for loading in {@link AssetManager}
+	 *
+	 * @param name {@link TextureName} to load.
+	 */
 	public void loadTexture(TextureName name) {
 		assetManager.load(textures.get(name).path, Texture.class);
 	}
 
+	/**
+	 * Queue Asset for loading in {@link AssetManager}
+	 *
+	 * @param name {@link FontName} to load.
+	 */
 	public void loadFont(FontName name) {
 		FontAsset asset = fonts.get(name);
 		FreetypeFontLoader.FreeTypeFontLoaderParameter parameter = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -269,40 +285,73 @@ public class Assets {
 		assetManager.load(asset.id, BitmapFont.class, parameter);
 	}
 
+	/**
+	 * Queue Asset for loading in {@link AssetManager}
+	 *
+	 * @param name {@link MusicName} to load.
+	 */
 	public void loadMusic(MusicName name) {
 		assetManager.load(music.get(name).path, Music.class);
 	}
 
+	/**
+	 * Force load Animation.
+	 *
+	 * @param name {@link TankAnimationName} to load.
+	 */
 	public void loadTankAnimation(TankAnimationName name) {
 		AnimationAsset<TankParts> asset = tankAnimations.get(name);
 		FileHandle handle = Gdx.files.internal(asset.path);
 		asset.animation = new Animation<>(handle, TANK_PARTS);
 	}
 
+	/**
+	 * Force load Animation.
+	 *
+	 * @param name {@link AssassinAnimationName} to load.
+	 */
 	public void loadAssassinAnimation(AssassinAnimationName name) {
 		AnimationAsset<AssassinParts> asset = assassinAnimations.get(name);
 		FileHandle handle = Gdx.files.internal(asset.path);
 		asset.animation = new Animation<>(handle, ASSASSIN_PARTS);
 	}
 
+	/**
+	 * Force load Animation.
+	 *
+	 * @param name {@link Boss1AnimationName} to load.
+	 */
 	public void loadBoss1Animation(Boss1AnimationName name) {
 		AnimationAsset<Boss1Parts> asset = boss1Animations.get(name);
 		FileHandle handle = Gdx.files.internal(asset.path);
 		asset.animation = new Animation<>(handle, BOSS1_PARTS);
 	}
 
+	/**
+	 * Force load Animation.
+	 *
+	 * @param name {@link ShurikenAnimationName} to load.
+	 */
 	public void loadShurikenAnimation(ShurikenAnimationName name) {
 		AnimationAsset<ShurikenParts> asset = shurikenAnimations.get(name);
 		FileHandle handle = Gdx.files.internal(asset.path);
 		asset.animation = new Animation<>(handle, SHURIKEN_PARTS);
 	}
 
+	/**
+	 * Force load Animation.
+	 *
+	 * @param name {@link RockAnimationName} to load.
+	 */
 	public void loadRockAnimation(RockAnimationName name) {
 		AnimationAsset<RockParts> asset = rockAnimations.get(name);
 		FileHandle handle = Gdx.files.internal(asset.path);
 		asset.animation = new Animation<>(handle, ROCK_PARTS);
 	}
 
+	/**
+	 * Force load all assets in {@link AssetManager}
+	 */
 	public void load() {
 		// Force load all
 		assetManager.finishLoading();

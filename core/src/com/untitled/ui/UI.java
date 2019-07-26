@@ -71,5 +71,10 @@ public abstract class UI {
 		return h;
 	}
 
+	/**
+	 * Renders the UI
+	 *
+	 * @param batch {@link SpriteBatch} to render the UI on.
+	 */
 	public abstract void render(SpriteBatch batch);
 }

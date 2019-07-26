@@ -31,9 +31,8 @@ import static com.untitled.game.boss1.Boss1Parts.RIGHT_LEG;
 import static com.untitled.game.boss1.Boss1Parts.SHOCKWAVE;
 import static com.untitled.screens.GameScreen.GAME_FLOOR_HEIGHT;
 
-/*
-Responsibilities: Defines abilities, maps Ability states to Ability instances, handles
-sprite position, direction, motion.
+/**
+ * Boss1 (Golem) boss.
  */
 public class Boss1 extends LivingEntity<Boss1Input, Boss1States, Boss1Parts> {
 	// Ability animation duration

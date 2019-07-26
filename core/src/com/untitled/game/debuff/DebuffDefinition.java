@@ -1,5 +1,8 @@
 package com.untitled.game.debuff;
 
+/**
+ * Calls Runnables based on when a certain type of debuff is inflicted.
+ */
 public class DebuffDefinition {
 	private DebuffBegin begin;
 	// called when you inflict a debuff AND when the debuff ends.

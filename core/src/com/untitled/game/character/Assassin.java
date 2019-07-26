@@ -46,7 +46,9 @@ import static com.untitled.game.debuff.DebuffType.WEAK;
 import static com.untitled.screens.GameScreen.GAME_FLOOR_HEIGHT;
 import static com.untitled.screens.GameScreen.GAME_WIDTH;
 
-
+/**
+ * Assassin character.
+ */
 public class Assassin extends Character<AssassinInput, AssassinStates, AssassinParts> {
 	private static final float MOVESPEED = 2f;
 	// Movespeed is multiplied by this constant in air
@@ -80,7 +82,7 @@ public class Assassin extends Character<AssassinInput, AssassinStates, AssassinP
 	private static final float LIGHT_REALM_SHURIKEN_MAX_INTERVAL = 1f;
 
 	// Skill cooldown in seconds.
-	private static final float DASH_COOLDOWN = 1.5f;
+	private static final float DASH_COOLDOWN = 1f;
 	private static final float SHURIKEN_THROW_COOLDOWN = 0.5f;
 	private static final float CLEANSE_COOLDOWN = LIGHT_REALM_DURATION + 20f;
 

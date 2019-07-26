@@ -16,6 +16,10 @@ import static com.untitled.game.boss1.Boss1Input.RIGHT_KEYUP;
 import static com.untitled.game.boss1.Boss1Input.ROLL_KEYDOWN;
 import static com.untitled.game.boss1.Boss1Input.SLAM_KEYDOWN;
 
+/**
+ * AI of {@link Boss1} (Golem)
+ * AI will begin after 2 seconds.
+ */
 public class Boss1AI {
 	private static final float MIN_RESTING_DURATION = 2f;
 	private static final float MAX_RESTING_DURATION = 3f;

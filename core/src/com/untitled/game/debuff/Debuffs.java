@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-/*
-An effect on a LivingEntity over a duration of time.
+/**
+ * Debuff manager.
+ * <p>
+ * Determines what happens when a certain {@link DebuffType} is inflicted.
+ * Also responsible for inflicting {@link Debuff}s.
  */
 public class Debuffs {
 	// only used to schedule new tasks in inflict().
@@ -24,13 +27,23 @@ public class Debuffs {
 		inflicted = new HashMap<>();
 	}
 
+	/**
+	 * Maps a {@link DebuffType} to a {@link DebuffDefinition}.
+	 * When a {@link Debuff} with DebuffType is inflicted, this DebuffDefinition will be used.
+	 *
+	 * @param type   the DebuffType
+	 * @param debuff the DebuffDefinition
+	 * @return this instance
+	 */
 	public Debuffs map(DebuffType type, DebuffDefinition debuff) {
 		definitions.put(type, debuff);
 		inflicted.put(type, new HashSet<>());
 		return this;
 	}
 
-	// Modifier is from 0f to 1f. (0% - 100%). Main business logic on how functional interfaces DebuffX are called.
+	/**
+	 * @param debuff {@link Debuff} to inflict.
+	 */
 	public void inflict(Debuff debuff) {
 		// get the debuff from the map using the enum T.
 		DebuffDefinition definition = definitions.get(debuff.getType());
@@ -62,6 +75,9 @@ public class Debuffs {
 		definition.update(updateModifier(debuffs));
 	}
 
+	/**
+	 * @param type cancels all debuffs with this {@link DebuffType}
+	 */
 	public void cancel(DebuffType type) {
 		HashSet<Debuff> debuffs = inflicted.get(type);
 		for (Debuff debuff : debuffs) {
@@ -69,6 +85,9 @@ public class Debuffs {
 		}
 	}
 
+	/**
+	 * @param debuff cancels this specific {@link Debuff}
+	 */
 	public void cancel(Debuff debuff) {
 		DebuffDefinition definition = definitions.get(debuff.getType());
 		HashSet<Debuff> debuffs = inflicted.get(debuff.getType());

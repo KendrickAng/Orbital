@@ -6,15 +6,24 @@ import com.badlogic.gdx.InputProcessor;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * An {@link InputProcessor} which allows any user to control a {@link Character}.
+ */
 public class CharacterController implements InputProcessor {
 	private Character character;
 	private HashSet<CharacterControllerInput> inputs;
 
+	/**
+	 * @param character the {@link Character} to control.
+	 */
 	public CharacterController(Character character) {
 		this.character = character;
 		this.inputs = new HashSet<>();
 	}
 
+	/**
+	 * @param character the {@link Character} to control.
+	 */
 	public void setCharacter(Character character) {
 		this.character = character;
 	}
@@ -112,7 +121,7 @@ public class CharacterController implements InputProcessor {
 		return false;
 	}
 
-	public Collection<CharacterControllerInput> getInputs() {
+	Collection<CharacterControllerInput> getInputs() {
 		return inputs;
 	}
 }

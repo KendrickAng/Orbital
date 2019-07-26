@@ -44,6 +44,11 @@ import static com.untitled.assets.Assets.TANK_PARTS;
 import static com.untitled.assets.Assets.TANK_STANDING_PATH;
 import static com.untitled.assets.Assets.TANK_WALKING_PATH;
 
+/**
+ * Parses Animation files (.ora) into Textures (.png) and Hitboxes (Animation.xml).
+ * <p>
+ * This class is called in gradle :core:animationsBuilder.
+ */
 public class AnimationsBuilder {
 	public static void main(String[] args) throws IOException {
 		AnimationsBuilder builder = new AnimationsBuilder();

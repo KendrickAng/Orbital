@@ -36,8 +36,8 @@ public class Animation<P extends Enum> {
 	/**
 	 * Creates an animation with Textures and Hitboxes.
 	 *
-	 * @param handle the folder location of the animation. LibGDX-specific.
-	 * @param parts  a mapping of the part ID to the part enum.
+	 * @param handle {@link FileHandle} of an animation folder.
+	 * @param parts  a mapping of Part ID to Part enum.
 	 */
 	public Animation(FileHandle handle, HashMap<String, P> parts) {
 		this.animationFrames = new HashMap<>();
@@ -195,30 +195,28 @@ public class Animation<P extends Enum> {
 	}
 
 	/**
-	 * Renders the current frame onto the screen.
+	 * Renders the current {@link AnimationFrame}.
 	 *
-	 * @param batch the batch to render the frame on. LibGDX-specific.
+	 * @param batch {@link SpriteBatch} to render the animation on.
 	 */
 	public void render(SpriteBatch batch) {
 		animationFrame.render(batch);
 	}
 
 	/**
-	 * Renders the animation's hitboxes.
+	 * Render debug of an {@link AnimationFrame}.
 	 *
-	 * @param shapeRenderer the renderer for shapes. LibGDX-specific.
+	 * @param shapeRenderer {@link ShapeRenderer} to render debug shapes on.
 	 */
 	public void renderDebug(ShapeRenderer shapeRenderer) {
 		animationFrame.renderDebug(shapeRenderer);
 	}
 
-	/* Getters */
-
 	/**
-	 * Gets the Hitbox of a part enum.
+	 * Gets the {@link Hitbox} of a Part enum.
 	 *
-	 * @param part the part enum.
-	 * @return the hitbox corresponding to the part enum.
+	 * @param part the Part enum.
+	 * @return the hitbox corresponding to the Part enum.
 	 */
 	public Hitbox getHitbox(P part) {
 		return animationFrame.getHitbox(part);
