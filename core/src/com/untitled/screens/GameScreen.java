@@ -82,7 +82,7 @@ public class GameScreen extends UntitledScreen {
 	private static final String ASSASSIN_HELP_TEXT = "[GOLD]ASSASSIN SKILLS[] - YOU MAY TRY THESE NOW." +
 			"\n\n[[[GOLD]Q[]] KEY: " + DASH +
 			"\n        The assassin dashes in any direction, dodging all attacks." +
-			"\n        [#b2ebf2]If the assassin dodges an attack, her " + STACKS + " increases. Dashing near a " + STUN + "[#ef5350]ED[] boss will deal true damage.[]" +
+			"\n        [#b2ebf2]If the assassin dodges an attack, her " + STACKS + " increases. Dashing near a " + STUN + "[#ef5350]NED[] boss will deal true damage.[]" +
 			"\n\n[[[GOLD]W[]] KEY: " + SHURIKEN_THROW +
 			"\n        The assassin throws a shuriken to inflict some damage." +
 			"\n        [#b2ebf2]At max " + STACKS + ", the shuriken will inflict bonus damage.[]" +
