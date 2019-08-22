@@ -100,6 +100,7 @@ public class Assets {
 	}
 
 	private class TextureAsset {
+		private boolean load;
 		private String path;
 		private Texture texture;
 
@@ -109,6 +110,7 @@ public class Assets {
 	}
 
 	private class FontAsset {
+		private boolean load;
 		private String path;
 		private String id;
 		private int size;
@@ -122,6 +124,7 @@ public class Assets {
 	}
 
 	private class MusicAsset {
+		private boolean load;
 		private String path;
 		private Music music;
 
@@ -170,20 +173,35 @@ public class Assets {
 		defineTexture(TextureName.BUTTON_HOVER, "Textures/Button/Hover.png");
 		defineTexture(TextureName.BUTTON_MENU_HOVER, "Textures/Button/Menu Hover.png");
 
-		defineTexture(TextureName.COOLDOWN_0, "Textures/Cooldowns/0.png");
-		defineTexture(TextureName.COOLDOWN_1, "Textures/Cooldowns/1.png");
-		defineTexture(TextureName.COOLDOWN_2, "Textures/Cooldowns/2.png");
-		defineTexture(TextureName.COOLDOWN_3, "Textures/Cooldowns/3.png");
-		defineTexture(TextureName.COOLDOWN_4, "Textures/Cooldowns/4.png");
-		defineTexture(TextureName.COOLDOWN_5, "Textures/Cooldowns/5.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_0, "Textures/AndroidCooldowns/0.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_1, "Textures/AndroidCooldowns/1.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_2, "Textures/AndroidCooldowns/2.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_3, "Textures/AndroidCooldowns/3.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_4, "Textures/AndroidCooldowns/4.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_5, "Textures/AndroidCooldowns/5.png");
 
-		defineTexture(TextureName.COOLDOWN_BLOCK, "Textures/Cooldowns/Block Ability.png");
-		defineTexture(TextureName.COOLDOWN_HAMMER_SWING, "Textures/Cooldowns/Impale Ability.png");
-		defineTexture(TextureName.COOLDOWN_FORTRESS, "Textures/Cooldowns/Fortress Ability.png");
-		defineTexture(TextureName.COOLDOWN_DASH, "Textures/Cooldowns/Dash Ability.png");
-		defineTexture(TextureName.COOLDOWN_SHURIKEN_THROW, "Textures/Cooldowns/Shuriken Ability.png");
-		defineTexture(TextureName.COOLDOWN_CLEANSE, "Textures/Cooldowns/Cleanse Ability.png");
-		defineTexture(TextureName.COOLDOWN_SWITCH_CHARACTER, "Textures/Cooldowns/Switch Character.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_BLOCK, "Textures/AndroidCooldowns/Block Ability.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_HAMMER_SWING, "Textures/AndroidCooldowns/Hammer Swing Ability.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_FORTRESS, "Textures/AndroidCooldowns/Fortress Ability.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_DASH, "Textures/AndroidCooldowns/Dash Ability.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_SHURIKEN_THROW, "Textures/AndroidCooldowns/Shuriken Ability.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_CLEANSE, "Textures/AndroidCooldowns/Cleanse Ability.png");
+		defineTexture(TextureName.ANDROID_COOLDOWN_SWITCH_CHARACTER, "Textures/AndroidCooldowns/Switch Character.png");
+
+		defineTexture(TextureName.DESKTOP_COOLDOWN_0, "Textures/DesktopCooldowns/0.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_1, "Textures/DesktopCooldowns/1.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_2, "Textures/DesktopCooldowns/2.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_3, "Textures/DesktopCooldowns/3.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_4, "Textures/DesktopCooldowns/4.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_5, "Textures/DesktopCooldowns/5.png");
+
+		defineTexture(TextureName.DESKTOP_COOLDOWN_BLOCK, "Textures/DesktopCooldowns/Block Ability.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_HAMMER_SWING, "Textures/DesktopCooldowns/Hammer Swing Ability.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_FORTRESS, "Textures/DesktopCooldowns/Fortress Ability.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_DASH, "Textures/DesktopCooldowns/Dash Ability.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_SHURIKEN_THROW, "Textures/DesktopCooldowns/Shuriken Ability.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_CLEANSE, "Textures/DesktopCooldowns/Cleanse Ability.png");
+		defineTexture(TextureName.DESKTOP_COOLDOWN_SWITCH_CHARACTER, "Textures/DesktopCooldowns/Switch Character.png");
 
 		defineTexture(TextureName.DEBUFF_STUNNED, "Textures/Debuff/Stunned.png");
 		defineTexture(TextureName.DEBUFF_WEAK_SPOT, "Textures/Debuff/Weak Spot.png");
@@ -269,7 +287,10 @@ public class Assets {
 	 * @param name {@link TextureName} to load.
 	 */
 	public void loadTexture(TextureName name) {
-		assetManager.load(textures.get(name).path, Texture.class);
+		TextureAsset asset = textures.get(name);
+		asset.load = true;
+
+		assetManager.load(asset.path, Texture.class);
 	}
 
 	/**
@@ -279,6 +300,8 @@ public class Assets {
 	 */
 	public void loadFont(FontName name) {
 		FontAsset asset = fonts.get(name);
+		asset.load = true;
+
 		FreetypeFontLoader.FreeTypeFontLoaderParameter parameter = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		parameter.fontFileName = asset.path;
 		parameter.fontParameters.size = asset.size;
@@ -291,6 +314,9 @@ public class Assets {
 	 * @param name {@link MusicName} to load.
 	 */
 	public void loadMusic(MusicName name) {
+		MusicAsset asset = music.get(name);
+		asset.load = true;
+
 		assetManager.load(music.get(name).path, Music.class);
 	}
 
@@ -358,20 +384,26 @@ public class Assets {
 
 		// Copy textures from assetManager back
 		for (TextureAsset asset : textures.values()) {
-			asset.texture = assetManager.get(asset.path, Texture.class);
+			if (asset.load) {
+				asset.texture = assetManager.get(asset.path, Texture.class);
+			}
 		}
 
 		// Copy fonts from assetManager back
 		for (FontAsset asset : fonts.values()) {
-			asset.font = assetManager.get(asset.id, BitmapFont.class);
-			asset.font.getData().markupEnabled = true;
-			asset.font.getData().setLineHeight(asset.font.getLineHeight() * FONT_LINE_HEIGHT);
+			if (asset.load) {
+				asset.font = assetManager.get(asset.id, BitmapFont.class);
+				asset.font.getData().markupEnabled = true;
+				asset.font.getData().setLineHeight(asset.font.getLineHeight() * FONT_LINE_HEIGHT);
+			}
 		}
 
 		// Copy music from assetManager back
 		for (MusicAsset asset : music.values()) {
-			asset.music = assetManager.get(asset.path, Music.class);
-			asset.music.setLooping(true);
+			if (asset.load) {
+				asset.music = assetManager.get(asset.path, Music.class);
+				asset.music.setLooping(true);
+			}
 		}
 	}
 
