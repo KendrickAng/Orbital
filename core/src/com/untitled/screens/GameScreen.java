@@ -514,7 +514,7 @@ public class GameScreen extends UntitledScreen {
 	@Override
 	public void renderDebug(ShapeRenderer renderer) {
 		renderer.setProjectionMatrix(cameraGame.combined);
-		renderer.begin();
+		renderer.begin(ShapeRenderer.ShapeType.Line);
 		this.entityManager.renderDebugAll(renderer);
 		renderer.end();
 	}
