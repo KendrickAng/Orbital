@@ -1,9 +1,10 @@
-package com.untitled;
+package com.untitled.android;
 
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.untitled.UntitledGame;
 
 public class AndroidLauncher extends AndroidApplication {
 	@Override
