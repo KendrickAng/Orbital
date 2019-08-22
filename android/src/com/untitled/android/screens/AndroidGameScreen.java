@@ -1,5 +1,6 @@
 package com.untitled.android.screens;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.untitled.UntitledGame;
 import com.untitled.android.AndroidControls;
 import com.untitled.android.ui.AndroidCooldowns;
@@ -25,10 +26,23 @@ public class AndroidGameScreen extends GameScreen {
 	private static final float CHARACTER_COOLDOWNS_Y = GAME_HEIGHT - 70f;
 	private static final float CHARACTER_COOLDOWNS_PADDING = 20f;
 
+	private AndroidControls controls;
+
 	public AndroidGameScreen(UntitledGame game) {
 		super(game);
 
-		getInputMultiplexer().addProcessor(new AndroidControls(getViewportUI(), getCharacterController()));
+		this.controls = new AndroidControls(getAssets(), getViewportUI(), getCharacterController());
+		initGame();
+	}
+
+	@Override
+	protected void initGame() {
+		getInputMultiplexer().addProcessor(this.controls);
+	}
+
+	@Override
+	public void renderAbstract(SpriteBatch batch) {
+		controls.render(batch);
 	}
 
 	@Override

@@ -300,6 +300,8 @@ public abstract class GameScreen extends UntitledScreen {
 
 					Gdx.input.setCursorCatched(true);
 					this.state = State.BOSS_FIGHT;
+
+					initGame();
 				})
 				.setX(START_BUTTON_X)
 				.setY(START_BUTTON_Y)
@@ -383,6 +385,8 @@ public abstract class GameScreen extends UntitledScreen {
 		this.assassin.getAlpha().set(0);
 		this.character = tank;
 	}
+
+	protected abstract void initGame();
 
 	protected abstract Cooldowns initTankHelpCooldowns(Assets A, Tank tank, CooldownState switchCharacter);
 
@@ -490,8 +494,12 @@ public abstract class GameScreen extends UntitledScreen {
 			this.highscoreText.render(batch);
 		}
 
+		renderAbstract(batch);
+
 		batch.end();
 	}
+
+	protected abstract void renderAbstract(SpriteBatch batch);
 
 	@Override
 	public void renderDebug(ShapeRenderer renderer) {

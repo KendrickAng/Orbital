@@ -166,8 +166,8 @@ public class Assets {
 
 		defineTexture(TextureName.MENU_BACKGROUND, "Textures/Game/Menu Background.png");
 		defineTexture(TextureName.GAME_BACKGROUND, "Textures/Game/Background.png");
-		defineTexture(TextureName.GAME_FLOOR, "Textures/Game/Floor.png");
 		defineTexture(TextureName.GAME_OVERLAY, "Textures/Game/Overlay.png");
+		defineTexture(TextureName.ANDROID_CONTROLLER, "Textures/Game/Android Controller.png");
 
 		defineTexture(TextureName.BUTTON_NORMAL, "Textures/Button/Normal.png");
 		defineTexture(TextureName.BUTTON_HOVER, "Textures/Button/Hover.png");

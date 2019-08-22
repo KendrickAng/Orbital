@@ -96,7 +96,6 @@ public abstract class UntitledGame extends Game {
 
 		assets.loadTexture(TextureName.MENU_BACKGROUND);
 		assets.loadTexture(TextureName.GAME_BACKGROUND);
-		assets.loadTexture(TextureName.GAME_FLOOR);
 		assets.loadTexture(TextureName.GAME_OVERLAY);
 
 		assets.loadTexture(TextureName.DEBUFF_STUNNED);

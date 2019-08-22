@@ -1,5 +1,6 @@
 package com.untitled.desktop.screens;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.untitled.UntitledGame;
 import com.untitled.assets.Assets;
 import com.untitled.assets.TextureName;
@@ -29,6 +30,11 @@ public class DesktopGameScreen extends GameScreen {
 
 	public DesktopGameScreen(UntitledGame game) {
 		super(game);
+	}
+
+	@Override
+	protected void initGame() {
+
 	}
 
 	@Override
@@ -137,5 +143,10 @@ public class DesktopGameScreen extends GameScreen {
 						getViewportUI(),
 						() -> getCharacterController().keyDown(R),
 						() -> getCharacterController().keyUp(R));
+	}
+
+	@Override
+	protected void renderAbstract(SpriteBatch batch) {
+
 	}
 }

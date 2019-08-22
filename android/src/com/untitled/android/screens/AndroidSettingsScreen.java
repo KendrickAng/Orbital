@@ -5,6 +5,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.untitled.UntitledGame;
 import com.untitled.assets.Assets;
@@ -22,15 +23,24 @@ import static com.untitled.UntitledGame.CAMERA_HEIGHT;
 import static com.untitled.UntitledGame.CAMERA_WIDTH;
 import static com.untitled.UntitledGame.SETTINGS_MUSIC_VOLUME;
 import static com.untitled.UntitledGame.SETTINGS_MUSIC_VOLUME_DEFAULT;
+import static com.untitled.UntitledGame.SETTINGS_NAME;
 import static com.untitled.screens.ScreenName.MAIN_MENU;
+import static com.untitled.screens.ScreenName.NAME_SETTINGS;
 
 /**
  * Setttings screen of Untitled.
  */
 public class AndroidSettingsScreen extends SettingsScreen {
+	private static final String NAME_TEXT = "YOUR NAME:";
+	private static final float NAME_TEXT_X = 50f;
+	private static final float NAME_TEXT_Y = CAMERA_HEIGHT - 50f;
+
+	private static final float NAME_BUTTON_X = 200f;
+	private static final float NAME_BUTTON_Y = NAME_TEXT_Y;
+
 	private static final String MUSIC_VOLUME_TEXT = "MUSIC VOLUME:";
 	private static final float MUSIC_VOLUME_TEXT_X = 50f;
-	private static final float MUSIC_VOLUME_TEXT_Y = CAMERA_HEIGHT - 50f;
+	private static final float MUSIC_VOLUME_TEXT_Y = NAME_TEXT_Y - 50f;
 
 	private static final String MUSIC_VOLUME_MINUS_TEXT = "-";
 	private static final float MUSIC_VOLUME_MINUS_BUTTON_X = 200f - 30f;
@@ -53,6 +63,11 @@ public class AndroidSettingsScreen extends SettingsScreen {
 	private OrthographicCamera camera;
 	private Preferences settings;
 
+	private TextUI nameText;
+	private ButtonUI nameButton;
+	private TextUI nameButtonText;
+	private String nameSetting;
+
 	private TextUI musicVolumeText;
 	private ButtonUI musicVolumeMinusButton;
 	private TextUI musicVolumeMinusButtonText;
@@ -73,7 +88,39 @@ public class AndroidSettingsScreen extends SettingsScreen {
 		this.camera = game.getCamera();
 		this.settings = game.getSettings();
 
+		this.nameSetting = settings.getString(SETTINGS_NAME);
 		this.musicVolumeSetting = settings.getInteger(SETTINGS_MUSIC_VOLUME, SETTINGS_MUSIC_VOLUME_DEFAULT);
+
+		// Name
+		this.nameText = new TextUI(UIAlign.LEFT, A.getFont(FontName.MINECRAFT_8))
+				.setX(NAME_TEXT_X)
+				.setY(NAME_TEXT_Y)
+				.setText(NAME_TEXT);
+
+		this.nameButton = new ButtonUI(UIAlign.MIDDLE, viewport)
+				.setButtonUp(() -> {
+					// Create a random 3 character name.
+					StringBuilder nameBuilder = new StringBuilder();
+					for (int i = 0; i < 3; i++) {
+						nameBuilder.append((char) MathUtils.random(65, 90));
+					}
+
+					this.nameSetting = nameBuilder.toString();
+					updateNameText();
+				})
+				.setX(NAME_BUTTON_X)
+				.setY(NAME_BUTTON_Y)
+				.setW(BUTTON_W)
+				.setH(BUTTON_H)
+				.setNormalTexture(A.getTexture(TextureName.BUTTON_NORMAL))
+				.setHoverTexture(A.getTexture(TextureName.BUTTON_HOVER));
+
+		this.nameButtonText = new TextUI(UIAlign.MIDDLE, A.getFont(FontName.MINECRAFT_8))
+				.setX(NAME_BUTTON_X)
+				.setY(NAME_BUTTON_Y)
+				.setColor(Color.GOLD);
+
+		updateNameText();
 
 		// Music Volume
 		this.musicVolumeText = new TextUI(UIAlign.LEFT, A.getFont(FontName.MINECRAFT_8))
@@ -129,6 +176,8 @@ public class AndroidSettingsScreen extends SettingsScreen {
 		// Save
 		this.saveButton = new ButtonUI(UIAlign.MIDDLE, viewport)
 				.setButtonUp(() -> {
+					game.setName(nameSetting);
+					settings.putString(SETTINGS_NAME, nameSetting);
 					settings.putInteger(SETTINGS_MUSIC_VOLUME, musicVolumeSetting);
 					settings.flush();
 					setScreen(MAIN_MENU);
@@ -146,9 +195,14 @@ public class AndroidSettingsScreen extends SettingsScreen {
 				.setText(SAVE_BUTTON_TEXT);
 
 		// Add input processors
+		multiplexer.addProcessor(nameButton);
 		multiplexer.addProcessor(musicVolumeMinusButton);
 		multiplexer.addProcessor(musicVolumePlusButton);
 		multiplexer.addProcessor(saveButton);
+	}
+
+	private void updateNameText() {
+		this.nameButtonText.setText(nameSetting);
 	}
 
 	private void updateMusicVolumeText() {
@@ -162,6 +216,10 @@ public class AndroidSettingsScreen extends SettingsScreen {
 		batch.begin();
 
 		batch.draw(A.getTexture(TextureName.MENU_BACKGROUND), 0, 0, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+
+		this.nameText.render(batch);
+		this.nameButton.render(batch);
+		this.nameButtonText.render(batch);
 
 		this.musicVolumeText.render(batch);
 		this.musicVolumeMinusButton.render(batch);

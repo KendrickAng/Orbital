@@ -2,11 +2,17 @@ package com.untitled.android;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.untitled.assets.Assets;
+import com.untitled.assets.TextureName;
 import com.untitled.game.character.CharacterController;
 
 import java.util.HashSet;
+
+import static com.untitled.screens.GameScreen.GAME_WIDTH;
 
 public class AndroidControls implements InputProcessor {
 	private static final float RADIUS = 20f;
@@ -14,13 +20,22 @@ public class AndroidControls implements InputProcessor {
 	private CharacterController characterController;
 	private HashSet<Integer> keys;
 
+	private Texture touchDownTexture;
 	private Integer touchDownPointer;
 	private Vector2 touchDown;
 
-	public AndroidControls(Viewport viewport, CharacterController characterController) {
+	public AndroidControls(Assets assets, Viewport viewport, CharacterController characterController) {
 		this.viewport = viewport;
 		this.characterController = characterController;
 		this.keys = new HashSet<>();
+
+		this.touchDownTexture = assets.getTexture(TextureName.ANDROID_CONTROLLER);
+	}
+
+	public void render(SpriteBatch batch) {
+		if (this.touchDownPointer != null) {
+			batch.draw(touchDownTexture, this.touchDown.x, this.touchDown.y);
+		}
 	}
 
 	@Override
@@ -42,7 +57,10 @@ public class AndroidControls implements InputProcessor {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (this.touchDownPointer == null) {
 			this.touchDown = viewport.unproject(new Vector2(screenX, screenY));
-			this.touchDownPointer = pointer;
+
+			if (this.touchDown.x < GAME_WIDTH - 120f) {
+				this.touchDownPointer = pointer;
+			}
 		}
 		return false;
 	}

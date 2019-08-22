@@ -1,5 +1,7 @@
 package com.untitled.android;
 
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.math.MathUtils;
 import com.untitled.UntitledGame;
 import com.untitled.android.screens.AndroidGameScreen;
 import com.untitled.android.screens.AndroidSettingsScreen;
@@ -16,6 +18,8 @@ public class AndroidUntitledGame extends UntitledGame {
 
 	@Override
 	protected void loadAssets(Assets A) {
+		A.loadTexture(TextureName.ANDROID_CONTROLLER);
+
 		A.loadTexture(TextureName.ANDROID_COOLDOWN_0);
 		A.loadTexture(TextureName.ANDROID_COOLDOWN_1);
 		A.loadTexture(TextureName.ANDROID_COOLDOWN_2);
@@ -34,6 +38,25 @@ public class AndroidUntitledGame extends UntitledGame {
 
 	@Override
 	protected void createAbstract() {
+		/* Settings */
+		Preferences settings = getSettings();
+
+		// Name
+		String name = settings.getString(SETTINGS_NAME, null);
+
+		if (name == null) {
+			// Create a random 3 character name.
+			StringBuilder nameBuilder = new StringBuilder();
+			for (int i = 0; i < 3; i++) {
+				nameBuilder.append((char) MathUtils.random(65, 90));
+			}
+
+			name = nameBuilder.toString();
+			settings.putString(SETTINGS_NAME, name);
+			settings.flush();
+		}
+
+		setName(name);
 		setScreen(MAIN_MENU);
 	}
 
