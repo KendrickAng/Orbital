@@ -1,32 +1,35 @@
-package com.untitled.ui;
+package com.untitled.ui.button;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.untitled.ui.UI;
+import com.untitled.ui.UIAlign;
 
 /**
- * A UI which can be clicked. Clicking will call a {@link ButtonCallback}.
+ * A UI which can be clicked. Clicking will call a {@link ButtonUpCallback}.
  */
 public class ButtonUI extends UI implements InputProcessor {
+	private Integer touchDownPointer;
 	private boolean touchedDown;
 	private boolean hovering;
 
 	private Viewport viewport;
 	private Texture normal;
 	private Texture hover;
-	private ButtonCallback callback;
+	private ButtonDownCallback buttonDown;
+	private ButtonUpCallback buttonUp;
+	private ButtonReleaseCallback buttonRelease;
 
 	/**
 	 * @param align    where the origin (x, y) of the UI should be relative to the content.
 	 * @param viewport {@link Viewport} which the button should use to detect clicking.
-	 * @param callback {@link ButtonCallback} runnable to call when this ButtonUI is clicked.
 	 */
-	public ButtonUI(UIAlign align, Viewport viewport, ButtonCallback callback) {
+	public ButtonUI(UIAlign align, Viewport viewport) {
 		super(align);
 		this.viewport = viewport;
-		this.callback = callback;
 	}
 
 	/**
@@ -48,6 +51,33 @@ public class ButtonUI extends UI implements InputProcessor {
 	 */
 	public ButtonUI setHoverTexture(Texture hover) {
 		this.hover = hover;
+		return this;
+	}
+
+	/**
+	 * @param buttonDown {@link ButtonUpCallback} runnable to call when this ButtonUI is pressed.
+	 * @return this instance.
+	 */
+	public ButtonUI setButtonDown(ButtonDownCallback buttonDown) {
+		this.buttonDown = buttonDown;
+		return this;
+	}
+
+	/**
+	 * @param buttonUp {@link ButtonUpCallback} runnable to call when this ButtonUI is released over the button.
+	 * @return this instance.
+	 */
+	public ButtonUI setButtonUp(ButtonUpCallback buttonUp) {
+		this.buttonUp = buttonUp;
+		return this;
+	}
+
+	/**
+	 * @param buttonRelease {@link ButtonReleaseCallback} runnable to call when this ButtonUI is released anywhere.
+	 * @return this instance.
+	 */
+	public ButtonUI setButtonRelease(ButtonReleaseCallback buttonRelease) {
+		this.buttonRelease = buttonRelease;
 		return this;
 	}
 
@@ -77,12 +107,12 @@ public class ButtonUI extends UI implements InputProcessor {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		if (normal != null) {
-			batch.draw(normal, getX(), getY(), getW(), getH());
+		if (this.normal != null) {
+			batch.draw(this.normal, getX(), getY(), getW(), getH());
 		}
 
-		if (hover != null && hovering) {
-			batch.draw(hover, getX(), getY(), getW(), getH());
+		if (this.hover != null && this.hovering) {
+			batch.draw(this.hover, getX(), getY(), getW(), getH());
 		}
 	}
 
@@ -104,30 +134,53 @@ public class ButtonUI extends UI implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		updateHovering(screenX, screenY);
+		if (this.touchDownPointer == null) {
+			updateHovering(screenX, screenY);
 
-		// Ensures that button was pressed down and released on it
-		if (button == 0 && hovering) {
-			touchedDown = true;
+			// Left mouse click
+			// Ensures that button is pressed down over it
+			if (button == 0 && hovering) {
+				this.touchedDown = true;
+				this.touchDownPointer = pointer;
+
+				if (this.buttonDown != null) {
+					this.buttonDown.call();
+				}
+			}
+
 		}
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		updateHovering(screenX, screenY);
+		// Ensure that this pointer is the same which started touchDown
+		if (this.touchDownPointer != null && this.touchDownPointer == pointer) {
+			updateHovering(screenX, screenY);
 
-		// Left mouse click
-		if (button == 0 && hovering && touchedDown) {
-			callback.call();
+			// Ensures that button was pressed down over it
+			if (button == 0 && this.touchedDown) {
+
+				// If released over button, call buttonUp. Else call buttonRelease.
+				if (this.hovering && this.buttonUp != null) {
+					this.buttonUp.call();
+				} else if (this.buttonRelease != null) {
+					this.buttonRelease.call();
+				}
+			}
+
+			this.touchedDown = false;
+			this.touchDownPointer = null;
 		}
-		touchedDown = false;
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		updateHovering(screenX, screenY);
+		// Ensure that this pointer is the same which started touchDown
+		if (this.touchDownPointer != null && this.touchDownPointer == pointer) {
+			updateHovering(screenX, screenY);
+		}
 		return false;
 	}
 

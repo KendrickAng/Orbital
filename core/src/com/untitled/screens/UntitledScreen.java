@@ -84,7 +84,7 @@ public abstract class UntitledScreen implements Screen {
 
 	}
 
-	void setScreen(ScreenName screen) {
+	protected void setScreen(ScreenName screen) {
 		game.setScreen(screen);
 	}
 }

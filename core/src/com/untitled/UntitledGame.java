@@ -20,19 +20,9 @@ import com.untitled.assets.ShurikenAnimationName;
 import com.untitled.assets.TankAnimationName;
 import com.untitled.assets.TextureName;
 import com.untitled.highscores.Highscores;
-import com.untitled.screens.CreditsScreen;
-import com.untitled.screens.GameScreen;
-import com.untitled.screens.HighscoresScreen;
-import com.untitled.screens.MainMenuScreen;
-import com.untitled.screens.NameScreen;
 import com.untitled.screens.ScreenName;
-import com.untitled.screens.SettingsScreen;
 
 import java.util.Locale;
-
-import static com.untitled.screens.ScreenName.MAIN_MENU;
-import static com.untitled.screens.ScreenName.NAME_MENU;
-import static com.untitled.screens.ScreenName.SETTINGS;
 
 /**
  * LibGDX {@link Game} object, created when the program starts.
@@ -42,7 +32,7 @@ import static com.untitled.screens.ScreenName.SETTINGS;
  * <p>
  * Also contains some constant definitions and debug flags for the game.
  */
-public class UntitledGame extends Game {
+public abstract class UntitledGame extends Game {
 	public static final String GAME_VERSION = "BETA 1.5";
 	public static final String HIGHSCORE_VERSION = "BETA 1.5";
 
@@ -100,10 +90,10 @@ public class UntitledGame extends Game {
 		viewport = new FitViewport(CAMERA_WIDTH, CAMERA_HEIGHT, camera);
 
 		assets = new Assets();
+		highscores = new Highscores("???");
 		inputMultiplexer = new InputMultiplexer();
 		settings = Gdx.app.getPreferences(PREFERENCES_SETTINGS);
 
-		// TODO: (Optimization) Move to Screens
 		assets.loadTexture(TextureName.MENU_BACKGROUND);
 		assets.loadTexture(TextureName.GAME_BACKGROUND);
 		assets.loadTexture(TextureName.GAME_FLOOR);
@@ -125,21 +115,6 @@ public class UntitledGame extends Game {
 		assets.loadTexture(TextureName.HEALTH_BAR_ASSASSIN);
 		assets.loadTexture(TextureName.STACK_BAR_ASSASSIN);
 		assets.loadTexture(TextureName.HEALTH_BAR_BOSS);
-
-		assets.loadTexture(TextureName.COOLDOWN_0);
-		assets.loadTexture(TextureName.COOLDOWN_1);
-		assets.loadTexture(TextureName.COOLDOWN_2);
-		assets.loadTexture(TextureName.COOLDOWN_3);
-		assets.loadTexture(TextureName.COOLDOWN_4);
-		assets.loadTexture(TextureName.COOLDOWN_5);
-
-		assets.loadTexture(TextureName.COOLDOWN_BLOCK);
-		assets.loadTexture(TextureName.COOLDOWN_HAMMER_SWING);
-		assets.loadTexture(TextureName.COOLDOWN_FORTRESS);
-		assets.loadTexture(TextureName.COOLDOWN_DASH);
-		assets.loadTexture(TextureName.COOLDOWN_SHURIKEN_THROW);
-		assets.loadTexture(TextureName.COOLDOWN_CLEANSE);
-		assets.loadTexture(TextureName.COOLDOWN_SWITCH_CHARACTER);
 
 		assets.loadFont(FontName.MINECRAFT_8);
 		assets.loadFont(FontName.MINECRAFT_16);
@@ -172,6 +147,8 @@ public class UntitledGame extends Game {
 
 		assets.loadShurikenAnimation(ShurikenAnimationName.FLYING);
 		assets.loadRockAnimation(RockAnimationName.ERUPT);
+
+		loadAssets(assets);
 		assets.load();
 
 		assets.getTexture(TextureName.MENU_BACKGROUND).setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
@@ -179,27 +156,20 @@ public class UntitledGame extends Game {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.input.setInputProcessor(inputMultiplexer); // set processor for input.
 
-		/* Settings */
-		// Name
-		String name = settings.getString(SETTINGS_NAME, null);
-
-		// VSync
-		Gdx.graphics.setVSync(settings.getBoolean(SETTINGS_VSYNC, SETTINGS_VSYNC_DEFAULT));
-
-		// Fullscreen
-		if (settings.getBoolean(SETTINGS_FULLSCREEN, SETTINGS_FULLSCREEN_DEFAULT)) {
-			Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-		} else {
-			Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
-		}
-
-		if (name == null) {
-			setScreen(NAME_MENU);
-		} else {
-			highscores = new Highscores(name);
-			setScreen(MAIN_MENU);
-		}
+		createAbstract();
 	}
+
+	/**
+	 * Load assets in this method.
+	 *
+	 * @param A Untitled {@link Assets}
+	 */
+	protected abstract void loadAssets(Assets A);
+
+	/**
+	 * Libgdx game create() logic for child classes.
+	 */
+	protected abstract void createAbstract();
 
 	@Override
 	public void render() {
@@ -214,35 +184,23 @@ public class UntitledGame extends Game {
 
 	public void setScreen(ScreenName screen) {
 		inputMultiplexer.clear();
-		switch (screen) {
-			case NAME_MENU:
-				setScreen(new NameScreen(this, MAIN_MENU));
-				break;
-			case NAME_SETTINGS:
-				setScreen(new NameScreen(this, SETTINGS));
-				break;
-			case MAIN_MENU:
-				setScreen(new MainMenuScreen(this));
-				break;
-			case GAME:
-				setScreen(new GameScreen(this));
-				break;
-			case HIGHSCORES:
-				setScreen(new HighscoresScreen(this));
-				break;
-			case SETTINGS:
-				setScreen(new SettingsScreen(this));
-				break;
-			case CREDITS:
-				setScreen(new CreditsScreen(this));
-				break;
-		}
+		setScreenAbstract(screen);
 	}
 
+	protected abstract void setScreenAbstract(ScreenName screen);
+
+	/**
+	 * @param level Level received from {@link Highscores} database
+	 * @return Formatted level to 2 decimal places.
+	 */
 	public static String formatLevel(int level) {
 		return String.format(Locale.US, "%.2f", level / 100f);
 	}
 
+	/**
+	 * @param time Time received from {@link Highscores} in seconds.
+	 * @return Formatted time to HH:MM:SS.
+	 */
 	public static String formatTime(int time) {
 		int s = time;
 		int m = s / 60;
@@ -259,8 +217,6 @@ public class UntitledGame extends Game {
 
 	/* SETTERS */
 	public void setName(String name) {
-		settings.putString(SETTINGS_NAME, name);
-		settings.flush();
 		highscores = new Highscores(name);
 	}
 

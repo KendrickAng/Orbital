@@ -9,15 +9,15 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.untitled.UntitledGame;
 import com.untitled.assets.Assets;
-import com.untitled.assets.MusicName;
 import com.untitled.name.NameProcessor;
-import com.untitled.ui.ButtonUI;
 import com.untitled.ui.TextUI;
+import com.untitled.ui.button.ButtonUI;
 
 import static com.untitled.UntitledGame.BUTTON_H;
 import static com.untitled.UntitledGame.BUTTON_W;
 import static com.untitled.UntitledGame.CAMERA_HEIGHT;
 import static com.untitled.UntitledGame.CAMERA_WIDTH;
+import static com.untitled.UntitledGame.SETTINGS_NAME;
 import static com.untitled.assets.FontName.MINECRAFT_16;
 import static com.untitled.assets.FontName.MINECRAFT_8;
 import static com.untitled.assets.TextureName.BUTTON_HOVER;
@@ -90,12 +90,16 @@ public class NameScreen extends UntitledScreen {
 				.setY(CONTINUE_Y)
 				.setText(CONTINUE_TEXT);
 
-		this.continueButton = new ButtonUI(MIDDLE, viewport, () -> {
-			if (characterStack.size == CHARACTERS) {
-				game.setName(characterStack.toString(""));
-				setScreen(next);
-			}
-		})
+		this.continueButton = new ButtonUI(MIDDLE, viewport)
+				.setButtonUp(() -> {
+					if (characterStack.size == CHARACTERS) {
+						String name = characterStack.toString("");
+						game.getSettings().putString(SETTINGS_NAME, name);
+						game.getSettings().flush();
+						game.setName(name);
+						setScreen(next);
+					}
+				})
 				.setX(CONTINUE_X)
 				.setY(CONTINUE_Y)
 				.setW(BUTTON_W)

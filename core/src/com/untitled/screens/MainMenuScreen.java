@@ -11,9 +11,9 @@ import com.untitled.assets.Assets;
 import com.untitled.assets.FontName;
 import com.untitled.assets.MusicName;
 import com.untitled.assets.TextureName;
-import com.untitled.ui.ButtonUI;
 import com.untitled.ui.TextUI;
 import com.untitled.ui.UIAlign;
+import com.untitled.ui.button.ButtonUI;
 
 /**
  * Main menu screen of Untitled.
@@ -86,7 +86,8 @@ public class MainMenuScreen extends UntitledScreen {
 				.setY(TITLE_Y)
 				.setText(TITLE);
 
-		this.playButton = new ButtonUI(UIAlign.MIDDLE, viewport, () -> setScreen(ScreenName.GAME))
+		this.playButton = new ButtonUI(UIAlign.MIDDLE, viewport)
+				.setButtonUp(() -> setScreen(ScreenName.GAME))
 				.setX(PLAY_BUTTON_X)
 				.setY(PLAY_BUTTON_Y)
 				.setW(BUTTON_MENU_WIDTH)
@@ -98,7 +99,8 @@ public class MainMenuScreen extends UntitledScreen {
 				.setY(PLAY_BUTTON_Y)
 				.setText(PLAY_BUTTON_TEXT);
 
-		this.highscoresButton = new ButtonUI(UIAlign.MIDDLE, viewport, () -> setScreen(ScreenName.HIGHSCORES))
+		this.highscoresButton = new ButtonUI(UIAlign.MIDDLE, viewport)
+				.setButtonUp(() -> setScreen(ScreenName.HIGHSCORES))
 				.setX(HIGHSCORES_BUTTON_X)
 				.setY(HIGHSCORES_BUTTON_Y)
 				.setW(BUTTON_MENU_WIDTH)
@@ -110,7 +112,8 @@ public class MainMenuScreen extends UntitledScreen {
 				.setY(HIGHSCORES_BUTTON_Y)
 				.setText(HIGHSCORES_BUTTON_TEXT);
 
-		this.settingsButton = new ButtonUI(UIAlign.MIDDLE, viewport, () -> setScreen(ScreenName.SETTINGS))
+		this.settingsButton = new ButtonUI(UIAlign.MIDDLE, viewport)
+				.setButtonUp(() -> setScreen(ScreenName.SETTINGS))
 				.setX(SETTINGS_BUTTON_X)
 				.setY(SETTINGS_BUTTON_Y)
 				.setW(BUTTON_MENU_WIDTH)
@@ -122,7 +125,8 @@ public class MainMenuScreen extends UntitledScreen {
 				.setY(SETTINGS_BUTTON_Y)
 				.setText(SETTINGS_BUTTON_TEXT);
 
-		this.creditsButton = new ButtonUI(UIAlign.MIDDLE, viewport, () -> setScreen(ScreenName.CREDITS))
+		this.creditsButton = new ButtonUI(UIAlign.MIDDLE, viewport)
+				.setButtonUp(() -> setScreen(ScreenName.CREDITS))
 				.setX(CREDITS_BUTTON_X)
 				.setY(CREDITS_BUTTON_Y)
 				.setW(BUTTON_MENU_WIDTH)
@@ -134,7 +138,8 @@ public class MainMenuScreen extends UntitledScreen {
 				.setY(CREDITS_BUTTON_Y)
 				.setText(CREDITS_BUTTON_TEXT);
 
-		this.exitButton = new ButtonUI(UIAlign.MIDDLE, viewport, () -> Gdx.app.exit())
+		this.exitButton = new ButtonUI(UIAlign.MIDDLE, viewport)
+				.setButtonUp(() -> Gdx.app.exit())
 				.setX(EXIT_BUTTON_X)
 				.setY(EXIT_BUTTON_Y)
 				.setW(BUTTON_MENU_WIDTH)

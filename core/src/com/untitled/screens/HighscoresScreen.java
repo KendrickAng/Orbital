@@ -12,9 +12,9 @@ import com.untitled.UntitledGame;
 import com.untitled.assets.Assets;
 import com.untitled.assets.MusicName;
 import com.untitled.highscores.Highscore;
-import com.untitled.ui.ButtonUI;
 import com.untitled.ui.TextUI;
 import com.untitled.ui.TextureUI;
+import com.untitled.ui.button.ButtonUI;
 
 import static com.untitled.UntitledGame.BUTTON_H;
 import static com.untitled.UntitledGame.BUTTON_W;
@@ -136,7 +136,8 @@ public class HighscoresScreen extends UntitledScreen {
 				.setY(BACK_BUTTON_Y)
 				.setText(BACK_BUTTON_TEXT);
 
-		this.backButton = new ButtonUI(MIDDLE, viewport, () -> setScreen(MAIN_MENU))
+		this.backButton = new ButtonUI(MIDDLE, viewport)
+				.setButtonUp(() -> setScreen(MAIN_MENU))
 				.setX(BACK_BUTTON_X)
 				.setY(BACK_BUTTON_Y)
 				.setW(BUTTON_W)

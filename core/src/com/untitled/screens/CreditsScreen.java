@@ -10,10 +10,10 @@ import com.untitled.assets.Assets;
 import com.untitled.assets.FontName;
 import com.untitled.assets.MusicName;
 import com.untitled.assets.TextureName;
-import com.untitled.ui.ButtonUI;
 import com.untitled.ui.TextUI;
 import com.untitled.ui.TextUIAlign;
 import com.untitled.ui.UIAlign;
+import com.untitled.ui.button.ButtonUI;
 
 /**
  * Credits screen of Untitled.
@@ -54,7 +54,8 @@ public class CreditsScreen extends UntitledScreen {
 				.setTextAlign(TextUIAlign.MIDDLE);
 
 		// Back
-		this.backButton = new ButtonUI(UIAlign.MIDDLE, viewport, () -> setScreen(ScreenName.MAIN_MENU))
+		this.backButton = new ButtonUI(UIAlign.MIDDLE, viewport)
+				.setButtonUp(() -> setScreen(ScreenName.MAIN_MENU))
 				.setX(BACK_BUTTON_X)
 				.setY(BACK_BUTTON_Y)
 				.setW(UntitledGame.BUTTON_W)

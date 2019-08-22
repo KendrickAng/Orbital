@@ -25,31 +25,33 @@ import com.untitled.game.character.CharacterController;
 import com.untitled.game.character.Tank;
 import com.untitled.game.debuff.Debuff;
 import com.untitled.highscores.Highscores;
-import com.untitled.ui.ButtonUI;
-import com.untitled.ui.Cooldowns;
 import com.untitled.ui.HealthBar;
 import com.untitled.ui.StackBar;
 import com.untitled.ui.TextUI;
 import com.untitled.ui.TextUIAlign;
 import com.untitled.ui.UIAlign;
+import com.untitled.ui.button.ButtonUI;
+import com.untitled.ui.cooldowns.Cooldowns;
 
+import static com.untitled.UntitledGame.CAMERA_HEIGHT;
+import static com.untitled.UntitledGame.CAMERA_WIDTH;
 import static com.untitled.game.debuff.DebuffType.DAMAGE_REDUCTION;
 
 /**
  * Main game screen (Play) of Untitled
  */
-public class GameScreen extends UntitledScreen {
+public abstract class GameScreen extends UntitledScreen {
 	// Game Size
-	public static final int GAME_WIDTH = UntitledGame.CAMERA_WIDTH;
-	public static final int GAME_HEIGHT = UntitledGame.CAMERA_HEIGHT;
+	public static final int GAME_WIDTH = CAMERA_WIDTH;
+	public static final int GAME_HEIGHT = CAMERA_HEIGHT;
 	public static final float GAME_FLOOR_HEIGHT = 66f;
 
 	// Help
 	private static final String TANK_TEXT = "TANK";
 	private static final String ASSASSIN_TEXT = "ASSASSIN";
 
-	private static final float CHARACTER_TEXT_X = 20f;
-	private static final float CHARACTER_TEXT_Y = UntitledGame.CAMERA_HEIGHT - 20f;
+	protected static final float CHARACTER_TEXT_X = 20f;
+	protected static final float CHARACTER_TEXT_Y = CAMERA_HEIGHT - 20f;
 
 	private static final String BLOCK = "[#42a5f5]BLOCK[]";
 	private static final String HAMMER_SWING = "[#42a5f5]HAMMER SWING[]";
@@ -66,7 +68,8 @@ public class GameScreen extends UntitledScreen {
 	private static final String TANK_HELP_TEXT = "[GOLD]TANK SKILLS[] - YOU MAY TRY THESE NOW." +
 			"\n\n[[[GOLD]Q[]] KEY: " + BLOCK +
 			"\n        The tank blocks some damage. If timed perfectly, he will take zero damage." +
-			"\n        [#b2ebf2]If he blocks perfectly, " + HAMMER_SWING + " cooldown will be reset. The next " + HAMMER_SWING + " also deals bonus damage.[]" +
+			"\n        [#b2ebf2]If he blocks perfectly, " + HAMMER_SWING + " cooldown will be reset." +
+			"\n        The next " + HAMMER_SWING + " also deals bonus damage.[]" +
 			"\n\n[[[GOLD]W[]] KEY: " + HAMMER_SWING +
 			"\n        The tank swings his hammer to inflict some damage." +
 			"\n        [#b2ebf2]If he attacks a " + WEAK_SPOT + " of the boss, the next " + FORTRESS + " will heal all characters.[]" +
@@ -76,13 +79,11 @@ public class GameScreen extends UntitledScreen {
 			"\n\n[[[GOLD]R[]] KEY: [#42a5f5]SWITCH CHARACTER[]" +
 			"\n[[[GOLD]ARROW KEYS[]]: [#42a5f5]MOVEMENT[]";
 
-	private static final float CHARACTER_HELP_COOLDOWNS_X = 20f;
-	private static final float CHARACTER_HELP_COOLDOWNS_Y = CHARACTER_TEXT_Y - 16f;
-
 	private static final String ASSASSIN_HELP_TEXT = "[GOLD]ASSASSIN SKILLS[] - YOU MAY TRY THESE NOW." +
 			"\n\n[[[GOLD]Q[]] KEY: " + DASH +
 			"\n        The assassin dashes in any direction, dodging all attacks." +
-			"\n        [#b2ebf2]If the assassin dodges an attack, her " + STACKS + " increases. Dashing near a " + STUN + "[#ef5350]NED[] boss will deal true damage.[]" +
+			"\n        [#b2ebf2]If the assassin dodges an attack, her " + STACKS + " increases." +
+			"\n        Dashing near a " + STUN + "[#ef5350]NED[] boss will deal true damage.[]" +
 			"\n\n[[[GOLD]W[]] KEY: " + SHURIKEN_THROW +
 			"\n        The assassin throws a shuriken to inflict some damage." +
 			"\n        [#b2ebf2]At max " + STACKS + ", the shuriken will inflict bonus damage.[]" +
@@ -93,66 +94,60 @@ public class GameScreen extends UntitledScreen {
 			"\n[[[GOLD]ARROW KEYS[]]: [#42a5f5]MOVEMENT[]";
 
 	private static final float CHARACTER_HELP_TEXT_X = 50f;
-	private static final float CHARACTER_HELP_TEXT_Y = UntitledGame.CAMERA_HEIGHT - 80f;
+	private static final float CHARACTER_HELP_TEXT_Y = CAMERA_HEIGHT - 80f;
 
 	private static final String START_BUTTON_TEXT = "START";
-	private static final float START_BUTTON_X = UntitledGame.CAMERA_WIDTH - 100f;
+	private static final float START_BUTTON_X = CAMERA_WIDTH - 160f;
 	private static final float START_BUTTON_Y = 50f;
 
 	// Game
 	private static final float CHARACTER_HEALTH_BAR_X = CHARACTER_TEXT_X;
-	private static final float CHARACTER_HEALTH_BAR_Y = CHARACTER_TEXT_Y - 10f;
-	private static final float CHARACTER_HEALTH_BAR_W = UntitledGame.CAMERA_WIDTH / 2f;
-
-	private static final float TANK_COOLDOWNS_X = CHARACTER_HEALTH_BAR_X;
-	private static final float TANK_COOLDOWNS_Y = CHARACTER_HEALTH_BAR_Y - 16f;
+	protected static final float CHARACTER_HEALTH_BAR_Y = CHARACTER_TEXT_Y - 10f;
+	private static final float CHARACTER_HEALTH_BAR_W = CAMERA_WIDTH / 2f;
 
 	private static final float ASSASSIN_STACK_BAR_X = CHARACTER_HEALTH_BAR_X;
-	private static final float ASSASSIN_STACK_BAR_Y = CHARACTER_HEALTH_BAR_Y - 10f;
-	private static final float ASSASSIN_STACK_BAR_W = UntitledGame.CAMERA_WIDTH / 4f;
-
-	private static final float ASSASSIN_COOLDOWNS_X = CHARACTER_HEALTH_BAR_X;
-	private static final float ASSASSIN_COOLDOWNS_Y = ASSASSIN_STACK_BAR_Y - 16f;
+	protected static final float ASSASSIN_STACK_BAR_Y = CHARACTER_HEALTH_BAR_Y - 10f;
+	private static final float ASSASSIN_STACK_BAR_W = CAMERA_WIDTH / 4f;
 
 	private static final float BOSS_BAR_X = 20f;
 	private static final float BOSS_BAR_Y = 20f;
-	private static final float BOSS_BAR_W = UntitledGame.CAMERA_WIDTH - 40f;
+	private static final float BOSS_BAR_W = CAMERA_WIDTH - 40f;
 
 	private static final String BOSS_TEXT = "BOSS - GOLEM";
 	private static final float BOSS_TEXT_X = 20f;
 	private static final float BOSS_TEXT_Y = 32f;
 
 	private static final String FPS_TEXT = "FPS: ";
-	private static final float FPS_TEXT_X = UntitledGame.CAMERA_WIDTH - 5f;
+	private static final float FPS_TEXT_X = CAMERA_WIDTH - 5f;
 	private static final float FPS_TEXT_Y = 5f;
 
 	private static final String LEVEL_TEXT = "LEVEL: ";
-	private static final float LEVEL_TEXT_X = UntitledGame.CAMERA_WIDTH - 20f;
-	private static final float LEVEL_TEXT_Y = UntitledGame.CAMERA_HEIGHT - 20f;
+	private static final float LEVEL_TEXT_X = CAMERA_WIDTH - 20f;
+	private static final float LEVEL_TEXT_Y = CAMERA_HEIGHT - 20f;
 
 	private static final String TIME_TEXT = "TIME: ";
-	private static final float TIME_TEXT_X = UntitledGame.CAMERA_WIDTH - 20f;
+	private static final float TIME_TEXT_X = CAMERA_WIDTH - 20f;
 	private static final float TIME_TEXT_Y = LEVEL_TEXT_Y - 14f;
 
 	private static final String SCORE_TEXT = "SCORE: ";
-	private static final float SCORE_TEXT_X = UntitledGame.CAMERA_WIDTH - 20f;
+	private static final float SCORE_TEXT_X = CAMERA_WIDTH - 20f;
 	private static final float SCORE_TEXT_Y = TIME_TEXT_Y - 14f;
 
 	// Game Over
 	private static final String HIGHSCORE_UPLOADING_TEXT = "UPLOADING HIGHSCORE...";
 	private static final String HIGHSCORE_SUCCESS_TEXT = "UPLOAD HIGHSCORE SUCCESSFUL!";
 	private static final String HIGHSCORE_FAILED_TEXT = "UPLOAD HIGHSCORE FAILED...";
-	private static final float HIGHSCORE_TEXT_X = UntitledGame.CAMERA_WIDTH - 20f;
+	private static final float HIGHSCORE_TEXT_X = CAMERA_WIDTH - 20f;
 	private static final float HIGHSCORE_TEXT_Y = SCORE_TEXT_Y - 14f;
 
 	private static final String GAME_OVER_LOSE_TEXT = "GAME OVER...";
 	private static final String GAME_OVER_WIN_TEXT = "YOU DID IT!\n\nMORE BOSSES COMING SOON (TM)";
-	private static final float GAME_OVER_TEXT_X = UntitledGame.CAMERA_WIDTH / 2f;
-	private static final float GAME_OVER_TEXT_Y = UntitledGame.CAMERA_HEIGHT / 2f + 50f;
+	private static final float GAME_OVER_TEXT_X = CAMERA_WIDTH / 2f;
+	private static final float GAME_OVER_TEXT_Y = CAMERA_HEIGHT / 2f + 50f;
 
 	private static final String EXIT_TEXT = "EXIT";
-	private static final float EXIT_TEXT_X = UntitledGame.CAMERA_WIDTH / 2f;
-	private static final float EXIT_TEXT_Y = UntitledGame.CAMERA_HEIGHT / 2f - 50f;
+	private static final float EXIT_TEXT_X = CAMERA_WIDTH / 2f;
+	private static final float EXIT_TEXT_Y = CAMERA_HEIGHT / 2f - 50f;
 
 	private static final float SWITCH_CHARACTER_COOLDOWN = 2f;
 	private static final float DEAD_CHARACTER_INVULNERABLE_DURATION = 1f;
@@ -226,8 +221,8 @@ public class GameScreen extends UntitledScreen {
 		this.cameraGame = game.getCamera();
 		this.cameraX = cameraGame.position.x;
 		this.cameraUI = new OrthographicCamera();
-		this.cameraUI.setToOrtho(false, UntitledGame.CAMERA_WIDTH, UntitledGame.CAMERA_HEIGHT);
-		this.viewportUI = new FitViewport(UntitledGame.CAMERA_WIDTH, UntitledGame.CAMERA_HEIGHT, cameraUI);
+		this.cameraUI.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
+		this.viewportUI = new FitViewport(CAMERA_WIDTH, CAMERA_HEIGHT, cameraUI);
 
 		this.highscores = game.getHighscores();
 		this.entityManager = new EntityManager();
@@ -238,14 +233,12 @@ public class GameScreen extends UntitledScreen {
 		this.switchCharacter = new CooldownState(SWITCH_CHARACTER_COOLDOWN);
 		this.deadCharacterDebuff = new Debuff(DAMAGE_REDUCTION, 1f, DEAD_CHARACTER_INVULNERABLE_DURATION);
 
-		/* Entities */
-		this.tank = new Tank(this);
-		this.assassin = new Assassin(this);
-		this.assassin.getAlpha().set(0);
-		this.character = tank;
-
-		/* Input */
+		// Character
+		initCharacter();
 		this.characterController = new CharacterController(this.character);
+
+		this.tankCooldowns = initTankHelpCooldowns(A, tank, switchCharacter);
+		this.assassinCooldowns = initAssassinHelpCooldowns(A, assassin, switchCharacter);
 
 		/* UI */
 		// Help
@@ -254,73 +247,60 @@ public class GameScreen extends UntitledScreen {
 				.setY(CHARACTER_HELP_TEXT_Y)
 				.setText(TANK_HELP_TEXT);
 
-		this.startButton = new ButtonUI(UIAlign.MIDDLE, viewportUI, () -> {
-			this.tank.dispose(0);
-			this.assassin.dispose(0);
-			this.entityManager = new EntityManager();
+		this.startButton = new ButtonUI(UIAlign.MIDDLE, viewportUI)
+				.setButtonUp(() -> {
+					multiplexer.clear();
+					multiplexer.addProcessor(this.characterController);
 
-			// Character
-			this.tank = new Tank(this);
-			this.assassin = new Assassin(this);
-			this.assassin.getAlpha().set(0);
-			this.character = tank;
-			this.characterController.setCharacter(character);
+					this.tank.dispose(0);
+					this.assassin.dispose(0);
+					this.entityManager = new EntityManager();
 
-			tankHealthBar = new HealthBar(UIAlign.TOP_LEFT, tank, A.getTexture(TextureName.HEALTH_BAR_TANK), A.getTexture(TextureName.INFO_BAR_BACKGROUND))
-					.setX(CHARACTER_HEALTH_BAR_X)
-					.setY(CHARACTER_HEALTH_BAR_Y)
-					.setW(CHARACTER_HEALTH_BAR_W);
+					// Character
+					initCharacter();
+					this.characterController.setCharacter(character);
 
-			tankCooldowns = new Cooldowns(UIAlign.TOP_LEFT, A)
-					.setX(TANK_COOLDOWNS_X)
-					.setY(TANK_COOLDOWNS_Y)
-					.add(tank.getBlockState(), A.getTexture(TextureName.COOLDOWN_BLOCK))
-					.add(tank.getImpaleState(), A.getTexture(TextureName.COOLDOWN_HAMMER_SWING))
-					.add(tank.getFortressState(), A.getTexture(TextureName.COOLDOWN_FORTRESS))
-					.add(switchCharacter, A.getTexture(TextureName.COOLDOWN_SWITCH_CHARACTER));
+					this.tankCooldowns = initTankCooldowns(A, tank, switchCharacter);
+					this.assassinCooldowns = initAssassinCooldowns(A, assassin, switchCharacter);
 
-			assassinHealthBar = new HealthBar(UIAlign.TOP_LEFT, assassin, A.getTexture(TextureName.HEALTH_BAR_ASSASSIN), A.getTexture(TextureName.INFO_BAR_BACKGROUND))
-					.setX(CHARACTER_HEALTH_BAR_X)
-					.setY(CHARACTER_HEALTH_BAR_Y)
-					.setW(CHARACTER_HEALTH_BAR_W);
+					this.tankHealthBar = new HealthBar(UIAlign.TOP_LEFT, tank, A.getTexture(TextureName.HEALTH_BAR_TANK), A.getTexture(TextureName.INFO_BAR_BACKGROUND))
+							.setX(CHARACTER_HEALTH_BAR_X)
+							.setY(CHARACTER_HEALTH_BAR_Y)
+							.setW(CHARACTER_HEALTH_BAR_W);
 
-			assassinStackBar = new StackBar(UIAlign.TOP_LEFT, assassin, A.getTexture(TextureName.STACK_BAR_ASSASSIN), A.getTexture(TextureName.INFO_BAR_BACKGROUND))
-					.setX(ASSASSIN_STACK_BAR_X)
-					.setY(ASSASSIN_STACK_BAR_Y)
-					.setW(ASSASSIN_STACK_BAR_W);
+					this.assassinHealthBar = new HealthBar(UIAlign.TOP_LEFT, assassin, A.getTexture(TextureName.HEALTH_BAR_ASSASSIN), A.getTexture(TextureName.INFO_BAR_BACKGROUND))
+							.setX(CHARACTER_HEALTH_BAR_X)
+							.setY(CHARACTER_HEALTH_BAR_Y)
+							.setW(CHARACTER_HEALTH_BAR_W);
 
-			assassinCooldowns = new Cooldowns(UIAlign.TOP_LEFT, A)
-					.setX(ASSASSIN_COOLDOWNS_X)
-					.setY(ASSASSIN_COOLDOWNS_Y)
-					.add(assassin.getDashState(), A.getTexture(TextureName.COOLDOWN_DASH))
-					.add(assassin.getShurikenState(), A.getTexture(TextureName.COOLDOWN_SHURIKEN_THROW))
-					.add(assassin.getCleanseState(), A.getTexture(TextureName.COOLDOWN_CLEANSE))
-					.add(switchCharacter, A.getTexture(TextureName.COOLDOWN_SWITCH_CHARACTER));
+					this.assassinStackBar = new StackBar(UIAlign.TOP_LEFT, assassin, A.getTexture(TextureName.STACK_BAR_ASSASSIN), A.getTexture(TextureName.INFO_BAR_BACKGROUND))
+							.setX(ASSASSIN_STACK_BAR_X)
+							.setY(ASSASSIN_STACK_BAR_Y)
+							.setW(ASSASSIN_STACK_BAR_W);
 
-			// Boss
-			this.boss1 = new Boss1(this);
-			if (UntitledGame.DEBUG_BOSS_AI) {
-				multiplexer.addProcessor(new Boss1Controller(this));
-			} else {
-				new Boss1AI(this);
-			}
+					// Boss
+					this.boss1 = new Boss1(this);
+					if (UntitledGame.DEBUG_BOSS_AI) {
+						multiplexer.addProcessor(new Boss1Controller(this));
+					} else {
+						new Boss1AI(this);
+					}
 
-			bossHealthBar = new HealthBar(UIAlign.BOTTOM_LEFT, boss1, A.getTexture(TextureName.HEALTH_BAR_BOSS), A.getTexture(TextureName.INFO_BAR_BACKGROUND))
-					.setX(BOSS_BAR_X)
-					.setY(BOSS_BAR_Y)
-					.setW(BOSS_BAR_W);
+					bossHealthBar = new HealthBar(UIAlign.BOTTOM_LEFT, boss1, A.getTexture(TextureName.HEALTH_BAR_BOSS), A.getTexture(TextureName.INFO_BAR_BACKGROUND))
+							.setX(BOSS_BAR_X)
+							.setY(BOSS_BAR_Y)
+							.setW(BOSS_BAR_W);
 
-			// Music
-			A.getMusic(MusicName.MAIN_MENU).stop();
+					// Music
+					A.getMusic(MusicName.MAIN_MENU).stop();
 
-			float volume = game.getSettings().getInteger(UntitledGame.SETTINGS_MUSIC_VOLUME, UntitledGame.SETTINGS_MUSIC_VOLUME_DEFAULT) / 100f;
-			A.getMusic(MusicName.BOSS).setVolume(volume);
-			A.getMusic(MusicName.BOSS).play();
+					float volume = game.getSettings().getInteger(UntitledGame.SETTINGS_MUSIC_VOLUME, UntitledGame.SETTINGS_MUSIC_VOLUME_DEFAULT) / 100f;
+					A.getMusic(MusicName.BOSS).setVolume(volume);
+					A.getMusic(MusicName.BOSS).play();
 
-			Gdx.input.setCursorCatched(true);
-			multiplexer.removeProcessor(startButton);
-			this.state = State.BOSS_FIGHT;
-		})
+					Gdx.input.setCursorCatched(true);
+					this.state = State.BOSS_FIGHT;
+				})
 				.setX(START_BUTTON_X)
 				.setY(START_BUTTON_Y)
 				.setW(UntitledGame.BUTTON_W)
@@ -339,27 +319,11 @@ public class GameScreen extends UntitledScreen {
 				.setY(CHARACTER_TEXT_Y)
 				.setText(TANK_TEXT);
 
-		tankCooldowns = new Cooldowns(UIAlign.TOP_LEFT, A)
-				.setX(CHARACTER_HELP_COOLDOWNS_X)
-				.setY(CHARACTER_HELP_COOLDOWNS_Y)
-				.add(tank.getBlockState(), A.getTexture(TextureName.COOLDOWN_BLOCK))
-				.add(tank.getImpaleState(), A.getTexture(TextureName.COOLDOWN_HAMMER_SWING))
-				.add(tank.getFortressState(), A.getTexture(TextureName.COOLDOWN_FORTRESS))
-				.add(switchCharacter, A.getTexture(TextureName.COOLDOWN_SWITCH_CHARACTER));
-
 		// Assassin
 		assassinText = new TextUI(UIAlign.TOP_LEFT, A.getFont(FontName.MINECRAFT_8))
 				.setX(CHARACTER_TEXT_X)
 				.setY(CHARACTER_TEXT_Y)
 				.setText(ASSASSIN_TEXT);
-
-		assassinCooldowns = new Cooldowns(UIAlign.TOP_LEFT, A)
-				.setX(CHARACTER_HELP_COOLDOWNS_X)
-				.setY(CHARACTER_HELP_COOLDOWNS_Y)
-				.add(assassin.getDashState(), A.getTexture(TextureName.COOLDOWN_DASH))
-				.add(assassin.getShurikenState(), A.getTexture(TextureName.COOLDOWN_SHURIKEN_THROW))
-				.add(assassin.getCleanseState(), A.getTexture(TextureName.COOLDOWN_CLEANSE))
-				.add(switchCharacter, A.getTexture(TextureName.COOLDOWN_SWITCH_CHARACTER));
 
 		// Boss
 		bossText = new TextUI(UIAlign.BOTTOM_LEFT, A.getFont(FontName.MINECRAFT_8))
@@ -394,7 +358,8 @@ public class GameScreen extends UntitledScreen {
 				.setY(EXIT_TEXT_Y)
 				.setText(EXIT_TEXT);
 
-		exitButton = new ButtonUI(UIAlign.MIDDLE, this.viewportUI, () -> setScreen(ScreenName.MAIN_MENU))
+		exitButton = new ButtonUI(UIAlign.MIDDLE, this.viewportUI)
+				.setButtonUp(() -> setScreen(ScreenName.MAIN_MENU))
 				.setX(EXIT_TEXT_X)
 				.setY(EXIT_TEXT_Y)
 				.setW(UntitledGame.BUTTON_W)
@@ -411,6 +376,21 @@ public class GameScreen extends UntitledScreen {
 		multiplexer.addProcessor(this.characterController);
 		multiplexer.addProcessor(this.startButton);
 	}
+
+	private void initCharacter() {
+		this.tank = new Tank(this);
+		this.assassin = new Assassin(this);
+		this.assassin.getAlpha().set(0);
+		this.character = tank;
+	}
+
+	protected abstract Cooldowns initTankHelpCooldowns(Assets A, Tank tank, CooldownState switchCharacter);
+
+	protected abstract Cooldowns initAssassinHelpCooldowns(Assets A, Assassin assassin, CooldownState switchCharacter);
+
+	protected abstract Cooldowns initTankCooldowns(Assets A, Tank tank, CooldownState switchCharacter);
+
+	protected abstract Cooldowns initAssassinCooldowns(Assets A, Assassin assassin, CooldownState switchCharacter);
 
 	@Override
 	public void render(SpriteBatch batch) {
@@ -448,7 +428,7 @@ public class GameScreen extends UntitledScreen {
 		batch.setProjectionMatrix(cameraGame.combined);
 		batch.begin();
 
-		batch.draw(A.getTexture(TextureName.GAME_BACKGROUND), 0, 0, UntitledGame.CAMERA_WIDTH, UntitledGame.CAMERA_HEIGHT);
+		batch.draw(A.getTexture(TextureName.GAME_BACKGROUND), 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		this.entityManager.render(batch);
 		this.floatingTextManager.render(batch);
 
@@ -480,15 +460,17 @@ public class GameScreen extends UntitledScreen {
 		switch (state) {
 			case HELP_SCREEN:
 				batch.draw(A.getTexture(TextureName.GAME_OVERLAY), 0, 0, GAME_WIDTH, GAME_HEIGHT);
+				this.characterHelpText.render(batch);
+
 				if (character == tank) {
 					this.tankText.render(batch);
 					this.tankCooldowns.render(batch);
+
 				} else if (character == assassin) {
 					this.assassinText.render(batch);
 					this.assassinCooldowns.render(batch);
 				}
 
-				this.characterHelpText.render(batch);
 				this.startButton.render(batch);
 				this.startButtonText.render(batch);
 				break;
@@ -541,10 +523,6 @@ public class GameScreen extends UntitledScreen {
 		} else {
 			A.getMusic(MusicName.BOSS).play();
 		}
-	}
-
-	public CharacterController getCharacterController() {
-		return characterController;
 	}
 
 	private void gameOver() {
@@ -693,11 +671,23 @@ public class GameScreen extends UntitledScreen {
 		return A;
 	}
 
+	public CharacterController getCharacterController() {
+		return characterController;
+	}
+
 	public EntityManager getEntityManager() {
 		return entityManager;
 	}
 
 	public FloatingTextManager getFloatingTextManager() {
 		return floatingTextManager;
+	}
+
+	public InputMultiplexer getInputMultiplexer() {
+		return multiplexer;
+	}
+
+	public FitViewport getViewportUI() {
+		return viewportUI;
 	}
 }

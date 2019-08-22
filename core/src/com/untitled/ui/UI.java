@@ -78,11 +78,11 @@ public abstract class UI {
 		}
 	}
 
-	float getW() {
+	protected float getW() {
 		return w;
 	}
 
-	float getH() {
+	protected float getH() {
 		return h;
 	}
 
